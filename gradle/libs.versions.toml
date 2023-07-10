@@ -9,6 +9,8 @@ compose-bom = "2023.06.01"
 compose-kotlinCompilerExt = "1.4.8"
 espresso = "3.5.1"
 kotlin = "1.8.22"
+ksp = "1.8.22-1.0.11"
+room = "2.5.2"
 
 
 [libraries]
@@ -27,6 +29,10 @@ compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
+room = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-test = { module = "androidx.room:room-testing", version.ref = "room" }
 
 
 [plugins]
@@ -34,6 +40,7 @@ kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin
 android-application = { id = "com.android.application", version.ref = "android-tools" }
 android-library = { id = "com.android.library", version.ref = "android-tools" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 
 [bundles]

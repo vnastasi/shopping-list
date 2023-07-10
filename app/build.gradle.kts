@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,9 +45,21 @@ android {
         jvmTarget = "17"
     }
 
+    ksp {
+        arg("room.schemaLocation", "${buildDir}/schemas")
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    sourceSets {
+        getByName("androidTest") {
+            assets {
+                srcDir("$buildDir/schemas")
+            }
         }
     }
 }
@@ -62,6 +75,10 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.preview)
     implementation(libs.compose.ui)
+    implementation(libs.room)
+    implementation(libs.room.runtime)
+
+    ksp(libs.room.compiler)
 
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
