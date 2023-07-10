@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.preview)
     implementation(libs.compose.ui)
+    implementation(libs.koin.android)
     implementation(libs.room)
     implementation(libs.room.runtime)
 
