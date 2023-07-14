@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.main
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,12 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.flow.collectLatest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,9 +32,6 @@ fun AvailableShoppingListsScreen(
     navController: NavHostController,
     viewModel: AvailableShoppingListsViewModel
 ) {
-
-    val context = LocalContext.current
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -54,9 +51,7 @@ fun AvailableShoppingListsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    Toast.makeText(context, "FAB clicked", Toast.LENGTH_LONG).show()
-                }
+                onClick = viewModel::onAddShoppingListClicked
             ) {
                 Image(
                     imageVector = Icons.Default.Add,
@@ -74,9 +69,18 @@ fun AvailableShoppingListsScreen(
             is ScreenState.AvailableEntries -> AvailableShoppingListsState(
                 contentPaddings = contentPaddings,
                 list = screenState.list,
-                onClick = { navController.navigate("shopping-list/$it") },
-                onDelete = viewModel::onDelete
+                onClick = viewModel::onListItemClick,
+                onDelete = viewModel::onListItemDelete
             )
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.navigationTarget.collectLatest { navigationTarget ->
+            when (navigationTarget) {
+                is NavigationTarget.ShoppingListDetails -> navController.navigate("shopping-list/${navigationTarget.id}")
+                is NavigationTarget.ShoppingListForm -> Unit
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsScreen
 import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsViewModel
-import md.vnastasi.shoppinglist.screen.shoppinglist.ShoppingListContentsScreen
+import md.vnastasi.shoppinglist.screen.shoppinglist.ShoppingListDetailsScreen
 import org.koin.androidx.compose.get
 
 @Composable
@@ -31,7 +31,7 @@ fun NavigationGraph() {
             )
         ) { backStackEntry ->
             val shoppingListId = requireNotNull(backStackEntry.arguments?.getLong("shoppingListId"))
-            ShoppingListContentsScreen(shoppingListId)
+            ShoppingListDetailsScreen(shoppingListId)
         }
     }
 }

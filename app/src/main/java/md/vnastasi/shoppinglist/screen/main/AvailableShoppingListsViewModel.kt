@@ -1,10 +1,13 @@
 package md.vnastasi.shoppinglist.screen.main
 
+import android.util.Log
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -20,9 +23,26 @@ class AvailableShoppingListsViewModel(
         .map { if (it.isEmpty()) ScreenState.NoEntries else ScreenState.AvailableEntries(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.Loading)
 
-    fun onDelete(shoppingList: ShoppingList) {
+    val navigationTarget: SharedFlow<NavigationTarget> = MutableSharedFlow()
+
+    fun onListItemDelete(shoppingList: ShoppingList) {
+        Log.d("EVENTS", "Shopping list <$shoppingList> deleted")
         viewModelScope.launch(Dispatchers.IO) {
             shoppingListRepository.delete(shoppingList)
+        }
+    }
+
+    fun onListItemClick(shoppingList: ShoppingList) {
+        Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
+        viewModelScope.launch {
+            (navigationTarget as MutableSharedFlow).emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
+        }
+    }
+
+    fun onAddShoppingListClicked() {
+        Log.d("EVENTS", "New shopping list")
+        viewModelScope.launch {
+            (navigationTarget as MutableSharedFlow).emit(NavigationTarget.ShoppingListForm)
         }
     }
 
