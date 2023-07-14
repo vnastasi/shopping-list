@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShoppingListScreen(shoppingListId: Long) {
+fun ShoppingListContentsScreen(shoppingListId: Long) {
 
     Text(
         modifier = Modifier.fillMaxWidth().padding(16.dp),

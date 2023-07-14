@@ -7,21 +7,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import md.vnastasi.shoppinglist.screen.main.MainScreen
-import md.vnastasi.shoppinglist.screen.main.MainViewModel
-import md.vnastasi.shoppinglist.screen.shoppinglist.ShoppingListScreen
+import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsScreen
+import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsViewModel
+import md.vnastasi.shoppinglist.screen.shoppinglist.ShoppingListContentsScreen
 import org.koin.androidx.compose.get
 
 @Composable
 fun NavigationGraph() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "main") {
+    NavHost(navController = navController, startDestination = "shopping-list") {
 
         composable(
-            route = "main"
+            route = "shopping-list"
         ) {
-            MainScreen(navController, viewModel(factory = get<MainViewModel.Factory>()))
+            AvailableShoppingListsScreen(navController, viewModel(factory = get<AvailableShoppingListsViewModel.Factory>()))
         }
 
         composable(
@@ -31,7 +31,7 @@ fun NavigationGraph() {
             )
         ) { backStackEntry ->
             val shoppingListId = requireNotNull(backStackEntry.arguments?.getLong("shoppingListId"))
-            ShoppingListScreen(shoppingListId)
+            ShoppingListContentsScreen(shoppingListId)
         }
     }
 }

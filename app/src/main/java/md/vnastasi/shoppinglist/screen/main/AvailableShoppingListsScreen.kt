@@ -25,9 +25,9 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun AvailableShoppingListsScreen(
     navController: NavHostController,
-    viewModel: MainViewModel
+    viewModel: AvailableShoppingListsViewModel
 ) {
 
     val context = LocalContext.current

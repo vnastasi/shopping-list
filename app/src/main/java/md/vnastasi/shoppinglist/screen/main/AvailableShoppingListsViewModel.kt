@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 
-class MainViewModel(
+class AvailableShoppingListsViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
@@ -29,6 +29,6 @@ class MainViewModel(
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T =
-            MainViewModel(shoppingListRepository) as T
+            AvailableShoppingListsViewModel(shoppingListRepository) as T
     }
 }
