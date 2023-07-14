@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -15,7 +16,9 @@ class AvailableShoppingListsViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
-    val state = shoppingListRepository.getAvailableLists().stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
+    val screenState = shoppingListRepository.getAvailableLists()
+        .map { if (it.isEmpty()) ScreenState.NoEntries else ScreenState.AvailableEntries(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.Loading)
 
     fun onDelete(shoppingList: ShoppingList) {
         viewModelScope.launch(Dispatchers.IO) {
