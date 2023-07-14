@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
-fun ShoppingListItem(
+fun ShoppingList(
     shoppingList: ShoppingList,
     onClickItem: (ShoppingList) -> Unit = { },
     onDeleteItem: (ShoppingList) -> Unit = { }
@@ -64,7 +64,7 @@ fun ShoppingListItem(
     heightDp = 128
 )
 @Composable
-fun ShoppingListItemPreview() {
+fun ShoppingListPreview() {
     val shoppingList = ShoppingList(1, "Sample shopping list")
-    ShoppingListItem(shoppingList = shoppingList)
+    ShoppingList(shoppingList = shoppingList)
 }
