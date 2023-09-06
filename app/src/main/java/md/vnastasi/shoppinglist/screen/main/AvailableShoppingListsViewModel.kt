@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import kotlin.random.Random
 
 class AvailableShoppingListsViewModel(
     private val shoppingListRepository: ShoppingListRepository
@@ -43,6 +44,12 @@ class AvailableShoppingListsViewModel(
         Log.d("EVENTS", "New shopping list")
         viewModelScope.launch {
             (navigationTarget as MutableSharedFlow).emit(NavigationTarget.ShoppingListForm)
+        }
+    }
+
+    fun onSaveNewShoppingList(name: String) {
+        viewModelScope.launch {
+            shoppingListRepository.create(ShoppingList(name = name))
         }
     }
 

@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ShoppingList(
-    val id: Long,
+    val id: Long = 0,
     val name: String
 ): Parcelable
