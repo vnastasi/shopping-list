@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsScreen
 import md.vnastasi.shoppinglist.screen.main.AvailableShoppingListsViewModel
 import md.vnastasi.shoppinglist.screen.shoppinglist.ShoppingListDetailsScreen
-import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 
 @Composable
 fun NavigationGraph() {
@@ -21,7 +21,7 @@ fun NavigationGraph() {
         composable(
             route = "shopping-list"
         ) {
-            AvailableShoppingListsScreen(navController, viewModel(factory = get<AvailableShoppingListsViewModel.Factory>()))
+            AvailableShoppingListsScreen(navController, viewModel(factory = koinInject<AvailableShoppingListsViewModel.Factory>()))
         }
 
         composable(
