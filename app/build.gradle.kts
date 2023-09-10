@@ -47,7 +47,7 @@ android {
     }
 
     ksp {
-        arg("room.schemaLocation", "${layout.buildDirectory}/schemas")
+        arg(roomSchemaDir(file("${layout.projectDirectory}/schemas")))
     }
 
     packaging {
@@ -59,7 +59,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${layout.buildDirectory}/schemas")
+                srcDir("${layout.projectDirectory}/schemas")
             }
         }
     }
@@ -83,11 +83,11 @@ dependencies {
     implementation(libs.room)
     implementation(libs.room.runtime)
 
-    ksp(libs.room.compiler)
-
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
 
+    ksp(libs.room.compiler)
+    
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.compose.test.junit4)
