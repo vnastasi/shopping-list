@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvailableShoppingListsScreen(
     navController: NavHostController,
