@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -45,9 +45,9 @@ import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
-fun AvailableShoppingListsScreen(
+fun ListOverviewScreen(
     navController: NavHostController,
-    viewModel: AvailableShoppingListsViewModel
+    viewModel: ListOverviewViewModel
 ) {
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -150,7 +150,7 @@ fun AvailableShoppingListsState(
             .fillMaxWidth()
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
-            ShoppingList(shoppingList = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
+            ShoppingListCard(list = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
         }
     }
 }
@@ -160,7 +160,7 @@ fun AvailableShoppingListsState(
 fun ShoppingListFormBottomSheet(
     bottomSheetState: SheetState,
     bottomSheetScope: CoroutineScope,
-    viewModel: AvailableShoppingListsViewModel
+    viewModel: ListOverviewViewModel
 ) {
 
     val textFieldValue = rememberSaveable { mutableStateOf("") }

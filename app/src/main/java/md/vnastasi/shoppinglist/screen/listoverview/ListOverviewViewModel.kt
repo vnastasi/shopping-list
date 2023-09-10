@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 
-class AvailableShoppingListsViewModel(
+class ListOverviewViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
@@ -40,14 +40,14 @@ class AvailableShoppingListsViewModel(
     fun onListItemClick(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
         viewModelScope.launch {
-            (navigationTarget as MutableSharedFlow).emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
+            _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
         }
     }
 
     fun onAddShoppingListClicked() {
         Log.d("EVENTS", "New shopping list")
         viewModelScope.launch {
-            (navigationTarget as MutableSharedFlow).emit(NavigationTarget.ShoppingListForm)
+            _navigationTarget.emit(NavigationTarget.ShoppingListForm)
         }
     }
 
@@ -61,7 +61,7 @@ class AvailableShoppingListsViewModel(
         private val shoppingListRepository: ShoppingListRepository
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            AvailableShoppingListsViewModel(shoppingListRepository)
+            ListOverviewViewModel(shoppingListRepository)
         }
     })
 }

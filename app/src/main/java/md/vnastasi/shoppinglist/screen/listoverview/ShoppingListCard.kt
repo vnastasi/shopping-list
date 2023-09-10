@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
-fun ShoppingList(
-    shoppingList: ShoppingList,
+fun ShoppingListCard(
+    list: ShoppingList,
     onClickItem: (ShoppingList) -> Unit = { },
     onDeleteItem: (ShoppingList) -> Unit = { }
 ) {
@@ -30,7 +30,7 @@ fun ShoppingList(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable { onClickItem.invoke(shoppingList) },
+            .clickable { onClickItem.invoke(list) },
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
         Row(
@@ -41,7 +41,7 @@ fun ShoppingList(
         ) {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = shoppingList.name
+                text = list.name
             )
 
             Spacer(
@@ -53,7 +53,7 @@ fun ShoppingList(
             Image(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .clickable { onDeleteItem.invoke(shoppingList) },
+                    .clickable { onDeleteItem.invoke(list) },
                 imageVector = Icons.Default.Delete, contentDescription = null
             )
         }
@@ -64,7 +64,7 @@ fun ShoppingList(
     heightDp = 128
 )
 @Composable
-fun ShoppingListPreview() {
+fun ListEntryPreview() {
     val shoppingList = ShoppingList(1, "Sample shopping list")
-    ShoppingList(shoppingList = shoppingList)
+    ShoppingListCard(list = shoppingList)
 }

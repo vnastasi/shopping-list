@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 sealed class NavigationTarget {
 

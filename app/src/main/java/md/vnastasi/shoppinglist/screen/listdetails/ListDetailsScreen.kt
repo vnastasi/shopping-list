@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.shoppinglist
+package md.vnastasi.shoppinglist.screen.listdetails
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShoppingListDetailsScreen(shoppingListId: Long) {
+fun ListDetailsScreen(
+    shoppingListId: Long
+) {
 
     Text(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
