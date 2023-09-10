@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "md.vnastasi.shoppinglist"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "md.vnastasi.shoppinglist"
         minSdk = 28
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -47,7 +47,7 @@ android {
     }
 
     ksp {
-        arg("room.schemaLocation", "${buildDir}/schemas")
+        arg("room.schemaLocation", "${layout.buildDirectory}/schemas")
     }
 
     packaging {
@@ -59,7 +59,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("$buildDir/schemas")
+                srcDir("${layout.buildDirectory}/schemas")
             }
         }
     }
