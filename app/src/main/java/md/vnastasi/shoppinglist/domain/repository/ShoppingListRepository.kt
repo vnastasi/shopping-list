@@ -15,6 +15,9 @@ class ShoppingListRepository(
             list.map { it.toDomainModel() }
         }
 
+    fun getListById(id: Long): Flow<ShoppingList> =
+        shoppingListDao.getShoppingListById(id).map { it.toDomainModel() }
+
     suspend fun create(shoppingList: ShoppingList) {
         shoppingListDao.addShoppingList(shoppingList.toEntity())
     }
