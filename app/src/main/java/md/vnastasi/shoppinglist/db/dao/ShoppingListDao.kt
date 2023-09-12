@@ -16,7 +16,7 @@ interface ShoppingListDao {
     fun getShoppingLists(): Flow<List<ShoppingList>>
 
     @Query("SELECT * FROM shopping_lists WHERE id = :id LIMIT 1")
-    suspend fun getShoppingListById(id: Long): ShoppingList
+    fun getShoppingListById(id: Long): Flow<ShoppingList>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun addShoppingList(list: ShoppingList)

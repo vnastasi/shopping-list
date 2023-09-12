@@ -1,9 +1,7 @@
 package md.vnastasi.shoppinglist.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -16,11 +14,11 @@ class ShoppingItemRepository(
     private val shoppingItemDao: ShoppingItemDao
 ) {
 
-    fun getAllItems(shoppingListId: Long): Flow<List<ShoppingItem>> = flow {
-        val shoppingList = shoppingListDao.getShoppingListById(shoppingListId).toDomainModel()
-        shoppingItemDao.getAllShoppingItems(shoppingListId).map { list ->
-            list.map { it.toDomainModel(shoppingList) }
-        }.also { emitAll(it) }
+    fun getAllItems(shoppingListId: Long): Flow<List<ShoppingItem>> = combine(
+        shoppingListDao.getShoppingListById(shoppingListId),
+        shoppingItemDao.getAllShoppingItems(shoppingListId)
+    ) { shoppingList: ShoppingListEntity, itemList: List<ShoppingItemEntity> ->
+        itemList.map { it.toDomainModel(shoppingList.toDomainModel()) }
     }
 
     suspend fun create(item: ShoppingItem) {

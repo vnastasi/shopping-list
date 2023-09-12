@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -43,12 +43,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.nav.Routes
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AvailableShoppingListsScreen(
+fun ListOverviewScreen(
     navController: NavHostController,
-    viewModel: AvailableShoppingListsViewModel
+    viewModel: ListOverviewViewModel
 ) {
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -114,7 +114,7 @@ fun AvailableShoppingListsScreen(
         LaunchedEffect(key1 = Unit) {
             viewModel.navigationTarget.collectLatest { navigationTarget ->
                 when (navigationTarget) {
-                    is NavigationTarget.ShoppingListDetails -> navController.navigate("shopping-list/${navigationTarget.id}")
+                    is NavigationTarget.ShoppingListDetails -> navController.navigate(Routes.ListDetails(navigationTarget.id))
                     is NavigationTarget.ShoppingListForm -> bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
                 }
             }
@@ -151,7 +151,7 @@ fun AvailableShoppingListsState(
             .fillMaxWidth()
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
-            ShoppingList(shoppingList = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
+            ShoppingListCard(list = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
         }
     }
 }
@@ -161,7 +161,7 @@ fun AvailableShoppingListsState(
 fun ShoppingListFormBottomSheet(
     bottomSheetState: SheetState,
     bottomSheetScope: CoroutineScope,
-    viewModel: AvailableShoppingListsViewModel
+    viewModel: ListOverviewViewModel
 ) {
 
     val textFieldValue = rememberSaveable { mutableStateOf("") }

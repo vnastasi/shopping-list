@@ -1,12 +1,12 @@
-package md.vnastasi.shoppinglist.screen.main
+package md.vnastasi.shoppinglist.screen.listoverview
 
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 sealed class ScreenState {
 
-    object Loading : ScreenState()
+    data object Loading : ScreenState()
 
-    object NoEntries : ScreenState()
+    data object NoEntries : ScreenState()
 
     data class AvailableEntries(val list: List<ShoppingList>) : ScreenState()
 }
