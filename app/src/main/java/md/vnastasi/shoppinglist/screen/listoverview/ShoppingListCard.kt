@@ -54,14 +54,15 @@ fun ShoppingListCard(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .clickable { onDeleteItem.invoke(list) },
-                imageVector = Icons.Default.Delete, contentDescription = null
+                imageVector = Icons.Default.Delete,
+                contentDescription = null
             )
         }
     }
 }
 
 @Preview(
-    heightDp = 128
+    heightDp = 96
 )
 @Composable
 fun ListEntryPreview() {

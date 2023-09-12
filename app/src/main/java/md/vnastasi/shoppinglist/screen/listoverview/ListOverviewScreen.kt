@@ -43,6 +43,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.nav.Routes
 
 @Composable
 fun ListOverviewScreen(
@@ -113,7 +114,7 @@ fun ListOverviewScreen(
         LaunchedEffect(key1 = Unit) {
             viewModel.navigationTarget.collectLatest { navigationTarget ->
                 when (navigationTarget) {
-                    is NavigationTarget.ShoppingListDetails -> navController.navigate("shopping-list/${navigationTarget.id}")
+                    is NavigationTarget.ShoppingListDetails -> navController.navigate(Routes.ListDetails(navigationTarget.id))
                     is NavigationTarget.ShoppingListForm -> bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
                 }
             }
