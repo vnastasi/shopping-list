@@ -17,15 +17,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListOverviewViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
-    val screenState: StateFlow<ScreenState> =
+    val screenState: StateFlow<ScreenState<List<ShoppingList>, Nothing>> =
         shoppingListRepository.getAvailableLists()
-            .map { if (it.isEmpty()) ScreenState.NoEntries else ScreenState.AvailableEntries(it) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.Loading)
+            .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.loading())
 
     private val _navigationTarget = MutableSharedFlow<NavigationTarget>()
     val navigationTarget: SharedFlow<NavigationTarget> = _navigationTarget.asSharedFlow()

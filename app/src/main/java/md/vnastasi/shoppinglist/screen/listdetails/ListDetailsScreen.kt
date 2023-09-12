@@ -7,21 +7,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import md.vnastasi.shoppinglist.support.state.ScreenState
 
 @Composable
 fun ListDetailsScreen(
     viewModel: ListDetailsViewModel
 ) {
 
-    when(val screenState = viewModel.screenState.collectAsState().value) {
+    val collectedScreenState = viewModel.screenState.collectAsState()
+
+    when(val screenState = collectedScreenState.value) {
         is ScreenState.Loading -> Unit
-        is ScreenState.Details -> {
+        is ScreenState.Empty -> Unit
+        is ScreenState.Ready -> {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = "This is the shoppingList ${screenState.name}"
+                text = "This is the shoppingList ${screenState.data.name}"
             )
         }
+        is ScreenState.Failure -> Unit
     }
 }

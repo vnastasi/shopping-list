@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -44,6 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.nav.Routes
+import md.vnastasi.shoppinglist.support.state.ScreenState
 
 @Composable
 fun ListOverviewScreen(
@@ -100,14 +100,16 @@ fun ListOverviewScreen(
             when (val screenState = viewModel.screenState.collectAsStateWithLifecycle().value) {
                 is ScreenState.Loading -> Unit
 
-                is ScreenState.NoEntries -> EmptyState(contentPaddings)
+                is ScreenState.Empty -> EmptyState(contentPaddings)
 
-                is ScreenState.AvailableEntries -> AvailableShoppingListsState(
+                is ScreenState.Ready -> AvailableShoppingListsState(
                     contentPaddings = contentPaddings,
-                    list = screenState.list,
+                    list = screenState.data,
                     onClick = viewModel::onListItemClick,
                     onDelete = viewModel::onListItemDelete
                 )
+
+                is ScreenState.Failure -> Unit
             }
         }
 
@@ -156,7 +158,6 @@ fun AvailableShoppingListsState(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListFormBottomSheet(
     bottomSheetState: SheetState,

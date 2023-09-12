@@ -14,24 +14,26 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
-    val screenState: StateFlow<ScreenState> =
+    val screenState: StateFlow<ScreenState<ListDetails, Nothing>> =
         savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
             .filterNotNull()
             .flatMapLatest(shoppingListRepository::getListById)
             .map { shoppingList ->
-                ScreenState.Details(
+                val details = ListDetails(
                     id = shoppingList.id,
                     name = shoppingList.name,
-                    items = emptyList() // TODO fill in later
+                    shoppingItems = emptyList() // TODO fill in later
                 )
+                ScreenState.ready(details)
             }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000L), ScreenState.Loading)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000L), ScreenState.loading())
 
     class Factory(
         private val shoppingListRepository: ShoppingListRepository
