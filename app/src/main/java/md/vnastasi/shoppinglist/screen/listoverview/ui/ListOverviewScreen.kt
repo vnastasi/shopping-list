@@ -1,26 +1,18 @@
-package md.vnastasi.shoppinglist.screen.listoverview
+package md.vnastasi.shoppinglist.screen.listoverview.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,21 +21,21 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
+import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
 import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.state.ScreenState
+import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 
 @Composable
 fun ListOverviewScreen(
@@ -63,7 +55,13 @@ fun ListOverviewScreen(
         modifier = Modifier.fillMaxSize(),
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
-            ShoppingListFormBottomSheet(bottomSheetScaffoldState.bottomSheetState, bottomSheetScope, viewModel)
+            ShoppingListFormBottomSheet(
+                behaviour = BottomSheetBehaviour(
+                    state = bottomSheetScaffoldState.bottomSheetState,
+                    scope = bottomSheetScope
+                ),
+                onSaveList = viewModel::onSaveNewShoppingList
+            )
         },
         sheetPeekHeight = 0.dp
     ) {
@@ -154,70 +152,6 @@ fun AvailableShoppingListsState(
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
             ShoppingListCard(list = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
-        }
-    }
-}
-
-@Composable
-fun ShoppingListFormBottomSheet(
-    bottomSheetState: SheetState,
-    bottomSheetScope: CoroutineScope,
-    viewModel: ListOverviewViewModel
-) {
-
-    val textFieldValue = rememberSaveable { mutableStateOf("") }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(16.dp)
-                .weight(1f),
-            value = textFieldValue.value,
-            label = {
-                Text(text = "Shopping list name")
-            },
-            maxLines = 1,
-            singleLine = true,
-            onValueChange = { newValue ->
-                textFieldValue.value = newValue
-            }
-        )
-
-        IconButton(
-            modifier = Modifier.padding(start = 8.dp),
-            onClick = {
-                viewModel.onSaveNewShoppingList(textFieldValue.value)
-                bottomSheetScope.launch { bottomSheetState.hide() }
-            }
-        ) {
-
-        }
-
-        Button(
-            modifier = Modifier.padding(start = 8.dp),
-            shape = RoundedCornerShape(50),
-            onClick = {
-                viewModel.onSaveNewShoppingList(textFieldValue.value)
-                bottomSheetScope.launch { bottomSheetState.hide() }
-            }
-        ) {
-            Image(
-                imageVector = Icons.Default.Create,
-                contentDescription = null
-            )
-        }
-    }
-
-    LaunchedEffect(bottomSheetState.currentValue) {
-        if (bottomSheetState.currentValue == SheetValue.Hidden) {
-            textFieldValue.value = ""
         }
     }
 }

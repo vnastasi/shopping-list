@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listoverview
+package md.vnastasi.shoppinglist.screen.listoverview.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

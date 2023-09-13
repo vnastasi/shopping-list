@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
-import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewScreen
+import md.vnastasi.shoppinglist.screen.listoverview.ui.ListOverviewScreen
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.support.viewmodel.viewModel
 import org.koin.compose.koinInject
