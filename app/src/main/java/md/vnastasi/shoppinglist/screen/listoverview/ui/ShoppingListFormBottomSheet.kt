@@ -15,6 +15,7 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -36,12 +37,19 @@ fun ShoppingListFormBottomSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val textFieldValue = rememberSaveable { mutableStateOf("") }
+    val textFieldError = rememberSaveable { mutableStateOf(TextFieldValidator.Error.NONE) }
+    val textFieldValidator = remember { TextFieldValidator() }
 
     val saveAndCloseSheet: () -> Unit = {
-        onSaveList.invoke(textFieldValue.value)
-        behaviour.scope.launch {
-            keyboardController?.hide()
-            behaviour.state.hide()
+        val validationResult = textFieldValidator.validate(textFieldValue.value)
+        textFieldError.value = validationResult
+
+        if (validationResult.noErrors()) {
+            onSaveList.invoke(textFieldValue.value.trim())
+            behaviour.scope.launch {
+                keyboardController?.hide()
+                behaviour.state.hide()
+            }
         }
     }
 
@@ -67,9 +75,18 @@ fun ShoppingListFormBottomSheet(
                     text = "Shopping list name"
                 )
             },
+            isError = textFieldError.value.hasErrors(),
+            supportingText = {
+                when (textFieldError.value) {
+                    TextFieldValidator.Error.NONE -> Unit
+                    TextFieldValidator.Error.EMPTY -> Text(text = "Value cannot be empty")
+                    TextFieldValidator.Error.BLANK -> Text(text = "Value cannot be blank")
+                }
+            },
             maxLines = 1,
             singleLine = true,
             onValueChange = { newValue ->
+                textFieldError.value = textFieldValidator.validate(newValue)
                 textFieldValue.value = newValue
             },
             keyboardOptions = KeyboardOptions(
@@ -88,6 +105,7 @@ fun ShoppingListFormBottomSheet(
                 .padding(top = 32.dp, start = 16.dp, end = 16.dp)
                 .align(Alignment.CenterHorizontally),
             shape = RoundedCornerShape(8.dp),
+            enabled = textFieldError.value.noErrors(),
             onClick = saveAndCloseSheet
         ) {
             Text(
@@ -109,7 +127,7 @@ fun ShoppingListFormBottomSheetPreview() {
                 skipHiddenState = true,
                 initialValue = SheetValue.Expanded
             ),
-            scope =  rememberCoroutineScope()
+            scope = rememberCoroutineScope()
         ),
         onSaveList = { }
     )
