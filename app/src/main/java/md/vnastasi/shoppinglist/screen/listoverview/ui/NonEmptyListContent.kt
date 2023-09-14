@@ -27,7 +27,11 @@ fun NonEmptyListContent(
             .fillMaxWidth()
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
-            ShoppingListCard(list = shoppingList, onClickItem = onClick, onDeleteItem = onDelete)
+            ShoppingListCard(
+                list = shoppingList,
+                onClickItem = onClick,
+                onDeleteItem = onDelete
+            )
         }
     }
 }

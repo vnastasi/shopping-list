@@ -3,11 +3,13 @@ package md.vnastasi.shoppinglist.screen.listoverview.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
@@ -26,37 +28,44 @@ fun ShoppingListCard(
     onClickItem: (ShoppingList) -> Unit = { },
     onDeleteItem: (ShoppingList) -> Unit = { }
 ) {
-    Card(
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { onClickItem.invoke(list) },
-        elevation = CardDefaults.cardElevation(4.dp),
     ) {
-        Row(
+        Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Start
+                .widthIn(max = 520.dp)
+                .padding(16.dp)
+                .align(Alignment.Center)
+                .clickable { onClickItem.invoke(list) },
+            elevation = CardDefaults.cardElevation(4.dp),
         ) {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = list.name
-            )
-
-            Spacer(
+            Row(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-            )
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = list.name
+                )
 
-            Image(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .clickable { onDeleteItem.invoke(list) },
-                imageVector = Icons.Default.Delete,
-                contentDescription = null
-            )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                )
+
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable { onDeleteItem.invoke(list) },
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null
+                )
+            }
         }
     }
 }
@@ -65,7 +74,7 @@ fun ShoppingListCard(
     heightDp = 96
 )
 @Composable
-fun ListEntryPreview() {
+fun ShoppingListCardPreview() {
     val shoppingList = ShoppingList(1, "Sample shopping list")
     ShoppingListCard(list = shoppingList)
 }
