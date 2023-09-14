@@ -31,28 +31,37 @@ class ListOverviewViewModel(
     private val _navigationTarget = MutableSharedFlow<NavigationTarget>()
     val navigationTarget: SharedFlow<NavigationTarget> = _navigationTarget.asSharedFlow()
 
-    fun onListItemDelete(shoppingList: ShoppingList) {
+    fun onUiEvent(uiEvent: UiEvent) {
+        when (uiEvent) {
+            is UiEvent.OnAddNewShoppingListClicked -> onAddShoppingListClicked()
+            is UiEvent.OnSaveNewShoppingList -> onSaveNewShoppingList(uiEvent.name)
+            is UiEvent.OnShoppingListItemClicked -> onListItemClick(uiEvent.shoppingList)
+            is UiEvent.OnShoppingListItemDeleted -> onListItemDelete(uiEvent.shoppingList)
+        }
+    }
+
+    private fun onListItemDelete(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> deleted")
         viewModelScope.launch(Dispatchers.IO) {
             shoppingListRepository.delete(shoppingList)
         }
     }
 
-    fun onListItemClick(shoppingList: ShoppingList) {
+    private fun onListItemClick(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
         viewModelScope.launch {
             _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
         }
     }
 
-    fun onAddShoppingListClicked() {
+    private fun onAddShoppingListClicked() {
         Log.d("EVENTS", "New shopping list")
         viewModelScope.launch {
             _navigationTarget.emit(NavigationTarget.ShoppingListForm)
         }
     }
 
-    fun onSaveNewShoppingList(name: String) {
+    private fun onSaveNewShoppingList(name: String) {
         viewModelScope.launch {
             shoppingListRepository.create(ShoppingList(name = name))
         }
