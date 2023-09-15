@@ -46,6 +46,7 @@ fun ListDetailsScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
+                modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(text = toolbarTitle.value)
                 },
@@ -58,7 +59,8 @@ fun ListDetailsScreen(
                             contentDescription = null
                         )
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
