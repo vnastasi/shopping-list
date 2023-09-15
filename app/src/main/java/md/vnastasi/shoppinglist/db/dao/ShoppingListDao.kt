@@ -12,7 +12,7 @@ import md.vnastasi.shoppinglist.db.model.ShoppingList
 @Dao
 interface ShoppingListDao {
 
-    @Query("SELECT * FROM shopping_lists")
+    @Query("SELECT * FROM shopping_lists ORDER BY id DESC")
     fun getShoppingLists(): Flow<List<ShoppingList>>
 
     @Query("SELECT * FROM shopping_lists WHERE id = :id LIMIT 1")
