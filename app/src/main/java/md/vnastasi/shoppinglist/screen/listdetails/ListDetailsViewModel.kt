@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
@@ -38,7 +39,19 @@ class ListDetailsViewModel(
             )
             ScreenState.ready(listDetails)
         }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000L), ScreenState.loading())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(100L), ScreenState.loading())
+
+    fun onUiEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.OnShoppingListItemClicked -> onShoppingListItemClicked(event.shoppingItem)
+        }
+    }
+
+    private fun onShoppingListItemClicked(shoppingItem: ShoppingItem) {
+        viewModelScope.launch {
+            shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
+        }
+    }
 
     private fun getShoppingList(): Flow<ShoppingList> =
         savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)

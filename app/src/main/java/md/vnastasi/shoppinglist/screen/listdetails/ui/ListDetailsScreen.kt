@@ -28,6 +28,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
+import md.vnastasi.shoppinglist.screen.listdetails.UiEvent
 import md.vnastasi.shoppinglist.support.state.ScreenState
 
 @Composable
@@ -112,7 +113,7 @@ fun ListDetailsScreen(
                             ShoppingItemRow(
                                 shoppingItem = shoppingItem,
                                 isLastItemInList = remember { mutableStateOf(index == screenState.data.shoppingItems.size - 1) },
-                                onClick = { }
+                                onClick = { viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem)) }
                             )
                         }
                     }
