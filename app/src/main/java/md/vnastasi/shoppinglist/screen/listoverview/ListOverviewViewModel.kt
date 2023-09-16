@@ -32,7 +32,7 @@ class ListOverviewViewModel(
             .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
             .stateIn(
                 scope = viewModelScope + dispatchersProvider.MainImediate,
-                started = SharingStarted.WhileSubscribed(1000),
+                started = SharingStarted.WhileSubscribed(100L),
                 initialValue = ScreenState.loading()
             )
 
@@ -43,19 +43,19 @@ class ListOverviewViewModel(
         when (uiEvent) {
             is UiEvent.OnAddNewShoppingListClicked -> onAddShoppingListClicked()
             is UiEvent.OnSaveNewShoppingList -> onSaveNewShoppingList(uiEvent.name)
-            is UiEvent.OnShoppingListItemClicked -> onListItemClick(uiEvent.shoppingList)
-            is UiEvent.OnShoppingListItemDeleted -> onListItemDelete(uiEvent.shoppingList)
+            is UiEvent.OnShoppingListItemClicked -> onListItemClicked(uiEvent.shoppingList)
+            is UiEvent.OnShoppingListItemDeleted -> onListItemDeleted(uiEvent.shoppingList)
         }
     }
 
-    private fun onListItemDelete(shoppingList: ShoppingList) {
+    private fun onListItemDeleted(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> deleted")
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingListRepository.delete(shoppingList)
         }
     }
 
-    private fun onListItemClick(shoppingList: ShoppingList) {
+    private fun onListItemClicked(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
         viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
