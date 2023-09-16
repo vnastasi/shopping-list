@@ -8,7 +8,7 @@ class TestDispatchersProvider(private val dispatcher: CoroutineDispatcher) : Dis
     override val Main: CoroutineDispatcher
         get() = dispatcher
 
-    override val MainImediate: CoroutineDispatcher
+    override val MainImmediate: CoroutineDispatcher
         get() = dispatcher
 
     override val Default: CoroutineDispatcher

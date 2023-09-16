@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.listoverview
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -31,7 +30,7 @@ class ListOverviewViewModel(
         shoppingListRepository.getAvailableLists()
             .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
             .stateIn(
-                scope = viewModelScope + dispatchersProvider.MainImediate,
+                scope = viewModelScope + dispatchersProvider.MainImmediate,
                 started = SharingStarted.WhileSubscribed(100L),
                 initialValue = ScreenState.loading()
             )
@@ -49,21 +48,18 @@ class ListOverviewViewModel(
     }
 
     private fun onListItemDeleted(shoppingList: ShoppingList) {
-        Log.d("EVENTS", "Shopping list <$shoppingList> deleted")
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingListRepository.delete(shoppingList)
         }
     }
 
     private fun onListItemClicked(shoppingList: ShoppingList) {
-        Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
         viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
         }
     }
 
     private fun onAddShoppingListClicked() {
-        Log.d("EVENTS", "New shopping list")
         viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListForm)
         }

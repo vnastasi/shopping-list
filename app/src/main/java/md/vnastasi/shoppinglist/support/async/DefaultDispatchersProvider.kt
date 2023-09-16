@@ -7,7 +7,7 @@ class DefaultDispatchersProvider : DispatchersProvider {
 
     override val Main: CoroutineDispatcher = Dispatchers.Main
 
-    override val MainImediate: CoroutineDispatcher = Dispatchers.Main.immediate
+    override val MainImmediate: CoroutineDispatcher = Dispatchers.Main.immediate
 
     override val Default: CoroutineDispatcher = Dispatchers.Default
 

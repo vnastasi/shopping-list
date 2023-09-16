@@ -43,7 +43,7 @@ class ListDetailsViewModel(
             )
             ScreenState.ready(listDetails)
         }.stateIn(
-            scope = viewModelScope + dispatchersProvider.MainImediate,
+            scope = viewModelScope + dispatchersProvider.MainImmediate,
             started = SharingStarted.WhileSubscribed(100L),
             initialValue = ScreenState.loading()
         )

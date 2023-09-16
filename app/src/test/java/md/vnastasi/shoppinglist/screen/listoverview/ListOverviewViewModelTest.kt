@@ -8,6 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
@@ -53,7 +54,7 @@ class ListOverviewViewModelTest {
     fun onAddNewShoppingListClicked() = runTest {
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler).also { it.screenState.test { } }
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnAddNewShoppingListClicked)
 
         viewModel.navigationTarget.test {
@@ -67,8 +68,9 @@ class ListOverviewViewModelTest {
         val shoppingListName = "new list here"
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler).also { it.screenState.test { } }
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnSaveNewShoppingList(shoppingListName))
+        advanceUntilIdle()
 
         argumentCaptor<ShoppingList> {
             verify(mockShoppingListRepository).create(capture())
@@ -83,7 +85,7 @@ class ListOverviewViewModelTest {
         }
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler).also { it.screenState.test { } }
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingList))
 
         viewModel.navigationTarget.test {
@@ -97,8 +99,9 @@ class ListOverviewViewModelTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler).also { it.screenState.test { } }
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnShoppingListItemDeleted(shoppingList))
+        advanceUntilIdle()
 
         verify(mockShoppingListRepository).delete(eq(shoppingList))
     }
