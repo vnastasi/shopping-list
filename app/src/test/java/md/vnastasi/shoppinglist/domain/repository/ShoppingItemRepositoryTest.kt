@@ -12,6 +12,7 @@ import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.support.DbTestData.createShoppingItemEntity
 import md.vnastasi.shoppinglist.support.DbTestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingItem
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -28,6 +29,7 @@ class ShoppingItemRepositoryTest {
     private val shoppingItemRepository = ShoppingItemRepository(mockShoppingListDao, mockShoppingItemDao)
 
     @Test
+    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 123 The expect empty list")
     fun getAllItemsEmpty() = runTest {
         val listId = 123L
         whenever(mockShoppingListDao.getShoppingListById(listId)).doReturn(flowOf(createShoppingListEntity()))
@@ -39,6 +41,7 @@ class ShoppingItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 45 The expect non-empty list")
     fun getAllItems() = runTest {
         val shoppingListId = 45L
         val shoppingListEntity = createShoppingListEntity {
@@ -89,6 +92,7 @@ class ShoppingItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("When creating a new shopping item The expect DAO call to create new entity")
     fun create() = runTest {
         val shoppingItem = createShoppingItem {
             id = 980L
@@ -116,6 +120,7 @@ class ShoppingItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("When updating an existing shopping item The expect DAO call to update entity")
     fun update() = runTest {
         val shoppingItem = createShoppingItem {
             id = 56L
@@ -143,6 +148,7 @@ class ShoppingItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("When deleting a shopping item The expect DAO call to delete entity")
     fun delete() = runTest {
         val shoppingItem = createShoppingItem {
             id = 89L

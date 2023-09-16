@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.support.DbTestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingList
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -25,6 +26,7 @@ class ShoppingListRepositoryTest {
     private val shoppingListRepository = ShoppingListRepository(mockShoppingListDao)
 
     @Test
+    @DisplayName("Given no entities in DAO When getting available shopping lists Then expect empty list")
     fun getAvailableListsEmpty() = runTest {
         whenever(mockShoppingListDao.getShoppingLists()).doReturn(flowOf(emptyList()))
 
@@ -35,6 +37,7 @@ class ShoppingListRepositoryTest {
     }
 
     @Test
+    @DisplayName("Given existing entities in DAO When getting available shopping lists Then expect non-empty list")
     fun getAvailableLists() = runTest {
         val shoppingListEntity1 = createShoppingListEntity {
             id = 1L
@@ -64,6 +67,7 @@ class ShoppingListRepositoryTest {
     }
 
     @Test
+    @DisplayName("When creating a new shopping list The expect DAO call to create new entity")
     fun create() = runTest {
         val shoppingList = createShoppingList {
             id = 5678L
@@ -84,6 +88,7 @@ class ShoppingListRepositoryTest {
     }
 
     @Test
+    @DisplayName("When updating an existing shopping list The expect DAO call to update entity")
     fun update() = runTest {
         val shoppingList = createShoppingList {
             id = 5678L
@@ -104,6 +109,7 @@ class ShoppingListRepositoryTest {
     }
 
     @Test
+    @DisplayName("When deleting a shopping list The expect DAO call to delete entity")
     fun delete() = runTest {
         val shoppingList = createShoppingList {
             id = 5678L

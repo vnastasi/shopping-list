@@ -20,6 +20,7 @@ import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingItem
 import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingList
 import md.vnastasi.shoppinglist.support.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.state.ScreenState
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -33,6 +34,13 @@ class ListDetailsViewModelTest {
     private val mockShoppingItemRepository = mock<ShoppingItemRepository>()
 
     @Test
+    @DisplayName(
+        """
+        Given repository returns no shopping items for list 567
+        When creating list details screen state for list 567
+        Then expect ScreenState.Ready with empty list of shopping items
+    """
+    )
     fun screenStateWithNoShoppingItems() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
@@ -57,6 +65,13 @@ class ListDetailsViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        Given repository returns shopping items for list 567
+        When creating list details screen state for list 567
+        Then expect ScreenState.Ready with non-empty list of shopping items
+    """
+    )
     fun screenState() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
@@ -82,7 +97,13 @@ class ListDetailsViewModelTest {
     }
 
     @Test
-    fun onShoppingListItemSelected() = runTest {
+    @DisplayName(
+        """
+        When selecting a previously unselected shopping item
+        Then expect shopping item to be updated to checked state
+    """
+    )
+    fun onShoppingListItemChecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
@@ -103,7 +124,13 @@ class ListDetailsViewModelTest {
     }
 
     @Test
-    fun onShoppingListItemDeselected() = runTest {
+    @DisplayName(
+        """
+        When deselecting a previously selected shopping item
+        Then expect shopping item to be updated to unchecked state
+    """
+    )
+    fun onShoppingListItemUnchecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 

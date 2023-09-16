@@ -15,6 +15,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingList
 import md.vnastasi.shoppinglist.support.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.state.ScreenState
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -28,6 +29,13 @@ class ListOverviewViewModelTest {
     private val mockShoppingListRepository = mock<ShoppingListRepository>()
 
     @Test
+    @DisplayName(
+        """
+        Given repository returns no shopping lists
+        When creating list overview screen state
+        Then expect ScreenState.Empty
+    """
+    )
     fun screenStateWithNoLists() = runTest {
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
@@ -39,6 +47,13 @@ class ListOverviewViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        Given repository returns shopping lists
+        When creating list overview screen state
+        Then expect ScreenState.Ready with a list of shopping lists
+    """
+    )
     fun screenState() = runTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(listOf(shoppingList)))
@@ -51,6 +66,12 @@ class ListOverviewViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        When clicking on 'Add new shopping list' button
+        Then expect a UI navigation event of type 'ShoppingListForm'
+    """
+    )
     fun onAddNewShoppingListClicked() = runTest {
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
 
@@ -64,6 +85,12 @@ class ListOverviewViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        When saving a new shopping list with a given name
+        Then expect repository to create a new shopping list with said name
+    """
+    )
     fun onSaveNewShoppingList() = runTest {
         val shoppingListName = "new list here"
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
@@ -79,6 +106,12 @@ class ListOverviewViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        When clicking on a shopping list item
+        Then expect a UI navigation event of type 'ShoppingListDetails' with list ID
+    """
+    )
     fun onListItemClicked() = runTest {
         val shoppingList = createShoppingList {
             id = 6578L
@@ -95,6 +128,12 @@ class ListOverviewViewModelTest {
     }
 
     @Test
+    @DisplayName(
+        """
+        When deleting a shopping list
+        Then expect repository to delete said shopping list
+    """
+    )
     fun onListItemDeleted() = runTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
