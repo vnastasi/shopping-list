@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.support.DbTestData.createShoppingItemEntity
-import md.vnastasi.shoppinglist.support.DbTestData.createShoppingListEntity
-import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingItem
+import md.vnastasi.shoppinglist.support.testdata.DbTestData.createShoppingItemEntity
+import md.vnastasi.shoppinglist.support.testdata.DbTestData.createShoppingListEntity
+import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingItem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor

@@ -1,7 +1,6 @@
-package md.vnastasi.shoppinglist.support
+package md.vnastasi.shoppinglist.support.async
 
 import kotlinx.coroutines.CoroutineDispatcher
-import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class TestDispatchersProvider(private val dispatcher: CoroutineDispatcher) : DispatchersProvider {
 

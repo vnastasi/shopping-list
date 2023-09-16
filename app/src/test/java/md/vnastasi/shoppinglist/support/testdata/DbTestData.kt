@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.support
+package md.vnastasi.shoppinglist.support.testdata
 
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList

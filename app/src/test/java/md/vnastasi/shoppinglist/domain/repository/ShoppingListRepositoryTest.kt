@@ -8,8 +8,8 @@ import assertk.assertions.isEqualTo
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.support.DbTestData.createShoppingListEntity
-import md.vnastasi.shoppinglist.support.DomainTestData.createShoppingList
+import md.vnastasi.shoppinglist.support.testdata.DbTestData.createShoppingListEntity
+import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
