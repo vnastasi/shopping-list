@@ -16,16 +16,19 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val shoppingListRepository: ShoppingListRepository,
-    private val shoppingItemRepository: ShoppingItemRepository
+    private val shoppingItemRepository: ShoppingItemRepository,
+    private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     val screenState: StateFlow<ScreenState<ListDetails, Nothing>> =
@@ -39,8 +42,11 @@ class ListDetailsViewModel(
                 listOfShoppingItems = listOfShoppingItems.toImmutableList()
             )
             ScreenState.ready(listDetails)
-        }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(100L), ScreenState.loading())
+        }.stateIn(
+            scope = viewModelScope + dispatchersProvider.MainImediate,
+            started = SharingStarted.WhileSubscribed(100L),
+            initialValue = ScreenState.loading()
+        )
 
     fun onUiEvent(event: UiEvent) {
         when (event) {
@@ -49,7 +55,7 @@ class ListDetailsViewModel(
     }
 
     private fun onShoppingListItemClicked(shoppingItem: ShoppingItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.IO) {
             shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
         }
     }
@@ -66,10 +72,11 @@ class ListDetailsViewModel(
 
     class Factory(
         private val shoppingListRepository: ShoppingListRepository,
-        private val shoppingItemRepository: ShoppingItemRepository
+        private val shoppingItemRepository: ShoppingItemRepository,
+        private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            ListDetailsViewModel(createSavedStateHandle(), shoppingListRepository, shoppingItemRepository)
+            ListDetailsViewModel(createSavedStateHandle(), shoppingListRepository, shoppingItemRepository, dispatchersProvider)
         }
     })
 

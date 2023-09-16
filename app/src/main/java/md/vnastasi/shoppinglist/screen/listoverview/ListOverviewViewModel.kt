@@ -8,7 +8,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,18 +16,25 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListOverviewViewModel(
-    private val shoppingListRepository: ShoppingListRepository
+    private val shoppingListRepository: ShoppingListRepository,
+    private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     val screenState: StateFlow<ScreenState<ImmutableList<ShoppingList>, Nothing>> =
         shoppingListRepository.getAvailableLists()
             .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.loading())
+            .stateIn(
+                scope = viewModelScope + dispatchersProvider.MainImediate,
+                started = SharingStarted.WhileSubscribed(1000),
+                initialValue = ScreenState.loading()
+            )
 
     private val _navigationTarget = MutableSharedFlow<NavigationTarget>()
     val navigationTarget: SharedFlow<NavigationTarget> = _navigationTarget.asSharedFlow()
@@ -44,36 +50,37 @@ class ListOverviewViewModel(
 
     private fun onListItemDelete(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> deleted")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchersProvider.IO) {
             shoppingListRepository.delete(shoppingList)
         }
     }
 
     private fun onListItemClick(shoppingList: ShoppingList) {
         Log.d("EVENTS", "Shopping list <$shoppingList> clicked")
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
         }
     }
 
     private fun onAddShoppingListClicked() {
         Log.d("EVENTS", "New shopping list")
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListForm)
         }
     }
 
     private fun onSaveNewShoppingList(name: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.Main) {
             shoppingListRepository.create(ShoppingList(name = name))
         }
     }
 
     class Factory(
-        private val shoppingListRepository: ShoppingListRepository
+        private val shoppingListRepository: ShoppingListRepository,
+        private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            ListOverviewViewModel(shoppingListRepository)
+            ListOverviewViewModel(shoppingListRepository, dispatchersProvider)
         }
     })
 }
