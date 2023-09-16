@@ -74,6 +74,7 @@ dependencies {
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
+    implementation(platform(libs.kotlin.coroutines.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lificycle.runtime)
@@ -93,6 +94,16 @@ dependencies {
     debugImplementation(libs.compose.tooling)
 
     ksp(libs.room.compiler)
+
+    testImplementation(platform(libs.kotlin.coroutines.bom))
+    testImplementation(libs.androidx.lificycle.test)
+    testImplementation(libs.assertk)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
