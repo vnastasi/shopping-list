@@ -11,6 +11,7 @@ compose-kotlinCompilerExt = "1.5.3"
 espresso = "3.5.1"
 koin = "3.4.3"
 kotlin = "1.9.10"
+kotlin-collections = "0.3.5"
 ksp = "1.9.10-1.0.13"
 room = "2.5.2"
 
@@ -38,6 +39,7 @@ koin-android-compose = { module = "io.insert-koin:koin-androidx-compose", versio
 koin-android-test = { module = "io.insert-koin:koin-android-test", version.ref = "koin" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlin-collections" }
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

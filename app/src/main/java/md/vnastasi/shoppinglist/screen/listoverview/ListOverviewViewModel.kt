@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,9 +25,9 @@ class ListOverviewViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
-    val screenState: StateFlow<ScreenState<List<ShoppingList>, Nothing>> =
+    val screenState: StateFlow<ScreenState<ImmutableList<ShoppingList>, Nothing>> =
         shoppingListRepository.getAvailableLists()
-            .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it) }
+            .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), ScreenState.loading())
 
     private val _navigationTarget = MutableSharedFlow<NavigationTarget>()

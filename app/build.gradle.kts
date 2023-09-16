@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
+    implementation(libs.kotlin.collections)
     implementation(libs.room)
     implementation(libs.room.runtime)
 

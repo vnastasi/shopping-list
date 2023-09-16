@@ -7,6 +7,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,7 @@ class ListDetailsViewModel(
             val listDetails = ListDetails(
                 id = shoppingList.id,
                 name = shoppingList.name,
-                shoppingItems = listOfShoppingItems
+                shoppingItems = listOfShoppingItems.toImmutableList()
             )
             ScreenState.ready(listDetails)
         }
