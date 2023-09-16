@@ -2,10 +2,13 @@ package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -13,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
@@ -28,37 +32,45 @@ fun ShoppingItemRow(
     isLastItemInList: State<Boolean>,
     onClick: (ShoppingItem) -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick.invoke(shoppingItem) }
-                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp),
-            horizontalArrangement = Arrangement.Start
+                .widthIn(max = 520.dp)
+                .align(Alignment.Center)
         ) {
-            Checkbox(
-                checked = shoppingItem.isChecked,
-                onCheckedChange = null
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onClick.invoke(shoppingItem) }
+                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Checkbox(
+                    checked = shoppingItem.isChecked,
+                    onCheckedChange = null
+                )
 
-            val textStyle = TextStyle.Default.copy(
-                textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
-            )
+                val textStyle = TextStyle.Default.copy(
+                    textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
+                )
 
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = shoppingItem.name,
-                style = textStyle,
-                fontSize = 18.sp
-            )
-        }
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = shoppingItem.name,
+                    style = textStyle,
+                    fontSize = 18.sp
+                )
+            }
 
-        if (!isLastItemInList.value) {
-            Divider(
-                thickness = 1.dp
-            )
+            if (!isLastItemInList.value) {
+                Divider(
+                    thickness = 1.dp
+                )
+            }
         }
     }
 }
