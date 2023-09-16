@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
 fun NonEmptyListContent(
     contentPaddings: PaddingValues,
-    list: List<ShoppingList>,
+    list: ImmutableList<ShoppingList>,
     onDelete: (ShoppingList) -> Unit,
     onClick: (ShoppingList) -> Unit
 ) {
@@ -42,7 +44,7 @@ fun NonEmptyListContent(
 )
 @Composable
 fun NonEmptyListContentPreview() {
-    val list = listOf(
+    val list = persistentListOf(
         ShoppingList(id = 1L, name = "Groceries"),
         ShoppingList(id = 2L, name = "Pharmacy for mom"),
         ShoppingList(id = 3L, name = "Gamma & Praxis"),
@@ -59,7 +61,7 @@ fun NonEmptyListContentPreview() {
 
     NonEmptyListContent(
         contentPaddings = PaddingValues(0.dp),
-        list =list,
+        list = list,
         onDelete = { },
         onClick = { }
     )

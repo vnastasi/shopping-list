@@ -68,12 +68,19 @@ android {
             }
         }
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
+    implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lificycle.runtime)
@@ -85,6 +92,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
+    implementation(libs.kotlinx.collections)
     implementation(libs.room)
     implementation(libs.room.runtime)
 
@@ -92,6 +100,17 @@ dependencies {
     debugImplementation(libs.compose.tooling)
 
     ksp(libs.room.compiler)
+
+    testImplementation(platform(libs.kotlinx.coroutines.bom))
+    testImplementation(libs.androidx.lificycle.test)
+    testImplementation(libs.assertk)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
