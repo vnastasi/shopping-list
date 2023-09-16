@@ -8,5 +8,5 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 data class ListDetails(
     val id: Long,
     val name: String,
-    val shoppingItems: ImmutableList<ShoppingItem>
+    val listOfShoppingItems: ImmutableList<ShoppingItem>
 )

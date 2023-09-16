@@ -36,7 +36,7 @@ class ListDetailsViewModel(
             val listDetails = ListDetails(
                 id = shoppingList.id,
                 name = shoppingList.name,
-                shoppingItems = listOfShoppingItems.toImmutableList()
+                listOfShoppingItems = listOfShoppingItems.toImmutableList()
             )
             ScreenState.ready(listDetails)
         }
