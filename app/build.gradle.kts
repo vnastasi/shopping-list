@@ -118,5 +118,6 @@ dependencies {
     androidTestImplementation(libs.compose.test.junit4)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.kotlin.reflect)
+    androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.turbine)
 }
