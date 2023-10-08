@@ -32,10 +32,10 @@ class ShoppingItemRepositoryTest {
     @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 123 The expect empty list")
     fun getAllItemsEmpty() = runTest {
         val listId = 123L
-        whenever(mockShoppingListDao.getShoppingListById(listId)).doReturn(flowOf(createShoppingListEntity()))
-        whenever(mockShoppingItemDao.getAllShoppingItems(listId)).doReturn(emptyFlow())
+        whenever(mockShoppingListDao.findById(listId)).doReturn(flowOf(createShoppingListEntity()))
+        whenever(mockShoppingItemDao.findAll(listId)).doReturn(emptyFlow())
 
-        shoppingItemRepository.getAllItems(listId).test {
+        shoppingItemRepository.findAll(listId).test {
             awaitComplete()
         }
     }
@@ -60,8 +60,8 @@ class ShoppingItemRepositoryTest {
             isChecked = false
             listId = shoppingListId
         }
-        whenever(mockShoppingListDao.getShoppingListById(shoppingListId)).doReturn(flowOf(shoppingListEntity))
-        whenever(mockShoppingItemDao.getAllShoppingItems(shoppingListId)).doReturn(flowOf(listOf(shoppingItemEntity1, shoppingItemEntity2)))
+        whenever(mockShoppingListDao.findById(shoppingListId)).doReturn(flowOf(shoppingListEntity))
+        whenever(mockShoppingItemDao.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItemEntity1, shoppingItemEntity2)))
 
         val expectedListOfShoppingItems = listOf(
             createShoppingItem {
@@ -84,7 +84,7 @@ class ShoppingItemRepositoryTest {
             }
         )
 
-        shoppingItemRepository.getAllItems(shoppingListId).test {
+        shoppingItemRepository.findAll(shoppingListId).test {
             val listOfShoppingItems = awaitItem()
             assertThat(listOfShoppingItems).isEqualTo(expectedListOfShoppingItems)
             awaitComplete()
@@ -114,7 +114,7 @@ class ShoppingItemRepositoryTest {
         shoppingItemRepository.create(shoppingItem)
 
         argumentCaptor<ShoppingItemEntity> {
-            verify(mockShoppingItemDao).addShoppingItem(capture())
+            verify(mockShoppingItemDao).create(capture())
             assertThat(firstValue).isDataClassEqualTo(expectedShoppingItemEntity)
         }
     }
@@ -142,7 +142,7 @@ class ShoppingItemRepositoryTest {
         shoppingItemRepository.update(shoppingItem)
 
         argumentCaptor<ShoppingItemEntity> {
-            verify(mockShoppingItemDao).updateShoppingItem(capture())
+            verify(mockShoppingItemDao).update(capture())
             assertThat(firstValue).isDataClassEqualTo(expectedShoppingItemEntity)
         }
     }
@@ -170,7 +170,7 @@ class ShoppingItemRepositoryTest {
         shoppingItemRepository.delete(shoppingItem)
 
         argumentCaptor<ShoppingItemEntity> {
-            verify(mockShoppingItemDao).deleteShoppingItem(capture())
+            verify(mockShoppingItemDao).delete(capture())
             assertThat(firstValue).isDataClassEqualTo(expectedShoppingItemEntity)
         }
     }

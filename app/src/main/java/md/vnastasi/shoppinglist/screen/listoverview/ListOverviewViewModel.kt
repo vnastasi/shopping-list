@@ -27,7 +27,7 @@ class ListOverviewViewModel(
 ) : ViewModel() {
 
     val screenState: StateFlow<ScreenState<ImmutableList<ShoppingList>, Nothing>> =
-        shoppingListRepository.getAvailableLists()
+        shoppingListRepository.findAll()
             .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
             .stateIn(
                 scope = viewModelScope + dispatchersProvider.MainImmediate,

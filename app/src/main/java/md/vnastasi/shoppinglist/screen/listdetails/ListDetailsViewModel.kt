@@ -63,12 +63,12 @@ class ListDetailsViewModel(
     private fun getShoppingList(): Flow<ShoppingList> =
         savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
             .filterNotNull()
-            .flatMapLatest(shoppingListRepository::getListById)
+            .flatMapLatest(shoppingListRepository::findById)
 
     private fun getListOfShoppingItems(): Flow<List<ShoppingItem>> =
         savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
             .filterNotNull()
-            .flatMapLatest(shoppingItemRepository::getAllItems)
+            .flatMapLatest(shoppingItemRepository::findAll)
 
     class Factory(
         private val shoppingListRepository: ShoppingListRepository,

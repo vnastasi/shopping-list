@@ -37,7 +37,7 @@ class ListOverviewViewModelTest {
     """
     )
     fun screenStateWithNoLists() = runTest {
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         createViewModel(testScheduler).screenState.test {
             assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
@@ -56,7 +56,7 @@ class ListOverviewViewModelTest {
     )
     fun screenState() = runTest {
         val shoppingList = createShoppingList()
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(listOf(shoppingList)))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingList)))
 
         createViewModel(testScheduler).screenState.test {
             assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
@@ -73,7 +73,7 @@ class ListOverviewViewModelTest {
     """
     )
     fun onAddNewShoppingListClicked() = runTest {
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnAddNewShoppingListClicked)
@@ -93,7 +93,7 @@ class ListOverviewViewModelTest {
     )
     fun onSaveNewShoppingList() = runTest {
         val shoppingListName = "new list here"
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnSaveNewShoppingList(shoppingListName))
@@ -116,7 +116,7 @@ class ListOverviewViewModelTest {
         val shoppingList = createShoppingList {
             id = 6578L
         }
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingList))
@@ -136,7 +136,7 @@ class ListOverviewViewModelTest {
     )
     fun onListItemDeleted() = runTest {
         val shoppingList = createShoppingList()
-        whenever(mockShoppingListRepository.getAvailableLists()).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.OnShoppingListItemDeleted(shoppingList))

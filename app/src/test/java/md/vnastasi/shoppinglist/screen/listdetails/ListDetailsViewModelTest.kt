@@ -46,8 +46,8 @@ class ListDetailsViewModelTest {
         val shoppingList = createShoppingList {
             id = shoppingListId
         }
-        whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(shoppingList))
-        whenever(mockShoppingItemRepository.getAllItems(shoppingListId)).doReturn(flowOf(emptyList()))
+        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
+        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(emptyList()))
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
@@ -78,8 +78,8 @@ class ListDetailsViewModelTest {
             id = shoppingListId
         }
         val shoppingItem = createShoppingItem()
-        whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(shoppingList))
-        whenever(mockShoppingItemRepository.getAllItems(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
+        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
@@ -105,12 +105,12 @@ class ListDetailsViewModelTest {
     )
     fun onShoppingListItemChecked() = runTest {
         val shoppingListId = 567L
-        whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(createShoppingList()))
+        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
         val shoppingItem = createShoppingItem {
             isChecked = false
         }
-        whenever(mockShoppingItemRepository.getAllItems(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
@@ -132,12 +132,12 @@ class ListDetailsViewModelTest {
     )
     fun onShoppingListItemUnchecked() = runTest {
         val shoppingListId = 567L
-        whenever(mockShoppingListRepository.getListById(shoppingListId)).doReturn(flowOf(createShoppingList()))
+        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
         val shoppingItem = createShoppingItem {
             isChecked = true
         }
-        whenever(mockShoppingItemRepository.getAllItems(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
