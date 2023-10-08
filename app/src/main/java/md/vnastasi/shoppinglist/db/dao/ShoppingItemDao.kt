@@ -13,17 +13,17 @@ import md.vnastasi.shoppinglist.db.model.ShoppingItem
 interface ShoppingItemDao {
 
     @Query("SELECT * FROM shopping_items WHERE list_id = :listId ORDER BY id DESC, is_checked DESC")
-    fun getAllShoppingItems(listId: Long): Flow<List<ShoppingItem>>
+    fun findAll(listId: Long): Flow<List<ShoppingItem>>
 
     @Query("SELECT * FROM shopping_items WHERE id = :id LIMIT 1")
-    suspend fun getShoppingItemById(id: Long): ShoppingItem
+    fun findById(id: Long): Flow<ShoppingItem>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun addShoppingItem(item: ShoppingItem)
+    suspend fun create(item: ShoppingItem)
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    suspend fun updateShoppingItem(item: ShoppingItem)
+    suspend fun update(item: ShoppingItem)
 
     @Delete
-    suspend fun deleteShoppingItem(item: ShoppingItem)
+    suspend fun delete(item: ShoppingItem)
 }

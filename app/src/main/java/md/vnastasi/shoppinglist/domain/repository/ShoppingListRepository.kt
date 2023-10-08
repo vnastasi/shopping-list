@@ -1,6 +1,7 @@
 package md.vnastasi.shoppinglist.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -10,24 +11,24 @@ class ShoppingListRepository(
     private val shoppingListDao: ShoppingListDao
 ) {
 
-    fun getAvailableLists(): Flow<List<ShoppingList>> =
-        shoppingListDao.getShoppingLists().map { list ->
+    fun findAll(): Flow<List<ShoppingList>> =
+        shoppingListDao.findAll().map { list ->
             list.map { it.toDomainModel() }
         }
 
-    fun getListById(id: Long): Flow<ShoppingList> =
-        shoppingListDao.getShoppingListById(id).map { it.toDomainModel() }
+    fun findById(id: Long): Flow<ShoppingList> =
+        shoppingListDao.findById(id).filterNotNull().map { it.toDomainModel() }
 
     suspend fun create(shoppingList: ShoppingList) {
-        shoppingListDao.addShoppingList(shoppingList.toEntity())
+        shoppingListDao.create(shoppingList.toEntity())
     }
 
     suspend fun update(shoppingList: ShoppingList) {
-        shoppingListDao.updateShoppingList(shoppingList.toEntity())
+        shoppingListDao.update(shoppingList.toEntity())
     }
 
     suspend fun delete(shoppingList: ShoppingList) {
-        shoppingListDao.deleteShoppingList(shoppingList.toEntity())
+        shoppingListDao.delete(shoppingList.toEntity())
     }
 
     private fun ShoppingList.toEntity() = ShoppingListEntity(id, name)

@@ -13,17 +13,17 @@ import md.vnastasi.shoppinglist.db.model.ShoppingList
 interface ShoppingListDao {
 
     @Query("SELECT * FROM shopping_lists ORDER BY id DESC")
-    fun getShoppingLists(): Flow<List<ShoppingList>>
+    fun findAll(): Flow<List<ShoppingList>>
 
     @Query("SELECT * FROM shopping_lists WHERE id = :id LIMIT 1")
-    fun getShoppingListById(id: Long): Flow<ShoppingList>
+    fun findById(id: Long): Flow<ShoppingList>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun addShoppingList(list: ShoppingList)
+    suspend fun create(list: ShoppingList)
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    suspend fun updateShoppingList(list: ShoppingList)
+    suspend fun update(list: ShoppingList)
 
     @Delete
-    suspend fun deleteShoppingList(list: ShoppingList)
+    suspend fun delete(list: ShoppingList)
 }

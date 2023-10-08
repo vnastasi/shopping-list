@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.db.dao
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import assertk.all
 import assertk.assertThat
@@ -16,9 +15,7 @@ import md.vnastasi.shoppinglist.support.testdata.TestData.DEFAULT_SHOPPING_LIST_
 import md.vnastasi.shoppinglist.support.testdata.TestData.createShoppingItemEntity
 import md.vnastasi.shoppinglist.support.testdata.TestData.createShoppingListEntity
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class ShoppingItemDaoTest {
 
     @Test
@@ -26,13 +23,13 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
-        shoppingItemDao.getAllShoppingItems(DEFAULT_SHOPPING_LIST_ID).test {
+        shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
             assertThat(awaitItem()).isEmpty()
 
             val shoppingItem = createShoppingItemEntity()
-            shoppingItemDao.addShoppingItem(shoppingItem)
+            shoppingItemDao.create(shoppingItem)
             assertThat(awaitItem()).all { hasSize(1); contains(shoppingItem) }
             cancelAndIgnoreRemainingEvents()
         }
@@ -43,11 +40,11 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
         val shoppingItem = createShoppingItemEntity()
-        shoppingItemDao.addShoppingItem(shoppingItem)
-        assertThat(runCatching { shoppingItemDao.addShoppingItem(shoppingItem) }).isFailure()
+        shoppingItemDao.create(shoppingItem)
+        assertThat(runCatching { shoppingItemDao.create(shoppingItem) }).isFailure()
     }
 
     @Test
@@ -55,7 +52,7 @@ class ShoppingItemDaoTest {
         val shoppingItemDao = db.shoppingItemDao()
 
         val shoppingItem = createShoppingItemEntity { listId = 1L }
-        assertThat(runCatching { shoppingItemDao.addShoppingItem(shoppingItem) }).isFailure()
+        assertThat(runCatching { shoppingItemDao.create(shoppingItem) }).isFailure()
     }
 
     @Test
@@ -63,17 +60,17 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
-        shoppingItemDao.getAllShoppingItems(DEFAULT_SHOPPING_LIST_ID).test {
+        shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
             assertThat(awaitItem()).isEmpty()
 
             val shoppingItem = createShoppingItemEntity()
-            shoppingItemDao.addShoppingItem(shoppingItem)
+            shoppingItemDao.create(shoppingItem)
             assertThat(awaitItem()).all { hasSize(1); contains(shoppingItem) }
 
             val updatedShoppingItem = shoppingItem.copy(isChecked = true)
-            shoppingItemDao.updateShoppingItem(updatedShoppingItem)
+            shoppingItemDao.update(updatedShoppingItem)
             assertThat(awaitItem()).all { hasSize(1); contains(updatedShoppingItem) }
 
             cancelAndIgnoreRemainingEvents()
@@ -85,15 +82,15 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
         val shoppingItem = createShoppingItemEntity()
-        shoppingItemDao.addShoppingItem(shoppingItem)
+        shoppingItemDao.create(shoppingItem)
 
-        shoppingItemDao.getAllShoppingItems(DEFAULT_SHOPPING_LIST_ID).test {
+        shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
             assertThat(awaitItem()).all { hasSize(1); contains(shoppingItem) }
 
-            shoppingItemDao.deleteShoppingItem(shoppingItem)
+            shoppingItemDao.delete(shoppingItem)
             assertThat(awaitItem()).isEmpty()
 
             cancelAndIgnoreRemainingEvents()
@@ -105,12 +102,15 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
         val shoppingItem = createShoppingItemEntity()
-        shoppingItemDao.addShoppingItem(shoppingItem)
+        shoppingItemDao.create(shoppingItem)
 
-        assertThat(shoppingItemDao.getShoppingItemById(DEFAULT_SHOPPING_LIST_ITEM_ID)).isDataClassEqualTo(shoppingItem)
+        shoppingItemDao.findById(DEFAULT_SHOPPING_LIST_ITEM_ID).test {
+            assertThat(awaitItem()).isDataClassEqualTo(shoppingItem)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -118,11 +118,14 @@ class ShoppingItemDaoTest {
         val shoppingListDao = db.shoppingListDao()
         val shoppingItemDao = db.shoppingItemDao()
 
-        shoppingListDao.addShoppingList(createShoppingListEntity())
+        shoppingListDao.create(createShoppingListEntity())
 
         val shoppingItem = createShoppingItemEntity()
-        shoppingItemDao.addShoppingItem(shoppingItem)
+        shoppingItemDao.create(shoppingItem)
 
-        assertThat(shoppingItemDao.getShoppingItemById(-1L)).isNull()
+        shoppingItemDao.findById(-1L).test {
+            assertThat(awaitItem()).isNull()
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }
