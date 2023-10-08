@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d3f4bc7fe4d5e531e9c7922ec24d0040",
+    "identityHash": "d57ad1ed324948c21fbf149447e74efd",
     "entities": [
       {
         "tableName": "shopping_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `is_checked` INTEGER NOT NULL, `list_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `is_checked` INTEGER NOT NULL, `list_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`list_id`) REFERENCES `shopping_lists`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -40,7 +40,19 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "shopping_lists",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "list_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "shopping_lists",
@@ -72,7 +84,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3f4bc7fe4d5e531e9c7922ec24d0040')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd57ad1ed324948c21fbf149447e74efd')"
     ]
   }
 }
