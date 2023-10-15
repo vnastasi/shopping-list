@@ -1,6 +1,6 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,15 +13,18 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -42,65 +45,73 @@ fun AddItemsScreen(
 
     val viewState = viewModel.screenState.collectAsStateWithLifecycle().value
 
-    Column {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-        TopAppBar(
-            title = {
-                Text("")
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = { navController.navigateUp() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            },
-            actions = {
-
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 2.dp),
-                    value = textFieldValue.value,
-                    onValueChange = {
-                        textFieldValue.value = it
-                        viewModel.onUiEvent(UiEvent.OnSearchTermChanged(textFieldValue.value))
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                textFieldValue.value = ""
-                                viewModel.onUiEvent(UiEvent.OnSearchTermChanged(textFieldValue.value))
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                title = {
+                    Text(text = "")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navController.navigateUp() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp),
+                        value = textFieldValue.value,
+                        onValueChange = {
+                            textFieldValue.value = it
+                            viewModel.onUiEvent(UiEvent.OnSearchTermChanged(textFieldValue.value))
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    textFieldValue.value = ""
+                                    viewModel.onUiEvent(UiEvent.OnSearchTermChanged(textFieldValue.value))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = null
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                        }
-                    ),
-                )
-            }
-        )
-
+                        },
+                        maxLines = 1,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                            }
+                        ),
+                    )
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { contentPaddings ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = contentPaddings.calculateTopPadding())
         ) {
             itemsIndexed(items = viewState.suggestions, key = { _, it -> it.id }) { index, suggestion ->
                 SuggestionRow(
