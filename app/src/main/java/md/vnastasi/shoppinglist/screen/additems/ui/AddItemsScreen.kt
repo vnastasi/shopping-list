@@ -102,11 +102,11 @@ fun AddItemsScreen(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            itemsIndexed(items = viewState.suggestions, key = { _, it -> it }) { index, suggestion ->
+            itemsIndexed(items = viewState.suggestions, key = { _, it -> it.id }) { index, suggestion ->
                 SuggestionRow(
-                    text = suggestion,
+                    suggestion = suggestion,
                     isLastItemInList = remember { mutableStateOf(index == viewState.suggestions.size - 1) },
-                    onClick = { viewModel.onUiEvent(UiEvent.OnAddItem(suggestion)) }
+                    onClick = { viewModel.onUiEvent(UiEvent.OnAddItem(suggestion.name)) }
                 )
             }
         }

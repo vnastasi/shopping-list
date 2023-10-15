@@ -1,8 +1,10 @@
 package md.vnastasi.shoppinglist.screen.additems
 
+import md.vnastasi.shoppinglist.domain.model.NameSuggestion
+
 data class ViewState(
     val searchTerm: String,
-    val suggestions: List<String>,
+    val suggestions: List<NameSuggestion>,
     val toastMessage: String?
 ) {
 

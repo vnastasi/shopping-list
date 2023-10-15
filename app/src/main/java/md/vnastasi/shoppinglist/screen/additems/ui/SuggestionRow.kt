@@ -17,10 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 
 @Composable
 fun SuggestionRow(
-    text: String,
+    suggestion: NameSuggestion,
     isLastItemInList: State<Boolean>,
     onClick: () -> Unit
 ) {
@@ -44,7 +45,7 @@ fun SuggestionRow(
 
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
-                    text = text,
+                    text = suggestion.name,
                     fontSize = 18.sp
                 )
             }

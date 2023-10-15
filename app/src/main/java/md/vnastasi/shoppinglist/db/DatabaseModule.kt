@@ -2,7 +2,7 @@ package md.vnastasi.shoppinglist.db
 
 import androidx.room.Room
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
-import md.vnastasi.shoppinglist.db.dao.ShoppingItemNameSuggestionDao
+import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom1To2
 import org.koin.android.ext.koin.androidApplication
@@ -26,7 +26,7 @@ object DatabaseModule {
             get<ShoppingListDatabase>().shoppingItemDao()
         }
 
-        factory<ShoppingItemNameSuggestionDao> {
+        factory<NameSuggestionDao> {
             get<ShoppingListDatabase>().shoppingItemNameSuggestionDao()
         }
     }

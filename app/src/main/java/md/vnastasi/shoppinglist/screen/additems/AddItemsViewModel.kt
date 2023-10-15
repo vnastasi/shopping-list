@@ -17,14 +17,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.repository.ShoppingItemNameSuggestionRepository
+import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class AddItemsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val shoppingItemNameSuggestionRepository: ShoppingItemNameSuggestionRepository,
+    private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
     private val dispatchersProvider: DispatchersProvider
@@ -44,7 +44,7 @@ class AddItemsViewModel(
 
     private fun onSearchTermChanged(newSearchTerm: String) {
         viewModelScope.launch(dispatchersProvider.Main) {
-            shoppingItemNameSuggestionRepository.findAllMatching(newSearchTerm).collectLatest { suggestions ->
+            nameSuggestionRepository.findAllMatching(newSearchTerm).collectLatest { suggestions ->
                 _screenState.update { it.copy(searchTerm = newSearchTerm, suggestions = suggestions) }
             }
         }
@@ -54,19 +54,22 @@ class AddItemsViewModel(
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingList
                 .map { ShoppingItem(name = name, isChecked = false, list = it) }
-                .collectLatest { shoppingItemRepository.create(it) }
+                .collectLatest {
+                    shoppingItemRepository.create(it)
+                    nameSuggestionRepository.create(it.name)
+                }
             _screenState.update { it.copy(toastMessage = "$name added to shopping list") }
         }
     }
 
     class Factory(
-        private val shoppingItemNameSuggestionRepository: ShoppingItemNameSuggestionRepository,
+        private val nameSuggestionRepository: NameSuggestionRepository,
         private val shoppingListRepository: ShoppingListRepository,
         private val shoppingItemRepository: ShoppingItemRepository,
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            AddItemsViewModel(createSavedStateHandle(), shoppingItemNameSuggestionRepository, shoppingListRepository, shoppingItemRepository, dispatchersProvider)
+            AddItemsViewModel(createSavedStateHandle(), nameSuggestionRepository, shoppingListRepository, shoppingItemRepository, dispatchersProvider)
         }
     })
 
