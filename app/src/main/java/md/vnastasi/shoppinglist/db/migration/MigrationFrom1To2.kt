@@ -25,7 +25,7 @@ class MigrationFrom1To2 : Migration(1, 2) {
         private val CREATE_INDEX = "CREATE UNIQUE INDEX IF NOT EXISTS `idx_shopping_item_name_suggestions_value` ON `shopping_item_name_suggestions` (`value`)"
 
         private val TRANSFER_EXISTING_NAMES_SQL = """
-        INSERT INTO shopping_item_name_suggestions (`value`)
+        INSERT INTO `shopping_item_name_suggestions` (`value`)
             SELECT `name` FROM shopping_items;
     """.trimIndent()
 
@@ -34,7 +34,7 @@ class MigrationFrom1To2 : Migration(1, 2) {
             AFTER INSERT ON shopping_items 
         FOR EACH ROW
         BEGIN
-            INSERT OR REPLACE INTO shopping_item_name_suggestions (`value`) VALUES (new.name);
+            INSERT OR REPLACE INTO `shopping_item_name_suggestions` (`value`) VALUES (new.name);
         END;
     """.trimIndent()
     }

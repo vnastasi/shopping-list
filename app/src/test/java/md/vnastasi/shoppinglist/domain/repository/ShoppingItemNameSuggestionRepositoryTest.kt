@@ -25,7 +25,7 @@ class ShoppingItemNameSuggestionRepositoryTest {
     @Test
     @DisplayName("Given empty search term The expect no suggestions")
     fun emptySearchTermReturnsNoSuggestions() = runTest {
-        repository.getSuggestions("").test {
+        repository.findAllMatching("").test {
             assertThat(awaitItem()).isEmpty()
             awaitComplete()
         }
@@ -37,7 +37,7 @@ class ShoppingItemNameSuggestionRepositoryTest {
     @DisplayName("Given search term of length 1 The expect suggestions of search item")
     fun searchTermLength1ReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "a"
-        repository.getSuggestions(searchTerm).test {
+        repository.findAllMatching(searchTerm).test {
             assertThat(awaitItem()).containsExactly(searchTerm)
             awaitComplete()
         }
@@ -49,7 +49,7 @@ class ShoppingItemNameSuggestionRepositoryTest {
     @DisplayName("Given search term of length 2 The expect suggestions of search item")
     fun searchTermLength2ReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "ab"
-        repository.getSuggestions(searchTerm).test {
+        repository.findAllMatching(searchTerm).test {
             assertThat(awaitItem()).containsExactly(searchTerm)
             awaitComplete()
         }
@@ -63,7 +63,7 @@ class ShoppingItemNameSuggestionRepositoryTest {
         val searchTerm = "abc"
         whenever(mockShoppingItemNameSuggestionDao.findAll(searchTerm)).doReturn(flowOf(emptyList()))
 
-        repository.getSuggestions(searchTerm).test {
+        repository.findAllMatching(searchTerm).test {
             assertThat(awaitItem()).containsExactly(searchTerm)
             awaitComplete()
         }
@@ -77,7 +77,7 @@ class ShoppingItemNameSuggestionRepositoryTest {
         val searchTerm = "abc"
         whenever(mockShoppingItemNameSuggestionDao.findAll(searchTerm)).doReturn(flowOf(listOf("def", "ghi")))
 
-        repository.getSuggestions(searchTerm).test {
+        repository.findAllMatching(searchTerm).test {
             assertThat(awaitItem()).containsExactly(searchTerm, "def", "ghi")
             awaitComplete()
         }

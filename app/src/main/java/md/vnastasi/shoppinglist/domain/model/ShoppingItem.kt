@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ShoppingItem(
-    val id: Long,
+    val id: Long = 0L,
     val name: String,
     val isChecked: Boolean,
     val list: ShoppingList

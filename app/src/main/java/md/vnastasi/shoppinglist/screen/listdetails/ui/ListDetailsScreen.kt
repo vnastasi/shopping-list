@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.UiEvent
+import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.state.ScreenState
 
 @Composable
@@ -16,7 +17,8 @@ fun ListDetailsScreen(
         is ScreenState.Ready -> ListDetailsContent(
             screenState = screenState,
             onNavigateBack = { navController.navigateUp() },
-            onListItemClicked = { viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(it)) }
+            onListItemClicked = { viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(it)) },
+            onAddItemsClicked = { navController.navigate(Routes.AddItems(screenState.data.id)) }
         )
 
         else -> Unit

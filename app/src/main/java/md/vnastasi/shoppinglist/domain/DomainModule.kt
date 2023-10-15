@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.domain
 
+import md.vnastasi.shoppinglist.domain.repository.ShoppingItemNameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import org.koin.core.module.dsl.factoryOf
@@ -12,5 +13,7 @@ object DomainModule {
         factoryOf(::ShoppingListRepository)
 
         factoryOf(::ShoppingItemRepository)
+
+        factoryOf(::ShoppingItemNameSuggestionRepository)
     }
 }
