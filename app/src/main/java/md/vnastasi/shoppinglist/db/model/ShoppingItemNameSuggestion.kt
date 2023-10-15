@@ -16,8 +16,9 @@ import androidx.room.PrimaryKey
     ]
 )
 data class ShoppingItemNameSuggestion(
-    @PrimaryKey
-    val id: Long,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long = 0L,
 
     @ColumnInfo(
         name = "value",

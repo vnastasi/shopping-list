@@ -34,7 +34,7 @@ class MigrationFrom1To2 : Migration(1, 2) {
             AFTER INSERT ON shopping_items 
         FOR EACH ROW
         BEGIN
-            INSERT OR IGNORE INTO shopping_item_name_suggestions (`value`) VALUES (new.name);
+            INSERT OR REPLACE INTO shopping_item_name_suggestions (`value`) VALUES (new.name);
         END;
     """.trimIndent()
     }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "dbcf9644408a44f8f387c94245503eda",
+    "identityHash": "83277436ede1b78ccc392dd7479e9604",
     "entities": [
       {
         "tableName": "shopping_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `is_checked` INTEGER NOT NULL, `list_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`list_id`) REFERENCES `shopping_lists`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `is_checked` INTEGER NOT NULL, `list_id` INTEGER NOT NULL, FOREIGN KEY(`list_id`) REFERENCES `shopping_lists`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -34,7 +34,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
@@ -82,7 +82,7 @@
       },
       {
         "tableName": "shopping_item_name_suggestions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `value` TEXT NOT NULL COLLATE NOCASE, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `value` TEXT NOT NULL COLLATE NOCASE)",
         "fields": [
           {
             "fieldPath": "id",
@@ -98,7 +98,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
@@ -120,7 +120,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dbcf9644408a44f8f387c94245503eda')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '83277436ede1b78ccc392dd7479e9604')"
     ]
   }
 }

@@ -18,9 +18,9 @@ import androidx.room.PrimaryKey
     ]
 )
 data class ShoppingItem(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: Long = 0L,
 
     @ColumnInfo(name = "name")
     val name: String,

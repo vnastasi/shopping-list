@@ -48,6 +48,7 @@ class MigrationFrom1To2Test {
         }
     }
 
+
     private fun Cursor.containsAtIndex(index: Int, vararg values: String) {
         assertThat(this.count).isEqualTo(values.size)
         repeat(values.size) {
