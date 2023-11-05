@@ -6,14 +6,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
+import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
-fun NonEmptyDetailsContent(
+fun NonEmptyListDetailsScreenContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
     onClick: (ShoppingItem) -> Unit
@@ -32,9 +34,30 @@ fun NonEmptyDetailsContent(
         ) { index, shoppingItem ->
             ShoppingItemRow(
                 shoppingItem = shoppingItem,
-                isLastItemInList = remember { mutableStateOf(index == listOfShoppingItems.size - 1) },
+                isLastItemInList = index == listOfShoppingItems.size - 1,
                 onClick = onClick
             )
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFFFBFE
+)
+@Composable
+private fun NonEmptyListDetailsScreenContentPreview() {
+    val shoppingList = ShoppingList(id = 1L, "My list")
+    val listOfShoppingItems = persistentListOf(
+        ShoppingItem(id = 1L, name = "Apples", isChecked = true, list = shoppingList),
+        ShoppingItem(id = 2L, name = "Bread", isChecked = false, list = shoppingList),
+        ShoppingItem(id = 3L, name = "Minced meat", isChecked = true, list = shoppingList),
+        ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
+    )
+
+    NonEmptyListDetailsScreenContent(
+        contentPaddings = PaddingValues(0.dp),
+        listOfShoppingItems = listOfShoppingItems,
+        onClick = { }
+    )
 }

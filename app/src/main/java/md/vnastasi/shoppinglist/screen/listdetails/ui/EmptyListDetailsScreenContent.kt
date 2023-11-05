@@ -8,10 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmptyDetailsContent(
+fun EmptyListDetailsScreenContent(
     contentPaddings: PaddingValues
 ) {
     Box(
@@ -28,4 +30,15 @@ fun EmptyDetailsContent(
             fontSize = 24.sp
         )
     }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFFFBFE
+)
+@Composable
+private fun EmptyListDetailsScreenContentPreview() {
+    EmptyListDetailsScreenContent(
+        contentPaddings = PaddingValues(16.dp)
+    )
 }
