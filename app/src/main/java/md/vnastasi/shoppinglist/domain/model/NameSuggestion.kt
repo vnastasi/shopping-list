@@ -4,9 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ShoppingItem(
+data class NameSuggestion(
     val id: Long = 0L,
-    val name: String,
-    val isChecked: Boolean,
-    val list: ShoppingList
+    val name: String
 ): Parcelable

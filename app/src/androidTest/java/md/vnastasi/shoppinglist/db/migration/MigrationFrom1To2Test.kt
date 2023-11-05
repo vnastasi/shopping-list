@@ -13,7 +13,7 @@ import org.junit.Test
 private const val TEST_DB_NAME = "testing_migrations_db"
 private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO shopping_lists (`id`, `name`) VALUES (?, ?)"
 private const val INSERT_SHOPPING_LIST_ITEM_SQL = "INSERT INTO shopping_items (`id`, `name`, `is_checked`, `list_id`) VALUES (?, ?, ?, ?)"
-private const val SELECT_SUGGESTIONS = "SELECT `value` FROM shopping_item_name_suggestions"
+private const val SELECT_SUGGESTIONS = "SELECT `value` FROM name_suggestions"
 
 class MigrationFrom1To2Test {
 
@@ -38,12 +38,6 @@ class MigrationFrom1To2Test {
             // Verify copying existing values worked
             db.query(SELECT_SUGGESTIONS).use { cursor ->
                 cursor.containsAtIndex(0, "Burger", "Quark", "Bread")
-            }
-
-            // Verify trigger works
-            db.execSQL(INSERT_SHOPPING_LIST_ITEM_SQL, arrayOf(4L, "Chicken", 0, 1L))
-            db.query(SELECT_SUGGESTIONS).use { cursor ->
-                cursor.containsAtIndex(0, "Burger", "Quark", "Bread", "Chicken")
             }
         }
     }

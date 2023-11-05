@@ -27,7 +27,8 @@ import md.vnastasi.shoppinglist.support.state.ScreenState
 fun ListDetailsContent(
     screenState: ScreenState.Ready<ListDetails>,
     onNavigateBack: () -> Unit,
-    onListItemClicked: (ShoppingItem) -> Unit
+    onListItemClicked: (ShoppingItem) -> Unit,
+    onAddItemsClicked: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -57,7 +58,7 @@ fun ListDetailsContent(
         floatingActionButton = {
             FloatingActionButton(
                 shape = CircleShape,
-                onClick = { }
+                onClick = { onAddItemsClicked.invoke() }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -102,6 +103,7 @@ fun ListDetailsContentPreview() {
     ListDetailsContent(
         screenState = ScreenState.Ready(listDetails),
         onNavigateBack = { },
-        onListItemClicked = { }
+        onListItemClicked = { },
+        onAddItemsClicked = { }
     )
 }
