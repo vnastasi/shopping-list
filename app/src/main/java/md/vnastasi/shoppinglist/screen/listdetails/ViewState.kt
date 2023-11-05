@@ -14,6 +14,6 @@ data class ViewState(
 
     companion object {
 
-        fun init() = ViewState(-1L, "", persistentListOf())
+        val Init = ViewState(-1L, "", persistentListOf())
     }
 }

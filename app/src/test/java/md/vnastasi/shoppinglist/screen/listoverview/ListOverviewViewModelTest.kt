@@ -12,9 +12,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
-import md.vnastasi.shoppinglist.support.state.ScreenState
+import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -40,8 +39,8 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         createViewModel(testScheduler).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
-            assertThat(awaitItem()).isEqualTo(ScreenState.Empty)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf()))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -59,8 +58,8 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingList)))
 
         createViewModel(testScheduler).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
-            assertThat(awaitItem()).isDataClassEqualTo(ScreenState.Ready(persistentListOf(shoppingList)))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingList)))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -76,7 +75,7 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnAddNewShoppingListClicked)
+        viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
         viewModel.navigationTarget.test {
             assertThat(awaitItem()).isEqualTo(NavigationTarget.ShoppingListForm)
@@ -96,7 +95,7 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnSaveNewShoppingList(shoppingListName))
+        viewModel.onUiEvent(UiEvent.SaveShoppingList(shoppingListName))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingList> {
@@ -119,7 +118,7 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingList))
+        viewModel.onUiEvent(UiEvent.SelectShoppingList(shoppingList))
 
         viewModel.navigationTarget.test {
             assertThat(awaitItem()).isDataClassEqualTo(NavigationTarget.ShoppingListDetails(6578L))
@@ -139,7 +138,7 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemDeleted(shoppingList))
+        viewModel.onUiEvent(UiEvent.DeleteShoppingList(shoppingList))
         advanceUntilIdle()
 
         verify(mockShoppingListRepository).delete(eq(shoppingList))

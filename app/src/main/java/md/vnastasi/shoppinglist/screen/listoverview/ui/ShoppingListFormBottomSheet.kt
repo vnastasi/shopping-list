@@ -120,7 +120,7 @@ fun ShoppingListFormBottomSheet(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun ShoppingListFormBottomSheetPreview() {
+private fun ShoppingListFormBottomSheetPreview() {
     ShoppingListFormBottomSheet(
         behaviour = BottomSheetBehaviour(
             state = rememberStandardBottomSheetState(

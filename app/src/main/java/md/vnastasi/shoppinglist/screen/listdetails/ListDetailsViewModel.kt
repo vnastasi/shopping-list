@@ -43,7 +43,7 @@ class ListDetailsViewModel(
         }.stateIn(
             scope = viewModelScope + dispatchersProvider.MainImmediate,
             started = SharingStarted.WhileSubscribed(100L),
-            initialValue = ViewState.init()
+            initialValue = ViewState.Init
         )
 
     fun onUiEvent(event: UiEvent) {

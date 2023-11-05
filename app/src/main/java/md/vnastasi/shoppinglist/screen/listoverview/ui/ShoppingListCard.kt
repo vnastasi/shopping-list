@@ -77,7 +77,7 @@ fun ShoppingListCard(
     heightDp = 96
 )
 @Composable
-fun ShoppingListCardPreview() {
+private fun ShoppingListCardPreview() {
     val shoppingList = ShoppingList(1, "Sample shopping list")
     ShoppingListCard(list = shoppingList)
 }

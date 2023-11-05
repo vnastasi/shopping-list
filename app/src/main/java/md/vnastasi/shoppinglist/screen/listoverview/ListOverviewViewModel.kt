@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,20 +20,19 @@ import kotlinx.coroutines.plus
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
-import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListOverviewViewModel(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    val screenState: StateFlow<ScreenState<ImmutableList<ShoppingList>, Nothing>> =
+    val screenState: StateFlow<ViewState> =
         shoppingListRepository.findAll()
-            .map { if (it.isEmpty()) ScreenState.empty() else ScreenState.ready(it.toImmutableList()) }
+            .map { ViewState(it.toImmutableList()) }
             .stateIn(
                 scope = viewModelScope + dispatchersProvider.MainImmediate,
-                started = SharingStarted.WhileSubscribed(100L),
-                initialValue = ScreenState.loading()
+                started = SharingStarted.Eagerly,
+                initialValue = ViewState.Init
             )
 
     private val _navigationTarget = MutableSharedFlow<NavigationTarget>()
@@ -40,32 +40,32 @@ class ListOverviewViewModel(
 
     fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
-            is UiEvent.OnAddNewShoppingListClicked -> onAddShoppingListClicked()
-            is UiEvent.OnSaveNewShoppingList -> onSaveNewShoppingList(uiEvent.name)
-            is UiEvent.OnShoppingListItemClicked -> onListItemClicked(uiEvent.shoppingList)
-            is UiEvent.OnShoppingListItemDeleted -> onListItemDeleted(uiEvent.shoppingList)
+            is UiEvent.AddNewShoppingList -> onAddNewShoppingList()
+            is UiEvent.SaveShoppingList -> onSaveShoppingList(uiEvent.name)
+            is UiEvent.SelectShoppingList -> onSelectShoppingList(uiEvent.shoppingList)
+            is UiEvent.DeleteShoppingList -> onDeleteShoppingList(uiEvent.shoppingList)
         }
     }
 
-    private fun onListItemDeleted(shoppingList: ShoppingList) {
+    private fun onDeleteShoppingList(shoppingList: ShoppingList) {
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingListRepository.delete(shoppingList)
         }
     }
 
-    private fun onListItemClicked(shoppingList: ShoppingList) {
+    private fun onSelectShoppingList(shoppingList: ShoppingList) {
         viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListDetails(shoppingList.id))
         }
     }
 
-    private fun onAddShoppingListClicked() {
+    private fun onAddNewShoppingList() {
         viewModelScope.launch(dispatchersProvider.Main) {
             _navigationTarget.emit(NavigationTarget.ShoppingListForm)
         }
     }
 
-    private fun onSaveNewShoppingList(name: String) {
+    private fun onSaveShoppingList(name: String) {
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingListRepository.create(ShoppingList(name = name))
         }

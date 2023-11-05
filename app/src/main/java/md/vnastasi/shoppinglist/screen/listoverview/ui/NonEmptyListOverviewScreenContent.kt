@@ -14,7 +14,7 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
-fun NonEmptyListContent(
+fun NonEmptyListOverviewScreenContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingList>,
     onDelete: (ShoppingList) -> Unit,
@@ -43,7 +43,7 @@ fun NonEmptyListContent(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun NonEmptyListContentPreview() {
+private fun NonEmptyListOverviewScreenContentPreview() {
     val list = persistentListOf(
         ShoppingList(id = 1L, name = "Groceries"),
         ShoppingList(id = 2L, name = "Pharmacy for mom"),
@@ -59,7 +59,7 @@ fun NonEmptyListContentPreview() {
         ShoppingList(id = 12L, name = "Trip to Paris"),
     )
 
-    NonEmptyListContent(
+    NonEmptyListOverviewScreenContent(
         contentPaddings = PaddingValues(0.dp),
         list = list,
         onDelete = { },

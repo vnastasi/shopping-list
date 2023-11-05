@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmptyListContent(
+fun EmptyListOverviewScreenContent(
     contentPaddings: PaddingValues
 ) {
     Box(
@@ -34,8 +34,8 @@ fun EmptyListContent(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun EmptyListContentPreview() {
-    EmptyListContent(
+private fun EmptyListOverviewScreenContentPreview() {
+    EmptyListOverviewScreenContent(
         contentPaddings = PaddingValues(16.dp)
     )
 }
