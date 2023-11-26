@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.listoverview.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,14 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
@@ -50,12 +48,13 @@ fun ListOverviewScreen(
 
     ListOverviewScreen(
         viewState = viewModel.screenState.collectAsState(),
-        navigationTarget = viewModel.navigationTarget,
         events = Events(
             onAddNewShoppingList = { viewModel.onUiEvent(UiEvent.AddNewShoppingList) },
-            onSaveShoppingList = { shoppingListName -> viewModel.onUiEvent(UiEvent.SaveShoppingList(shoppingListName)) },
-            onDeleteShoppingList = { shoppingList -> viewModel.onUiEvent(UiEvent.DeleteShoppingList(shoppingList)) },
-            onSelectShoppingList = { shoppingList -> viewModel.onUiEvent(UiEvent.SelectShoppingList(shoppingList)) }
+            onShoppingListSaved = { shoppingListName -> viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName)) },
+            onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
+            onShoppingListSelected = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList)) },
+            onNavigationPerformed = { viewModel.onUiEvent(UiEvent.NavigationPerformed) },
+            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
         ),
         navigations = Navigations(
             toShoppingListDetails = { shoppingListId -> navController.navigate(Routes.ListDetails(shoppingListId)) }
@@ -66,9 +65,11 @@ fun ListOverviewScreen(
 @Stable
 private class Events(
     val onAddNewShoppingList: () -> Unit,
-    val onSaveShoppingList: (String) -> Unit,
-    val onDeleteShoppingList: (ShoppingList) -> Unit,
-    val onSelectShoppingList: (ShoppingList) -> Unit
+    val onShoppingListSaved: (String) -> Unit,
+    val onShoppingListDeleted: (ShoppingList) -> Unit,
+    val onShoppingListSelected: (ShoppingList) -> Unit,
+    val onNavigationPerformed: () -> Unit,
+    val onToastShown: () -> Unit
 )
 
 @Stable
@@ -79,10 +80,11 @@ private class Navigations(
 @Composable
 private fun ListOverviewScreen(
     viewState: State<ViewState>,
-    navigationTarget: Flow<NavigationTarget>,
     events: Events,
     navigations: Navigations
 ) {
+
+    val context = LocalContext.current
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -101,7 +103,7 @@ private fun ListOverviewScreen(
                     state = bottomSheetScaffoldState.bottomSheetState,
                     scope = bottomSheetScope
                 ),
-                onSaveList = events.onSaveShoppingList
+                onShoppingListSaved = events.onShoppingListSaved
             )
         },
         sheetPeekHeight = 0.dp
@@ -143,19 +145,33 @@ private fun ListOverviewScreen(
                 NonEmptyListOverviewScreenContent(
                     contentPaddings = contentPaddings,
                     list = viewState.value.shoppingLists,
-                    onClick = events.onSelectShoppingList,
-                    onDelete = events.onDeleteShoppingList
+                    onClick = events.onShoppingListSelected,
+                    onDelete = events.onShoppingListDeleted
                 )
             }
         }
+    }
 
-        LaunchedEffect(Unit) {
-            navigationTarget.collectLatest { navigationTarget ->
-                when (navigationTarget) {
-                    is NavigationTarget.ShoppingListDetails -> navigations.toShoppingListDetails.invoke(navigationTarget.id)
-                    is NavigationTarget.ShoppingListForm -> bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                }
+    LaunchedEffect(key1 = viewState.value.navigationTarget) {
+        when (val navigationTarget = viewState.value.navigationTarget) {
+            is NavigationTarget.ShoppingListDetails -> {
+                navigations.toShoppingListDetails.invoke(navigationTarget.id)
+                events.onNavigationPerformed.invoke()
             }
+
+            is NavigationTarget.ShoppingListForm -> {
+                bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+                events.onNavigationPerformed.invoke()
+            }
+
+            null -> Unit
+        }
+    }
+
+    LaunchedEffect(key1 = viewState.value.toastMessage) {
+        if (viewState.value.toastMessage != null) {
+            Toast.makeText(context, viewState.value.toastMessage, Toast.LENGTH_SHORT).show()
+            events.onToastShown.invoke()
         }
     }
 }
@@ -182,12 +198,13 @@ private fun ListOverviewScreenPreview() {
 
     ListOverviewScreen(
         viewState = remember { mutableStateOf(ViewState(list)) },
-        navigationTarget = emptyFlow(),
         events = Events(
-            onSelectShoppingList = { },
-            onDeleteShoppingList = { },
-            onSaveShoppingList = { },
-            onAddNewShoppingList = { }
+            onShoppingListSelected = { },
+            onShoppingListDeleted = { },
+            onShoppingListSaved = { },
+            onAddNewShoppingList = { },
+            onNavigationPerformed = { },
+            onToastShown = { }
         ),
         navigations = Navigations(
             toShoppingListDetails = { }

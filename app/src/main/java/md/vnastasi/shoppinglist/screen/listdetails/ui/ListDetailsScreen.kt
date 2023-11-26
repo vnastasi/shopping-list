@@ -41,7 +41,7 @@ fun ListDetailsScreen(
         viewState = viewModel.screenState.collectAsState(),
         events = Events(
             onNavigateUp = { navController.navigateUp() },
-            onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem)) },
+            onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
             onAddNewItems = { shoppingListId -> navController.navigate(Routes.AddItems(shoppingListId)) }
         )
     )

@@ -7,7 +7,9 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Stable
 data class ViewState(
-    val shoppingLists: ImmutableList<ShoppingList>
+    val shoppingLists: ImmutableList<ShoppingList>,
+    val navigationTarget: NavigationTarget? = null,
+    val toastMessage: String? = null
 ) {
 
     companion object {

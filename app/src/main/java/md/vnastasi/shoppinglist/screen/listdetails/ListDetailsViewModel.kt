@@ -48,11 +48,11 @@ class ListDetailsViewModel(
 
     fun onUiEvent(event: UiEvent) {
         when (event) {
-            is UiEvent.OnShoppingListItemClicked -> onShoppingListItemClicked(event.shoppingItem)
+            is UiEvent.ShoppingItemClicked -> onShoppingItemClicked(event.shoppingItem)
         }
     }
 
-    private fun onShoppingListItemClicked(shoppingItem: ShoppingItem) {
+    private fun onShoppingItemClicked(shoppingItem: ShoppingItem) {
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
         }

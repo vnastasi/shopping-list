@@ -68,7 +68,7 @@ class ListDetailsViewModelTest {
         Then expect ScreenState.Ready with non-empty list of shopping items
     """
     )
-    fun screenState() = runTest {
+    fun screenStateWithShoppingItems() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
             id = shoppingListId
@@ -93,11 +93,11 @@ class ListDetailsViewModelTest {
     @Test
     @DisplayName(
         """
-        When selecting a previously unselected shopping item
+        When handling a `ShoppingItemClicked` UI event on an unchecked shopping item
         Then expect shopping item to be updated to checked state
     """
     )
-    fun onShoppingListItemChecked() = runTest {
+    fun onShoppingListChecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
@@ -108,7 +108,7 @@ class ListDetailsViewModelTest {
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem))
+        viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingItem> {
@@ -120,11 +120,11 @@ class ListDetailsViewModelTest {
     @Test
     @DisplayName(
         """
-        When deselecting a previously selected shopping item
+        When handling a `ShoppingItemClicked` UI event on a checked shopping item
         Then expect shopping item to be updated to unchecked state
     """
     )
-    fun onShoppingListItemUnchecked() = runTest {
+    fun onShoppingItemUnchecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
@@ -135,7 +135,7 @@ class ListDetailsViewModelTest {
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem))
+        viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingItem> {
