@@ -19,8 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 @Composable
@@ -65,7 +67,7 @@ fun ShoppingListCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically),
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.overview_btn_delete_list_acc)
                     )
                 }
             }

@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.listoverview.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,12 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
@@ -39,6 +39,7 @@ import md.vnastasi.shoppinglist.screen.listoverview.UiEvent
 import md.vnastasi.shoppinglist.screen.listoverview.ViewState
 import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
+import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun ListOverviewScreen(
@@ -84,8 +85,6 @@ private fun ListOverviewScreen(
     navigations: Navigations
 ) {
 
-    val context = LocalContext.current
-
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             skipHiddenState = false,
@@ -120,7 +119,7 @@ private fun ListOverviewScreen(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
-                            text = "Shopping lists"
+                            text = stringResource(R.string.overview_toolbar_title)
                         )
                     },
                     scrollBehavior = scrollBehavior
@@ -133,7 +132,7 @@ private fun ListOverviewScreen(
                 ) {
                     Image(
                         imageVector = Icons.Default.Add,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.overview_btn_add_list_acc)
                     )
                 }
             }
@@ -152,6 +151,11 @@ private fun ListOverviewScreen(
         }
     }
 
+    ToastEffect(
+        message = viewState.value.toastMessage,
+        onToastShown = events.onToastShown
+    )
+
     LaunchedEffect(key1 = viewState.value.navigationTarget) {
         when (val navigationTarget = viewState.value.navigationTarget) {
             is NavigationTarget.ShoppingListDetails -> {
@@ -165,13 +169,6 @@ private fun ListOverviewScreen(
             }
 
             null -> Unit
-        }
-    }
-
-    LaunchedEffect(key1 = viewState.value.toastMessage) {
-        if (viewState.value.toastMessage != null) {
-            Toast.makeText(context, viewState.value.toastMessage, Toast.LENGTH_SHORT).show()
-            events.onToastShown.invoke()
         }
     }
 }

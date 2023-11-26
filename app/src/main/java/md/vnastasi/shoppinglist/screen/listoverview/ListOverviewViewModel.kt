@@ -5,17 +5,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
+import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
 class ListOverviewViewModel(
     private val shoppingListRepository: ShoppingListRepository,
@@ -27,9 +29,11 @@ class ListOverviewViewModel(
 
     init {
         viewModelScope.launch(dispatchersProvider.Main) {
-            shoppingListRepository.findAll()
-                .map { ViewState(it.toImmutableList()) }
-                .collectLatest { _screenState.value = it }
+            shoppingListRepository.findAll().collectLatest { list ->
+                _screenState.update { viewState ->
+                    viewState.copy(shoppingLists = list.toImmutableList())
+                }
+            }
         }
     }
 
@@ -70,7 +74,7 @@ class ListOverviewViewModel(
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingListRepository.create(ShoppingList(name = name))
             _screenState.update { viewState ->
-                viewState.copy(toastMessage = "Shopping list $name created")
+                viewState.copy(toastMessage = ToastMessage(textResourceId = R.string.toast_list_created, arguments = persistentListOf(name)))
             }
         }
     }

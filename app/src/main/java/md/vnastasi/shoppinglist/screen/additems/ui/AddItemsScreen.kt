@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,16 +22,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kotlinx.collections.immutable.persistentListOf
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.additems.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.ViewState
+import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun AddItemsScreen(
@@ -66,7 +67,6 @@ private fun AddItemsScreen(
     events: Events
 ) {
 
-    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val textFieldValue = rememberSaveable { mutableStateOf("") }
@@ -89,7 +89,7 @@ private fun AddItemsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.add_items_btn_back_acc)
                         )
                     }
                 },
@@ -126,15 +126,13 @@ private fun AddItemsScreen(
         }
     }
 
+    ToastEffect(
+        message = viewState.value.toastMessage,
+        onToastShown = events.onToastShown
+    )
+
     LaunchedEffect(key1 = textFieldValue.value) {
         events.onSearchTermChanged.invoke(textFieldValue.value)
-    }
-
-    LaunchedEffect(key1 = viewState.value.toastMessage) {
-        if (viewState.value.toastMessage != null) {
-            Toast.makeText(context, viewState.value.toastMessage, Toast.LENGTH_SHORT).show()
-            events.onToastShown.invoke()
-        }
     }
 }
 

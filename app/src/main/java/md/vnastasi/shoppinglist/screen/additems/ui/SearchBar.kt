@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import md.vnastasi.shoppinglist.R
 
 @Composable
 fun SearchBar(
@@ -40,7 +42,7 @@ fun SearchBar(
             ),
         value = searchTerm.value,
         placeholder = {
-            Text(text = "Type item name")
+            Text(text = stringResource(R.string.add_items_search_title))
         },
         onValueChange = { newValue ->
             searchTerm.value = newValue
