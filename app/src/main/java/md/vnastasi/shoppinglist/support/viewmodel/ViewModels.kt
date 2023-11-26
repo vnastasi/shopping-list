@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import md.vnastasi.shoppinglist.support.bundle.orEmpty
+import md.vnastasi.shoppinglist.support.bundle.plus
 
 @Composable
 inline fun <reified VM : ViewModel> viewModel(
@@ -27,7 +27,7 @@ inline fun <reified VM : ViewModel> viewModel(
         is HasDefaultViewModelProviderFactory -> viewModelStoreOwner.defaultViewModelCreationExtras
         else -> CreationExtras.Empty
     }
-    val arguments = defaultExtras[DEFAULT_ARGS_KEY].orEmpty().apply { putAll(extraArguments) }
+    val arguments = defaultExtras[DEFAULT_ARGS_KEY] + extraArguments
     val newExtras = MutableCreationExtras(defaultExtras).apply { set(DEFAULT_ARGS_KEY, arguments) }
 
     return viewModel(viewModelStoreOwner, key, factory, newExtras)
