@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
-import assertk.assertions.isEqualTo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -15,11 +14,10 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
+import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.testdata.DomainTestData.DEFAULT_SHOPPING_LIST_NAME
 import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingItem
 import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
-import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
-import md.vnastasi.shoppinglist.support.state.ScreenState
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -50,14 +48,12 @@ class ListDetailsViewModelTest {
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(emptyList()))
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
+            awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
-                ScreenState.Ready(
-                    ListDetails(
-                        id = shoppingListId,
-                        name = DEFAULT_SHOPPING_LIST_NAME,
-                        listOfShoppingItems = persistentListOf()
-                    )
+                ViewState(
+                    shoppingListId = shoppingListId,
+                    shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
+                    listOfShoppingItems = persistentListOf()
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -72,7 +68,7 @@ class ListDetailsViewModelTest {
         Then expect ScreenState.Ready with non-empty list of shopping items
     """
     )
-    fun screenState() = runTest {
+    fun screenStateWithShoppingItems() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
             id = shoppingListId
@@ -82,14 +78,12 @@ class ListDetailsViewModelTest {
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
+            awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
-                ScreenState.Ready(
-                    ListDetails(
-                        id = shoppingListId,
-                        name = DEFAULT_SHOPPING_LIST_NAME,
-                        listOfShoppingItems = persistentListOf(shoppingItem)
-                    )
+                ViewState(
+                    shoppingListId = shoppingListId,
+                    shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
+                    listOfShoppingItems = persistentListOf(shoppingItem)
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -99,11 +93,11 @@ class ListDetailsViewModelTest {
     @Test
     @DisplayName(
         """
-        When selecting a previously unselected shopping item
+        When handling a `ShoppingItemClicked` UI event on an unchecked shopping item
         Then expect shopping item to be updated to checked state
     """
     )
-    fun onShoppingListItemChecked() = runTest {
+    fun onShoppingListChecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
@@ -114,7 +108,7 @@ class ListDetailsViewModelTest {
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem))
+        viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingItem> {
@@ -126,11 +120,11 @@ class ListDetailsViewModelTest {
     @Test
     @DisplayName(
         """
-        When deselecting a previously selected shopping item
+        When handling a `ShoppingItemClicked` UI event on a checked shopping item
         Then expect shopping item to be updated to unchecked state
     """
     )
-    fun onShoppingListItemUnchecked() = runTest {
+    fun onShoppingItemUnchecked() = runTest {
         val shoppingListId = 567L
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
 
@@ -141,7 +135,7 @@ class ListDetailsViewModelTest {
 
         val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingItem))
+        viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingItem> {

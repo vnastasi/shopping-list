@@ -4,11 +4,15 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 
 sealed interface UiEvent {
 
-    data class OnShoppingListItemDeleted(val shoppingList: ShoppingList) : UiEvent
+    data class ShoppingListDeleted(val shoppingList: ShoppingList) : UiEvent
 
-    data class OnShoppingListItemClicked(val shoppingList: ShoppingList): UiEvent
+    data class ShoppingListSelected(val shoppingList: ShoppingList) : UiEvent
 
-    data object OnAddNewShoppingListClicked : UiEvent
+    data object AddNewShoppingList : UiEvent
 
-    data class OnSaveNewShoppingList(val name: String) : UiEvent
+    data class ShoppingListSaved(val name: String) : UiEvent
+
+    data object NavigationPerformed : UiEvent
+
+    data object ToastShown : UiEvent
 }

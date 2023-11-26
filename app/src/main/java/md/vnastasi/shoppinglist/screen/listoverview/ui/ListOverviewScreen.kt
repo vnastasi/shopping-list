@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.listoverview.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,19 +18,26 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listoverview.UiEvent
+import md.vnastasi.shoppinglist.screen.listoverview.ViewState
 import md.vnastasi.shoppinglist.screen.nav.Routes
-import md.vnastasi.shoppinglist.support.state.ScreenState
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 
 @Composable
@@ -37,6 +45,46 @@ fun ListOverviewScreen(
     navController: NavHostController,
     viewModel: ListOverviewViewModel
 ) {
+
+    ListOverviewScreen(
+        viewState = viewModel.screenState.collectAsState(),
+        events = Events(
+            onAddNewShoppingList = { viewModel.onUiEvent(UiEvent.AddNewShoppingList) },
+            onShoppingListSaved = { shoppingListName -> viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName)) },
+            onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
+            onShoppingListSelected = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList)) },
+            onNavigationPerformed = { viewModel.onUiEvent(UiEvent.NavigationPerformed) },
+            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
+        ),
+        navigations = Navigations(
+            toShoppingListDetails = { shoppingListId -> navController.navigate(Routes.ListDetails(shoppingListId)) }
+        )
+    )
+}
+
+@Stable
+private class Events(
+    val onAddNewShoppingList: () -> Unit,
+    val onShoppingListSaved: (String) -> Unit,
+    val onShoppingListDeleted: (ShoppingList) -> Unit,
+    val onShoppingListSelected: (ShoppingList) -> Unit,
+    val onNavigationPerformed: () -> Unit,
+    val onToastShown: () -> Unit
+)
+
+@Stable
+private class Navigations(
+    val toShoppingListDetails: (Long) -> Unit
+)
+
+@Composable
+private fun ListOverviewScreen(
+    viewState: State<ViewState>,
+    events: Events,
+    navigations: Navigations
+) {
+
+    val context = LocalContext.current
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -55,7 +103,7 @@ fun ListOverviewScreen(
                     state = bottomSheetScaffoldState.bottomSheetState,
                     scope = bottomSheetScope
                 ),
-                onSaveList = { viewModel.onUiEvent(UiEvent.OnSaveNewShoppingList(it)) }
+                onShoppingListSaved = events.onShoppingListSaved
             )
         },
         sheetPeekHeight = 0.dp
@@ -81,7 +129,7 @@ fun ListOverviewScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     shape = CircleShape,
-                    onClick = { viewModel.onUiEvent(UiEvent.OnAddNewShoppingListClicked) }
+                    onClick = events.onAddNewShoppingList
                 ) {
                     Image(
                         imageVector = Icons.Default.Add,
@@ -91,29 +139,75 @@ fun ListOverviewScreen(
             }
         ) { contentPaddings ->
 
-            when (val screenState = viewModel.screenState.collectAsStateWithLifecycle().value) {
-                is ScreenState.Loading -> Unit
-
-                is ScreenState.Empty -> EmptyListContent(contentPaddings)
-
-                is ScreenState.Ready -> NonEmptyListContent(
+            if (viewState.value.shoppingLists.isEmpty()) {
+                EmptyListOverviewScreenContent(contentPaddings)
+            } else {
+                NonEmptyListOverviewScreenContent(
                     contentPaddings = contentPaddings,
-                    list = screenState.data,
-                    onClick = { viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(it)) },
-                    onDelete = { viewModel.onUiEvent(UiEvent.OnShoppingListItemDeleted(it)) }
+                    list = viewState.value.shoppingLists,
+                    onClick = events.onShoppingListSelected,
+                    onDelete = events.onShoppingListDeleted
                 )
-
-                is ScreenState.Failure -> Unit
-            }
-        }
-
-        LaunchedEffect(key1 = Unit) {
-            viewModel.navigationTarget.collectLatest { navigationTarget ->
-                when (navigationTarget) {
-                    is NavigationTarget.ShoppingListDetails -> navController.navigate(Routes.ListDetails(navigationTarget.id))
-                    is NavigationTarget.ShoppingListForm -> bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                }
             }
         }
     }
+
+    LaunchedEffect(key1 = viewState.value.navigationTarget) {
+        when (val navigationTarget = viewState.value.navigationTarget) {
+            is NavigationTarget.ShoppingListDetails -> {
+                navigations.toShoppingListDetails.invoke(navigationTarget.id)
+                events.onNavigationPerformed.invoke()
+            }
+
+            is NavigationTarget.ShoppingListForm -> {
+                bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+                events.onNavigationPerformed.invoke()
+            }
+
+            null -> Unit
+        }
+    }
+
+    LaunchedEffect(key1 = viewState.value.toastMessage) {
+        if (viewState.value.toastMessage != null) {
+            Toast.makeText(context, viewState.value.toastMessage, Toast.LENGTH_SHORT).show()
+            events.onToastShown.invoke()
+        }
+    }
+}
+
+@Preview(
+    showSystemUi = true
+)
+@Composable
+private fun ListOverviewScreenPreview() {
+    val list = persistentListOf(
+        ShoppingList(id = 1L, name = "Groceries"),
+        ShoppingList(id = 2L, name = "Pharmacy for mom"),
+        ShoppingList(id = 3L, name = "Gamma & Praxis"),
+        ShoppingList(id = 4L, name = "Birthday party shopping list"),
+        ShoppingList(id = 5L, name = "Christmas Eve party"),
+        ShoppingList(id = 6L, name = "Thanksgiving family reunion"),
+        ShoppingList(id = 7L, name = "Ibiza!"),
+        ShoppingList(id = 8L, name = "At the baker's"),
+        ShoppingList(id = 9L, name = "Big shopping at the mall"),
+        ShoppingList(id = 10L, name = "Trip to Iceland"),
+        ShoppingList(id = 11L, name = "Disney"),
+        ShoppingList(id = 12L, name = "Trip to Paris"),
+    )
+
+    ListOverviewScreen(
+        viewState = remember { mutableStateOf(ViewState(list)) },
+        events = Events(
+            onShoppingListSelected = { },
+            onShoppingListDeleted = { },
+            onShoppingListSaved = { },
+            onAddNewShoppingList = { },
+            onNavigationPerformed = { },
+            onToastShown = { }
+        ),
+        navigations = Navigations(
+            toShoppingListDetails = { }
+        )
+    )
 }

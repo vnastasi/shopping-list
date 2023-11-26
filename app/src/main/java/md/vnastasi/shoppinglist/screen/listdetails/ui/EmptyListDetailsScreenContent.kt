@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listoverview.ui
+package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,17 +13,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmptyListContent(
+fun EmptyListDetailsScreenContent(
     contentPaddings: PaddingValues
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = contentPaddings.calculateTopPadding(), bottom = contentPaddings.calculateBottomPadding()),
+            .padding(
+                top = contentPaddings.calculateTopPadding(),
+                bottom = contentPaddings.calculateBottomPadding()
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "No shopping lists available",
+            text = "Shopping list is empty",
             fontSize = 24.sp
         )
     }
@@ -34,8 +37,8 @@ fun EmptyListContent(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun EmptyListContentPreview() {
-    EmptyListContent(
+private fun EmptyListDetailsScreenContentPreview() {
+    EmptyListDetailsScreenContent(
         contentPaddings = PaddingValues(16.dp)
     )
 }

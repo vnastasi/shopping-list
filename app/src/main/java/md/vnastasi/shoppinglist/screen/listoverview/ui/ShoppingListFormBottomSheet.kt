@@ -31,7 +31,7 @@ import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 @Composable
 fun ShoppingListFormBottomSheet(
     behaviour: BottomSheetBehaviour,
-    onSaveList: (String) -> Unit
+    onShoppingListSaved: (String) -> Unit
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -45,7 +45,7 @@ fun ShoppingListFormBottomSheet(
         textFieldError.value = validationResult
 
         if (validationResult.noErrors()) {
-            onSaveList.invoke(textFieldValue.value.trim())
+            onShoppingListSaved.invoke(textFieldValue.value.trim())
             behaviour.scope.launch {
                 keyboardController?.hide()
                 behaviour.state.hide()
@@ -120,7 +120,7 @@ fun ShoppingListFormBottomSheet(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun ShoppingListFormBottomSheetPreview() {
+private fun ShoppingListFormBottomSheetPreview() {
     ShoppingListFormBottomSheet(
         behaviour = BottomSheetBehaviour(
             state = rememberStandardBottomSheetState(
@@ -129,6 +129,6 @@ fun ShoppingListFormBottomSheetPreview() {
             ),
             scope = rememberCoroutineScope()
         ),
-        onSaveList = { }
+        onShoppingListSaved = { }
     )
 }

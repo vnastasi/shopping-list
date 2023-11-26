@@ -13,9 +13,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -29,7 +26,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 @Composable
 fun ShoppingItemRow(
     shoppingItem: ShoppingItem,
-    isLastItemInList: State<Boolean>,
+    isLastItemInList: Boolean,
     onClick: (ShoppingItem) -> Unit
 ) {
     Box(
@@ -66,7 +63,7 @@ fun ShoppingItemRow(
                 )
             }
 
-            if (!isLastItemInList.value) {
+            if (!isLastItemInList) {
                 Divider(
                     thickness = 1.dp
                 )
@@ -81,7 +78,7 @@ fun ShoppingItemRow(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun ShoppingItemRowPreview1() {
+private fun ShoppingItemRowPreview1() {
     val shoppingItem = ShoppingItem(
         id = 1,
         name = "Sample shopping item",
@@ -90,7 +87,7 @@ fun ShoppingItemRowPreview1() {
     )
     ShoppingItemRow(
         shoppingItem = shoppingItem,
-        isLastItemInList = remember { mutableStateOf(true) },
+        isLastItemInList = true,
         onClick = { }
     )
 }
@@ -101,7 +98,7 @@ fun ShoppingItemRowPreview1() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-fun ShoppingItemRowPreview2() {
+private fun ShoppingItemRowPreview2() {
     val shoppingItem = ShoppingItem(
         id = 1,
         name = "Sample shopping item",
@@ -110,7 +107,7 @@ fun ShoppingItemRowPreview2() {
     )
     ShoppingItemRow(
         shoppingItem = shoppingItem,
-        isLastItemInList = remember { mutableStateOf(true) },
+        isLastItemInList = true,
         onClick = { }
     )
 }

@@ -12,9 +12,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
-import md.vnastasi.shoppinglist.support.state.ScreenState
+import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -40,8 +39,7 @@ class ListOverviewViewModelTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         createViewModel(testScheduler).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
-            assertThat(awaitItem()).isEqualTo(ScreenState.Empty)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf()))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -54,13 +52,13 @@ class ListOverviewViewModelTest {
         Then expect ScreenState.Ready with a list of shopping lists
     """
     )
-    fun screenState() = runTest {
+    fun screenStateWithLists() = runTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingList)))
 
         createViewModel(testScheduler).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ScreenState.Loading)
-            assertThat(awaitItem()).isDataClassEqualTo(ScreenState.Ready(persistentListOf(shoppingList)))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingList)))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -68,18 +66,22 @@ class ListOverviewViewModelTest {
     @Test
     @DisplayName(
         """
-        When clicking on 'Add new shopping list' button
-        Then expect a UI navigation event of type 'ShoppingListForm'
+        When handling a `AddNewShoppingList` UI event
+        Then expect a navigation target of type 'ShoppingListForm'
     """
     )
-    fun onAddNewShoppingListClicked() = runTest {
+    fun onAddNewShoppingList() = runTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnAddNewShoppingListClicked)
+        viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
-        viewModel.navigationTarget.test {
-            assertThat(awaitItem()).isEqualTo(NavigationTarget.ShoppingListForm)
+        viewModel.screenState.test {
+            skipItems(1)
+
+            val expectedViewState = ViewState(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListForm)
+            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
+
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -87,16 +89,16 @@ class ListOverviewViewModelTest {
     @Test
     @DisplayName(
         """
-        When saving a new shopping list with a given name
+        When handling a `ShoppingListSaved` UI event with a shopping list name
         Then expect repository to create a new shopping list with said name
     """
     )
-    fun onSaveNewShoppingList() = runTest {
+    fun onShoppingListSaved() = runTest {
         val shoppingListName = "new list here"
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnSaveNewShoppingList(shoppingListName))
+        viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName))
         advanceUntilIdle()
 
         argumentCaptor<ShoppingList> {
@@ -108,21 +110,25 @@ class ListOverviewViewModelTest {
     @Test
     @DisplayName(
         """
-        When clicking on a shopping list item
-        Then expect a UI navigation event of type 'ShoppingListDetails' with list ID
+        When handling a `ShoppingListSelected` UI event with a shopping list ID
+        Then expect a navigation target of type 'ShoppingListDetails' with said ID
     """
     )
-    fun onListItemClicked() = runTest {
+    fun onShoppingListSelected() = runTest {
         val shoppingList = createShoppingList {
             id = 6578L
         }
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemClicked(shoppingList))
+        viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList))
 
-        viewModel.navigationTarget.test {
-            assertThat(awaitItem()).isDataClassEqualTo(NavigationTarget.ShoppingListDetails(6578L))
+        viewModel.screenState.test {
+            skipItems(1)
+
+            val expectedViewState = ViewState(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListDetails(6578L))
+            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
+
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -130,19 +136,70 @@ class ListOverviewViewModelTest {
     @Test
     @DisplayName(
         """
-        When deleting a shopping list
+        When handling a `ShoppingListDeleted` UI event
         Then expect repository to delete said shopping list
     """
     )
-    fun onListItemDeleted() = runTest {
+    fun onShoppingListDeleted() = runTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.onUiEvent(UiEvent.OnShoppingListItemDeleted(shoppingList))
+        viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList))
         advanceUntilIdle()
 
         verify(mockShoppingListRepository).delete(eq(shoppingList))
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `NavigationPerformed` UI event
+        Then expect navigation target to be cleared
+    """
+    )
+    fun onNavigationPerformed() = runTest {
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+
+        val viewModel = createViewModel(testScheduler)
+
+        viewModel.screenState.test {
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), navigationTarget = null))
+
+            viewModel.onUiEvent(UiEvent.AddNewShoppingList)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListForm))
+
+            viewModel.onUiEvent(UiEvent.NavigationPerformed)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), navigationTarget = null))
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `ToastShown` UI event
+        Then expect toast message to be cleared
+    """
+    )
+    fun onToastShown() = runTest {
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+
+        val viewModel = createViewModel(testScheduler)
+
+        viewModel.screenState.test {
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), navigationTarget = null))
+
+            viewModel.onUiEvent(UiEvent.ShoppingListSaved("test"))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), toastMessage = "Shopping list test created"))
+
+            viewModel.onUiEvent(UiEvent.ToastShown)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(shoppingLists = persistentListOf(), toastMessage = null))
+
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     private fun createViewModel(scheduler: TestCoroutineScheduler) = ListOverviewViewModel(

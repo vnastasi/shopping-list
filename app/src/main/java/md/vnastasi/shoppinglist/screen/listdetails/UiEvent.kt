@@ -4,5 +4,5 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 
 sealed interface UiEvent {
 
-    data class OnShoppingListItemClicked(val shoppingItem: ShoppingItem): UiEvent
+    data class ShoppingItemClicked(val shoppingItem: ShoppingItem): UiEvent
 }

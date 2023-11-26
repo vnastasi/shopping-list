@@ -22,7 +22,6 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
-import md.vnastasi.shoppinglist.support.state.ScreenState
 
 class ListDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -31,30 +30,29 @@ class ListDetailsViewModel(
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    val screenState: StateFlow<ScreenState<ListDetails, Nothing>> =
+    val screenState: StateFlow<ViewState> =
         combine(
             getShoppingList(),
             getListOfShoppingItems()
         ) { shoppingList, listOfShoppingItems ->
-            val listDetails = ListDetails(
-                id = shoppingList.id,
-                name = shoppingList.name,
+            ViewState(
+                shoppingListId = shoppingList.id,
+                shoppingListName = shoppingList.name,
                 listOfShoppingItems = listOfShoppingItems.toImmutableList()
             )
-            ScreenState.ready(listDetails)
         }.stateIn(
             scope = viewModelScope + dispatchersProvider.MainImmediate,
             started = SharingStarted.WhileSubscribed(100L),
-            initialValue = ScreenState.loading()
+            initialValue = ViewState.Init
         )
 
     fun onUiEvent(event: UiEvent) {
         when (event) {
-            is UiEvent.OnShoppingListItemClicked -> onShoppingListItemClicked(event.shoppingItem)
+            is UiEvent.ShoppingItemClicked -> onShoppingItemClicked(event.shoppingItem)
         }
     }
 
-    private fun onShoppingListItemClicked(shoppingItem: ShoppingItem) {
+    private fun onShoppingItemClicked(shoppingItem: ShoppingItem) {
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
         }
