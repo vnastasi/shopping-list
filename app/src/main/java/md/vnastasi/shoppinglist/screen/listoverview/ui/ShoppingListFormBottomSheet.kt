@@ -21,11 +21,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 
 @Composable
@@ -72,15 +74,15 @@ fun ShoppingListFormBottomSheet(
             value = textFieldValue.value,
             label = {
                 Text(
-                    text = "Shopping list name"
+                    text = stringResource(R.string.list_form_input_title)
                 )
             },
             isError = textFieldError.value.hasErrors(),
             supportingText = {
                 when (textFieldError.value) {
                     TextFieldValidator.Error.NONE -> Unit
-                    TextFieldValidator.Error.EMPTY -> Text(text = "Value cannot be empty")
-                    TextFieldValidator.Error.BLANK -> Text(text = "Value cannot be blank")
+                    TextFieldValidator.Error.EMPTY -> Text(text = stringResource(R.string.list_form_input_error_empty))
+                    TextFieldValidator.Error.BLANK -> Text(text = stringResource(R.string.list_form_input_error_blank))
                 }
             },
             maxLines = 1,
@@ -109,7 +111,7 @@ fun ShoppingListFormBottomSheet(
             onClick = saveAndCloseSheet
         ) {
             Text(
-                text = "Save"
+                text = stringResource(R.string.list_form_btn_save)
             )
         }
     }

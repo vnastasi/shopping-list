@@ -21,9 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import kotlinx.collections.immutable.persistentListOf
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
@@ -79,7 +81,7 @@ private fun ListDetailsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.list_details_btn_back_acc)
                         )
                     }
                 },
@@ -93,7 +95,7 @@ private fun ListDetailsScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.list_details_btn_add_acc)
                 )
             }
         }

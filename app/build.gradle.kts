@@ -69,9 +69,14 @@ android {
         }
     }
 
+    @Suppress("UnstableApiUsage")
     testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            all {
+                it.useJUnitPlatform()
+            }
         }
     }
 }

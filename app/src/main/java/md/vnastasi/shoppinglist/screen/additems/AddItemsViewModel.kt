@@ -7,6 +7,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,12 +18,14 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
+import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
 class AddItemsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -51,7 +54,9 @@ class AddItemsViewModel(
     private fun onSearchTermChanged(newSearchTerm: String) {
         viewModelScope.launch(dispatchersProvider.Main) {
             nameSuggestionRepository.findAllMatching(newSearchTerm).collectLatest { suggestions ->
-                _screenState.update { it.copy(searchTerm = newSearchTerm, suggestions = suggestions.toImmutableList()) }
+                _screenState.update { viewState ->
+                    viewState.copy(searchTerm = newSearchTerm, suggestions = suggestions.toImmutableList())
+                }
             }
         }
     }
@@ -63,7 +68,10 @@ class AddItemsViewModel(
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
                     nameSuggestionRepository.create(shoppingItem.name)
-                    _screenState.update { it.copy(toastMessage = "$name added to shopping list") }
+                    _screenState.update { viewState ->
+                        val toastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
+                        viewState.copy(toastMessage = toastMessage)
+                    }
                 }
         }
     }
@@ -71,13 +79,18 @@ class AddItemsViewModel(
     private fun onSuggestionDeleted(suggestion: NameSuggestion) {
         viewModelScope.launch(dispatchersProvider.Main) {
             nameSuggestionRepository.delete(suggestion)
-            _screenState.update { it.copy(toastMessage = "${suggestion.name} removed from suggestions") }
+            _screenState.update { viewState ->
+                val toastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf(suggestion.name))
+                viewState.copy(toastMessage = toastMessage)
+            }
         }
     }
 
     private fun onToastShown() {
         viewModelScope.launch(dispatchersProvider.Main) {
-            _screenState.update { it.copy(toastMessage = null) }
+            _screenState.update { viewState ->
+                viewState.copy(toastMessage = null)
+            }
         }
     }
 

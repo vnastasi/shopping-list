@@ -4,11 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
+import assertk.assertions.isNotNull
+import assertk.assertions.prop
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
+import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
@@ -17,6 +20,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.testdata.DomainTestData.DEFAULT_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
+import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
@@ -74,7 +78,9 @@ class AddItemsViewModelTest {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = "Milk added to shopping list"))
+            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
+            val expectedViewState = ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
         }
@@ -100,7 +106,9 @@ class AddItemsViewModelTest {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = "Milk removed from suggestions"))
+            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf("Milk"))
+            val expectedViewState = ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
         }
@@ -125,7 +133,7 @@ class AddItemsViewModelTest {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = "Milk removed from suggestions"))
+            assertThat(awaitItem()).prop(ViewState::toastMessage).isNotNull()
 
             viewModel.onUiEvent(UiEvent.ToastShown)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = null))

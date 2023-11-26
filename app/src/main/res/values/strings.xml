@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">Shopping list</string>
+
+    <string name="application_name">Shopping list</string>
+
+    <string name="overview_toolbar_title">Shopping lists</string>
+    <string name="overview_btn_add_list_acc">Add new shopping list</string>
+    <string name="overview_empty_list">No shopping lists available</string>
+    <string name="overview_btn_delete_list_acc">Delete shopping list</string>
+
+    <string name="list_form_input_title">Shopping list name</string>
+    <string name="list_form_input_error_empty">Value cannot be empty</string>
+    <string name="list_form_input_error_blank">Value cannot be blank</string>
+    <string name="list_form_btn_save">Save</string>
+
+    <string name="list_details_btn_back_acc">Back to overview</string>
+    <string name="list_details_btn_add_acc">Add items</string>
+    <string name="list_details_empty">Shopping list is empty</string>
+
+    <string name="add_items_btn_back_acc">Back to list details</string>
+    <string name="add_items_search_title">Type item name</string>
+    <string name="add_items_btn_delete_suggestion_acc">Delete suggestions</string>
+
+    <string name="toast_list_created">Shopping list %1$s created</string>
+    <string name="toast_item_added">%1$s added to shopping list</string>
+    <string name="toast_suggestion_removed">%1$s removed from suggestions</string>
+
 </resources>
