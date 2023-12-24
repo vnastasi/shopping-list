@@ -2,7 +2,7 @@ package md.vnastasi.shoppinglist.theme
 
 import androidx.compose.ui.graphics.Color
 
-object Colors {
+object AppColors {
 
     object Light {
 

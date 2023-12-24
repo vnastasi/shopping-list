@@ -15,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.theme.AppTypography
 
 @Composable
 fun ShoppingListCard(
@@ -39,19 +41,21 @@ fun ShoppingListCard(
             modifier = Modifier
                 .widthIn(max = 520.dp)
                 .padding(16.dp)
-                .align(Alignment.Center)
-                .clickable { onClickItem.invoke(list) },
-            elevation = CardDefaults.cardElevation(4.dp),
+                .align(Alignment.Center),
+            shape = CardDefaults.outlinedShape
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp),
+                    .clickable { onClickItem.invoke(list) },
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = list.name
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 16.dp),
+                    text = list.name,
+                    style = AppTypography.titleLarge
                 )
 
                 Spacer(
@@ -61,6 +65,7 @@ fun ShoppingListCard(
                 )
 
                 IconButton(
+                    modifier = Modifier.fillMaxHeight(),
                     onClick = { onDeleteItem.invoke(list) }
                 ) {
                     Icon(
