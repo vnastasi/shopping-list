@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -25,10 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
+import md.vnastasi.shoppinglist.theme.AppDimensions
 
 @Composable
 fun ShoppingListFormBottomSheet(
@@ -64,12 +63,15 @@ fun ShoppingListFormBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(AppDimensions.paddingMedium)
     ) {
 
         OutlinedTextField(
             modifier = Modifier
-                .widthIn(min = 320.dp, max = 520.dp)
+                .widthIn(
+                    min = AppDimensions.contentMinWidth,
+                    max = AppDimensions.contentMaxWidth
+                )
                 .align(Alignment.CenterHorizontally),
             value = textFieldValue.value,
             label = {
@@ -104,9 +106,12 @@ fun ShoppingListFormBottomSheet(
 
         Button(
             modifier = Modifier
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                .padding(
+                    top = AppDimensions.paddingExtraLarge,
+                    start = AppDimensions.paddingMedium,
+                    end = AppDimensions.paddingMedium
+                )
                 .align(Alignment.CenterHorizontally),
-            shape = RoundedCornerShape(8.dp),
             enabled = textFieldError.value.noErrors(),
             onClick = saveAndCloseSheet
         ) {

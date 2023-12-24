@@ -23,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
+import md.vnastasi.shoppinglist.theme.AppDimensions
+import md.vnastasi.shoppinglist.theme.AppTypography
 
 @Composable
 fun SuggestionRow(
@@ -43,23 +43,27 @@ fun SuggestionRow(
     ) {
         Column(
             modifier = Modifier
-                .padding(0.dp)
-                .widthIn(max = 520.dp)
+                .widthIn(max = AppDimensions.contentMaxWidth)
                 .align(Alignment.Center)
                 .clickable { onClick.invoke() }
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 64.dp)
-                    .padding(start = 24.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                    .heightIn(min = AppDimensions.listItemMinHeight)
+                    .padding(
+                        start = AppDimensions.paddingLarge,
+                        end = AppDimensions.paddingSmall,
+                        top = AppDimensions.paddingSmall,
+                        bottom = AppDimensions.paddingSmall
+                    ),
                 horizontalArrangement = Arrangement.Start
             ) {
 
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = suggestion.name,
-                    fontSize = 18.sp
+                    style = AppTypography.titleLarge
                 )
 
                 Spacer(
@@ -71,7 +75,6 @@ fun SuggestionRow(
                 if (isDeletable) {
                     IconButton(
                         modifier = Modifier
-                            .padding(0.dp)
                             .wrapContentSize()
                             .align(Alignment.CenterVertically),
                         onClick = { onDelete.invoke() }
@@ -86,7 +89,7 @@ fun SuggestionRow(
 
             if (!isLastItemInList) {
                 Divider(
-                    thickness = 1.dp
+                    thickness = AppDimensions.divider
                 )
             }
         }
