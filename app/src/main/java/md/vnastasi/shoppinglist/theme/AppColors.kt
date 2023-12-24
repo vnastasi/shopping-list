@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package md.vnastasi.shoppinglist.theme
 
 import androidx.compose.ui.graphics.Color
