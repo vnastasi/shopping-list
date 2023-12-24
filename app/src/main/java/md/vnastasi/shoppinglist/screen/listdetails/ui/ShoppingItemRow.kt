@@ -15,13 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.theme.AppDimensions
+import md.vnastasi.shoppinglist.theme.AppTypography
 
 @Composable
 fun ShoppingItemRow(
@@ -36,14 +35,14 @@ fun ShoppingItemRow(
     ) {
         Column(
             modifier = Modifier
-                .widthIn(max = 520.dp)
+                .widthIn(max = AppDimensions.contentMaxWidth)
                 .align(Alignment.Center)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onClick.invoke(shoppingItem) }
-                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp),
+                    .padding(AppDimensions.paddingMedium),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Checkbox(
@@ -51,21 +50,20 @@ fun ShoppingItemRow(
                     onCheckedChange = null
                 )
 
-                val textStyle = TextStyle.Default.copy(
+                val textStyle = AppTypography.bodyLarge.copy(
                     textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
                 )
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = AppDimensions.paddingMedium),
                     text = shoppingItem.name,
-                    style = textStyle,
-                    fontSize = 18.sp
+                    style = textStyle
                 )
             }
 
             if (!isLastItemInList) {
                 Divider(
-                    thickness = 1.dp
+                    thickness = AppDimensions.divider
                 )
             }
         }

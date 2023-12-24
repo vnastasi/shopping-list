@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.theme.AppDimensions
+import md.vnastasi.shoppinglist.theme.AppTypography
 
 @Composable
 fun EmptyListDetailsScreenContent(
@@ -29,7 +29,7 @@ fun EmptyListDetailsScreenContent(
     ) {
         Text(
             text = stringResource(R.string.list_details_empty),
-            fontSize = 24.sp
+            style = AppTypography.headlineMedium
         )
     }
 }
@@ -41,6 +41,6 @@ fun EmptyListDetailsScreenContent(
 @Composable
 private fun EmptyListDetailsScreenContentPreview() {
     EmptyListDetailsScreenContent(
-        contentPaddings = PaddingValues(16.dp)
+        contentPaddings = PaddingValues(AppDimensions.paddingMedium)
     )
 }

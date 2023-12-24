@@ -8,11 +8,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.theme.AppDimensions
 
 @Composable
 fun NonEmptyListDetailsScreenContent(
@@ -56,7 +56,7 @@ private fun NonEmptyListDetailsScreenContentPreview() {
     )
 
     NonEmptyListDetailsScreenContent(
-        contentPaddings = PaddingValues(0.dp),
+        contentPaddings = PaddingValues(AppDimensions.zero),
         listOfShoppingItems = listOfShoppingItems,
         onClick = { }
     )

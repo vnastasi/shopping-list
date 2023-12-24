@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -40,6 +39,7 @@ import md.vnastasi.shoppinglist.screen.listoverview.ViewState
 import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
+import md.vnastasi.shoppinglist.theme.AppDimensions
 
 @Composable
 fun ListOverviewScreen(
@@ -105,7 +105,7 @@ private fun ListOverviewScreen(
                 onShoppingListSaved = events.onShoppingListSaved
             )
         },
-        sheetPeekHeight = 0.dp
+        sheetPeekHeight = AppDimensions.zero
     ) {
 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

@@ -15,16 +15,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.theme.AppDimensions
 import md.vnastasi.shoppinglist.theme.AppTypography
 
 @Composable
@@ -39,21 +38,20 @@ fun ShoppingListCard(
     ) {
         Card(
             modifier = Modifier
-                .widthIn(max = 520.dp)
-                .padding(16.dp)
+                .widthIn(max = AppDimensions.contentMaxWidth)
+                .padding(AppDimensions.paddingMedium)
                 .align(Alignment.Center),
             shape = CardDefaults.outlinedShape
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onClickItem.invoke(list) },
+                    .clickable { onClickItem.invoke(list) }
+                    .padding(start = AppDimensions.paddingMedium),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = list.name,
                     style = AppTypography.titleLarge
                 )
