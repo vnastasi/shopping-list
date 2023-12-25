@@ -26,5 +26,6 @@ include(
     ":support:async",
     ":support:async-unit-test",
     ":support:lifecycle",
+    ":support:ui",
     ":app"
 )

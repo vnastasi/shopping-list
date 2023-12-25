@@ -84,6 +84,7 @@ dependencies {
     implementation(project(":domain:implementation"))
     implementation(project(":support:async"))
     implementation(project(":support:lifecycle"))
+    implementation(project(":support:ui"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
