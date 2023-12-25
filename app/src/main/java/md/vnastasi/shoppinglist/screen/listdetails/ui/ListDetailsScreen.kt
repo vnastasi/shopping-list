@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository

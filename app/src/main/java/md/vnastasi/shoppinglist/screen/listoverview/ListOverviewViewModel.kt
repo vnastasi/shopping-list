@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider

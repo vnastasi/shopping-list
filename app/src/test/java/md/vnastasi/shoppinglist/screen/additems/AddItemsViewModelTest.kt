@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion

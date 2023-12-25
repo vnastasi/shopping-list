@@ -86,6 +86,7 @@ dependencies {
     implementation(project(":support:lifecycle"))
     implementation(project(":support:ui"))
     implementation(project(":support:theme"))
+    implementation(project(":resources"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))

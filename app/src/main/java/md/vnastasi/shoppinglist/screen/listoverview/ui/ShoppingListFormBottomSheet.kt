@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour

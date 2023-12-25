@@ -28,5 +28,6 @@ include(
     ":support:lifecycle",
     ":support:ui",
     ":support:theme",
+    ":resources",
     ":app"
 )

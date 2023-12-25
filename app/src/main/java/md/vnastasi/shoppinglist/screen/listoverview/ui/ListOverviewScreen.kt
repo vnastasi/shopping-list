@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
