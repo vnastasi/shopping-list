@@ -51,10 +51,6 @@ android {
         jvmTarget = "17"
     }
 
-    ksp {
-        arg(roomSchemaDir(file("${layout.projectDirectory}/schemas")))
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -64,7 +60,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${layout.projectDirectory}/schemas")
+                srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
             }
         }
     }
@@ -74,14 +70,26 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
-            all {
-                it.useJUnitPlatform()
+            all { test ->
+                test.useJUnitPlatform()
             }
         }
     }
 }
 
 dependencies {
+
+    implementation(project(":database:implementation"))
+    implementation(project(":domain:api"))
+    implementation(project(":domain:implementation"))
+    implementation(project(":resources"))
+    implementation(project(":screen:add-items"))
+    implementation(project(":screen:list-details"))
+    implementation(project(":screen:overview"))
+    implementation(project(":support:async"))
+    implementation(project(":support:lifecycle"))
+    implementation(project(":support:theme"))
+    implementation(project(":support:ui"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
@@ -91,20 +99,11 @@ dependencies {
     implementation(libs.androidx.lificycle.runtime)
     implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.compose.graphics)
-    implementation(libs.compose.material)
-    implementation(libs.compose.preview)
-    implementation(libs.compose.ui)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
-    implementation(libs.kotlinx.collections)
-    implementation(libs.room)
-    implementation(libs.room.runtime)
 
-    debugImplementation(libs.compose.test.manifest)
-    debugImplementation(libs.compose.tooling)
-
-    ksp(libs.room.compiler)
+    testImplementation(project(":domain:test-data"))
+    testImplementation(project(":support:async-unit-test"))
 
     testImplementation(platform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.androidx.lificycle.test)
@@ -116,6 +115,8 @@ dependencies {
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    androidTestImplementation(project(":database:test-data"))
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)

@@ -6,6 +6,7 @@ pluginManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -16,4 +17,20 @@ dependencyResolutionManagement {
 
 rootProject.name = "Shopping list"
 
-include(":app")
+include(
+    ":database:implementation",
+    ":database:test-data",
+    ":domain:api",
+    ":domain:implementation",
+    ":domain:test-data",
+    ":support:async",
+    ":support:async-unit-test",
+    ":support:lifecycle",
+    ":support:ui",
+    ":support:theme",
+    ":resources",
+    ":screen:overview",
+    ":screen:list-details",
+    ":screen:add-items",
+    ":app"
+)

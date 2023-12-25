@@ -6,7 +6,7 @@ import assertk.assertions.containsExactly
 import assertk.assertions.extracting
 import assertk.assertions.isEmpty
 import md.vnastasi.shoppinglist.db.model.NameSuggestion
-import md.vnastasi.shoppinglist.support.db.runDatabaseTest
+import md.vnastasi.shoppinglist.db.support.runDatabaseTest
 import org.junit.Test
 
 class NameSuggestionDaoTest {

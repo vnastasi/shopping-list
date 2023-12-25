@@ -9,10 +9,10 @@ import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isFailure
 import assertk.assertions.isNull
-import md.vnastasi.shoppinglist.support.db.runDatabaseTest
-import md.vnastasi.shoppinglist.support.testdata.TestData.DEFAULT_SHOPPING_LIST_ID
-import md.vnastasi.shoppinglist.support.testdata.TestData.createShoppingItemEntity
-import md.vnastasi.shoppinglist.support.testdata.TestData.createShoppingListEntity
+import md.vnastasi.shoppinglist.db.support.runDatabaseTest
+import md.vnastasi.shoppinglist.db.TestData.DEFAULT_SHOPPING_LIST_ID
+import md.vnastasi.shoppinglist.db.TestData.createShoppingItemEntity
+import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import org.junit.Test
 
 class ShoppingListDaoTest {
