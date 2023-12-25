@@ -8,21 +8,21 @@ import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.db.model.NameSuggestion as NameSuggestionEntity
 
-class NameSuggestionRepository(
+internal class LocalNameSuggestionRepository(
     private val nameSuggestionDao: NameSuggestionDao
-) {
+) : NameSuggestionRepository {
 
-    fun findAllMatching(searchTerm: String): Flow<List<NameSuggestion>> = when {
+    override fun findAllMatching(searchTerm: String): Flow<List<NameSuggestion>> = when {
         searchTerm.isEmpty() -> flowOf(emptyList())
         searchTerm.length < 3 -> flowOf(listOf(NameSuggestion(-1L, searchTerm)))
         else -> combine(searchTerm)
     }
 
-    suspend fun create(value: String) {
+    override suspend fun create(value: String) {
         nameSuggestionDao.create(NameSuggestionEntity(value = value))
     }
 
-    suspend fun delete(suggestion: NameSuggestion) {
+    override suspend fun delete(suggestion: NameSuggestion) {
         nameSuggestionDao.delete(suggestion.toEntity())
     }
 

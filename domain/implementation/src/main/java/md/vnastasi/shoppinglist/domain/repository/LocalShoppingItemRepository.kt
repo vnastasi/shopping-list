@@ -10,27 +10,27 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.db.model.ShoppingItem as ShoppingItemEntity
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 
-class ShoppingItemRepository(
+internal class LocalShoppingItemRepository(
     private val shoppingListDao: ShoppingListDao,
     private val shoppingItemDao: ShoppingItemDao
-) {
+) : ShoppingItemRepository{
 
-    fun findAll(shoppingListId: Long): Flow<List<ShoppingItem>> = combine(
+    override fun findAll(shoppingListId: Long): Flow<List<ShoppingItem>> = combine(
         shoppingListDao.findById(shoppingListId).filterNotNull(),
         shoppingItemDao.findAll(shoppingListId)
     ) { shoppingList: ShoppingListEntity, itemList: List<ShoppingItemEntity> ->
         itemList.map { it.toDomainModel(shoppingList.toDomainModel()) }
     }
 
-    suspend fun create(item: ShoppingItem) {
+    override suspend fun create(item: ShoppingItem) {
         shoppingItemDao.create(item.toEntity())
     }
 
-    suspend fun update(item: ShoppingItem) {
+    override suspend fun update(item: ShoppingItem) {
         shoppingItemDao.update(item.toEntity())
     }
 
-    suspend fun delete(item: ShoppingItem) {
+    override suspend fun delete(item: ShoppingItem) {
         shoppingItemDao.delete(item.toEntity())
     }
 
@@ -42,4 +42,3 @@ class ShoppingItemRepository(
 
     private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
 }
-

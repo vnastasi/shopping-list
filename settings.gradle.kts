@@ -19,5 +19,8 @@ rootProject.name = "Shopping list"
 include(
     ":database:implementation",
     ":database:test-data",
+    ":domain:api",
+    ":domain:implementation",
+    ":domain:test-data",
     ":app"
 )

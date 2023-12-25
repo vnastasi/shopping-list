@@ -10,14 +10,14 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_NAME
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.DEFAULT_SHOPPING_LIST_NAME
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingItem
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -19,11 +19,11 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 
-class ShoppingListRepositoryTest {
+internal class LocalShoppingListRepositoryTest {
 
     private val mockShoppingListDao = mock<ShoppingListDao>()
 
-    private val shoppingListRepository = ShoppingListRepository(mockShoppingListDao)
+    private val shoppingListRepository = LocalShoppingListRepository(mockShoppingListDao)
 
     @Test
     @DisplayName("Given no entities in DAO When getting available shopping lists Then expect empty list")

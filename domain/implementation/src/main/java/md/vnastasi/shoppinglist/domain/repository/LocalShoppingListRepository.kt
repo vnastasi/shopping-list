@@ -7,27 +7,27 @@ import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 
-class ShoppingListRepository(
+internal class LocalShoppingListRepository(
     private val shoppingListDao: ShoppingListDao
-) {
+) : ShoppingListRepository{
 
-    fun findAll(): Flow<List<ShoppingList>> =
+    override fun findAll(): Flow<List<ShoppingList>> =
         shoppingListDao.findAll().map { list ->
             list.map { it.toDomainModel() }
         }
 
-    fun findById(id: Long): Flow<ShoppingList> =
+    override fun findById(id: Long): Flow<ShoppingList> =
         shoppingListDao.findById(id).filterNotNull().map { it.toDomainModel() }
 
-    suspend fun create(shoppingList: ShoppingList) {
+    override suspend fun create(shoppingList: ShoppingList) {
         shoppingListDao.create(shoppingList.toEntity())
     }
 
-    suspend fun update(shoppingList: ShoppingList) {
+    override suspend fun update(shoppingList: ShoppingList) {
         shoppingListDao.update(shoppingList.toEntity())
     }
 
-    suspend fun delete(shoppingList: ShoppingList) {
+    override suspend fun delete(shoppingList: ShoppingList) {
         shoppingListDao.delete(shoppingList.toEntity())
     }
 

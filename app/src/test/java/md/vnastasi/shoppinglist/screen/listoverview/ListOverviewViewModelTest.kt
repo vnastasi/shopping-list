@@ -11,10 +11,10 @@ import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingList
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

@@ -18,11 +18,11 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import md.vnastasi.shoppinglist.db.model.NameSuggestion as NameSuggestionEntity
 
-class NameSuggestionRepositoryTest {
+internal class LocalNameSuggestionRepositoryTest {
 
     private val mockNameSuggestionDao = mock<NameSuggestionDao>()
 
-    private val repository = NameSuggestionRepository(mockNameSuggestionDao)
+    private val repository = LocalNameSuggestionRepository(mockNameSuggestionDao)
 
     @Test
     @DisplayName("Given empty search term Then expect no suggestions")

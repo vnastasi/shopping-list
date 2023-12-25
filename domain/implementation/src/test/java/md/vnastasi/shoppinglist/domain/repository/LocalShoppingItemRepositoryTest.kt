@@ -11,7 +11,7 @@ import md.vnastasi.shoppinglist.db.TestData.createShoppingItemEntity
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.support.testdata.DomainTestData.createShoppingItem
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -21,12 +21,12 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import md.vnastasi.shoppinglist.db.model.ShoppingItem as ShoppingItemEntity
 
-class ShoppingItemRepositoryTest {
+internal class LocalShoppingItemRepositoryTest {
 
     private val mockShoppingListDao = mock<ShoppingListDao>()
     private val mockShoppingItemDao = mock<ShoppingItemDao>()
 
-    private val shoppingItemRepository = ShoppingItemRepository(mockShoppingListDao, mockShoppingItemDao)
+    private val shoppingItemRepository = LocalShoppingItemRepository(mockShoppingListDao, mockShoppingItemDao)
 
     @Test
     @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 123 The expect empty list")

@@ -80,6 +80,8 @@ android {
 dependencies {
 
     implementation(project(":database:implementation"))
+    implementation(project(":domain:api"))
+    implementation(project(":domain:implementation"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
@@ -100,7 +102,7 @@ dependencies {
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
 
-    testImplementation(project(":database:test-data"))
+    testImplementation(project(":domain:test-data"))
 
     testImplementation(platform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.androidx.lificycle.test)
