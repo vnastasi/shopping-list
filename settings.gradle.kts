@@ -29,5 +29,8 @@ include(
     ":support:ui",
     ":support:theme",
     ":resources",
+    ":screen:overview",
+    ":screen:list-details",
+    ":screen:add-items",
     ":app"
 )

@@ -1,32 +1,14 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist"
+    namespace = "md.vnastasi.shoppinglist.screen.overview"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "md.vnastasi.shoppinglist"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
     }
 
     buildFeatures {
@@ -50,46 +32,16 @@ android {
         )
         jvmTarget = "17"
     }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    sourceSets {
-        getByName("androidTest") {
-            assets {
-                srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
-            }
-        }
-    }
-
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-            all {
-                it.useJUnitPlatform()
-            }
-        }
-    }
 }
 
 dependencies {
 
-    implementation(project(":database:implementation"))
     implementation(project(":domain:api"))
-    implementation(project(":domain:implementation"))
     implementation(project(":support:async"))
     implementation(project(":support:lifecycle"))
     implementation(project(":support:ui"))
     implementation(project(":support:theme"))
     implementation(project(":resources"))
-    implementation(project(":screen:overview"))
-    implementation(project(":screen:list-details"))
-    implementation(project(":screen:add-items"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
@@ -106,6 +58,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
     implementation(libs.kotlinx.collections)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
@@ -123,15 +76,4 @@ dependencies {
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
-
-    androidTestImplementation(project(":database:test-data"))
-
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.assertk)
-    androidTestImplementation(libs.compose.test.junit4)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.kotlin.reflect)
-    androidTestImplementation(libs.room.test)
-    androidTestImplementation(libs.turbine)
 }
