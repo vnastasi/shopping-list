@@ -23,29 +23,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsScreenNavigator
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.ViewState
-import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun ListDetailsScreen(
-    navController: NavController,
-    viewModel: ListDetailsViewModel
+    viewModel: ListDetailsViewModel,
+    navigator: ListDetailsScreenNavigator
 ) {
 
     ListDetailsScreen(
         viewState = viewModel.screenState.collectAsState(),
         events = Events(
-            onNavigateUp = { navController.navigateUp() },
+            onNavigateUp = { navigator.backToOverview() },
             onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
-            onAddNewItems = { shoppingListId -> navController.navigate(Routes.AddItems(shoppingListId)) }
+            onAddNewItems = { shoppingListId -> navigator.toAddItems(shoppingListId) }
         )
     )
 

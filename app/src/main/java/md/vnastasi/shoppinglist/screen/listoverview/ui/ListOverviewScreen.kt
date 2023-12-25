@@ -27,16 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewScreenNavigator
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listoverview.UiEvent
 import md.vnastasi.shoppinglist.screen.listoverview.ViewState
-import md.vnastasi.shoppinglist.screen.nav.Routes
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
@@ -44,8 +43,8 @@ import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun ListOverviewScreen(
-    navController: NavHostController,
-    viewModel: ListOverviewViewModel
+    viewModel: ListOverviewViewModel,
+    navigator: ListOverviewScreenNavigator
 ) {
 
     ListOverviewScreen(
@@ -56,10 +55,8 @@ fun ListOverviewScreen(
             onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
             onShoppingListSelected = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList)) },
             onNavigationPerformed = { viewModel.onUiEvent(UiEvent.NavigationPerformed) },
-            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
-        ),
-        navigations = Navigations(
-            toShoppingListDetails = { shoppingListId -> navController.navigate(Routes.ListDetails(shoppingListId)) }
+            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) },
+            onNavigateToListDetails = navigator::toListDetails
         )
     )
 }
@@ -71,19 +68,14 @@ private class Events(
     val onShoppingListDeleted: (ShoppingList) -> Unit,
     val onShoppingListSelected: (ShoppingList) -> Unit,
     val onNavigationPerformed: () -> Unit,
-    val onToastShown: () -> Unit
-)
-
-@Stable
-private class Navigations(
-    val toShoppingListDetails: (Long) -> Unit
+    val onToastShown: () -> Unit,
+    val onNavigateToListDetails: (Long) -> Unit
 )
 
 @Composable
 private fun ListOverviewScreen(
     viewState: State<ViewState>,
-    events: Events,
-    navigations: Navigations
+    events: Events
 ) {
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -160,7 +152,7 @@ private fun ListOverviewScreen(
     LaunchedEffect(key1 = viewState.value.navigationTarget) {
         when (val navigationTarget = viewState.value.navigationTarget) {
             is NavigationTarget.ShoppingListDetails -> {
-                navigations.toShoppingListDetails.invoke(navigationTarget.id)
+                events.onNavigateToListDetails.invoke(navigationTarget.id)
                 events.onNavigationPerformed.invoke()
             }
 
@@ -203,10 +195,8 @@ private fun ListOverviewScreenPreview() {
                 onShoppingListSaved = { },
                 onAddNewShoppingList = { },
                 onNavigationPerformed = { },
-                onToastShown = { }
-            ),
-            navigations = Navigations(
-                toShoppingListDetails = { }
+                onToastShown = { },
+                onNavigateToListDetails = { }
             )
         )
     }

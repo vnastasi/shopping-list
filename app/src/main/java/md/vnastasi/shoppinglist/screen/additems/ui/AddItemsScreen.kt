@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
+import md.vnastasi.shoppinglist.screen.additems.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.additems.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.ViewState
@@ -38,13 +39,13 @@ import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun AddItemsScreen(
-    navController: NavController,
-    viewModel: AddItemsViewModel
+    viewModel: AddItemsViewModel,
+    navigator: AddItemsScreenNavigator
 ) {
     AddItemsScreen(
         viewState = viewModel.screenState.collectAsStateWithLifecycle(),
         events = Events(
-            onNavigateUp = { navController.navigateUp() },
+            onNavigateUp = { navigator.backToListDetails() },
             onSearchTermChanged = { searchTerm -> viewModel.onUiEvent(UiEvent.SearchTermChanged(searchTerm)) },
             onItemAddedToList = { suggestedName -> viewModel.onUiEvent(UiEvent.ItemAddedToList(suggestedName)) },
             onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
