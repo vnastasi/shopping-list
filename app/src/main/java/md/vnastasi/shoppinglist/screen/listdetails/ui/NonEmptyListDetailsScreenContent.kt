@@ -12,7 +12,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
-import md.vnastasi.shoppinglist.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun NonEmptyListDetailsScreenContent(
@@ -55,9 +56,11 @@ private fun NonEmptyListDetailsScreenContentPreview() {
         ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
     )
 
-    NonEmptyListDetailsScreenContent(
-        contentPaddings = PaddingValues(AppDimensions.zero),
-        listOfShoppingItems = listOfShoppingItems,
-        onClick = { }
-    )
+    AppTheme {
+        NonEmptyListDetailsScreenContent(
+            contentPaddings = PaddingValues(AppDimensions.zero),
+            listOfShoppingItems = listOfShoppingItems,
+            onClick = { }
+        )
+    }
 }

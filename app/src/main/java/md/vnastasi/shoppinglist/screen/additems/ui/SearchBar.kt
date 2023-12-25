@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.R
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun SearchBar(
@@ -83,8 +84,10 @@ fun SearchBar(
 )
 @Composable
 private fun SearchBarPreview() {
-    SearchBar(
-        modifier = Modifier.fillMaxWidth(),
-        searchTerm = remember { mutableStateOf("Search term") }
-    )
+    AppTheme {
+        SearchBar(
+            modifier = Modifier.fillMaxWidth(),
+            searchTerm = remember { mutableStateOf("Search term") }
+        )
+    }
 }

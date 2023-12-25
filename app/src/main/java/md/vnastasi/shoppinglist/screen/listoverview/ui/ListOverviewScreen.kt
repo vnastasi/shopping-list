@@ -37,9 +37,10 @@ import md.vnastasi.shoppinglist.screen.listoverview.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listoverview.UiEvent
 import md.vnastasi.shoppinglist.screen.listoverview.ViewState
 import md.vnastasi.shoppinglist.screen.nav.Routes
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
-import md.vnastasi.shoppinglist.theme.AppDimensions
 
 @Composable
 fun ListOverviewScreen(
@@ -193,18 +194,20 @@ private fun ListOverviewScreenPreview() {
         ShoppingList(id = 12L, name = "Trip to Paris"),
     )
 
-    ListOverviewScreen(
-        viewState = remember { mutableStateOf(ViewState(list)) },
-        events = Events(
-            onShoppingListSelected = { },
-            onShoppingListDeleted = { },
-            onShoppingListSaved = { },
-            onAddNewShoppingList = { },
-            onNavigationPerformed = { },
-            onToastShown = { }
-        ),
-        navigations = Navigations(
-            toShoppingListDetails = { }
+    AppTheme {
+        ListOverviewScreen(
+            viewState = remember { mutableStateOf(ViewState(list)) },
+            events = Events(
+                onShoppingListSelected = { },
+                onShoppingListDeleted = { },
+                onShoppingListSaved = { },
+                onAddNewShoppingList = { },
+                onNavigationPerformed = { },
+                onToastShown = { }
+            ),
+            navigations = Navigations(
+                toShoppingListDetails = { }
+            )
         )
-    )
+    }
 }

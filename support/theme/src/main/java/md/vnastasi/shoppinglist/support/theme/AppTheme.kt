@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.theme
+package md.vnastasi.shoppinglist.support.theme
 
 import android.app.Activity
 import android.os.Build

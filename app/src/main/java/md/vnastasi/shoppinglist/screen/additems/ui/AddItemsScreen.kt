@@ -33,6 +33,7 @@ import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.additems.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.ViewState
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
@@ -156,14 +157,16 @@ fun AddItemsScreenPreview() {
         toastMessage = null
     )
 
-    AddItemsScreen(
-        viewState = remember { mutableStateOf(viewState) },
-        events = Events(
-            onNavigateUp = { },
-            onItemAddedToList = { },
-            onSearchTermChanged = { },
-            onSuggestionDeleted = { },
-            onToastShown = { }
+    AppTheme {
+        AddItemsScreen(
+            viewState = remember { mutableStateOf(viewState) },
+            events = Events(
+                onNavigateUp = { },
+                onItemAddedToList = { },
+                onSearchTermChanged = { },
+                onSuggestionDeleted = { },
+                onToastShown = { }
+            )
         )
-    )
+    }
 }

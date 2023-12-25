@@ -32,6 +32,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.ViewState
 import md.vnastasi.shoppinglist.screen.nav.Routes
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun ListDetailsScreen(
@@ -135,12 +136,14 @@ private fun ListDetailsScreenPreview() {
         listOfShoppingItems = listOfShoppingItems
     )
 
-    ListDetailsScreen(
-        viewState = remember { mutableStateOf(viewState) },
-        events = Events(
-            onNavigateUp = { },
-            onItemClicked = { },
-            onAddNewItems = { }
+    AppTheme {
+        ListDetailsScreen(
+            viewState = remember { mutableStateOf(viewState) },
+            events = Events(
+                onNavigateUp = { },
+                onItemClicked = { },
+                onAddNewItems = { }
+            )
         )
-    )
+    }
 }

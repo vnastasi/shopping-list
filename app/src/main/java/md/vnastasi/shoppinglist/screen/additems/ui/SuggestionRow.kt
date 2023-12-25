@@ -25,8 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
-import md.vnastasi.shoppinglist.theme.AppDimensions
-import md.vnastasi.shoppinglist.theme.AppTypography
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
+import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 fun SuggestionRow(
@@ -104,13 +105,15 @@ fun SuggestionRow(
 )
 @Composable
 private fun SuggestionRowPreview1() {
-    SuggestionRow(
-        suggestion = NameSuggestion(1L, "Name suggestion"),
-        isLastItemInList = true,
-        isDeletable = true,
-        onClick = { },
-        onDelete = { }
-    )
+    AppTheme {
+        SuggestionRow(
+            suggestion = NameSuggestion(1L, "Name suggestion"),
+            isLastItemInList = true,
+            isDeletable = true,
+            onClick = { },
+            onDelete = { }
+        )
+    }
 }
 
 @Preview(
@@ -121,11 +124,13 @@ private fun SuggestionRowPreview1() {
 )
 @Composable
 private fun SuggestionRowPreview2() {
-    SuggestionRow(
-        suggestion = NameSuggestion(1L, "Name suggestion"),
-        isLastItemInList = true,
-        isDeletable = false,
-        onClick = { },
-        onDelete = { }
-    )
+    AppTheme {
+        SuggestionRow(
+            suggestion = NameSuggestion(1L, "Name suggestion"),
+            isLastItemInList = true,
+            isDeletable = false,
+            onClick = { },
+            onDelete = { }
+        )
+    }
 }

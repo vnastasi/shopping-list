@@ -11,7 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
-import md.vnastasi.shoppinglist.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun NonEmptyListOverviewScreenContent(
@@ -59,10 +60,12 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         ShoppingList(id = 12L, name = "Trip to Paris"),
     )
 
-    NonEmptyListOverviewScreenContent(
-        contentPaddings = PaddingValues(AppDimensions.zero),
-        list = list,
-        onDelete = { },
-        onClick = { }
-    )
+    AppTheme {
+        NonEmptyListOverviewScreenContent(
+            contentPaddings = PaddingValues(AppDimensions.zero),
+            list = list,
+            onDelete = { },
+            onClick = { }
+        )
+    }
 }

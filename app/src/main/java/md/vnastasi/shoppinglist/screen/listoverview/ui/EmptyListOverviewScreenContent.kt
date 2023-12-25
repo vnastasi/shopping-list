@@ -11,8 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.R
-import md.vnastasi.shoppinglist.theme.AppDimensions
-import md.vnastasi.shoppinglist.theme.AppTypography
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
+import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 fun EmptyListOverviewScreenContent(
@@ -40,7 +41,9 @@ fun EmptyListOverviewScreenContent(
 )
 @Composable
 private fun EmptyListOverviewScreenContentPreview() {
-    EmptyListOverviewScreenContent(
-        contentPaddings = PaddingValues(AppDimensions.paddingMedium)
-    )
+    AppTheme {
+        EmptyListOverviewScreenContent(
+            contentPaddings = PaddingValues(AppDimensions.paddingMedium)
+        )
+    }
 }
