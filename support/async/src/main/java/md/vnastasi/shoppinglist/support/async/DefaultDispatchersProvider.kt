@@ -3,7 +3,7 @@ package md.vnastasi.shoppinglist.support.async
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class DefaultDispatchersProvider : DispatchersProvider {
+internal class DefaultDispatchersProvider : DispatchersProvider {
 
     override val Main: CoroutineDispatcher = Dispatchers.Main
 

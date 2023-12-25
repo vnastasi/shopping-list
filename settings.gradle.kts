@@ -22,5 +22,7 @@ include(
     ":domain:api",
     ":domain:implementation",
     ":domain:test-data",
+    ":support:async",
+    ":support:async-unit-test",
     ":app"
 )
