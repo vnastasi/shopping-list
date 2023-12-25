@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
     implementation(libs.kotlinx.collections)
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
