@@ -51,10 +51,6 @@ android {
         jvmTarget = "17"
     }
 
-    ksp {
-        arg(roomSchemaDir(file("${layout.projectDirectory}/schemas")))
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -64,7 +60,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${layout.projectDirectory}/schemas")
+                srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
             }
         }
     }
@@ -83,6 +79,8 @@ android {
 
 dependencies {
 
+    implementation(project(":database:implementation"))
+
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))
@@ -98,13 +96,11 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
     implementation(libs.kotlinx.collections)
-    implementation(libs.room)
-    implementation(libs.room.runtime)
 
     debugImplementation(libs.compose.test.manifest)
     debugImplementation(libs.compose.tooling)
 
-    ksp(libs.room.compiler)
+    testImplementation(project(":database:test-data"))
 
     testImplementation(platform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.androidx.lificycle.test)
@@ -116,6 +112,8 @@ dependencies {
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    androidTestImplementation(project(":database:test-data"))
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)

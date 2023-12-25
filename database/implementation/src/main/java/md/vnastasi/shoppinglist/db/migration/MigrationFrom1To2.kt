@@ -5,10 +5,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 class MigrationFrom1To2 : Migration(1, 2) {
 
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(CREATE_NEW_TABLE_SQL)
-        database.execSQL(CREATE_INDEX)
-        database.execSQL(TRANSFER_EXISTING_NAMES_SQL)
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(CREATE_NEW_TABLE_SQL)
+        db.execSQL(CREATE_INDEX)
+        db.execSQL(TRANSFER_EXISTING_NAMES_SQL)
     }
 
     private companion object {

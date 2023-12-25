@@ -1,5 +1,6 @@
-package md.vnastasi.shoppinglist.support.db
+package md.vnastasi.shoppinglist.db.support
 
+import android.app.Application
 import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,13 +12,10 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import md.vnastasi.shoppinglist.ShoppingListApplication
 import md.vnastasi.shoppinglist.db.ShoppingListDatabase
 
-private val loggableSqlQueryCallback = object : RoomDatabase.QueryCallback {
-    override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
-        Log.d("DATABASE SQL statement", "$sqlQuery with arguments $bindArgs")
-    }
+private val loggableSqlQueryCallback = RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
+    Log.d("DATABASE SQL statement", "$sqlQuery with arguments $bindArgs")
 }
 
 fun runDatabaseTest(block: suspend TestScope.(ShoppingListDatabase) -> Unit) = runTest {
@@ -25,7 +23,7 @@ fun runDatabaseTest(block: suspend TestScope.(ShoppingListDatabase) -> Unit) = r
     Dispatchers.setMain(dispatcher)
 
     try {
-        val context = ApplicationProvider.getApplicationContext<ShoppingListApplication>()
+        val context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, ShoppingListDatabase::class.java)
             .setQueryCallback(loggableSqlQueryCallback, dispatcher.asExecutor())
             .build()

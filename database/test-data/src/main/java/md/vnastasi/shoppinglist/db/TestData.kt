@@ -1,9 +1,9 @@
-package md.vnastasi.shoppinglist.support.testdata
+package md.vnastasi.shoppinglist.db
 
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
 
-object DbTestData {
+object TestData {
 
     const val DEFAULT_SHOPPING_LIST_ID = 1L
     const val DEFAULT_SHOPPING_LIST_NAME = "My list"

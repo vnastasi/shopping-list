@@ -16,4 +16,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Shopping list"
 
-include(":app")
+include(
+    ":database:implementation",
+    ":database:test-data",
+    ":app"
+)
