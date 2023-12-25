@@ -11,7 +11,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listoverview.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.listoverview.ui.ListOverviewScreen
-import md.vnastasi.shoppinglist.support.viewmodel.viewModel
+import md.vnastasi.shoppinglist.support.lifecycle.viewModel
 import org.koin.compose.koinInject
 
 @Composable

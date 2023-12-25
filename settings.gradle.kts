@@ -6,6 +6,7 @@ pluginManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -24,5 +25,6 @@ include(
     ":domain:test-data",
     ":support:async",
     ":support:async-unit-test",
+    ":support:lifecycle",
     ":app"
 )

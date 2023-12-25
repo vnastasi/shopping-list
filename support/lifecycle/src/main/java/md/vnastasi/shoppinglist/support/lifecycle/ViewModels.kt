@@ -1,6 +1,6 @@
 @file:JvmName("ViewModelSupport")
 
-package md.vnastasi.shoppinglist.support.viewmodel
+package md.vnastasi.shoppinglist.support.lifecycle
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
@@ -14,7 +14,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import md.vnastasi.shoppinglist.support.bundle.plus
 
 @Composable
 inline fun <reified VM : ViewModel> viewModel(

@@ -1,6 +1,6 @@
 @file:JvmName("BundleSupport")
 
-package md.vnastasi.shoppinglist.support.bundle
+package md.vnastasi.shoppinglist.support.lifecycle
 
 import android.os.Bundle
 import androidx.core.os.bundleOf
