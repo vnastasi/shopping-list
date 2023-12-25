@@ -31,7 +31,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 
 @Composable
-fun ShoppingListFormBottomSheet(
+internal fun ShoppingListFormBottomSheet(
     behaviour: BottomSheetBehaviour,
     onShoppingListSaved: (String) -> Unit
 ) {

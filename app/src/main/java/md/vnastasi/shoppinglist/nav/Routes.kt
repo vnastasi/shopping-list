@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.nav
+package md.vnastasi.shoppinglist.nav
 
 import android.os.Bundle
 import androidx.navigation.NamedNavArgument

@@ -16,7 +16,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun NonEmptyListDetailsScreenContent(
+internal fun NonEmptyListDetailsScreenContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
     onClick: (ShoppingItem) -> Unit

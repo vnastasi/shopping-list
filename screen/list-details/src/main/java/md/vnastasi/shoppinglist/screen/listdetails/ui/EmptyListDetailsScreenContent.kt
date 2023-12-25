@@ -16,7 +16,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
-fun EmptyListDetailsScreenContent(
+internal fun EmptyListDetailsScreenContent(
     contentPaddings: PaddingValues
 ) {
     Box(

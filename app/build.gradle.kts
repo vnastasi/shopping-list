@@ -70,8 +70,8 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
-            all {
-                it.useJUnitPlatform()
+            all { test ->
+                test.useJUnitPlatform()
             }
         }
     }
@@ -82,14 +82,14 @@ dependencies {
     implementation(project(":database:implementation"))
     implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
+    implementation(project(":resources"))
+    implementation(project(":screen:add-items"))
+    implementation(project(":screen:list-details"))
+    implementation(project(":screen:overview"))
     implementation(project(":support:async"))
     implementation(project(":support:lifecycle"))
-    implementation(project(":support:ui"))
     implementation(project(":support:theme"))
-    implementation(project(":resources"))
-    implementation(project(":screen:overview"))
-    implementation(project(":screen:list-details"))
-    implementation(project(":screen:add-items"))
+    implementation(project(":support:ui"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
@@ -99,16 +99,8 @@ dependencies {
     implementation(libs.androidx.lificycle.runtime)
     implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.compose.graphics)
-    implementation(libs.compose.material)
-    implementation(libs.compose.preview)
-    implementation(libs.compose.ui)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
-    implementation(libs.kotlinx.collections)
-
-    debugImplementation(libs.compose.test.manifest)
-    debugImplementation(libs.compose.tooling)
 
     testImplementation(project(":domain:test-data"))
     testImplementation(project(":support:async-unit-test"))

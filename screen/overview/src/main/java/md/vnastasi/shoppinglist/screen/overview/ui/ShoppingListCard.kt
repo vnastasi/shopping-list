@@ -28,7 +28,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
-fun ShoppingListCard(
+internal fun ShoppingListCard(
     list: ShoppingList,
     onClickItem: (ShoppingList) -> Unit = { },
     onDeleteItem: (ShoppingList) -> Unit = { }

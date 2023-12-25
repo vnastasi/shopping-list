@@ -37,8 +37,8 @@ android {
 
 dependencies {
 
-    implementation(project(":domain:api"))
     implementation(project(":database:implementation"))
+    implementation(project(":domain:api"))
 
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))

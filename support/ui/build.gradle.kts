@@ -40,9 +40,9 @@ dependencies {
     implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.collections)
-    implementation(libs.compose.material)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lificycle.runtime)
-    implementation(libs.androidx.lificycle.viewmodel.compose)
     implementation(libs.androidx.lificycle.runtime.compose)
+    implementation(libs.androidx.lificycle.viewmodel.compose)
+    implementation(libs.compose.material)
 }

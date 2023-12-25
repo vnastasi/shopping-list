@@ -31,12 +31,8 @@ android {
 
 dependencies {
 
-    implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.koin.android)
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lificycle.runtime)
-    implementation(libs.androidx.lificycle.viewmodel.compose)
     implementation(libs.androidx.lificycle.runtime.compose)
+    implementation(libs.androidx.lificycle.viewmodel.compose)
 }

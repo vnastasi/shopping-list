@@ -22,7 +22,14 @@ class ShoppingListApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@ShoppingListApplication)
-            modules(AsyncSupportModule(), DatabaseModule(), DomainModule(), OverviewScreenModule(), ListDetailsScreenModule(), AddItemsScreenModule())
+            modules(
+                AsyncSupportModule(),
+                DatabaseModule(),
+                DomainModule(),
+                OverviewScreenModule(),
+                ListDetailsScreenModule(),
+                AddItemsScreenModule()
+            )
         }
     }
 }

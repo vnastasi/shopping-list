@@ -26,7 +26,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class ListOverviewViewModelTest {
+internal class ListOverviewViewModelTest {
 
     private val mockShoppingListRepository = mock<ShoppingListRepository>()
 

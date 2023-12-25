@@ -19,7 +19,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
-class ListOverviewViewModel(
+class ListOverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
@@ -95,7 +95,7 @@ class ListOverviewViewModel(
         }
     }
 
-    class Factory(
+    class Factory internal constructor(
         private val shoppingListRepository: ShoppingListRepository,
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({

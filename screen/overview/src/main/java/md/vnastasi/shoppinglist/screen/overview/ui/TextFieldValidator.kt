@@ -1,6 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-class TextFieldValidator {
+internal class TextFieldValidator {
 
     fun validate(input: String): Error = when {
         input.isEmpty() -> Error.EMPTY

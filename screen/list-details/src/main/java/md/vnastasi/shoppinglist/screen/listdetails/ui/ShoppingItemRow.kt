@@ -24,7 +24,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
-fun ShoppingItemRow(
+internal fun ShoppingItemRow(
     shoppingItem: ShoppingItem,
     isLastItemInList: Boolean,
     onClick: (ShoppingItem) -> Unit

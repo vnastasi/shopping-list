@@ -35,8 +35,7 @@ android {
 
 dependencies {
 
-    implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.compose.bom))
-    implementation(libs.compose.material)
     implementation(libs.androidx.core)
+    implementation(libs.compose.material)
 }

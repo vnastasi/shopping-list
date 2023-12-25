@@ -26,7 +26,7 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun SearchBar(
+internal fun SearchBar(
     modifier: Modifier,
     searchTerm: MutableState<String>,
 ) {

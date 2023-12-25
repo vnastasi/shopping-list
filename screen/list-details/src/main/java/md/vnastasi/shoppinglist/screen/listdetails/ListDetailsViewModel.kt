@@ -23,7 +23,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
-class ListDetailsViewModel(
+class ListDetailsViewModel internal constructor(
     private val savedStateHandle: SavedStateHandle,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
@@ -68,7 +68,7 @@ class ListDetailsViewModel(
             .filterNotNull()
             .flatMapLatest(shoppingItemRepository::findAll)
 
-    class Factory(
+    class Factory internal constructor(
         private val shoppingListRepository: ShoppingListRepository,
         private val shoppingItemRepository: ShoppingItemRepository,
         private val dispatchersProvider: DispatchersProvider

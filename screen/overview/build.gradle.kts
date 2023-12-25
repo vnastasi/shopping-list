@@ -32,31 +32,38 @@ android {
         )
         jvmTarget = "17"
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            all { test ->
+                test.useJUnitPlatform()
+            }
+        }
+    }
 }
 
 dependencies {
 
     implementation(project(":domain:api"))
-    implementation(project(":support:async"))
-    implementation(project(":support:lifecycle"))
-    implementation(project(":support:ui"))
-    implementation(project(":support:theme"))
     implementation(project(":resources"))
+    implementation(project(":support:async"))
+    implementation(project(":support:theme"))
+    implementation(project(":support:ui"))
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lificycle.runtime)
     implementation(libs.androidx.lificycle.runtime.compose)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.graphics)
     implementation(libs.compose.material)
     implementation(libs.compose.preview)
     implementation(libs.compose.ui)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
     implementation(libs.kotlinx.collections)
 
     debugImplementation(libs.compose.test.manifest)
@@ -66,7 +73,6 @@ dependencies {
     testImplementation(project(":support:async-unit-test"))
 
     testImplementation(platform(libs.kotlinx.coroutines.bom))
-    testImplementation(libs.androidx.lificycle.test)
     testImplementation(libs.assertk)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.kotlin.reflect)

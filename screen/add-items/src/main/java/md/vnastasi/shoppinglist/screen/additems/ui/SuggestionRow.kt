@@ -30,7 +30,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
-fun SuggestionRow(
+internal fun SuggestionRow(
     suggestion: NameSuggestion,
     isLastItemInList: Boolean,
     isDeletable: Boolean,

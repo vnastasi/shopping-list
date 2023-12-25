@@ -27,7 +27,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
-class AddItemsViewModel(
+class AddItemsViewModel internal constructor(
     savedStateHandle: SavedStateHandle,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
@@ -94,7 +94,7 @@ class AddItemsViewModel(
         }
     }
 
-    class Factory(
+    class Factory internal constructor(
         private val nameSuggestionRepository: NameSuggestionRepository,
         private val shoppingListRepository: ShoppingListRepository,
         private val shoppingItemRepository: ShoppingItemRepository,

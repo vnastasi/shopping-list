@@ -29,7 +29,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class AddItemsViewModelTest {
+internal class AddItemsViewModelTest {
 
     private val mockNameSuggestionRepository = mock<NameSuggestionRepository>()
     private val mockShoppingListRepository = mock<ShoppingListRepository>()
