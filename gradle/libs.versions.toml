@@ -1,5 +1,12 @@
 [versions]
 
+project-compileSdk = "34"
+project-minSdk = "28"
+project-targetSdk = "34"
+project-version-code = "1"
+project-version-name = "1.0"
+project-application-id = "md.vnastasi.shoppinglist"
+
 android-cache-fix= "3.0"
 android-tools = "8.2.2"
 androidx-activity = "1.8.2"
@@ -62,12 +69,14 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-test = { module = "androidx.room:room-testing", version.ref = "room" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-tools" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
 
 [plugins]
 
 android-application = { id = "com.android.application", version.ref = "android-tools" }
 android-library = { id = "com.android.library", version.ref = "android-tools" }
-android-settings = { id = "com.android.library", version.ref = "android-tools" }
 android-cacheFix = { id = "org.gradle.android.cache-fix", version.ref = "android-cache-fix" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

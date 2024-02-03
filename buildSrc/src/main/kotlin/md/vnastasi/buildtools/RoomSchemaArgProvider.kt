@@ -1,7 +1,5 @@
 package md.vnastasi.buildtools
 
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
