@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -103,6 +104,28 @@ internal fun Project.configureComposeLibrary() {
     configureSimpleLibrary()
     extensions.configure<LibraryExtension> {
         configureCompose()
+    }
+}
+
+internal fun Project.configureComposeScreenLibrary() {
+    configureComposeLibrary()
+    configureTestableLibrary()
+    dependencies {
+        add("implementation", project(":domain:api"))
+        add("implementation", project(":resources"))
+        add("implementation", project(":support:async"))
+        add("implementation", project(":support:theme"))
+        add("implementation", project(":support:ui"))
+        add("implementation", platform(libs.findLibrary("compose-bom").get()))
+        add("implementation", platform(libs.findLibrary("kotlin-bom").get()))
+        add("implementation", platform(libs.findLibrary("kotlinx-coroutines-bom").get()))
+        add("implementation", libs.findLibrary("androidx-core").get())
+        add("implementation", libs.findLibrary("koin-android").get())
+        add("implementation", libs.findLibrary("kotlinx-collections").get())
+        add("implementation", libs.findBundle("compose-ui").get())
+        add("debugImplementation", libs.findBundle("compose-debug").get())
+        add("testImplementation", project(":domain:test-data"))
+        add("testImplementation", project(":support:async-unit-test"))
     }
 }
 

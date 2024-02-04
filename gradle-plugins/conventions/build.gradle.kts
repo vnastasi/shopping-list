@@ -37,6 +37,11 @@ gradlePlugin {
             implementationClass = "md.vnastasi.plugin.conventions.ComposeLibraryConventions"
         }
 
+        register("ComposeScreenLibraryConventions") {
+            id = "compose-screen-library.conventions"
+            implementationClass = "md.vnastasi.plugin.conventions.ComposeScreenLibraryConventions"
+        }
+
         register("ApplicationConventions") {
             id = "application.conventions"
             implementationClass = "md.vnastasi.plugin.conventions.ApplicationConventions"

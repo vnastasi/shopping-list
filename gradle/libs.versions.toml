@@ -84,3 +84,16 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 
 [bundles]
+
+compose-ui = [
+    "androidx-lificycle-runtime",
+    "androidx-lificycle-runtime-compose",
+    "compose-graphics",
+    "compose-material",
+    "compose-preview",
+    "compose-ui"
+]
+compose-debug = [
+    "compose-test-manifest",
+    "compose-tooling"
+]
