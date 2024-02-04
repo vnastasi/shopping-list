@@ -69,16 +69,7 @@ dependencies {
     testImplementation(project(":domain:test-data"))
     testImplementation(project(":support:async-unit-test"))
 
-    testImplementation(platform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.androidx.lificycle.test)
-    testImplementation(libs.assertk)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.turbine)
-
-    testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(project(":database:test-data"))
 

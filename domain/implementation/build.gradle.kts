@@ -19,14 +19,4 @@ dependencies {
 
     testImplementation(project(":database:test-data"))
     testImplementation(project(":domain:test-data"))
-
-    testImplementation(platform(libs.kotlinx.coroutines.bom))
-    testImplementation(libs.assertk)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.turbine)
-
-    testRuntimeOnly(libs.junit.jupiter.engine)
 }
