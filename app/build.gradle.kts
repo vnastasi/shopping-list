@@ -1,20 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("application.conventions")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "md.vnastasi.shoppinglist"
-    compileSdk = 34
 
     defaultConfig {
-        applicationId = "md.vnastasi.shoppinglist"
-        minSdk = 28
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = libs.versions.project.application.id.get()
+        targetSdk = libs.versions.project.targetSdk.get().toInt()
+        versionCode = libs.versions.project.version.code.get().toInt()
+        versionName = libs.versions.project.version.name.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -29,28 +26,6 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        freeCompilerArgs = listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
-        jvmTarget = "17"
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -61,17 +36,6 @@ android {
         getByName("androidTest") {
             assets {
                 srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
-            }
-        }
-    }
-
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-            all { test ->
-                test.useJUnitPlatform()
             }
         }
     }
@@ -105,16 +69,7 @@ dependencies {
     testImplementation(project(":domain:test-data"))
     testImplementation(project(":support:async-unit-test"))
 
-    testImplementation(platform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.androidx.lificycle.test)
-    testImplementation(libs.assertk)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.turbine)
-
-    testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(project(":database:test-data"))
 

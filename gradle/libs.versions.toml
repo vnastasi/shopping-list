@@ -1,18 +1,26 @@
 [versions]
 
-android-tools = "8.2.0"
-androidx-activity = "1.8.1"
+project-compileSdk = "34"
+project-minSdk = "28"
+project-targetSdk = "34"
+project-version-code = "1"
+project-version-name = "1.0"
+project-application-id = "md.vnastasi.shoppinglist"
+
+android-cache-fix= "3.0"
+android-tools = "8.2.2"
+androidx-activity = "1.8.2"
 androidx-core = "1.12.0"
-androidx-lifecycle = "2.6.2"
-androidx-navigation = "2.7.5"
+androidx-lifecycle = "2.7.0"
+androidx-navigation = "2.7.6"
 androidx-test-junit = "1.1.5"
 assertk = "0.27.0"
-compose-bom = "2023.10.01"
-compose-compiler = "1.5.6"
+compose-bom = "2024.01.00"
+compose-compiler = "1.5.8"
 espresso = "3.5.1"
 junit = "5.10.0"
 koin = "3.4.3"
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 kotlinx-collections = "0.3.6"
 kotlinx-coroutines = "1.7.3"
 ksp = "1.9.21-1.0.15"
@@ -61,14 +69,31 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-test = { module = "androidx.room:room-testing", version.ref = "room" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-tools" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
 
 [plugins]
 
 android-application = { id = "com.android.application", version.ref = "android-tools" }
 android-library = { id = "com.android.library", version.ref = "android-tools" }
+android-cacheFix = { id = "org.gradle.android.cache-fix", version.ref = "android-cache-fix" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 
 [bundles]
+
+compose-ui = [
+    "androidx-lificycle-runtime",
+    "androidx-lificycle-runtime-compose",
+    "compose-graphics",
+    "compose-material",
+    "compose-preview",
+    "compose-ui"
+]
+compose-debug = [
+    "compose-test-manifest",
+    "compose-tooling"
+]
