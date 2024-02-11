@@ -1,0 +1,44 @@
+name: Feature dev Workflow
+
+on:
+  push:
+    branches:
+      - "feature/*"
+
+jobs:
+  build:
+    name: "Build & Unit test"
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - run: echo "Checking out repository..."
+      - name: "Check out repository"
+        uses: actions/checkout@v3
+
+      - run: echo "Setting up Java..."
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: gradle
+
+      - run: echo "Granting execution permission to Gradle..."
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - run: echo "Assembling application variants..."
+      - name: "Assemble application"
+        run: ./gradlew assemble
+
+      - run: echo "Running unit tests for release variant..."
+      - name: "Unit tests"
+        run: ./gradlew testReleaseUnitTest
