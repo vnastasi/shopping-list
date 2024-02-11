@@ -32,7 +32,10 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
-          cache: gradle
+
+      - run: "Setting up Gradle..."
+      - name: "Set up Gradle"
+        uses: gradle/gradle-build-action@v2
 
       - run: echo "Granting execution permission to Gradle..."
       - name: "Grant permissions"
