@@ -22,33 +22,26 @@ jobs:
           echo "Operating system ${{ runner.os }}"
           echo "Architecture ${{ runner.arch }}"
 
-      - run: echo "Checking out repository..."
       - name: "Check out repository"
         uses: actions/checkout@v3
 
-      - run: echo "Setting up Java..."
       - name: "Set up Java"
         uses: actions/setup-java@v3
         with:
           java-version: "17"
           distribution: "temurin"
 
-      - run: "Setting up Gradle..."
       - name: "Set up Gradle"
         uses: gradle/gradle-build-action@v2
 
-      - run: echo "Granting execution permission to Gradle..."
       - name: "Grant permissions"
         run: chmod +x gradlew
 
-      - run: echo "Assembling application variants..."
       - name: "Assemble application"
         run: ./gradlew assemble
 
-      - run: echo "Running unit tests for release variant..."
       - name: "Unit tests"
         run: ./gradlew testReleaseUnitTest
 
-      - run: echo "Building instrumentation tests..."
       - name: "Build instrumentation tests"
         run: ./gradlew assembleAndroidTest
