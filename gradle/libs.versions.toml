@@ -7,7 +7,7 @@ project-version-code = "1"
 project-version-name = "1.0"
 project-application-id = "md.vnastasi.shoppinglist"
 
-android-cache-fix= "3.0"
+android-cache-fix= "3.0.1"
 android-tools = "8.2.2"
 androidx-activity = "1.8.2"
 androidx-core = "1.12.0"
