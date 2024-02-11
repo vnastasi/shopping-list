@@ -10,3 +10,42 @@
         include: scope
       reviewers:
         - vnastasi
+      groups:
+        kotlin:
+          dependency-type: development
+          patterns:
+            - "org.jetbrains.kotlin*"
+        kotlin-coroutines:
+          dependency-type: development
+          patterns:
+            - "org.jetbrains.kotlinx:kotlinx-coroutines*"
+        other-kotlin-libraries:
+          dependency-type: development
+          patterns:
+            - "org.jetbrains.kotlinx:kotlinx-collections*"
+        unit-test-libraries:
+          dependency-type: development
+          patterns:
+            - "org.junit.jupiter*"
+            - "com.willowtreeapps.assertk*"
+            - "org.mockito*"
+            - "app.cash.turbine*"
+        koin:
+          dependency-type: development
+          patterns:
+            - "io.insert-koin*"
+        compose:
+          dependency-type: development
+          patterns:
+            - "androidx.compose*"
+        other-androidx-libraries:
+          dependency-type: development
+          patterns:
+            - "androidx*"
+          exclude-patterns:
+            - "androidx.compose*"
+            - "androidx.test.espresso*"
+        ui-test-libraries:
+          dependency-type: development
+          patterns:
+            - "androidx.test.espresso*"
