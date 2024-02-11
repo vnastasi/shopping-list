@@ -3,7 +3,7 @@ name: Feature pull request Workflow
 on:
   pull_request_target:
     branches:
-      - "feature/*"
+      - "main"
     types:
       - opened
       - synchronize
