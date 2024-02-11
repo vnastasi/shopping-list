@@ -1,9 +1,12 @@
-name: Feature dev Workflow
+name: Feature pull request Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - "feature/*"
+    types:
+      - opened
+      - synchronize
 
 jobs:
   build:
@@ -42,3 +45,7 @@ jobs:
       - run: echo "Running unit tests for release variant..."
       - name: "Unit tests"
         run: ./gradlew testReleaseUnitTest
+
+      - run: echo "Building instrumentation tests..."
+      - name: "Build instrumentation tests"
+        run: ./gradlew assembleAndroidTest
