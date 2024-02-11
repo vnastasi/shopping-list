@@ -24,7 +24,7 @@ kotlin = "1.9.22"
 kotlinx-collections = "0.3.6"
 kotlinx-coroutines = "1.7.3"
 ksp = "1.9.21-1.0.15"
-mockito = "5.1.0"
+mockito = "5.2.1"
 room = "2.6.1"
 turbine = "1.0.0"
 
