@@ -17,6 +17,7 @@ androidx-test-junit = "1.1.5"
 assertk = "0.28.0"
 compose-bom = "2024.01.00"
 compose-compiler = "1.5.8"
+detekt = "1.23.5"
 espresso = "3.5.1"
 junit = "5.10.2"
 koin = "3.5.3"
@@ -78,6 +79,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 android-application = { id = "com.android.application", version.ref = "android-tools" }
 android-library = { id = "com.android.library", version.ref = "android-tools" }
 android-cacheFix = { id = "org.gradle.android.cache-fix", version.ref = "android-cache-fix" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

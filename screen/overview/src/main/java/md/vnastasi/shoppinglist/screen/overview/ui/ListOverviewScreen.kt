@@ -62,7 +62,7 @@ fun ListOverviewScreen(
 }
 
 @Stable
-private class Events(
+private data class Events(
     val onAddNewShoppingList: () -> Unit,
     val onShoppingListSaved: (String) -> Unit,
     val onShoppingListDeleted: (ShoppingList) -> Unit,

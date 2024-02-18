@@ -21,7 +21,7 @@ class MigrationFrom1To2 : Migration(1, 2) {
         );
     """.trimIndent()
 
-        private val CREATE_INDEX = "CREATE UNIQUE INDEX IF NOT EXISTS `idx_name_suggestions_value` ON `name_suggestions` (`value`)"
+        private const val CREATE_INDEX = "CREATE UNIQUE INDEX IF NOT EXISTS `idx_name_suggestions_value` ON `name_suggestions` (`value`)"
 
         private val TRANSFER_EXISTING_NAMES_SQL = """
         INSERT INTO `name_suggestions` (`value`)
