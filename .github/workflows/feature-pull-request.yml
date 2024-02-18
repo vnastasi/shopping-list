@@ -45,3 +45,6 @@ jobs:
 
       - name: "Build instrumentation tests"
         run: ./gradlew assembleAndroidTest
+
+      - name: "Code quality"
+        run: ./gradlew detekt
