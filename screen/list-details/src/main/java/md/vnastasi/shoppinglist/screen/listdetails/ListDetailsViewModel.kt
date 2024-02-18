@@ -42,7 +42,7 @@ class ListDetailsViewModel internal constructor(
             )
         }.stateIn(
             scope = viewModelScope + dispatchersProvider.MainImmediate,
-            started = SharingStarted.WhileSubscribed(100L),
+            started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
             initialValue = ViewState.Init
         )
 
@@ -81,5 +81,7 @@ class ListDetailsViewModel internal constructor(
     companion object {
 
         const val ARG_KEY_SHOPPING_LIST_ID = "SHOPPING_LIST_ID"
+
+        private const val FLOW_SUBSCRIPTION_TIMEOUT = 100L
     }
 }

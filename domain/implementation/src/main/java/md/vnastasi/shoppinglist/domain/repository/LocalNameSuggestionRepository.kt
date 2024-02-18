@@ -8,13 +8,15 @@ import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.db.model.NameSuggestion as NameSuggestionEntity
 
+private const val MIN_CHARACTER_THRESHOLD = 3
+
 internal class LocalNameSuggestionRepository(
     private val nameSuggestionDao: NameSuggestionDao
 ) : NameSuggestionRepository {
 
     override fun findAllMatching(searchTerm: String): Flow<List<NameSuggestion>> = when {
         searchTerm.isEmpty() -> flowOf(emptyList())
-        searchTerm.length < 3 -> flowOf(listOf(NameSuggestion(-1L, searchTerm)))
+        searchTerm.length < MIN_CHARACTER_THRESHOLD -> flowOf(listOf(NameSuggestion(-1L, searchTerm)))
         else -> combine(searchTerm)
     }
 
