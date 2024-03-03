@@ -32,6 +32,10 @@ jobs:
         run: chmod +x gradlew
       - name: "Assemble application"
         run: ./gradlew assemble
+      - name: "Assemble instrumented test application"
+        run: ./gradlew assembleAndroidTest
+      - name: "Assemble unit tests"
+        run: ./gradlew assembleReleaseUnitTest
   unit-tests:
     name: "Unit tests"
     runs-on: ubuntu-latest
@@ -57,8 +61,6 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: "Grant permissions"
         run: chmod +x gradlew
-      - name: "Assemble unit tests"
-        run: ./gradlew assembleReleaseUnitTest
       - name: "Run unit tests"
         run: ./gradlew testReleaseUnitTest
   instrumented-tests:
@@ -114,8 +116,6 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: echo "Generated emulator snapshot."
-      - name: "Assemble instrumented test application"
-        run: ./gradlew assembleAndroidTest
       - name: "Run instrumented tests"
         uses: reactivecircus/android-emulator-runner@v2
         with:
