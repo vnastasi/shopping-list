@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        api-level: [ 30 ]
+        api-level: [ 34 ]
 
     steps:
 
