@@ -56,7 +56,7 @@ jobs:
       - name: "Assemble instrumented test application"
         run: ./gradlew assembleAndroidTest
 
-      - name: "Setup emulator caching"
+      - name: "Set up emulator caching"
         uses: actions/cache@v4
         id: avd-cache
         with:
@@ -76,13 +76,13 @@ jobs:
           script: echo "Generated emulator snapshot."
 
       - name: "Run instrumented tests"
-        uses: ReactiveCircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: google_apis
-          arch: x86_64
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: ./gradlew connectedDebugAndroidTest
+          disable-animations: true
+          script: ./gradlew connectedCheck
 
       - name: "Code quality"
         run: ./gradlew detekt
