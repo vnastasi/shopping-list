@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist.support.async"
+    namespace = "md.vnastasi.shoppinglist.support.async.test"
 }
 
 dependencies {

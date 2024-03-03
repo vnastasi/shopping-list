@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist.domain"
+    namespace = "md.vnastasi.shoppinglist.domain.impl"
 }
 
 dependencies {

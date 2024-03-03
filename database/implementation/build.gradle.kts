@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist.db"
+    namespace = "md.vnastasi.shoppinglist.db.impl"
 
     ksp {
         arg(roomSchemaDir(file("${layout.projectDirectory}/schemas")))
