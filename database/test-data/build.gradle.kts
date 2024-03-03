@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist.db"
+    namespace = "md.vnastasi.shoppinglist.db.test"
 }
 
 dependencies {
