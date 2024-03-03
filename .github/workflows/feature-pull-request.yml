@@ -22,6 +22,12 @@ jobs:
           echo "Operating system ${{ runner.os }}"
           echo "Architecture ${{ runner.arch }}"
 
+      - name: "Enable hardware acceleration"
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: "Check out repository"
         uses: actions/checkout@v3
 
@@ -49,7 +55,7 @@ jobs:
       - name: "Run instrumented tests"
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 30
           target: google_apis
           arch: x86_64
           script: ./gradlew connectedDebugAndroidTest
