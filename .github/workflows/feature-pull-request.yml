@@ -27,6 +27,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Assemble application"
@@ -53,6 +54,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Assemble unit tests"
@@ -90,6 +92,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Set up emulator caching"
@@ -145,6 +148,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Detekt"
