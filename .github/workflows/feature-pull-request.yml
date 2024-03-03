@@ -25,6 +25,8 @@ jobs:
           distribution: "temurin"
       - name: "Set up Gradle"
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Assemble application"
@@ -49,6 +51,8 @@ jobs:
           distribution: "temurin"
       - name: "Set up Gradle"
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Assemble unit tests"
@@ -84,6 +88,8 @@ jobs:
           distribution: "temurin"
       - name: "Set up Gradle"
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Set up emulator caching"
@@ -137,6 +143,8 @@ jobs:
           distribution: "temurin"
       - name: "Set up Gradle"
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Detekt"
