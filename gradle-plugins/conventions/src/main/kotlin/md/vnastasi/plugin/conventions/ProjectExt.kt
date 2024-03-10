@@ -31,7 +31,7 @@ internal fun Project.configureKotlin() {
 }
 
 context(Project)
-internal fun CommonExtension<*, *, *, *, *>.configureAndroid() {
+internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid() {
     compileSdk = libs.findVersion("project-compileSdk").get().requiredVersion.toInt()
 
     defaultConfig {
@@ -44,7 +44,7 @@ internal fun CommonExtension<*, *, *, *, *>.configureAndroid() {
     }
 }
 
-internal fun CommonExtension<*, *, *, *, *>.configureUnitTests() {
+internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests {
@@ -58,7 +58,7 @@ internal fun CommonExtension<*, *, *, *, *>.configureUnitTests() {
 }
 
 context(Project)
-internal fun CommonExtension<*, *, *, *, *>.configureCompose() {
+internal fun CommonExtension<*, *, *, *, *, *>.configureCompose() {
     buildFeatures {
         compose = true
     }
