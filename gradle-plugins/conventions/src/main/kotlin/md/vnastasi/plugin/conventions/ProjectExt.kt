@@ -21,9 +21,6 @@ internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_17.toString()
-            freeCompilerArgs = freeCompilerArgs + setOf(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            )
         }
     }
 }
@@ -150,4 +147,23 @@ internal fun Project.configureApplication() {
 
     addUnitTestDependencies()
     configureKotlin()
+}
+
+internal fun Project.includeOptIns() {
+    val optIns = mutableSetOf<String>()
+    if (configurations.any { it.dependencies.contains(libs.findLibrary("kotlinx-coroutines-bom").get().get()) }) {
+        optIns += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+    }
+    if (configurations.any { it.dependencies.contains(libs.findLibrary("compose-ui").get().get()) }) {
+        optIns += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+    }
+    if (configurations.any { it.dependencies.contains(libs.findLibrary("compose-material").get().get()) }) {
+        optIns += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+    }
+
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + optIns
+        }
+    }
 }
