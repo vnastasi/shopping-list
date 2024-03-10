@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("compose-library.conventions")
 }
@@ -18,4 +20,13 @@ dependencies {
     implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.lificycle.viewmodel.compose)
     implementation(libs.compose.material)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + setOf(
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
+    }
 }
