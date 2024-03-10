@@ -21,9 +21,6 @@ internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_17.toString()
-            freeCompilerArgs = freeCompilerArgs + setOf(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            )
         }
     }
 }
@@ -125,15 +122,6 @@ internal fun Project.configureComposeScreenLibrary() {
         add("debugImplementation", libs.findBundle("compose-debug").get())
         add("testImplementation", project(":domain:test-data"))
         add("testImplementation", project(":support:async-unit-test"))
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + setOf(
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-            )
-        }
     }
 }
 
