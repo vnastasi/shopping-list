@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,7 +63,7 @@ internal fun ShoppingItemRow(
             }
 
             if (!isLastItemInList) {
-                Divider(
+                HorizontalDivider(
                     thickness = AppDimensions.divider
                 )
             }

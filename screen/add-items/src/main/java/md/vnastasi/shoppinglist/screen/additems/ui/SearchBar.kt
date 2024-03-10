@@ -32,13 +32,14 @@ internal fun SearchBar(
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
         modifier = modifier
             .indicatorLine(
                 enabled = true,
                 isError = false,
-                interactionSource = MutableInteractionSource(),
+                interactionSource = interactionSource,
                 colors = TextFieldDefaults.colors()
             ),
         value = searchTerm.value,

@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -23,8 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
@@ -89,7 +89,7 @@ internal fun SuggestionRow(
             }
 
             if (!isLastItemInList) {
-                Divider(
+                HorizontalDivider(
                     thickness = AppDimensions.divider
                 )
             }
