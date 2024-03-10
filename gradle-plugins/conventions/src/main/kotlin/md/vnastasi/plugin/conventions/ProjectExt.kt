@@ -21,11 +21,6 @@ internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_17.toString()
-            freeCompilerArgs = freeCompilerArgs + setOf(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-            )
         }
     }
 }
@@ -110,6 +105,7 @@ internal fun Project.configureComposeLibrary() {
 internal fun Project.configureComposeScreenLibrary() {
     configureComposeLibrary()
     configureTestableLibrary()
+
     dependencies {
         add("implementation", project(":domain:api"))
         add("implementation", project(":resources"))

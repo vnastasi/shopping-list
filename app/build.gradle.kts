@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("application.conventions")
     alias(libs.plugins.kotlin.parcelize)
@@ -81,4 +83,12 @@ dependencies {
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.turbine)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + setOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        )
+    }
 }
