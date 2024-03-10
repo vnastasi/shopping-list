@@ -7,6 +7,5 @@ class SimpleLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.configureSimpleLibrary()
-        target.includeOptIns()
     }
 }

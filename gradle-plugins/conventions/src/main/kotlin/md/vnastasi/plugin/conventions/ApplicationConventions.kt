@@ -7,6 +7,5 @@ class ApplicationConventions : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.configureApplication()
-        target.includeOptIns()
     }
 }

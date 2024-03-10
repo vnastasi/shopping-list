@@ -7,6 +7,5 @@ class TestableLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.configureTestableLibrary()
-        target.includeOptIns()
     }
 }

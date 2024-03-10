@@ -7,6 +7,5 @@ class ComposeScreenLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.configureComposeScreenLibrary()
-        target.includeOptIns()
     }
 }
