@@ -3,7 +3,7 @@ package md.vnastasi.shoppinglist.db.migration
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-class MigrationFrom2To3 : Migration(2, 3) {
+class MigrationFrom2To3 : Migration(startVersion = 2, endVersion = 3) {
 
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(CREATE_INDEX)
