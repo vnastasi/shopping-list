@@ -27,7 +27,7 @@ kotlinx-coroutines = "1.8.0"
 ksp = "1.9.22-1.0.18"
 mockito = "5.2.1"
 room = "2.6.1"
-turbine = "1.0.0"
+turbine = "1.1.0"
 
 
 [libraries]
