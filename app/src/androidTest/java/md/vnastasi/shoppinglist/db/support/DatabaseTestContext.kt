@@ -5,13 +5,10 @@ import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import md.vnastasi.shoppinglist.db.ShoppingListDatabase
 
 private val loggableSqlQueryCallback = RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
@@ -19,19 +16,17 @@ private val loggableSqlQueryCallback = RoomDatabase.QueryCallback { sqlQuery, bi
 }
 
 fun runDatabaseTest(block: suspend TestScope.(ShoppingListDatabase) -> Unit) = runTest {
-    val dispatcher = UnconfinedTestDispatcher(testScheduler)
-    Dispatchers.setMain(dispatcher)
+    val context = ApplicationProvider.getApplicationContext<Application>()
+    val executor = UnconfinedTestDispatcher(testScheduler).asExecutor()
+    val database = Room.inMemoryDatabaseBuilder(context, ShoppingListDatabase::class.java)
+        .setQueryExecutor(executor)
+        .setTransactionExecutor(executor)
+        .setQueryCallback(loggableSqlQueryCallback, executor)
+        .build()
 
     try {
-        val context = ApplicationProvider.getApplicationContext<Application>()
-        val database = Room.inMemoryDatabaseBuilder(context, ShoppingListDatabase::class.java)
-            .setQueryCallback(loggableSqlQueryCallback, dispatcher.asExecutor())
-            .build()
-
         block.invoke(this, database)
-
-        database.close()
     } finally {
-        Dispatchers.resetMain()
+        database.close()
     }
 }
