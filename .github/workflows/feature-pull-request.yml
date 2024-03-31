@@ -6,6 +6,9 @@ on:
     types:
       - opened
       - synchronize
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   assemble:
     name: "Assemble project"
@@ -153,3 +156,19 @@ jobs:
         run: chmod +x gradlew
       - name: "Detekt"
         run: ./gradlew detekt
+  dependabot:
+    name: "Dependabot auto-merge"
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    needs:
+      - assemble
+      - unit-tests
+      - instrumented-tests
+      - code-quality
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v3
+      - name: "Auto-merge Dependabot PR"
+        run: 'PR_NUM="$(gh pr list | grep $(git branch --show-current) | cut -f1)"; gh pr merge --auto --squash $PR_NUM'
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

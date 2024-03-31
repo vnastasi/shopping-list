@@ -5,8 +5,3 @@
       schedule:
         interval: weekly
       target-branch: "main"
-      commit-message:
-        prefix: "[Dependabot]"
-        include: scope
-      reviewers:
-        - vnastasi
