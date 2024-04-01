@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.additems
+package md.vnastasi.shoppinglist.screen.additems.model
 
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 

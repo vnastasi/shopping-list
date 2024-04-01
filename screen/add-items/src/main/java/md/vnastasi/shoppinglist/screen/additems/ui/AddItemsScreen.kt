@@ -29,16 +29,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.additems.AddItemsScreenNavigator
-import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
-import md.vnastasi.shoppinglist.screen.additems.UiEvent
-import md.vnastasi.shoppinglist.screen.additems.ViewState
+import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
+import md.vnastasi.shoppinglist.screen.additems.model.ViewState
+import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
+import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun AddItemsScreen(
-    viewModel: AddItemsViewModel,
+    viewModel: AddItemsViewModelSpec,
     navigator: AddItemsScreenNavigator
 ) {
     AddItemsScreen(
