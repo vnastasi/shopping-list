@@ -1,17 +1,15 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
 import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Environment
 import app.cash.paparazzi.Paparazzi
-import app.cash.paparazzi.detectEnvironment
 import com.android.ide.common.rendering.api.SessionParams
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewScreenNavigator
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewViewModelSpec
-import md.vnastasi.shoppinglist.screen.overview.UiEvent
-import md.vnastasi.shoppinglist.screen.overview.ViewState
+import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
+import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import org.junit.Rule
 import org.junit.Test
 

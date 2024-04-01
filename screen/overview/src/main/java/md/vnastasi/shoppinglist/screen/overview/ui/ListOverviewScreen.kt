@@ -31,11 +31,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewScreenNavigator
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewViewModelSpec
-import md.vnastasi.shoppinglist.screen.overview.NavigationTarget
-import md.vnastasi.shoppinglist.screen.overview.UiEvent
-import md.vnastasi.shoppinglist.screen.overview.ViewState
+import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
+import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
+import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour

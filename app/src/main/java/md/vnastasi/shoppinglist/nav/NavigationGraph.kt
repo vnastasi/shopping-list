@@ -9,7 +9,7 @@ import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewViewModel
+import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.ListOverviewScreen
 import md.vnastasi.shoppinglist.support.lifecycle.viewModel
 import org.koin.compose.koinInject
@@ -27,10 +27,11 @@ fun NavigationGraph() {
         composable(
             route = Routes.ListOverview.path
         ) {
+            val viewModel = viewModel<ListOverviewViewModel>(
+                factory = koinInject<ListOverviewViewModel.Factory>()
+            )
             ListOverviewScreen(
-                viewModel = viewModel(
-                    factory = koinInject<ListOverviewViewModel.Factory>()
-                ),
+                viewModel = viewModel,
                 navigator = ScreenNavigators.overview(navController)
             )
         }

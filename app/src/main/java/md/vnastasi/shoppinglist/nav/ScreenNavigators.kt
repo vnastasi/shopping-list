@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import md.vnastasi.shoppinglist.screen.additems.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsScreenNavigator
-import md.vnastasi.shoppinglist.screen.overview.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
 
 object ScreenNavigators {
 
