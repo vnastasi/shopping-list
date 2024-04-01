@@ -7,7 +7,7 @@ import assertk.assertions.isDataClassEqualTo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_NAME
@@ -18,7 +18,6 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
-import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
@@ -50,7 +49,7 @@ internal class ListDetailsViewModelTest {
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(emptyList()))
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
+        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState(
@@ -80,7 +79,7 @@ internal class ListDetailsViewModelTest {
         whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
+        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState(
@@ -109,7 +108,7 @@ internal class ListDetailsViewModelTest {
         }
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
-        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -136,7 +135,7 @@ internal class ListDetailsViewModelTest {
         }
         whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
 
-        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -147,13 +146,11 @@ internal class ListDetailsViewModelTest {
         }
     }
 
-    private fun createViewModel(
-        scheduler: TestCoroutineScheduler,
-        initialState: Map<String, Any?> = emptyMap()
-    ) = ListDetailsViewModel(
+    context(TestScope)
+    private fun createViewModel(initialState: Map<String, Any?> = emptyMap()) = ListDetailsViewModel(
         savedStateHandle = SavedStateHandle(initialState),
         shoppingListRepository = mockShoppingListRepository,
         shoppingItemRepository = mockShoppingItemRepository,
-        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(scheduler))
+        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
     )
 }
