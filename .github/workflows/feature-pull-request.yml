@@ -36,11 +36,11 @@ jobs:
       - name: "Assemble application"
         run: ./gradlew assemble
       - name: "Assemble instrumented test application"
-        run: ./gradlew assembleAndroidTest
+        run: ./gradlew assembleDebugAndroidTest
       - name: "Assemble unit tests"
-        run: ./gradlew assembleReleaseUnitTest
+        run: ./gradlew assembleDebugUnitTest
   unit-tests:
-    name: "Unit tests"
+    name: "Unit and screenshot tests"
     runs-on: ubuntu-latest
     needs:
       - assemble
@@ -65,7 +65,9 @@ jobs:
       - name: "Grant permissions"
         run: chmod +x gradlew
       - name: "Run unit tests"
-        run: ./gradlew testReleaseUnitTest
+        run: ./gradlew testDebugUnitTest
+      - name: "Run screenshot tests"
+        run: ./gradlew verifyPaparazziDebug
   instrumented-tests:
     name: "Instrumented tests"
     runs-on: ubuntu-latest
