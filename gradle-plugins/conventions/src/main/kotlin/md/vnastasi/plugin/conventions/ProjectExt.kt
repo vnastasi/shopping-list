@@ -5,6 +5,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
@@ -40,7 +41,12 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
-            all { it.useJUnitPlatform() }
+            all { test ->
+                test.useJUnitPlatform()
+                test.testLogging {
+                    exceptionFormat = TestExceptionFormat.FULL
+                }
+            }
         }
     }
 }
