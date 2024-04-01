@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("compose-screen-library.conventions")
+    alias(libs.plugins.paparazzi)
 }
 
 android {

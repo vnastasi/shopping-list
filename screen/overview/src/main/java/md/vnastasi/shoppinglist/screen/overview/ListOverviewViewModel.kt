@@ -22,10 +22,10 @@ import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 class ListOverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), ListOverviewViewModelSpec {
 
     private val _screenState = MutableStateFlow(ViewState.Init)
-    val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
+    override val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
 
     init {
         viewModelScope.launch(dispatchersProvider.Main) {
@@ -37,7 +37,7 @@ class ListOverviewViewModel internal constructor(
         }
     }
 
-    fun onUiEvent(uiEvent: UiEvent) {
+    override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.AddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.ShoppingListSaved -> onShoppingListSaved(uiEvent.name)

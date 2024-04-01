@@ -46,7 +46,9 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
             all {
-                it.useJUnitPlatform()
+                it.useJUnitPlatform {
+                    includeEngines = setOf("junit-jupiter", "junit-vintage")
+                }
             }
         }
     }
@@ -73,6 +75,7 @@ internal fun Project.addUnitTestDependencies() {
         add("testImplementation", libs.findLibrary("mockito-kotlin").get())
         add("testImplementation", libs.findLibrary("turbine").get())
         add("testRuntimeOnly", libs.findLibrary("junit-jupiter-engine").get())
+        add("testRuntimeOnly", libs.findLibrary("junit-vintage-engine").get())
     }
 }
 
