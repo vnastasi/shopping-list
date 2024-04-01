@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listdetails
+package md.vnastasi.shoppinglist.screen.listdetails.vm
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -21,6 +21,8 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
+import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class ListDetailsViewModel internal constructor(
@@ -28,25 +30,21 @@ class ListDetailsViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
     private val dispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), ListDetailsViewModelSpec {
 
-    val screenState: StateFlow<ViewState> =
-        combine(
-            getShoppingList(),
-            getListOfShoppingItems()
-        ) { shoppingList, listOfShoppingItems ->
-            ViewState(
-                shoppingListId = shoppingList.id,
-                shoppingListName = shoppingList.name,
-                listOfShoppingItems = listOfShoppingItems.toImmutableList()
-            )
-        }.stateIn(
-            scope = viewModelScope + dispatchersProvider.MainImmediate,
-            started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-            initialValue = ViewState.Init
+    override val screenState: StateFlow<ViewState> = combine(getShoppingList(), getListOfShoppingItems()) { shoppingList, listOfShoppingItems ->
+        ViewState(
+            shoppingListId = shoppingList.id,
+            shoppingListName = shoppingList.name,
+            listOfShoppingItems = listOfShoppingItems.toImmutableList()
         )
+    }.stateIn(
+        scope = viewModelScope + dispatchersProvider.MainImmediate,
+        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
+        initialValue = ViewState.Init
+    )
 
-    fun onUiEvent(event: UiEvent) {
+    override fun onUiEvent(event: UiEvent) {
         when (event) {
             is UiEvent.ShoppingItemClicked -> onShoppingItemClicked(event.shoppingItem)
         }

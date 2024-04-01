@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.additems
+package md.vnastasi.shoppinglist.screen.additems.vm
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -24,6 +24,8 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
+import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
@@ -33,16 +35,16 @@ class AddItemsViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
     private val dispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), AddItemsViewModelSpec {
 
     private val _screenState = MutableStateFlow(ViewState.init())
-    val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
+    override val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
 
     private val shoppingList = savedStateHandle.getStateFlow(ARG_KEY_SHOPPING_LIST_ID, Long.MIN_VALUE)
         .filter { it != Long.MIN_VALUE }
         .flatMapConcat { shoppingListRepository.findById(it) }
 
-    fun onUiEvent(uiEvent: UiEvent) {
+    override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.SearchTermChanged -> onSearchTermChanged(uiEvent.newSearchTerm)
             is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)

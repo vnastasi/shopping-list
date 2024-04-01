@@ -32,6 +32,11 @@ gradlePlugin {
             implementationClass = "md.vnastasi.plugin.conventions.TestableLibraryConventions"
         }
 
+        register("ScreenshotTestableLibraryConventions") {
+            id = "screenshot-testable-library.conventions"
+            implementationClass = "md.vnastasi.plugin.conventions.ScreenshotTestableLibraryConventions"
+        }
+
         register("ComposeLibraryConventions") {
             id = "compose-library.conventions"
             implementationClass = "md.vnastasi.plugin.conventions.ComposeLibraryConventions"

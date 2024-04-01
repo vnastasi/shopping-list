@@ -9,7 +9,7 @@ import assertk.assertions.prop
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_ID
@@ -19,6 +19,9 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
+import md.vnastasi.shoppinglist.screen.additems.model.ViewState
+import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
@@ -49,7 +52,7 @@ internal class AddItemsViewModelTest {
         whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
         whenever(mockNameSuggestionRepository.findAllMatching(searchTerm)).doReturn(flowOf(listOf(suggestion)))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.screenState.test {
             skipItems(1)
 
@@ -73,7 +76,7 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(shoppingList))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.screenState.test {
             skipItems(1)
 
@@ -101,7 +104,7 @@ internal class AddItemsViewModelTest {
 
         val suggestion = NameSuggestion(name = "Milk")
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.screenState.test {
             skipItems(1)
 
@@ -128,7 +131,7 @@ internal class AddItemsViewModelTest {
 
         val suggestion = NameSuggestion(name = "Milk")
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.screenState.test {
             skipItems(1)
 
@@ -142,11 +145,12 @@ internal class AddItemsViewModelTest {
         }
     }
 
-    private fun createViewModel(scheduler: TestCoroutineScheduler) = AddItemsViewModel(
+    context(TestScope)
+    private fun createViewModel() = AddItemsViewModel(
         savedStateHandle = SavedStateHandle(mapOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to DEFAULT_SHOPPING_LIST_ID)),
         nameSuggestionRepository = mockNameSuggestionRepository,
         shoppingItemRepository = mockShoppingItemRepository,
         shoppingListRepository = mockShoppingListRepository,
-        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(scheduler))
+        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
     )
 }

@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.additems
+package md.vnastasi.shoppinglist.screen.additems.nav
 
 interface AddItemsScreenNavigator {
 

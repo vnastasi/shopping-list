@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview
+package md.vnastasi.shoppinglist.screen.overview.vm
 
 import app.cash.turbine.test
 import assertk.assertThat
@@ -7,13 +7,16 @@ import assertk.assertions.isEqualTo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.TestData
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
+import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
@@ -40,7 +43,7 @@ internal class ListOverviewViewModelTest {
     fun screenStateWithNoLists() = runTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        createViewModel(testScheduler).screenState.test {
+        createViewModel().screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf()))
             cancelAndConsumeRemainingEvents()
         }
@@ -58,7 +61,7 @@ internal class ListOverviewViewModelTest {
         val shoppingList = TestData.createShoppingList()
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingList)))
 
-        createViewModel(testScheduler).screenState.test {
+        createViewModel().screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingList)))
             cancelAndConsumeRemainingEvents()
@@ -75,7 +78,7 @@ internal class ListOverviewViewModelTest {
     fun onAddNewShoppingList() = runTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
         viewModel.screenState.test {
@@ -100,7 +103,7 @@ internal class ListOverviewViewModelTest {
         val shoppingListName = "new list here"
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName))
         advanceUntilIdle()
 
@@ -123,7 +126,7 @@ internal class ListOverviewViewModelTest {
         }
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList))
 
         viewModel.screenState.test {
@@ -148,7 +151,7 @@ internal class ListOverviewViewModelTest {
         val shoppingList = TestData.createShoppingList()
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList))
         advanceUntilIdle()
 
@@ -165,7 +168,7 @@ internal class ListOverviewViewModelTest {
     fun onNavigationPerformed() = runTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
 
         viewModel.screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -197,7 +200,7 @@ internal class ListOverviewViewModelTest {
     fun onToastShown() = runTest {
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
 
         viewModel.screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -218,8 +221,9 @@ internal class ListOverviewViewModelTest {
         }
     }
 
-    private fun createViewModel(scheduler: TestCoroutineScheduler) = ListOverviewViewModel(
+    context(TestScope)
+    private fun createViewModel() = ListOverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
-        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(scheduler))
+        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
     )
 }

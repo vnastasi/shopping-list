@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview
+package md.vnastasi.shoppinglist.screen.overview.model
 
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList

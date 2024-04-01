@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview
+package md.vnastasi.shoppinglist.screen.overview.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,16 +16,19 @@ import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
+import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
 class ListOverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
-) : ViewModel() {
+) : ViewModel(), ListOverviewViewModelSpec {
 
     private val _screenState = MutableStateFlow(ViewState.Init)
-    val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
+    override val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
 
     init {
         viewModelScope.launch(dispatchersProvider.Main) {
@@ -37,7 +40,7 @@ class ListOverviewViewModel internal constructor(
         }
     }
 
-    fun onUiEvent(uiEvent: UiEvent) {
+    override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.AddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.ShoppingListSaved -> onShoppingListSaved(uiEvent.name)
