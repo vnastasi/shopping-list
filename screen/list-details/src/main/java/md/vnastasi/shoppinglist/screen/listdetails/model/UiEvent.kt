@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listdetails
+package md.vnastasi.shoppinglist.screen.listdetails.model
 
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 

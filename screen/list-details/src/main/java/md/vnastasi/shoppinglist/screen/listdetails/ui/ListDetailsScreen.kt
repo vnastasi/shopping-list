@@ -27,15 +27,15 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsScreenNavigator
-import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
-import md.vnastasi.shoppinglist.screen.listdetails.UiEvent
-import md.vnastasi.shoppinglist.screen.listdetails.ViewState
+import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
+import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
+import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
+import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun ListDetailsScreen(
-    viewModel: ListDetailsViewModel,
+    viewModel: ListDetailsViewModelSpec,
     navigator: ListDetailsScreenNavigator
 ) {
 

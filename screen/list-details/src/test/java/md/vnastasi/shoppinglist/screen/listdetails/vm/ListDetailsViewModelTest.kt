@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listdetails
+package md.vnastasi.shoppinglist.screen.listdetails.vm
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
@@ -16,7 +16,10 @@ import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
-import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
+import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
+import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
+import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

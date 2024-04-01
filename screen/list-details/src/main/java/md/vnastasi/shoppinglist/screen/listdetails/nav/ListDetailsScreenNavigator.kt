@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.listdetails
+package md.vnastasi.shoppinglist.screen.listdetails.nav
 
 interface ListDetailsScreenNavigator {
 

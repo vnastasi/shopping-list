@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import md.vnastasi.shoppinglist.screen.additems.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
-import md.vnastasi.shoppinglist.screen.listdetails.ListDetailsViewModel
+import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.ListOverviewScreen
@@ -41,11 +41,12 @@ fun NavigationGraph() {
             arguments = Routes.ListDetails.arguments
         ) { backStackEntry ->
             val shoppingListId = Routes.ListDetails.extractShoppingListId(backStackEntry.arguments)
+            val viewModel = viewModel<ListDetailsViewModel>(
+                factory = koinInject<ListDetailsViewModel.Factory>(),
+                extraArguments = bundleOf(ListDetailsViewModel.ARG_KEY_SHOPPING_LIST_ID to shoppingListId)
+            )
             ListDetailsScreen(
-                viewModel = viewModel(
-                    factory = koinInject<ListDetailsViewModel.Factory>(),
-                    extraArguments = bundleOf(ListDetailsViewModel.ARG_KEY_SHOPPING_LIST_ID to shoppingListId)
-                ),
+                viewModel = viewModel,
                 navigator = ScreenNavigators.listDetails(navController)
             )
         }
