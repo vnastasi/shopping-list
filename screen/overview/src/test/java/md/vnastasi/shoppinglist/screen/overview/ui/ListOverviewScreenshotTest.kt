@@ -21,7 +21,7 @@ class ListOverviewScreenshotTest {
     val paparazzi = Paparazzi(
         deviceConfig = DeviceConfig.PIXEL_5,
         showSystemUi = false,
-        renderingMode = SessionParams.RenderingMode.FULL_EXPAND,
+        renderingMode = SessionParams.RenderingMode.NORMAL,
         validateAccessibility = false,
         maxPercentDifference = 1.0
     )
