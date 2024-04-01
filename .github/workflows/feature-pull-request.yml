@@ -67,7 +67,7 @@ jobs:
       - name: "Run unit tests"
         run: ./gradlew testDebugUnitTest
       - name: "Run screenshot tests"
-        run: ./gradlew verifyPaparazziDebug
+        run: ./gradlew verifyPaparazziDebug --info
   instrumented-tests:
     name: "Instrumented tests"
     runs-on: ubuntu-latest
