@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +10,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -32,16 +30,9 @@ internal fun SearchBar(
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
-        modifier = modifier
-            .indicatorLine(
-                enabled = true,
-                isError = false,
-                interactionSource = interactionSource,
-                colors = TextFieldDefaults.colors()
-            ),
+        modifier = modifier,
         value = searchTerm.value,
         placeholder = {
             Text(text = stringResource(R.string.add_items_search_title))
