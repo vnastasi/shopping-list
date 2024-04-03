@@ -18,9 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,9 +29,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 internal fun SearchBar(
     modifier: Modifier,
     searchTerm: MutableState<String>,
+    onAccept: () -> Unit
 ) {
 
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
@@ -70,7 +68,7 @@ internal fun SearchBar(
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {
-                keyboardController?.hide()
+                onAccept.invoke()
             }
         ),
     )
@@ -88,7 +86,8 @@ private fun SearchBarPreview() {
     AppTheme {
         SearchBar(
             modifier = Modifier.fillMaxWidth(),
-            searchTerm = remember { mutableStateOf("Search term") }
+            searchTerm = remember { mutableStateOf("Search term") },
+            onAccept = { }
         )
     }
 }

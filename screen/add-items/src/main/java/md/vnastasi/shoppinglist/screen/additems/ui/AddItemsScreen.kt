@@ -99,7 +99,8 @@ private fun AddItemsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 56.dp),
-                        searchTerm = textFieldValue
+                        searchTerm = textFieldValue,
+                        onAccept = { events.onItemAddedToList.invoke(textFieldValue.value) }
                     )
                 },
                 scrollBehavior = scrollBehavior
