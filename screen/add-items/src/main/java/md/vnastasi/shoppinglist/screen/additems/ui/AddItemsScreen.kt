@@ -49,7 +49,7 @@ fun AddItemsScreen(
     AddItemsScreen(
         viewState = viewModel.screenState.collectAsStateWithLifecycle(),
         events = Events(
-            onNavigateUp = { navigator.backToListDetails() },
+            onNavigateUp = navigator::backToListDetails,
             onSearchTermChanged = { searchTerm -> viewModel.onUiEvent(UiEvent.SearchTermChanged(searchTerm)) },
             onItemAddedToList = { suggestedName -> viewModel.onUiEvent(UiEvent.ItemAddedToList(suggestedName)) },
             onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
