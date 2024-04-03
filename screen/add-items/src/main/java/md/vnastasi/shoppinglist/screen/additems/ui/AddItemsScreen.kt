@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.screen.additems.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,6 +34,7 @@ import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
@@ -111,7 +113,10 @@ private fun AddItemsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = contentPaddings.calculateTopPadding())
+                .padding(
+                    top = contentPaddings.calculateTopPadding(),
+                    bottom = AppDimensions.paddingSmall
+                ).then(Modifier.imePadding())
         ) {
             itemsIndexed(
                 items = viewState.value.suggestions,
