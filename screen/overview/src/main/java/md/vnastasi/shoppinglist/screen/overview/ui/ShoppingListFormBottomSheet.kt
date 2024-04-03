@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.screen.overview.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -32,6 +34,7 @@ import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 
 @Composable
 internal fun ShoppingListFormBottomSheet(
+    modifier: Modifier = Modifier,
     behaviour: BottomSheetBehaviour,
     onShoppingListSaved: (String) -> Unit
 ) {
@@ -62,7 +65,7 @@ internal fun ShoppingListFormBottomSheet(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(AppDimensions.paddingMedium)
     ) {

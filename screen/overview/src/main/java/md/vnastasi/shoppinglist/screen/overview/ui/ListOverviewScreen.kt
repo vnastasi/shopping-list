@@ -3,6 +3,7 @@ package md.vnastasi.shoppinglist.screen.overview.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -91,6 +92,7 @@ private fun ListOverviewScreen(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             ShoppingListFormBottomSheet(
+                modifier = Modifier.imePadding(),
                 behaviour = BottomSheetBehaviour(
                     state = bottomSheetScaffoldState.bottomSheetState,
                     scope = bottomSheetScope
