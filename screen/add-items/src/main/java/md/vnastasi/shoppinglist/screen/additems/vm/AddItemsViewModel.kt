@@ -64,6 +64,7 @@ class AddItemsViewModel internal constructor(
     }
 
     private fun onItemAddedToList(name: String) {
+        if (name.isBlank()) return
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingList
                 .map { ShoppingItem(name = name, isChecked = false, list = it) }

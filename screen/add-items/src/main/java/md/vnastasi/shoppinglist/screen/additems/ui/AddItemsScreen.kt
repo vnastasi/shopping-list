@@ -1,15 +1,19 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,7 +38,6 @@ import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
-import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
@@ -71,7 +74,6 @@ private fun AddItemsScreen(
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     val textFieldValue = rememberSaveable { mutableStateOf("") }
 
     Scaffold(
@@ -79,34 +81,46 @@ private fun AddItemsScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                title = {
-                    Text(text = "")
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            events.onNavigateUp.invoke()
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TopAppBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = {
+                        Text(text = "")
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = events.onNavigateUp
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.add_items_btn_back_acc),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.add_items_btn_back_acc)
+                    },
+                    actions = {
+                        SearchBar(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 56.dp),
+                            searchTerm = textFieldValue,
+                            onAccept = { events.onItemAddedToList.invoke(textFieldValue.value) }
                         )
-                    }
-                },
-                actions = {
-                    SearchBar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 56.dp),
-                        searchTerm = textFieldValue,
-                        onAccept = { events.onItemAddedToList.invoke(textFieldValue.value) }
+                    },
+                    scrollBehavior = scrollBehavior,
+                    colors = TopAppBarDefaults.topAppBarColors().copy(
+                        scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor
                     )
-                },
-                scrollBehavior = scrollBehavior
-            )
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
         }
     ) { contentPaddings ->
 
@@ -114,9 +128,10 @@ private fun AddItemsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = contentPaddings.calculateTopPadding(),
-                    bottom = AppDimensions.paddingSmall
-                ).then(Modifier.imePadding())
+                    top = contentPaddings.calculateTopPadding()
+                )
+                .imePadding()
+                .navigationBarsPadding()
         ) {
             itemsIndexed(
                 items = viewState.value.suggestions,

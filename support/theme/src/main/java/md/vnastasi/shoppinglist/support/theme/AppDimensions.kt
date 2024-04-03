@@ -11,10 +11,10 @@ object AppDimensions {
     val paddingLarge = 24.dp
     val paddingExtraLarge = 32.dp
 
-    val contentMaxWidth = 520.dp
+    val contentMaxWidth = 600.dp
     val contentMinWidth = 320.dp
 
-    val listItemMinHeight = 62.dp
+    val listItemMinHeight = 54.dp
 
-    val divider = 1.dp
+    val divider = 0.5.dp
 }

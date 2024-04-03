@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,6 +48,7 @@ internal fun SuggestionRow(
         Column(
             modifier = Modifier
                 .widthIn(max = AppDimensions.contentMaxWidth)
+                .wrapContentHeight()
                 .align(Alignment.Center)
                 .clickable { onClick.invoke() }
         ) {
@@ -53,18 +57,25 @@ internal fun SuggestionRow(
                     .fillMaxWidth()
                     .heightIn(min = AppDimensions.listItemMinHeight)
                     .padding(
-                        start = AppDimensions.paddingLarge,
-                        end = AppDimensions.paddingSmall,
-                        top = AppDimensions.paddingSmall,
-                        bottom = AppDimensions.paddingSmall
+                        start = AppDimensions.paddingMedium,
+                        end = AppDimensions.paddingSmall
                     ),
                 horizontalArrangement = Arrangement.Start
             ) {
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
 
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = AppDimensions.paddingMedium),
                     text = suggestion.name,
-                    style = AppTypography.titleLarge
+                    style = AppTypography.bodyLarge
                 )
 
                 Spacer(
@@ -81,8 +92,9 @@ internal fun SuggestionRow(
                         onClick = { onDelete.invoke() }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc)
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc),
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -90,6 +102,10 @@ internal fun SuggestionRow(
 
             if (!isLastItemInList) {
                 HorizontalDivider(
+                    modifier = Modifier.padding(
+                        start = AppDimensions.paddingSmall,
+                        end = AppDimensions.paddingSmall
+                    ),
                     thickness = AppDimensions.divider
                 )
             }
