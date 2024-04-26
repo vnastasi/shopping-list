@@ -86,9 +86,7 @@ private fun AddItemsScreen(
             ) {
                 TopAppBar(
                     modifier = Modifier.fillMaxWidth(),
-                    title = {
-                        Text(text = "")
-                    },
+                    title = { },
                     navigationIcon = {
                         IconButton(
                             onClick = events.onNavigateUp
