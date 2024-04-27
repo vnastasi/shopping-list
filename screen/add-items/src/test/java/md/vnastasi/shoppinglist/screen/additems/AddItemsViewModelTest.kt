@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -19,6 +18,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
@@ -26,9 +26,11 @@ import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -90,6 +92,31 @@ internal class AddItemsViewModelTest {
 
         verify(mockShoppingItemRepository).create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList)))
         verify(mockNameSuggestionRepository).create(name)
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `ItemAddedToList` UI event with an empty string
+        Then expect no further action
+    """
+    )
+    fun onEmptyItemAddedToList() = runTest {
+        val name = ""
+
+        val shoppingList = createShoppingList()
+        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(shoppingList))
+
+        val viewModel = createViewModel()
+        viewModel.screenState.test {
+            skipItems(1)
+
+            viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
+            expectNoEvents()
+        }
+
+        verify(mockShoppingItemRepository, never()).create(any())
+        verify(mockNameSuggestionRepository, never()).create(any())
     }
 
     @Test

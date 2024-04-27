@@ -1,17 +1,18 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -31,11 +32,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
-import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
@@ -77,7 +78,6 @@ private fun ListOverviewScreen(
     viewState: State<ViewState>,
     events: Events
 ) {
-
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             skipHiddenState = false,
@@ -91,6 +91,7 @@ private fun ListOverviewScreen(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             ShoppingListFormBottomSheet(
+                modifier = Modifier.imePadding(),
                 behaviour = BottomSheetBehaviour(
                     state = bottomSheetScaffoldState.bottomSheetState,
                     scope = bottomSheetScope
@@ -100,7 +101,6 @@ private fun ListOverviewScreen(
         },
         sheetPeekHeight = AppDimensions.zero
     ) {
-
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
         Scaffold(
@@ -108,7 +108,7 @@ private fun ListOverviewScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(
@@ -120,17 +120,16 @@ private fun ListOverviewScreen(
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    shape = CircleShape,
+                    shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                     onClick = events.onAddNewShoppingList
                 ) {
-                    Image(
+                    Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(R.string.overview_btn_add_list_acc)
                     )
                 }
             }
         ) { contentPaddings ->
-
             if (viewState.value.shoppingLists.isEmpty()) {
                 EmptyListOverviewScreenContent(contentPaddings)
             } else {
