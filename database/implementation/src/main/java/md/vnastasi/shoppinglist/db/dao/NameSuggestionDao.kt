@@ -12,7 +12,7 @@ import md.vnastasi.shoppinglist.db.model.NameSuggestion
 interface NameSuggestionDao {
 
     @Query("SELECT * FROM name_suggestions WHERE value LIKE '%' || :searchTerm || '%' ORDER BY id DESC")
-    fun findAll(searchTerm: String): Flow<List<NameSuggestion>>
+    suspend fun findAll(searchTerm: String): List<NameSuggestion>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun create(suggestion: NameSuggestion)

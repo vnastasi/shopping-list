@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.db.dao
 
-import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.extracting
@@ -14,31 +13,24 @@ class NameSuggestionDaoTest {
     @Test
     fun emptySearchTerm() = runDatabaseTest { db ->
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao().also { it.createTestSuggestions() }
-
-        shoppingItemNameSuggestionDao.findAll("").test {
-            assertThat(awaitItem()).extracting { it.value }.containsExactly("Toothbrush", "Toothpaste", "Butter", "Nutmeg", "Pasta", "Eggs", "Bread")
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertThat(shoppingItemNameSuggestionDao.findAll(""))
+            .extracting { it.value }
+            .containsExactly("Toothbrush", "Toothpaste", "Butter", "Nutmeg", "Pasta", "Eggs", "Bread")
     }
 
     @Test
     fun caseInsensitiveSearch() = runDatabaseTest { db ->
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao().also { it.createTestSuggestions() }
-
-        shoppingItemNameSuggestionDao.findAll("toOtH").test {
-            assertThat(awaitItem()).extracting { it.value }.containsExactly("Toothbrush", "Toothpaste")
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertThat(shoppingItemNameSuggestionDao.findAll("toOtH"))
+            .extracting { it.value }
+            .containsExactly("Toothbrush", "Toothpaste")
     }
 
     @Test
     fun noMatchingValues() = runDatabaseTest { db ->
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao().also { it.createTestSuggestions() }
-
-        shoppingItemNameSuggestionDao.findAll("qwerty").test {
-            assertThat(awaitItem()).isEmpty()
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertThat(shoppingItemNameSuggestionDao.findAll("qwerty"))
+            .isEmpty()
     }
 
     @Test
@@ -48,10 +40,9 @@ class NameSuggestionDaoTest {
         shoppingItemNameSuggestionDao.delete(NameSuggestion(5L, "Butter"))
         shoppingItemNameSuggestionDao.delete(NameSuggestion(1L, "Bread"))
 
-        shoppingItemNameSuggestionDao.findAll("").test {
-            assertThat(awaitItem()).extracting { it.value }.containsExactly("Toothbrush", "Toothpaste", "Nutmeg", "Pasta", "Eggs")
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertThat(shoppingItemNameSuggestionDao.findAll(""))
+            .extracting { it.value }
+            .containsExactly("Toothbrush", "Toothpaste", "Nutmeg", "Pasta", "Eggs")
     }
 
     private suspend fun NameSuggestionDao.createTestSuggestions() {
