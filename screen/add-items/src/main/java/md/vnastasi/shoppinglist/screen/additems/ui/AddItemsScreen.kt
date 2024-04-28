@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -74,7 +73,7 @@ private fun AddItemsScreen(
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val textFieldValue = rememberSaveable { mutableStateOf("") }
+    val textFieldValue = rememberSaveable { mutableStateOf(viewState.value.searchTerm) }
 
     Scaffold(
         modifier = Modifier
@@ -104,7 +103,7 @@ private fun AddItemsScreen(
                                 .fillMaxWidth()
                                 .padding(start = 56.dp),
                             searchTerm = textFieldValue,
-                            onAccept = { events.onItemAddedToList.invoke(textFieldValue.value) }
+                            onDone = { events.onItemAddedToList.invoke(textFieldValue.value) }
                         )
                     },
                     scrollBehavior = scrollBehavior,
@@ -151,13 +150,13 @@ private fun AddItemsScreen(
         onToastShown = events.onToastShown
     )
 
-    LaunchedEffect(key1 = textFieldValue.value) {
+    LaunchedEffect(textFieldValue.value) {
         events.onSearchTermChanged.invoke(textFieldValue.value)
     }
 }
 
 @Preview(
-    showSystemUi = true
+    showSystemUi = false
 )
 @Composable
 fun AddItemsScreenPreview() {

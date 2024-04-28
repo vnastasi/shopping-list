@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
@@ -55,10 +55,11 @@ class AddItemsViewModel internal constructor(
 
     private fun onSearchTermChanged(newSearchTerm: String) {
         viewModelScope.launch(dispatchersProvider.Main) {
-            nameSuggestionRepository.findAllMatching(newSearchTerm).collectLatest { suggestions ->
-                _screenState.update { viewState ->
-                    viewState.copy(searchTerm = newSearchTerm, suggestions = suggestions.toImmutableList())
-                }
+            _screenState.update { viewState ->
+                viewState.copy(
+                    searchTerm = newSearchTerm,
+                    suggestions = nameSuggestionRepository.findAllMatching(newSearchTerm).toImmutableList()
+                )
             }
         }
     }
@@ -84,7 +85,10 @@ class AddItemsViewModel internal constructor(
             nameSuggestionRepository.delete(suggestion)
             _screenState.update { viewState ->
                 val toastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf(suggestion.name))
-                viewState.copy(toastMessage = toastMessage)
+                viewState.copy(
+                    suggestions = nameSuggestionRepository.findAllMatching(viewState.searchTerm).toImmutableList(),
+                    toastMessage = toastMessage
+                )
             }
         }
     }

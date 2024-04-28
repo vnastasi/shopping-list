@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,7 +12,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -21,21 +19,19 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-internal fun SearchBar(
-    modifier: Modifier,
+fun SearchBar(
+    modifier: Modifier = Modifier,
     searchTerm: MutableState<String>,
-    onAccept: () -> Unit
+    onDone: () -> Unit
 ) {
-
     val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
-        modifier = modifier.focusRequester(focusRequester),
+        modifier = modifier
+            .focusRequester(focusRequester),
         value = searchTerm.value,
         placeholder = {
             Text(text = stringResource(R.string.add_items_search_title))
@@ -68,26 +64,13 @@ internal fun SearchBar(
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {
-                onAccept.invoke()
+                onDone.invoke()
+                searchTerm.value = ""
             }
         ),
     )
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-    }
-}
-
-@Preview(
-    showBackground = true
-)
-@Composable
-private fun SearchBarPreview() {
-    AppTheme {
-        SearchBar(
-            modifier = Modifier.fillMaxWidth(),
-            searchTerm = remember { mutableStateOf("Search term") },
-            onAccept = { }
-        )
     }
 }
