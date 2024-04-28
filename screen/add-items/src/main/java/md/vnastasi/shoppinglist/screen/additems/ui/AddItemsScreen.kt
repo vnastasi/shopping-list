@@ -120,7 +120,6 @@ private fun AddItemsScreen(
                             },
                             onValueChange = { newValue ->
                                 textFieldValue.value = newValue
-                                events.onSearchTermChanged.invoke(textFieldValue.value)
                             },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -134,7 +133,6 @@ private fun AddItemsScreen(
                                 IconButton(
                                     onClick = {
                                         textFieldValue.value = ""
-                                        events.onSearchTermChanged.invoke("")
                                     }
                                 ) {
                                     Icon(
@@ -150,7 +148,6 @@ private fun AddItemsScreen(
                                 onDone = {
                                     events.onItemAddedToList.invoke(textFieldValue.value)
                                     textFieldValue.value = ""
-                                    events.onSearchTermChanged.invoke("")
                                 }
                             ),
                         )
@@ -201,6 +198,10 @@ private fun AddItemsScreen(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(textFieldValue.value) {
+        events.onSearchTermChanged.invoke(textFieldValue.value)
     }
 }
 
