@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.db
 
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetailsView
 
 object TestData {
 
@@ -12,6 +13,8 @@ object TestData {
 
     fun createShoppingListEntity(block: ShoppingListEntityBuilder.() -> Unit = {}) = ShoppingListEntityBuilder().apply(block).build()
 
+    fun createShoppingListDetailsView(block: ShoppingListDetailsViewBuilder.() -> Unit = {}) = ShoppingListDetailsViewBuilder().apply(block).build()
+
     fun createShoppingItemEntity(block: ShoppingItemEntityBuilder.() -> Unit = {}) = ShoppingItemEntityBuilder().apply(block).build()
 
     class ShoppingListEntityBuilder(
@@ -20,6 +23,16 @@ object TestData {
     ) {
 
         fun build() = ShoppingList(id, name)
+    }
+
+    class ShoppingListDetailsViewBuilder(
+        var id: Long = DEFAULT_SHOPPING_LIST_ID,
+        var name: String = DEFAULT_SHOPPING_LIST_NAME,
+        var totalItems: Long = 0L,
+        var checkedItems: Long = 0L,
+    ) {
+
+        fun build() = ShoppingListDetailsView(id, name, totalItems, checkedItems)
     }
 
     class ShoppingItemEntityBuilder(

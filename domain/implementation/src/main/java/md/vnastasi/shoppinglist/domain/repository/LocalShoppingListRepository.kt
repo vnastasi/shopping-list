@@ -4,14 +4,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetailsView
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 
 internal class LocalShoppingListRepository(
     private val shoppingListDao: ShoppingListDao
 ) : ShoppingListRepository{
 
-    override fun findAll(): Flow<List<ShoppingList>> =
+    override fun findAll(): Flow<List<ShoppingListDetails>> =
         shoppingListDao.findAll().map { list ->
             list.map { it.toDomainModel() }
         }
@@ -34,4 +36,6 @@ internal class LocalShoppingListRepository(
     private fun ShoppingList.toEntity() = ShoppingListEntity(id, name)
 
     private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
+
+    private fun ShoppingListDetailsView.toDomainModel() = ShoppingListDetails(id, name, totalItems, checkedItems)
 }

@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -35,9 +35,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun ShoppingListCard(
-    list: ShoppingList,
-    onClickItem: (ShoppingList) -> Unit = { },
-    onDeleteItem: (ShoppingList) -> Unit = { }
+    list: ShoppingListDetails,
+    onClickItem: (ShoppingListDetails) -> Unit = { },
+    onDeleteItem: (ShoppingListDetails) -> Unit = { }
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -128,7 +128,7 @@ internal fun ShoppingListCard(
 )
 @Composable
 private fun ShoppingListCardPreview() {
-    val shoppingList = ShoppingList(1, "Sample shopping list")
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L)
 
     AppTheme {
         ShoppingListCard(list = shoppingList)

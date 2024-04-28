@@ -8,12 +8,13 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import md.vnastasi.shoppinglist.db.model.ShoppingList
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetailsView
 
 @Dao
 interface ShoppingListDao {
 
-    @Query("SELECT * FROM shopping_lists ORDER BY id DESC")
-    fun findAll(): Flow<List<ShoppingList>>
+    @Query("SELECT * FROM shopping_list_details ORDER BY id DESC")
+    fun findAll(): Flow<List<ShoppingListDetailsView>>
 
     @Query("SELECT * FROM shopping_lists WHERE id = :id LIMIT 1")
     fun findById(id: Long): Flow<ShoppingList>

@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.domain
 
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 
 object TestData {
 
@@ -12,6 +13,8 @@ object TestData {
 
     fun createShoppingList(block: ShoppingListBuilder.() -> Unit = {}) = ShoppingListBuilder().apply(block).build()
 
+    fun createShoppingListDetails(block: ShoppingListDetailsBuilder.() -> Unit = {}) = ShoppingListDetailsBuilder().apply(block).build()
+
     fun createShoppingItem(block: ShoppingItemBuilder.() -> Unit = {}) = ShoppingItemBuilder().apply(block).build()
 
     class ShoppingListBuilder(
@@ -20,6 +23,16 @@ object TestData {
     ) {
 
         fun build() = ShoppingList(id, name)
+    }
+
+    class ShoppingListDetailsBuilder(
+        var id: Long = DEFAULT_SHOPPING_LIST_ID,
+        var name: String = DEFAULT_SHOPPING_LIST_NAME,
+        var totalItems: Long = 0L,
+        var checkedItems: Long = 0L
+    ) {
+
+        fun build() = ShoppingListDetails(id, name, totalItems, checkedItems)
     }
 
     class ShoppingItemBuilder(

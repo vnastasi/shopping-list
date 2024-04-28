@@ -7,9 +7,11 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import md.vnastasi.shoppinglist.db.TestData.createShoppingListDetailsView
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -39,24 +41,32 @@ internal class LocalShoppingListRepositoryTest {
     @Test
     @DisplayName("Given existing entities in DAO When getting available shopping lists Then expect non-empty list")
     fun getAvailableLists() = runTest {
-        val shoppingListEntity1 = createShoppingListEntity {
+        val shoppingListDetailsView1 = createShoppingListDetailsView {
             id = 1L
             name = "Praxis"
+            totalItems = 10L
+            checkedItems = 3L
         }
-        val shoppingListEntity2 = createShoppingListEntity {
+        val shoppingListDetailsView2 = createShoppingListDetailsView {
             id = 2L
             name = "Jumbo"
+            totalItems = 1L
+            checkedItems = 1L
         }
-        whenever(mockShoppingListDao.findAll()).doReturn(flowOf(listOf(shoppingListEntity1, shoppingListEntity2)))
+        whenever(mockShoppingListDao.findAll()).doReturn(flowOf(listOf(shoppingListDetailsView1, shoppingListDetailsView2)))
 
         val expectedList = listOf(
-            createShoppingList {
+            createShoppingListDetails {
                 id = 1L
                 name = "Praxis"
+                totalItems = 10L
+                checkedItems = 3L
             },
-            createShoppingList {
+            createShoppingListDetails {
                 id = 2L
                 name = "Jumbo"
+                totalItems = 1L
+                checkedItems = 1L
             }
         )
 

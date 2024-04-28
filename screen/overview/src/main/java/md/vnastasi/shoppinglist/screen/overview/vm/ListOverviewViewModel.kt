@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
@@ -44,23 +45,23 @@ class ListOverviewViewModel internal constructor(
         when (uiEvent) {
             is UiEvent.AddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.ShoppingListSaved -> onShoppingListSaved(uiEvent.name)
-            is UiEvent.ShoppingListSelected -> onShoppingListSelected(uiEvent.shoppingList)
-            is UiEvent.ShoppingListDeleted -> onShoppingListDeleted(uiEvent.shoppingList)
+            is UiEvent.ShoppingListSelected -> onShoppingListSelected(uiEvent.shoppingListDetails)
+            is UiEvent.ShoppingListDeleted -> onShoppingListDeleted(uiEvent.shoppingListDetails)
             is UiEvent.NavigationPerformed -> onNavigationPerformed()
             is UiEvent.ToastShown -> onToastShown()
         }
     }
 
-    private fun onShoppingListDeleted(shoppingList: ShoppingList) {
+    private fun onShoppingListDeleted(shoppingListDetails: ShoppingListDetails) {
         viewModelScope.launch(dispatchersProvider.IO) {
-            shoppingListRepository.delete(shoppingList)
+            shoppingListRepository.delete(shoppingListDetails.toShoppingList())
         }
     }
 
-    private fun onShoppingListSelected(shoppingList: ShoppingList) {
+    private fun onShoppingListSelected(shoppingListDetails: ShoppingListDetails) {
         viewModelScope.launch(dispatchersProvider.Main) {
             _screenState.update { viewState ->
-                viewState.copy(navigationTarget = NavigationTarget.ShoppingListDetails(shoppingList.id))
+                viewState.copy(navigationTarget = NavigationTarget.ShoppingListDetails(shoppingListDetails.id))
             }
         }
     }

@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
@@ -66,8 +66,8 @@ fun ListOverviewScreen(
 private data class Events(
     val onAddNewShoppingList: () -> Unit,
     val onShoppingListSaved: (String) -> Unit,
-    val onShoppingListDeleted: (ShoppingList) -> Unit,
-    val onShoppingListSelected: (ShoppingList) -> Unit,
+    val onShoppingListDeleted: (ShoppingListDetails) -> Unit,
+    val onShoppingListSelected: (ShoppingListDetails) -> Unit,
     val onNavigationPerformed: () -> Unit,
     val onToastShown: () -> Unit,
     val onNavigateToListDetails: (Long) -> Unit
@@ -171,18 +171,18 @@ private fun ListOverviewScreen(
 @Composable
 private fun ListOverviewScreenPreview() {
     val list = persistentListOf(
-        ShoppingList(id = 1L, name = "Groceries"),
-        ShoppingList(id = 2L, name = "Pharmacy for mom"),
-        ShoppingList(id = 3L, name = "Gamma & Praxis"),
-        ShoppingList(id = 4L, name = "Birthday party shopping list"),
-        ShoppingList(id = 5L, name = "Christmas Eve party"),
-        ShoppingList(id = 6L, name = "Thanksgiving family reunion"),
-        ShoppingList(id = 7L, name = "Ibiza!"),
-        ShoppingList(id = 8L, name = "At the baker's"),
-        ShoppingList(id = 9L, name = "Big shopping at the mall"),
-        ShoppingList(id = 10L, name = "Trip to Iceland"),
-        ShoppingList(id = 11L, name = "Disney"),
-        ShoppingList(id = 12L, name = "Trip to Paris"),
+        ShoppingListDetails(id = 1L, name = "Groceries", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 2L, name = "Pharmacy for mom", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 3L, name = "Gamma & Praxis", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 4L, name = "Birthday party shopping list", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 5L, name = "Christmas Eve party", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 7L, name = "Ibiza!", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 8L, name = "At the baker's", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 9L, name = "Big shopping at the mall", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 10L, name = "Trip to Iceland", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 11L, name = "Disney", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 12L, name = "Trip to Paris", totalItems = 0L, checkedItems = 0L),
     )
 
     AppTheme {
