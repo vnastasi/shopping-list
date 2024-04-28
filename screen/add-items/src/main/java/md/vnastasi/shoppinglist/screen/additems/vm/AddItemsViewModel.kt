@@ -56,7 +56,10 @@ class AddItemsViewModel internal constructor(
     private fun onSearchTermChanged(newSearchTerm: String) {
         viewModelScope.launch(dispatchersProvider.Main) {
             _screenState.update { viewState ->
-                viewState.copy(searchTerm = newSearchTerm, suggestions = nameSuggestionRepository.findAllMatching(newSearchTerm).toImmutableList())
+                viewState.copy(
+                    searchTerm = newSearchTerm,
+                    suggestions = nameSuggestionRepository.findAllMatching(newSearchTerm).toImmutableList()
+                )
             }
         }
     }
@@ -82,7 +85,10 @@ class AddItemsViewModel internal constructor(
             nameSuggestionRepository.delete(suggestion)
             _screenState.update { viewState ->
                 val toastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf(suggestion.name))
-                viewState.copy(toastMessage = toastMessage)
+                viewState.copy(
+                    suggestions = nameSuggestionRepository.findAllMatching(viewState.searchTerm).toImmutableList(),
+                    toastMessage = toastMessage
+                )
             }
         }
     }
