@@ -52,7 +52,7 @@ internal class AddItemsViewModelTest {
         val suggestion = NameSuggestion(1L, "Milk")
 
         whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
-        whenever(mockNameSuggestionRepository.findAllMatching(searchTerm)).doReturn(flowOf(listOf(suggestion)))
+        whenever(mockNameSuggestionRepository.findAllMatching(searchTerm)).doReturn(listOf(suggestion))
 
         val viewModel = createViewModel()
         viewModel.screenState.test {
@@ -128,6 +128,7 @@ internal class AddItemsViewModelTest {
     )
     fun onSuggestionDeleted() = runTest {
         whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
+        whenever(mockNameSuggestionRepository.findAllMatching(any())).doReturn(emptyList())
 
         val suggestion = NameSuggestion(name = "Milk")
 
@@ -155,6 +156,7 @@ internal class AddItemsViewModelTest {
     )
     fun onToastShown() = runTest {
         whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
+        whenever(mockNameSuggestionRepository.findAllMatching(any())).doReturn(emptyList())
 
         val suggestion = NameSuggestion(name = "Milk")
 
