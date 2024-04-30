@@ -44,11 +44,11 @@ console-reports:
 output-reports:
   active: true
   exclude:
-  # - 'TxtOutputReport'
-  # - 'XmlOutputReport'
+   - 'TxtOutputReport'
+   - 'XmlOutputReport'
   # - 'HtmlOutputReport'
-  # - 'MdOutputReport'
-  # - 'SarifOutputReport'
+   - 'MdOutputReport'
+   - 'SarifOutputReport'
 
 comments:
   active: true
@@ -746,6 +746,10 @@ style:
     allowedNames: ''
     ignoreAnnotated:
       - 'androidx.compose.ui.tooling.preview.Preview'
+      - 'androidx.compose.ui.tooling.preview.PreviewLightDark'
+      - 'androidx.compose.ui.tooling.preview.PreviewFontScale'
+      - 'androidx.compose.ui.tooling.preview.PreviewDynamicColors'
+      - 'androidx.compose.ui.tooling.preview.PreviewScreenSizes'
   UnusedPrivateProperty:
     active: true
     allowedNames: '_|ignored|expected|serialVersionUID'

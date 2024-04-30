@@ -57,12 +57,6 @@ internal fun ShoppingListFormBottomSheet(
         }
     }
 
-    LaunchedEffect(behaviour.state.currentValue) {
-        if (behaviour.state.currentValue == SheetValue.Hidden) {
-            textFieldValue.value = ""
-        }
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -121,6 +115,12 @@ internal fun ShoppingListFormBottomSheet(
             Text(
                 text = stringResource(R.string.list_form_btn_save)
             )
+        }
+    }
+
+    LaunchedEffect(behaviour.state.currentValue) {
+        if (behaviour.state.currentValue != SheetValue.Expanded) {
+            textFieldValue.value = ""
         }
     }
 }
