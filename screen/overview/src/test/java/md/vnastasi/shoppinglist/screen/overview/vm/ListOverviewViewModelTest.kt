@@ -10,7 +10,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import md.vnastasi.shoppinglist.domain.TestData
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
@@ -58,12 +59,12 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun screenStateWithLists() = runTest {
-        val shoppingList = TestData.createShoppingList()
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingList)))
+        val shoppingListDetails = createShoppingListDetails()
+        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingListDetails)))
 
         createViewModel().screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingList)))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingListDetails)))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -121,13 +122,13 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun onShoppingListSelected() = runTest {
-        val shoppingList = TestData.createShoppingList {
+        val shoppingListDetails = createShoppingListDetails {
             id = 6578L
         }
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel()
-        viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList))
+        viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingListDetails))
 
         viewModel.screenState.test {
             skipItems(1)
@@ -148,14 +149,14 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun onShoppingListDeleted() = runTest {
-        val shoppingList = TestData.createShoppingList()
+        val shoppingListDetails = createShoppingListDetails()
         whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
 
         val viewModel = createViewModel()
-        viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList))
+        viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingListDetails))
         advanceUntilIdle()
 
-        verify(mockShoppingListRepository).delete(eq(shoppingList))
+        verify(mockShoppingListRepository).delete(eq(createShoppingList()))
     }
 
     @Test

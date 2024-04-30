@@ -5,7 +5,7 @@ import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.NightMode
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
+import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -66,13 +66,17 @@ class ListOverviewScreenshotTest(
                 screenshotName = "non_empty_list_dark"
                 viewState = ViewState(
                     shoppingLists = persistentListOf(
-                        createShoppingList {
+                        createShoppingListDetails {
                             id = 1L
                             name = "Test list 1"
+                            totalItems = 11L
+                            checkedItems = 4L
                         },
-                        createShoppingList {
+                        createShoppingListDetails {
                             id = 2L
                             name = "Test list 2"
+                            totalItems = 1L
+                            checkedItems = 0L
                         }
                     )
                 )
@@ -82,13 +86,17 @@ class ListOverviewScreenshotTest(
                 screenshotName = "non_empty_list_light"
                 viewState = ViewState(
                     shoppingLists = persistentListOf(
-                        createShoppingList {
+                        createShoppingListDetails {
                             id = 1L
                             name = "Test list 1"
+                            totalItems = 11L
+                            checkedItems = 4L
                         },
-                        createShoppingList {
+                        createShoppingListDetails {
                             id = 2L
                             name = "Test list 2"
+                            totalItems = 1L
+                            checkedItems = 0L
                         }
                     )
                 )
