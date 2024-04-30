@@ -8,11 +8,11 @@ import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.db.model.NameSuggestion
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
-import md.vnastasi.shoppinglist.db.model.ShoppingListDetailsView
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetails
 
 @Database(
     entities = [ShoppingItem::class, ShoppingList::class, NameSuggestion::class],
-    views = [ShoppingListDetailsView::class],
+    views = [ShoppingListDetails::class],
     version = 4,
     exportSchema = true
 )

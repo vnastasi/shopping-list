@@ -11,7 +11,7 @@ import androidx.room.DatabaseView
             + "(SELECT count(*) FROM shopping_items item WHERE item.list_id = list.id AND item.is_checked = 1) AS checkedItems "
         + "FROM shopping_lists list"
 )
-data class ShoppingListDetailsView(
+data class ShoppingListDetails(
     val id: Long,
     val name: String,
     val totalItems: Long,

@@ -2,7 +2,7 @@ package md.vnastasi.shoppinglist.db
 
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
-import md.vnastasi.shoppinglist.db.model.ShoppingListDetailsView
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetails
 
 object TestData {
 
@@ -32,7 +32,7 @@ object TestData {
         var checkedItems: Long = 0L,
     ) {
 
-        fun build() = ShoppingListDetailsView(id, name, totalItems, checkedItems)
+        fun build() = ShoppingListDetails(id, name, totalItems, checkedItems)
     }
 
     class ShoppingItemEntityBuilder(
