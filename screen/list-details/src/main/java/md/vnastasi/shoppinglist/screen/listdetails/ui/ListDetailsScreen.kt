@@ -26,6 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewDynamicColors
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -117,11 +121,10 @@ private fun ListDetailsScreen(
     }
 }
 
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    backgroundColor = 0xFFFFFBFE
-)
+@PreviewLightDark
+@PreviewDynamicColors
+@PreviewScreenSizes
+@PreviewFontScale
 @Composable
 private fun ListDetailsScreenPreview() {
     val shoppingList = ShoppingList(id = 1L, "My list")

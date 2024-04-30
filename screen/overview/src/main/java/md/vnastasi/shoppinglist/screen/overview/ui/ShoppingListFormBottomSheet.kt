@@ -26,6 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewDynamicColors
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
@@ -126,10 +130,8 @@ internal fun ShoppingListFormBottomSheet(
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFFFFBFE
-)
+@PreviewLightDark
+@PreviewFontScale
 @Composable
 private fun ShoppingListFormBottomSheetPreview() {
     AppTheme {
