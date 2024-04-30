@@ -2,16 +2,18 @@ package md.vnastasi.shoppinglist.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
+import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.NameSuggestion
+import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
+import md.vnastasi.shoppinglist.db.model.ShoppingListDetails
 
 @Database(
     entities = [ShoppingItem::class, ShoppingList::class, NameSuggestion::class],
-    version = 3,
+    views = [ShoppingListDetails::class],
+    version = 4,
     exportSchema = true
 )
 abstract class ShoppingListDatabase : RoomDatabase() {

@@ -1,12 +1,12 @@
 package md.vnastasi.shoppinglist.screen.overview.model
 
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 
 sealed interface UiEvent {
 
-    data class ShoppingListDeleted(val shoppingList: ShoppingList) : UiEvent
+    data class ShoppingListDeleted(val shoppingListDetails: ShoppingListDetails) : UiEvent
 
-    data class ShoppingListSelected(val shoppingList: ShoppingList) : UiEvent
+    data class ShoppingListSelected(val shoppingListDetails: ShoppingListDetails) : UiEvent
 
     data object AddNewShoppingList : UiEvent
 

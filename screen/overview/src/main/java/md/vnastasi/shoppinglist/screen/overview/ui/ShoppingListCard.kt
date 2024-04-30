@@ -20,14 +20,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -35,9 +35,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun ShoppingListCard(
-    list: ShoppingList,
-    onClickItem: (ShoppingList) -> Unit = { },
-    onDeleteItem: (ShoppingList) -> Unit = { }
+    list: ShoppingListDetails,
+    onClickItem: (ShoppingListDetails) -> Unit = { },
+    onDeleteItem: (ShoppingListDetails) -> Unit = { }
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -95,23 +95,44 @@ internal fun ShoppingListCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .wrapContentHeight()
                         .clickable { onClickItem.invoke(list) }
                         .padding(AppDimensions.paddingSmall),
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Icon(
-                        modifier = Modifier.minimumInteractiveComponentSize(),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(AppDimensions.paddingSmall),
                         imageVector = Icons.AutoMirrored.Filled.List,
                         contentDescription = null
                     )
 
-                    Text(
+                    Row(
                         modifier = Modifier
+                            .wrapContentHeight()
                             .align(Alignment.CenterVertically)
-                            .padding(start = AppDimensions.paddingSmall),
-                        text = list.name,
-                        style = AppTypography.titleLarge
-                    )
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .alignBy(LastBaseline)
+                                .weight(1.0f)
+                                .padding(start = AppDimensions.paddingSmall),
+                            text = list.name,
+                            style = AppTypography.titleLarge
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .alignBy(LastBaseline)
+                                .padding(
+                                    start = AppDimensions.paddingSmall,
+                                    end = AppDimensions.paddingSmall
+                                ),
+                            text = "${list.checkedItems} / ${list.totalItems}",
+                            style = AppTypography.bodySmall
+                        )
+                    }
                 }
             }
         }
@@ -123,12 +144,10 @@ internal fun ShoppingListCard(
     }
 }
 
-@Preview(
-    heightDp = 96
-)
+@Preview
 @Composable
 private fun ShoppingListCardPreview() {
-    val shoppingList = ShoppingList(1, "Sample shopping list")
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L)
 
     AppTheme {
         ShoppingListCard(list = shoppingList)

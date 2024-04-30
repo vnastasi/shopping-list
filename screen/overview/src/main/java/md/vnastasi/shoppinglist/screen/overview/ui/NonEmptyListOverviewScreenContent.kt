@@ -10,16 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 internal fun NonEmptyListOverviewScreenContent(
     contentPaddings: PaddingValues,
-    list: ImmutableList<ShoppingList>,
-    onDelete: (ShoppingList) -> Unit,
-    onClick: (ShoppingList) -> Unit
+    list: ImmutableList<ShoppingListDetails>,
+    onDelete: (ShoppingListDetails) -> Unit,
+    onClick: (ShoppingListDetails) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -46,18 +46,18 @@ internal fun NonEmptyListOverviewScreenContent(
 @Composable
 private fun NonEmptyListOverviewScreenContentPreview() {
     val list = persistentListOf(
-        ShoppingList(id = 1L, name = "Groceries"),
-        ShoppingList(id = 2L, name = "Pharmacy for mom"),
-        ShoppingList(id = 3L, name = "Gamma & Praxis"),
-        ShoppingList(id = 4L, name = "Birthday party shopping list"),
-        ShoppingList(id = 5L, name = "Christmas Eve party"),
-        ShoppingList(id = 6L, name = "Thanksgiving family reunion"),
-        ShoppingList(id = 7L, name = "Ibiza!"),
-        ShoppingList(id = 8L, name = "At the baker's"),
-        ShoppingList(id = 9L, name = "Big shopping at the mall"),
-        ShoppingList(id = 10L, name = "Trip to Iceland"),
-        ShoppingList(id = 11L, name = "Disney"),
-        ShoppingList(id = 12L, name = "Trip to Paris"),
+        ShoppingListDetails(id = 1L, name = "Groceries", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 2L, name = "Pharmacy for mom", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 3L, name = "Gamma & Praxis", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 4L, name = "Birthday party shopping list", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 5L, name = "Christmas Eve party", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 7L, name = "Ibiza!", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 8L, name = "At the baker's", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 9L, name = "Big shopping at the mall", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 10L, name = "Trip to Iceland", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 11L, name = "Disney", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 12L, name = "Trip to Paris", totalItems = 0L, checkedItems = 0L),
     )
 
     AppTheme {
