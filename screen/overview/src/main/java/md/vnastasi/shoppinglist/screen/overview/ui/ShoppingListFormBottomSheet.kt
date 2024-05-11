@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.screen.overview.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
@@ -60,6 +61,7 @@ internal fun ShoppingListFormBottomSheet(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
             .padding(AppDimensions.paddingMedium)
     ) {
 
@@ -104,7 +106,7 @@ internal fun ShoppingListFormBottomSheet(
         Button(
             modifier = Modifier
                 .padding(
-                    top = AppDimensions.paddingExtraLarge,
+                    top = AppDimensions.paddingLarge,
                     start = AppDimensions.paddingMedium,
                     end = AppDimensions.paddingMedium
                 )

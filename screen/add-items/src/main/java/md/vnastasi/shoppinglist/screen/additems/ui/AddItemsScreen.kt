@@ -1,10 +1,12 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
@@ -40,6 +43,7 @@ import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
+import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
@@ -127,11 +131,13 @@ private fun AddItemsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    top = contentPaddings.calculateTopPadding()
-                )
-                .imePadding()
-                .navigationBarsPadding()
+                .imePadding(),
+            contentPadding = PaddingValues(
+                start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
+                top = contentPaddings.calculateTopPadding(),
+                bottom = contentPaddings.calculateBottomPadding() + AppDimensions.paddingMedium
+            )
         ) {
             itemsIndexed(
                 items = viewState.value.suggestions,
