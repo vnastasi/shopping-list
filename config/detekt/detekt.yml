@@ -138,6 +138,8 @@ complexity:
     constructorThreshold: 7
     ignoreDefaultParameters: false
     ignoreDataClasses: true
+    ignoreAnnotated:
+      - 'androidx.compose.runtime.Composable'
     ignoreAnnotatedParameter: []
   MethodOverloading:
     active: false
