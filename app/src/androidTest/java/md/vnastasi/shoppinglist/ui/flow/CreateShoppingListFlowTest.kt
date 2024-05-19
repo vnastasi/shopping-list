@@ -8,11 +8,14 @@ import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.robot.shoppingListForm
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModule
-import md.vnastasi.shoppinglist.ui.support.InstrumentedTestDispatcherProvider
+import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
 
 private const val SHOPPING_LIST_NAME = "Test new shopping list"
+private const val SHOPPING_ITEM_NAME_1 = "Milk"
+private const val SHOPPING_ITEM_NAME_2 = "Bread"
+private const val SHOPPING_ITEM_NAME_3 = "Coconut oil"
 
 class CreateShoppingListFlowTest {
 
@@ -21,7 +24,7 @@ class CreateShoppingListFlowTest {
 
     @get:Rule
     val koinTestModeRule = createKoinTestModule {
-        single<DispatchersProvider> { InstrumentedTestDispatcherProvider() }
+        single<DispatchersProvider> { UiTestDispatcherProvider() }
     }
 
     @Test
@@ -50,21 +53,21 @@ class CreateShoppingListFlowTest {
 
         addItemsScreen {
             hasEmptySearchbar()
-            typeSearchQuery("Milk")
-            clickOnSuggestionItem("Milk")
+            typeSearchQuery(SHOPPING_ITEM_NAME_1)
+            clickOnSuggestionItem(SHOPPING_ITEM_NAME_1)
             clearSearchbar()
-            typeSearchQuery("Bread")
+            typeSearchQuery(SHOPPING_ITEM_NAME_2)
             acceptValueFromKeyboard()
-            typeSearchQuery("Coconut oil")
+            typeSearchQuery(SHOPPING_ITEM_NAME_3)
             acceptValueFromKeyboard()
             navigateBack()
         }
 
         listDetailsScreen {
             hasNoEmptyShoppingListMessage()
-            hasUncheckedItem("Coconut oil")
-            hasUncheckedItem("Bread")
-            hasUncheckedItem("Milk")
+            hasUncheckedItem(SHOPPING_ITEM_NAME_3)
+            hasUncheckedItem(SHOPPING_ITEM_NAME_2)
+            hasUncheckedItem(SHOPPING_ITEM_NAME_1)
             navigateBack()
         }
 

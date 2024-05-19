@@ -9,7 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class InstrumentedTestDispatcherProvider : DispatchersProvider {
+class UiTestDispatcherProvider : DispatchersProvider {
 
     private val idlingThreadPoolExecutor = IdlingThreadPoolExecutor(
         "idling-thread-pool",
