@@ -10,11 +10,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
@@ -40,6 +42,7 @@ internal fun NonEmptyListDetailsScreenContent(
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
             ShoppingItemRow(
+                modifier = Modifier.testTag(LIST_ITEM),
                 shoppingItem = shoppingItem,
                 isLastItemInList = index == listOfShoppingItems.size - 1,
                 onClick = onClick

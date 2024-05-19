@@ -34,6 +34,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun SuggestionRow(
+    modifier: Modifier = Modifier,
     suggestion: NameSuggestion,
     isLastItemInList: Boolean,
     isDeletable: Boolean,
@@ -41,7 +42,7 @@ internal fun SuggestionRow(
     onDelete: () -> Unit
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
