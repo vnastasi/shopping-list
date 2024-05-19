@@ -132,7 +132,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.DatabaseSuite
+          script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.InstrumentationSuite
       - name: "Run flow tests"
         uses: reactivecircus/android-emulator-runner@v2
         with:
