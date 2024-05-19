@@ -59,4 +59,9 @@ class ListDetailsScreenRobot {
         val matcher = hasTestTag(LIST_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasTestTag(LIST_ITEM_CHECKBOX) and isOff())
         onNode(matcher).performScrollTo().isDisplayed()
     }
+
+    fun clickOnItem(name: String) {
+        val matcher = hasTestTag(LIST_ITEM) and hasAnyDescendant(hasText(name))
+        onNode(matcher).performScrollTo().performClick()
+    }
 }

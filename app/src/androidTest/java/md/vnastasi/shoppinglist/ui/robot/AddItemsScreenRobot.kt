@@ -1,6 +1,7 @@
 package md.vnastasi.shoppinglist.ui.robot
 
 import android.content.res.Resources
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -16,6 +17,7 @@ import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM_DELETE_BUTTON
 
 context(AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
 @RobotDslMarker
@@ -53,8 +55,18 @@ class AddItemsScreenRobot {
         onNode(matcher).performScrollTo().isDisplayed()
     }
 
+    fun hasNoSuggestionItem(name: String) {
+        val matcher = hasTestTag(SUGGESTION_ITEM) and hasAnyDescendant(hasText(name))
+        onNode(matcher).assertDoesNotExist()
+    }
+
     fun clickOnSuggestionItem(name: String) {
         val matcher = hasTestTag(SUGGESTION_ITEM) and hasAnyDescendant(hasText(name))
+        onNode(matcher).performScrollTo().performClick()
+    }
+
+    fun deleteSuggestionItem(name: String) {
+        val matcher = hasTestTag(SUGGESTION_ITEM_DELETE_BUTTON) and hasAnyAncestor(hasTestTag(SUGGESTION_ITEM) and hasAnyDescendant(hasText(name)))
         onNode(matcher).performScrollTo().performClick()
     }
 }

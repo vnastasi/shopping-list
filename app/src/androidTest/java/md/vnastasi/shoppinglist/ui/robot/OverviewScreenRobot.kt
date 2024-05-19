@@ -37,11 +37,6 @@ class OverviewScreenRobot {
         onNode(matcher).performClick()
     }
 
-    fun hasShoppingListCard(name: String) {
-        val matcher = hasTestTag(SHOPPING_LIST_CARD) and hasAnyDescendant(hasText(name))
-        onNode(matcher).performScrollTo().isDisplayed()
-    }
-
     fun hasShoppingListCard(name: String, totalItems: Int, completedItems: Int) {
         val matcher = hasTestTag(SHOPPING_LIST_CARD) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasText("$completedItems / $totalItems"))
         onNode(matcher).performScrollTo().isDisplayed()
