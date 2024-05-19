@@ -9,10 +9,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LIST_CARD
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
@@ -34,6 +36,7 @@ internal fun NonEmptyListOverviewScreenContent(
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
             ShoppingListCard(
+                modifier = Modifier.testTag(SHOPPING_LIST_CARD),
                 list = shoppingList,
                 onClickItem = onClick,
                 onDeleteItem = onDelete

@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
@@ -39,11 +40,13 @@ import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FAB
 import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
+import java.nio.file.WatchEvent
 
 @Composable
 fun ListOverviewScreen(
@@ -123,6 +126,7 @@ private fun ListOverviewScreen(
             },
             floatingActionButton = {
                 FloatingActionButton(
+                    modifier = Modifier.testTag(NEW_SHOPPING_LIST_FAB),
                     shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                     onClick = events.onAddNewShoppingList
                 ) {

@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_TEXT_FIELD
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
@@ -71,7 +73,8 @@ internal fun ShoppingListFormBottomSheet(
                     min = AppDimensions.contentMinWidth,
                     max = AppDimensions.contentMaxWidth
                 )
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
+                .testTag(NEW_SHOPPING_LIST_TEXT_FIELD),
             value = textFieldValue.value,
             label = {
                 Text(

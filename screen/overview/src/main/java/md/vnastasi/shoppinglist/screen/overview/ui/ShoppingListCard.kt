@@ -35,12 +35,13 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun ShoppingListCard(
+    modifier: Modifier = Modifier,
     list: ShoppingListDetails,
     onClickItem: (ShoppingListDetails) -> Unit = { },
     onDeleteItem: (ShoppingListDetails) -> Unit = { }
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
             positionalThreshold = { it / 2 }
