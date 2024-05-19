@@ -24,16 +24,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun SuggestionRow(
+    modifier: Modifier = Modifier,
     suggestion: NameSuggestion,
     isLastItemInList: Boolean,
     isDeletable: Boolean,
@@ -41,7 +44,7 @@ internal fun SuggestionRow(
     onDelete: () -> Unit
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
@@ -87,6 +90,7 @@ internal fun SuggestionRow(
                 if (isDeletable) {
                     IconButton(
                         modifier = Modifier
+                            .testTag(SUGGESTION_ITEM_DELETE_BUTTON)
                             .wrapContentSize()
                             .align(Alignment.CenterVertically),
                         onClick = { onDelete.invoke() }

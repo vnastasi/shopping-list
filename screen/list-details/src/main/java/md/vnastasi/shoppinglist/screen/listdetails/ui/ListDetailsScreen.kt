@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
@@ -34,6 +35,8 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_LIST_ITEMS_FAB
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -73,7 +76,9 @@ private fun ListDetailsScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(LIST_DETAILS_TOOLBAR),
                 title = {
                     Text(text = viewState.value.shoppingListName)
                 },
@@ -93,6 +98,7 @@ private fun ListDetailsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.testTag(ADD_LIST_ITEMS_FAB),
                 shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                 onClick = { events.onAddNewItems.invoke(viewState.value.shoppingListId) }
             ) {

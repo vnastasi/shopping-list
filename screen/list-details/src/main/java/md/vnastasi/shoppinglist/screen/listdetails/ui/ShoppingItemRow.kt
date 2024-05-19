@@ -17,22 +17,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
 @Composable
 internal fun ShoppingItemRow(
+    modifier: Modifier = Modifier,
     shoppingItem: ShoppingItem,
     isLastItemInList: Boolean,
     onClick: (ShoppingItem) -> Unit
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
@@ -49,8 +52,9 @@ internal fun ShoppingItemRow(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Checkbox(
+                    modifier = Modifier.testTag(LIST_ITEM_CHECKBOX),
                     checked = shoppingItem.isChecked,
-                    onCheckedChange = null,
+                    onCheckedChange = { },
                     colors = CheckboxDefaults.colors().copy(
                         checkedBoxColor = MaterialTheme.colorScheme.tertiary,
                         checkedBorderColor = MaterialTheme.colorScheme.tertiary,

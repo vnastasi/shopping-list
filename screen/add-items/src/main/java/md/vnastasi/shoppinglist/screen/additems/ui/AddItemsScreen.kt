@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
@@ -42,6 +43,8 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -108,7 +111,8 @@ private fun AddItemsScreen(
                         SearchBar(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 56.dp),
+                                .padding(start = 56.dp)
+                                .testTag(SEARCH_BAR),
                             searchTerm = textFieldValue,
                             onDone = { events.onItemAddedToList.invoke(textFieldValue.value) }
                         )
@@ -144,6 +148,7 @@ private fun AddItemsScreen(
                 key = { _, suggestion -> suggestion.id }
             ) { index, suggestion ->
                 SuggestionRow(
+                    modifier = Modifier.testTag(SUGGESTION_ITEM),
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
