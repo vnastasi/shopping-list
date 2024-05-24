@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.paparazzi).apply(false)
     id("detekt-aggregator")
+    id("jacoco-aggregator")
 }
