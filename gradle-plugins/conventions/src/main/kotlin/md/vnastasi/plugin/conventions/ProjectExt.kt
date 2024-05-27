@@ -10,13 +10,14 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_17.toString()
-            freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-Xcontext-receivers")
         }
     }
 }
@@ -56,10 +57,6 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureCompose() {
     buildFeatures {
         compose = true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.findVersion("compose-compiler").get().requiredVersion
-    }
 }
 
 internal fun Project.addUnitTestDependencies() {
@@ -96,6 +93,9 @@ internal fun Project.configureTestableLibrary() {
 
 internal fun Project.configureComposeLibrary() {
     configureSimpleLibrary()
+
+    pluginManager.apply(libs.findPlugin("compose-compiler").get().get().pluginId)
+
     extensions.configure<LibraryExtension> {
         configureCompose()
     }
@@ -128,6 +128,7 @@ internal fun Project.configureApplication() {
     pluginManager.apply(libs.findPlugin("android-application").get().get().pluginId)
     pluginManager.apply(libs.findPlugin("android-cacheFix").get().get().pluginId)
     pluginManager.apply(libs.findPlugin("kotlin-android").get().get().pluginId)
+    pluginManager.apply(libs.findPlugin("compose-compiler").get().get().pluginId)
 
     extensions.configure<ApplicationExtension> {
         configureAndroid()
