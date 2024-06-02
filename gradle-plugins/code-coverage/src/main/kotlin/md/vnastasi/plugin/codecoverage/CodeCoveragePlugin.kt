@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import javax.inject.Inject
 
@@ -37,10 +38,17 @@ class CodeCoveragePlugin @Inject constructor(
 
         target.pluginManager.apply("jacoco")
 
+        val executionDataDirectories = target.getExecutionDataDirectories(targetBuildType)
+        val allSourceDirectories = target.getAllSourceDirectories()
+        val allClassDirectories = target.getAllClassDirectories(targetBuildType)
+
         target.tasks.register<JacocoReport>("jacocoTestReport") {
             group = "verification"
-
             dependsOn(target.getAllTestTasks(targetBuildType))
+
+            executionData.setFrom(executionDataDirectories)
+            sourceDirectories.setFrom(allSourceDirectories)
+            classDirectories.setFrom(allClassDirectories)
 
             reports {
                 html.apply {
@@ -54,10 +62,23 @@ class CodeCoveragePlugin @Inject constructor(
                     required.set(false)
                 }
             }
+        }
 
-            executionData.setFrom(target.getExecutionDataDirectories(targetBuildType))
-            sourceDirectories.setFrom(target.getAllSourceDirectories())
-            classDirectories.setFrom(target.getAllClassDirectories(targetBuildType))
+        target.tasks.register<JacocoCoverageVerification>("jacocoCoverageVerification") {
+            group = "verification"
+            dependsOn(target.tasks.named("jacocoTestReport"))
+
+            executionData.setFrom(executionDataDirectories)
+            sourceDirectories.setFrom(allSourceDirectories)
+            classDirectories.setFrom(allClassDirectories)
+
+            violationRules {
+                rule {
+                    limit {
+                        minimum = 0.6.toBigDecimal()
+                    }
+                }
+            }
         }
 
         target.extensions.configure<JacocoPluginExtension> {
