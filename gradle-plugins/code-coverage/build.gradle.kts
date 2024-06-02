@@ -22,9 +22,9 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("JacocoAggregator") {
-            id = "jacoco-aggregator"
-            implementationClass = "md.vnastasi.plugin.detektaggregator.JacocoAggregatorPlugin"
+        register("CodeCoverage") {
+            id = "code-coverage"
+            implementationClass = "md.vnastasi.plugin.codecoverage.CodeCoveragePlugin"
         }
     }
 }
