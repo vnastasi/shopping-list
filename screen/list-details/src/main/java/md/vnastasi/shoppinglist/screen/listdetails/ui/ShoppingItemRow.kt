@@ -1,14 +1,12 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -35,9 +33,7 @@ internal fun ShoppingItemRow(
     onClick: (ShoppingItem) -> Unit
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
@@ -48,27 +44,28 @@ internal fun ShoppingItemRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onClick.invoke(shoppingItem) }
-                    .padding(AppDimensions.paddingMedium),
-                horizontalArrangement = Arrangement.Start
+                    .padding(AppDimensions.paddingSmall)
             ) {
                 Checkbox(
-                    modifier = Modifier.testTag(LIST_ITEM_CHECKBOX),
+                    modifier = Modifier
+                        .testTag(LIST_ITEM_CHECKBOX)
+                        .align(Alignment.CenterVertically),
                     checked = shoppingItem.isChecked,
-                    onCheckedChange = { },
+                    onCheckedChange = { onClick.invoke(shoppingItem) },
                     colors = CheckboxDefaults.colors().copy(
                         checkedBoxColor = MaterialTheme.colorScheme.tertiary,
                         checkedBorderColor = MaterialTheme.colorScheme.tertiary,
                     )
                 )
 
-                val textStyle = AppTypography.bodyLarge.copy(
-                    textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
-                )
-
                 Text(
-                    modifier = Modifier.padding(start = AppDimensions.paddingMedium),
+                    modifier = Modifier
+                        .padding(start = AppDimensions.paddingSmall)
+                        .align(Alignment.CenterVertically),
                     text = shoppingItem.name,
-                    style = textStyle
+                    style = AppTypography.bodyLarge.copy(
+                        textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
+                    )
                 )
             }
 
