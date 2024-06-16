@@ -5,14 +5,12 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
@@ -38,13 +36,12 @@ class CodeCoveragePlugin @Inject constructor(
 
         target.pluginManager.apply("jacoco")
 
-        val executionDataDirectories = target.getExecutionDataDirectories(targetBuildType)
-        val allSourceDirectories = target.getAllSourceDirectories()
-        val allClassDirectories = target.getAllClassDirectories(targetBuildType)
+        val executionDataDirectories = target.getExecDataDirs(targetBuildType)
+        val allSourceDirectories = target.getAllSourceDirs()
+        val allClassDirectories = target.getAllClassDirs(targetBuildType)
 
         target.tasks.register<JacocoReport>("jacocoTestReport") {
             group = "verification"
-            dependsOn(target.getAllTestTasks(targetBuildType))
 
             executionData.setFrom(executionDataDirectories)
             sourceDirectories.setFrom(allSourceDirectories)
@@ -75,7 +72,7 @@ class CodeCoveragePlugin @Inject constructor(
             violationRules {
                 rule {
                     limit {
-                        minimum = 0.6.toBigDecimal()
+                        minimum = 0.8.toBigDecimal()
                     }
                 }
             }
@@ -86,23 +83,34 @@ class CodeCoveragePlugin @Inject constructor(
         }
     }
 
-    private fun Project.getAllTestTasks(buildType: String): List<Provider<Task>> = subprojects
-        .mapNotNull { it.tasks.findByName("test${buildType.capitalized()}UnitTest") }
-        .map { providers.provider { it } }
-
-    private fun Project.getAllSourceDirectories(): List<Provider<Directory>> = subprojects
+    private fun Project.getAllSourceDirs(): List<Provider<Directory>> = subprojects
         .map { it.layout.projectDirectory.dir("src/main/java") }
         .map { providers.provider { it } }
 
-    private fun Project.getAllClassDirectories(buildType: String): List<Provider<Directory>> = subprojects
+    private fun Project.getAllClassDirs(buildType: String): List<Provider<Directory>> = subprojects
         .map { it.layout.buildDirectory.dir("tmp/kotlin-classes/${buildType}") }
 
-    private fun Project.getExecutionDataDirectories(buildType: String): List<Provider<FileTree>> = subprojects
+    private fun Project.getExecDataDirs(buildType: String): List<Provider<FileTree>> = buildList {
+        addAll(getUniTestExecDataDirs(buildType))
+        addAll(getInstrumentationTestExecDataDirs(buildType))
+    }
+
+    private fun Project.getUniTestExecDataDirs(buildType: String): List<Provider<FileTree>> = subprojects
         .map { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage/${buildType}UnitTest") }
         .map { provider ->
             provider.map { directory ->
                 directory.asFileTree.matching {
-                    include { it.name.endsWith(".exec") }
+                    include("*.exec")
+                }
+            }
+        }
+
+    private fun Project.getInstrumentationTestExecDataDirs(buildType: String): List<Provider<FileTree>> = subprojects
+        .map { it.layout.buildDirectory.dir("outputs/code_coverage/${buildType}AndroidTest") }
+        .map { provider ->
+            provider.map { directory ->
+                directory.asFileTree.matching {
+                    include("**/*.ec")
                 }
             }
         }
@@ -123,6 +131,7 @@ class CodeCoveragePlugin @Inject constructor(
         buildTypes {
             getByName(buildType) {
                 enableUnitTestCoverage = true
+                enableAndroidTestCoverage = true
                 testCoverage {
                     jacocoVersion = findVersion("jacoco").get().requiredVersion
                 }
