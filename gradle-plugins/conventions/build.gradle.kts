@@ -13,6 +13,8 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
     implementation(platform(libs.kotlin.bom))
     implementation(libs.kotlin.stdlib)
 

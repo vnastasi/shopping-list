@@ -13,7 +13,7 @@ class ScreenshotTestableLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.dependencies {
-            add("testRuntimeOnly", target.libs.findLibrary("junit-vintage-engine").get())
+            addProvider("testRuntimeOnly", target.libs.junit.vintage.engine)
         }
 
         target.extensions.configure<LibraryExtension> {
@@ -28,9 +28,7 @@ class ScreenshotTestableLibraryConventions : Plugin<Project> {
             }
         }
 
-        val paparazziPluginId = target.libs.findPlugin("paparazzi").get().get().pluginId
-        target.pluginManager.apply(paparazziPluginId)
-        target.pluginManager.withPlugin(paparazziPluginId) {
+        target.pluginManager.applyAndConfigure(target.libs.plugins.paparazzi) {
             target.afterEvaluate {
                 dependencies.constraints {
                     add("testImplementation", "com.google.guava:guava") {
