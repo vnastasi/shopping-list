@@ -21,13 +21,18 @@ import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import javax.inject.Inject
 
+private const val EXTENSION_NAME = "codeCoverage"
+private const val TASK_GROUP = "verification"
+private const val COVERAGE_REPORT_TASK_NAME = "createCodeCoverageReport"
+private const val COVERAGE_VERIFICATION_TASK_NAME = "verifyCodeCoverage"
+
 @Suppress("unused")
 class CodeCoveragePlugin @Inject constructor(
     private val providers: ProviderFactory
 ) : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val codeCoverageExtension = target.extensions.create<CodeCoverageExtension>("codeCoverage")
+        val codeCoverageExtension = target.extensions.create<CodeCoverageExtension>(EXTENSION_NAME)
 
         val libs = target.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
@@ -46,8 +51,8 @@ class CodeCoveragePlugin @Inject constructor(
             val allSourceDirectories = target.getAllSourceDirs()
             val allClassDirectories = target.getAllClassDirs(targetBuildType)
 
-            val coverageReportTask = target.tasks.register<JacocoReport>("createCodeCoverageReport") {
-                group = "verification"
+            val coverageReportTask = target.tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
+                group = TASK_GROUP
                 dependsOn(target.subprojects.mapNotNull { it.tasks.findByName("test${targetBuildType.capitalized()}UnitTest") }.map { providers.provider { it } })
 
                 executionData.setFrom(executionDataDirectories)
@@ -68,8 +73,8 @@ class CodeCoveragePlugin @Inject constructor(
                 }
             }
 
-            target.tasks.register<JacocoCoverageVerification>("verifyCodeCoverage") {
-                group = "verification"
+            target.tasks.register<JacocoCoverageVerification>(COVERAGE_VERIFICATION_TASK_NAME) {
+                group = TASK_GROUP
                 dependsOn(coverageReportTask)
 
                 executionData.setFrom(executionDataDirectories)
