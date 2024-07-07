@@ -8,5 +8,12 @@ plugins {
     alias(libs.plugins.kotlin.parcelize).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.paparazzi).apply(false)
+    id("code-coverage")
     id("detekt-aggregator")
+}
+
+codeCoverage {
+    targetBuildType.set("debug")
+    reportDirectory.set(layout.buildDirectory.dir("reports/codeCoverage"))
+    coverageThreshold.set(0.80)
 }

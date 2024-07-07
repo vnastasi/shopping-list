@@ -1,6 +1,7 @@
 pluginManagement {
     includeBuild("gradle-plugins/conventions")
     includeBuild("gradle-plugins/detekt-aggregator")
+    includeBuild("gradle-plugins/code-coverage")
     repositories {
         google()
         mavenCentral()
