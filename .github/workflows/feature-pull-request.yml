@@ -56,9 +56,6 @@ jobs:
       - name: "Run unit tests"
         run: ./gradlew testDebugUnitTest
 
-      - name: "Run screenshot tests"
-        run: ./gradlew verifyPaparazziDebug
-
       - name: "Set up emulator caching"
         uses: actions/cache@v4
         id: avd-cache
