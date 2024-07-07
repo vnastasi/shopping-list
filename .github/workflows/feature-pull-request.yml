@@ -1,4 +1,5 @@
 name: Feature pull request Workflow
+
 on:
   pull_request:
     branches:
@@ -6,9 +7,11 @@ on:
     types:
       - opened
       - synchronize
+      -
 permissions:
   contents: write
   pull-requests: write
+
 jobs:
   main:
     name: "Build, test and verify"
