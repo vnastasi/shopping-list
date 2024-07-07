@@ -3,10 +3,10 @@ package md.vnastasi.plugin.codecoverage
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.LibraryExtension
+import md.vnastasi.plugin.support.libs
+import md.vnastasi.plugin.support.withPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalog
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
@@ -14,7 +14,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
@@ -31,29 +30,35 @@ class CodeCoveragePlugin @Inject constructor(
     private val providers: ProviderFactory
 ) : Plugin<Project> {
 
-    override fun apply(target: Project) {
-        val codeCoverageExtension = target.extensions.create<CodeCoverageExtension>(EXTENSION_NAME)
+    override fun apply(target: Project): Unit = with(target) {
+        val codeCoverageExtension = extensions.create<CodeCoverageExtension>(EXTENSION_NAME)
 
-        val libs = target.extensions.getByType<VersionCatalogsExtension>().named("libs")
+        pluginManager.apply("jacoco")
 
-        target.pluginManager.apply("jacoco")
-
-        target.extensions.configure<JacocoPluginExtension> {
-            toolVersion = libs.findVersion("jacoco").get().requiredVersion
+        extensions.configure<JacocoPluginExtension> {
+            toolVersion = libs.versions.jacoco.get()
         }
 
-        target.afterEvaluate {
+        afterEvaluate {
             val targetBuildType = codeCoverageExtension.targetBuildType.get()
 
-            target.subprojects.forEach { with(libs) { it.enableTestCoverageData(targetBuildType) } }
+            subprojects.forEach { subProject ->
+                subProject.pluginManager.withPlugin(libs.plugins.android.library) {
+                    subProject.extensions.configure<LibraryExtension> { enableTestCoverageData(targetBuildType, libs.versions.jacoco.get()) }
+                }
 
-            val executionDataDirectories = target.getExecDataDirs(targetBuildType)
-            val allSourceDirectories = target.getAllSourceDirs()
-            val allClassDirectories = target.getAllClassDirs(targetBuildType)
+                subProject.pluginManager.withPlugin(libs.plugins.android.application) {
+                    subProject.extensions.configure<ApplicationExtension> { enableTestCoverageData(targetBuildType, libs.versions.jacoco.get()) }
+                }
+            }
 
-            val coverageReportTask = target.tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
+            val executionDataDirectories = getExecDataDirs(targetBuildType)
+            val allSourceDirectories = getAllSourceDirs()
+            val allClassDirectories = getAllClassDirs(targetBuildType)
+
+            val coverageReportTask = tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
                 group = TASK_GROUP
-                dependsOn(target.subprojects.mapNotNull { it.tasks.findByName("test${targetBuildType.capitalized()}UnitTest") }.map { providers.provider { it } })
+                dependsOn(subprojects.mapNotNull { it.tasks.findByName("test${targetBuildType.capitalized()}UnitTest") }.map { providers.provider { it } })
 
                 executionData.setFrom(executionDataDirectories)
                 sourceDirectories.setFrom(allSourceDirectories)
@@ -73,7 +78,7 @@ class CodeCoveragePlugin @Inject constructor(
                 }
             }
 
-            target.tasks.register<JacocoCoverageVerification>(COVERAGE_VERIFICATION_TASK_NAME) {
+            tasks.register<JacocoCoverageVerification>(COVERAGE_VERIFICATION_TASK_NAME) {
                 group = TASK_GROUP
                 dependsOn(coverageReportTask)
 
@@ -124,19 +129,7 @@ class CodeCoveragePlugin @Inject constructor(
             }
         }
 
-    context(VersionCatalog)
-    private fun Project.enableTestCoverageData(buildType: String) {
-        pluginManager.withPlugin(findPlugin("android-library").get().get().pluginId) {
-            extensions.configure<LibraryExtension> { enableTestCoverageData(buildType) }
-        }
-
-        pluginManager.withPlugin(findPlugin("android-application").get().get().pluginId) {
-            extensions.configure<ApplicationExtension> { enableTestCoverageData(buildType) }
-        }
-    }
-
-    context(VersionCatalog)
-    private fun CommonExtension<*, *, *, *, *, *>.enableTestCoverageData(buildType: String) {
+    private fun CommonExtension<*, *, *, *, *, *>.enableTestCoverageData(buildType: String, jacocoAgentVersion: String) {
         buildTypes {
             getByName(buildType) {
                 enableUnitTestCoverage = true
@@ -145,7 +138,7 @@ class CodeCoveragePlugin @Inject constructor(
         }
 
         testCoverage {
-            jacocoVersion = findVersion("jacoco").get().requiredVersion
+            jacocoVersion = jacocoAgentVersion
         }
     }
 }
