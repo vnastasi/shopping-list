@@ -11,3 +11,9 @@ plugins {
     id("code-coverage")
     id("detekt-aggregator")
 }
+
+codeCoverage {
+    targetBuildType.set("debug")
+    reportDirectory.set(layout.buildDirectory.dir("reports/codeCoverage"))
+    coverageThreshold.set(0.80)
+}

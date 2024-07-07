@@ -11,7 +11,9 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
@@ -19,67 +21,69 @@ import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import javax.inject.Inject
 
-private const val PROPERTY_TARGET_BUILD_TYPE = "targetBuildType"
-private const val DEFAULT_TARGET_BUILD_TYPE = "debug"
-
 @Suppress("unused")
 class CodeCoveragePlugin @Inject constructor(
     private val providers: ProviderFactory
 ) : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val targetBuildType = providers.gradleProperty(PROPERTY_TARGET_BUILD_TYPE).getOrElse(DEFAULT_TARGET_BUILD_TYPE)
+        val codeCoverageExtension = target.extensions.create<CodeCoverageExtension>("codeCoverage")
 
         val libs = target.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-        target.subprojects.forEach { with(libs) { it.enableTestCoverageData(targetBuildType) } }
-
         target.pluginManager.apply("jacoco")
-
-        val executionDataDirectories = target.getExecDataDirs(targetBuildType)
-        val allSourceDirectories = target.getAllSourceDirs()
-        val allClassDirectories = target.getAllClassDirs(targetBuildType)
-
-        target.tasks.register<JacocoReport>("jacocoTestReport") {
-            group = "verification"
-
-            executionData.setFrom(executionDataDirectories)
-            sourceDirectories.setFrom(allSourceDirectories)
-            classDirectories.setFrom(allClassDirectories)
-
-            reports {
-                html.apply {
-                    required.set(true)
-                    outputLocation.set(target.layout.buildDirectory.dir("reports/jacoco/${targetBuildType}"))
-                }
-                xml.apply {
-                    required.set(false)
-                }
-                csv.apply {
-                    required.set(false)
-                }
-            }
-        }
-
-        target.tasks.register<JacocoCoverageVerification>("jacocoCoverageVerification") {
-            group = "verification"
-            dependsOn(target.tasks.named("jacocoTestReport"))
-
-            executionData.setFrom(executionDataDirectories)
-            sourceDirectories.setFrom(allSourceDirectories)
-            classDirectories.setFrom(allClassDirectories)
-
-            violationRules {
-                rule {
-                    limit {
-                        minimum = 0.8.toBigDecimal()
-                    }
-                }
-            }
-        }
 
         target.extensions.configure<JacocoPluginExtension> {
             toolVersion = libs.findVersion("jacoco").get().requiredVersion
+        }
+
+        target.afterEvaluate {
+            val targetBuildType = codeCoverageExtension.targetBuildType.get()
+
+            target.subprojects.forEach { with(libs) { it.enableTestCoverageData(targetBuildType) } }
+
+            val executionDataDirectories = target.getExecDataDirs(targetBuildType)
+            val allSourceDirectories = target.getAllSourceDirs()
+            val allClassDirectories = target.getAllClassDirs(targetBuildType)
+
+            val coverageReportTask = target.tasks.register<JacocoReport>("createCodeCoverageReport") {
+                group = "verification"
+                dependsOn(target.subprojects.mapNotNull { it.tasks.findByName("test${targetBuildType.capitalized()}UnitTest") }.map { providers.provider { it } })
+
+                executionData.setFrom(executionDataDirectories)
+                sourceDirectories.setFrom(allSourceDirectories)
+                classDirectories.setFrom(allClassDirectories)
+
+                reports {
+                    html.apply {
+                        required.set(true)
+                        outputLocation.set(codeCoverageExtension.reportDirectory)
+                    }
+                    xml.apply {
+                        required.set(false)
+                    }
+                    csv.apply {
+                        required.set(false)
+                    }
+                }
+            }
+
+            target.tasks.register<JacocoCoverageVerification>("verifyCodeCoverage") {
+                group = "verification"
+                dependsOn(coverageReportTask)
+
+                executionData.setFrom(executionDataDirectories)
+                sourceDirectories.setFrom(allSourceDirectories)
+                classDirectories.setFrom(allClassDirectories)
+
+                violationRules {
+                    rule {
+                        limit {
+                            minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal() }.get()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -132,10 +136,11 @@ class CodeCoveragePlugin @Inject constructor(
             getByName(buildType) {
                 enableUnitTestCoverage = true
                 enableAndroidTestCoverage = true
-                testCoverage {
-                    jacocoVersion = findVersion("jacoco").get().requiredVersion
-                }
             }
+        }
+
+        testCoverage {
+            jacocoVersion = findVersion("jacoco").get().requiredVersion
         }
     }
 }
