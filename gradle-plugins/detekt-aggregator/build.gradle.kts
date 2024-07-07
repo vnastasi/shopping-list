@@ -13,11 +13,12 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     implementation(platform(libs.kotlin.bom))
     implementation(libs.kotlin.stdlib)
-
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
+    implementation("md.vnastasi.plugins:plugin-support")
 }
 
 gradlePlugin {

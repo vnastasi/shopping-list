@@ -1,6 +1,8 @@
 package md.vnastasi.plugin.conventions
 
 import com.android.build.gradle.LibraryExtension
+import md.vnastasi.plugin.support.applyAndConfigure
+import md.vnastasi.plugin.support.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.java.TargetJvmEnvironment
@@ -11,12 +13,12 @@ import org.gradle.kotlin.dsl.named
 @Suppress("UnstableApiUsage", "unused")
 class ScreenshotTestableLibraryConventions : Plugin<Project> {
 
-    override fun apply(target: Project) {
-        target.dependencies {
-            addProvider("testRuntimeOnly", target.libs.junit.vintage.engine)
+    override fun apply(target: Project): Unit = with(target) {
+        dependencies {
+            addProvider("testRuntimeOnly", libs.junit.vintage.engine)
         }
 
-        target.extensions.configure<LibraryExtension> {
+        extensions.configure<LibraryExtension> {
             testOptions {
                 unitTests {
                     all { test ->
@@ -28,8 +30,8 @@ class ScreenshotTestableLibraryConventions : Plugin<Project> {
             }
         }
 
-        target.pluginManager.applyAndConfigure(target.libs.plugins.paparazzi) {
-            target.afterEvaluate {
+        pluginManager.applyAndConfigure(libs.plugins.paparazzi) {
+            afterEvaluate {
                 dependencies.constraints {
                     add("testImplementation", "com.google.guava:guava") {
                         attributes {

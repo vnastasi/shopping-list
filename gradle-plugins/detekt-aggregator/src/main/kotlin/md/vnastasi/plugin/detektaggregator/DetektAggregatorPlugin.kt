@@ -1,22 +1,21 @@
 package md.vnastasi.plugin.detektaggregator
 
 import io.gitlab.arturbosch.detekt.Detekt
+import md.vnastasi.plugin.support.apply
+import md.vnastasi.plugin.support.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 
 @Suppress("unused")
 class DetektAggregatorPlugin : Plugin<Project> {
 
-    override fun apply(target: Project) {
-        val libs = target.extensions.getByType<VersionCatalogsExtension>().named("libs")
-        val pluginId =  libs.findPlugin("detekt").get().get().pluginId
+    override fun apply(target: Project): Unit = with(target) {
+        val plugin = libs.plugins.detekt
 
-        target.rootProject.subprojects {
-            pluginManager.apply(pluginId)
+        rootProject.subprojects {
+            pluginManager.apply(plugin)
 
             tasks.withType<Detekt>().configureEach {
                 jvmTarget = JavaVersion.VERSION_17.toString()

@@ -22,4 +22,10 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("../plugin-support") {
+    dependencySubstitution {
+        substitute(module("md.vnastasi.plugins:plugin-support")).using(project(":"))
+    }
+}
+
 rootProject.name = "code-coverage"
