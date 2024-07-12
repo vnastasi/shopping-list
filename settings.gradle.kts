@@ -3,6 +3,7 @@ pluginManagement {
     includeBuild("gradle-plugins/detekt-aggregator")
     includeBuild("gradle-plugins/code-coverage")
     includeBuild("gradle-plugins/plugin-support")
+    includeBuild("gradle-plugins/secrets")
     repositories {
         google()
         mavenCentral()

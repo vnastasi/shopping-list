@@ -2,12 +2,23 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("application.conventions")
+    id("secrets")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "md.vnastasi.shoppinglist"
+
+    signingConfigs {
+        register("release") {
+            storeType = "JKS"
+            storeFile = secrets.keyStore.file.get().asFile
+            storePassword = secrets.keyStore.storePassword.get()
+            keyAlias = secrets.keyStore.keyAlias.get()
+            keyPassword = secrets.keyStore.keyPassword.get()
+        }
+    }
 
     defaultConfig {
         applicationId = libs.versions.project.application.id.get()
@@ -23,7 +34,8 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
