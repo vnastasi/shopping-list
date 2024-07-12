@@ -17,13 +17,16 @@ abstract class CreateReleaseTag @Inject constructor(
     @TaskAction
     fun create() {
         val versionName = getVersionName()
-
-        execOperations.exec { commandLine("git", "tag", "v$versionName") }
-        execOperations.exec { commandLine("git", "push", "origin", "tag", "v$versionName") }
+        createReleaseTag(versionName)
     }
 
     private fun getVersionName(): String =
         versionCatalogFile.get().asFile.readLines()
             .first { it.startsWith("project-version-name") }
             .split(" = ")[1].replace("\"", "")
+
+    private fun createReleaseTag(versionName: String) {
+        execOperations.exec { commandLine("git", "tag", "v$versionName") }
+        execOperations.exec { commandLine("git", "push", "origin", "tag", "v$versionName") }
+    }
 }
