@@ -5,10 +5,12 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
 abstract class UpdateProjectVersion @Inject constructor(
-    private val providers: ProviderFactory
+    private val providers: ProviderFactory,
+    private val execOperations: ExecOperations
 ) : DefaultTask() {
 
     @get:InputFile
@@ -16,6 +18,14 @@ abstract class UpdateProjectVersion @Inject constructor(
 
     @TaskAction
     fun update() {
+        val versionName = updateAndGetNewVersion()
+
+        execOperations.exec { commandLine("git", "add", versionCatalogFile.get().asFile.path) }
+        execOperations.exec { commandLine("git", "commit", "-m", "Prepare release v${versionName}") }
+        execOperations.exec { commandLine("git", "push", "origin", "master") }
+    }
+
+    private fun updateAndGetNewVersion(): String {
         val fileLines = versionCatalogFile.get().asFile.readLines()
         val projectVersionName = fileLines.withIndex().first { it.value.startsWith("project-version-name") }
         val projectVersionCode = fileLines.withIndex().first { it.value.startsWith("project-version-code") }
@@ -45,5 +55,7 @@ abstract class UpdateProjectVersion @Inject constructor(
         }
 
         versionCatalogFile.get().asFile.writeText(newFileLines.joinToString(separator = "\n"))
+
+        return versionName
     }
 }
