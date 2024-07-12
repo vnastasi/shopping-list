@@ -7,7 +7,6 @@ on:
     types:
       - opened
       - synchronize
-      -
 permissions:
   contents: write
   pull-requests: write
@@ -16,6 +15,11 @@ jobs:
   main:
     name: "Build, test and verify"
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Environment"
         run: |
