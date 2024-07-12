@@ -34,13 +34,15 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew assembleRelease
+          ./gradlew copyReleaseApkArtifact
 
       - name: "Upload APK"
         uses: actions/upload-artifact@v4
         with:
           name: "apk"
-          path: app/build/outputs/apk/release/app-release.apk
+          path: build/artifacts/shopping-list-v*.apk
           if-no-files-found: error
           retention-days: 14
           overwrite: true
@@ -63,8 +65,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
@@ -75,6 +77,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./app-release.apk
-          asset_name: app-release.apk
+          asset_path: ./shopping-list-v${{ github.ref_name }}.apk
+          asset_name: shopping-list-v${{ github.ref_name }}.apk
           asset_content_type: application/zip
