@@ -1,11 +1,14 @@
 package md.vnastasi.plugin.abs.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.process.ExecSpec
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 abstract class UpdateProjectVersion @Inject constructor(
@@ -18,6 +21,11 @@ abstract class UpdateProjectVersion @Inject constructor(
 
     @TaskAction
     fun update() {
+        val currentBranch = execOperations.execWithReturn { commandLine("git", "rev-parse", "--abbrev-ref", "HEAD") }
+        if (currentBranch != "master") {
+            throw GradleException("Not on master branch!")
+        }
+
         val versionName = updateAndGetNewVersion()
 
         execOperations.exec { commandLine("git", "add", versionCatalogFile.get().asFile.path) }
@@ -58,4 +66,13 @@ abstract class UpdateProjectVersion @Inject constructor(
 
         return versionName
     }
+
+    private fun ExecOperations.execWithReturn(block: ExecSpec.() -> Unit): String =
+        ByteArrayOutputStream().use { stream ->
+            exec {
+                block.invoke(this)
+                standardOutput = stream
+            }
+            stream.toString(Charsets.UTF_8).trim()
+        }
 }
