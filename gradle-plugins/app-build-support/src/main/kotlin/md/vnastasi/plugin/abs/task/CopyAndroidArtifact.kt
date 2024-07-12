@@ -1,4 +1,4 @@
-package md.vnastasi.plugin.abs
+package md.vnastasi.plugin.abs.task
 
 import com.android.build.api.variant.BuiltArtifactsLoader
 import org.gradle.api.DefaultTask
