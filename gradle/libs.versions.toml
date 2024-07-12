@@ -1,11 +1,11 @@
 [versions]
 
+project-application-id = "md.vnastasi.shoppinglist"
 project-compileSdk = "34"
 project-minSdk = "28"
 project-targetSdk = "34"
 project-version-code = "1"
-project-version-name = "1.0"
-project-application-id = "md.vnastasi.shoppinglist"
+project-version-name = "0.0.1"
 
 android-cache-fix = "3.0.1"
 android-tools = "8.5.0"

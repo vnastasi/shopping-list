@@ -1,8 +1,12 @@
+import com.android.build.api.artifact.SingleArtifact
+import md.vnastasi.plugin.abs.CopyAndroidArtifact
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("application.conventions")
     id("secrets")
+    id("app-build-support")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
 }
@@ -51,6 +55,17 @@ android {
             assets {
                 srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
             }
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) { applicationVariant ->
+        project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.capitalized()}ApkArtifact") {
+            artifactDirectory.set(applicationVariant.artifacts.get(SingleArtifact.APK))
+            artifactLoader.set(applicationVariant.artifacts.getBuiltArtifactsLoader())
+            targetDirectory.set(rootProject.layout.buildDirectory.dir("artifacts/apk"))
+            fileName.set("shopping-list-v${libs.versions.project.version.name.get()}.apk")
         }
     }
 }
