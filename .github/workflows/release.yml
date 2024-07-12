@@ -1,0 +1,75 @@
+name: Minimal Android CI Workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-apk:
+    name: Create release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Assemble application"
+        run: ./gradlew assembleRelease
+
+      - name: "Upload APK"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "apk"
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: true
+
+  release-apk:
+    name: "Release APK"
+    needs:
+      - create-apk
+    runs-on: ubuntu-latest
+    steps:
+      - id: download_artifact
+        name: "Download APK from build"
+        uses: actions/download-artifact@v4
+        with:
+          name: "apk"
+
+      - id: create_release
+        name: "Create release package"
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - id: upload_release_asset
+        name: "Upload release package"
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: apk/app-release.apk
+          asset_name: Shopping list v${{ github.ref }}.apk
+          asset_content_type: application/zip
