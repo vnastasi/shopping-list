@@ -5,7 +5,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
 abstract class CreateReleaseTag @Inject constructor(
@@ -17,14 +16,17 @@ abstract class CreateReleaseTag @Inject constructor(
 
     @TaskAction
     fun create() {
-        val version = versionCatalogFile.get().asFile.readLines().first { it.startsWith("project-version-name") }.split(" = ")[1].replace("\"", "")
-
-        execOperations.execRequired { commandLine("git", "tag", "v$version") }
-        execOperations.execRequired { commandLine("git", "push", "origin", "tag", "v$version") }
+        val versionName = getVersionName()
+        createReleaseTag(versionName)
     }
 
-    private fun ExecOperations.execRequired(block: ExecSpec.() -> Unit) {
-        val exitResult = exec(block).exitValue
-        require(exitResult == 0)
+    private fun getVersionName(): String =
+        versionCatalogFile.get().asFile.readLines()
+            .first { it.startsWith("project-version-name") }
+            .split(" = ")[1].replace("\"", "")
+
+    private fun createReleaseTag(versionName: String) {
+        execOperations.exec { commandLine("git", "tag", "v$versionName") }
+        execOperations.exec { commandLine("git", "push", "origin", "tag", "v$versionName") }
     }
 }
