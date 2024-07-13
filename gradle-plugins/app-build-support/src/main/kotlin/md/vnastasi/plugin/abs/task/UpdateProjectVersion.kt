@@ -16,7 +16,7 @@ private const val CATALOG_KEY_PROJECT_VERSION_CODE = "project-version-code"
 
 private const val TASK_PROPERTY_VERSION = "version"
 
-private const val TARGET_BRANCH = "master"
+private const val TARGET_BRANCH = "main"
 
 abstract class UpdateProjectVersion @Inject constructor(
     private val providers: ProviderFactory,
