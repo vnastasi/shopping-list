@@ -1,14 +1,22 @@
 package md.vnastasi.plugin.secrets
 
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.property
+import javax.inject.Inject
 
-data class Keystore(
-    val file: RegularFileProperty,
-    val storePassword: Property<String>,
-    val keyAlias: Property<String>,
-    val keyPassword: Property<String>
+abstract class Keystore @Inject constructor(
+    objects: ObjectFactory
 ) {
+
+    val file: RegularFileProperty = objects.fileProperty()
+
+    val storePassword: Property<String> = objects.property<String>()
+
+    val keyAlias: Property<String> = objects.property<String>()
+
+    val keyPassword: Property<String> = objects.property<String>()
 
     internal companion object {
 
