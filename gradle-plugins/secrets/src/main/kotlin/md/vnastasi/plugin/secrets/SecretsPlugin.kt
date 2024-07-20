@@ -1,6 +1,5 @@
 package md.vnastasi.plugin.secrets
 
-import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
@@ -28,14 +27,6 @@ class SecretsPlugin @Inject constructor(
         }
     }
 
-    private fun Provider<Properties>.property(key: String): Provider<String> {
-        var value = providers.environmentVariable(key).getOrElse("")
-        if (value.isEmpty()) {
-            value = this.map { it.getProperty(key) }.getOrElse("")
-        }
-        if (value.isEmpty()) {
-            throw GradleException("No value found for key <$key>")
-        }
-        return providers.provider { value }
-    }
+    private fun Provider<Properties>.property(key: String): Provider<String> =
+        providers.environmentVariable(key).orElse(map { it.getProperty(key) })
 }

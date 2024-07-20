@@ -26,6 +26,10 @@ jobs:
           echo "Agent ${{ runner.name }}"
           echo "Operating system ${{ runner.os }}"
           echo "Architecture ${{ runner.arch }}"
+          export KEYSTORE_FILE=${{ env.KEYSTORE_FILE }}
+          export KEYSTORE_PASSWORD=${{ env.KEYSTORE_PASSWORD }}
+          export KEYSTORE_KEY_ALIAS=${{ env.KEYSTORE_KEY_ALIAS }}
+          export KEYSTORE_KEY_PASSWORD=${{ env.KEYSTORE_KEY_PASSWORD }}
 
       - name: "Enable hardware acceleration"
         run: |
