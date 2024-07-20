@@ -17,10 +17,10 @@ android {
     signingConfigs {
         register("release") {
             storeType = "JKS"
-            storeFile = secrets.keyStore.file.get().asFile
-            storePassword = secrets.keyStore.storePassword.get()
-            keyAlias = secrets.keyStore.keyAlias.get()
-            keyPassword = secrets.keyStore.keyPassword.get()
+            storeFile = secrets.keystore.file.get().asFile
+            storePassword = secrets.keystore.storePassword.get()
+            keyAlias = secrets.keystore.keyAlias.get()
+            keyPassword = secrets.keystore.keyPassword.get()
         }
     }
 
