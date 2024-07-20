@@ -15,21 +15,12 @@ jobs:
   main:
     name: "Build, test and verify"
     runs-on: ubuntu-latest
-    env:
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Environment"
         run: |
           echo "Agent ${{ runner.name }}"
           echo "Operating system ${{ runner.os }}"
           echo "Architecture ${{ runner.arch }}"
-          export KEYSTORE_FILE=${{ env.KEYSTORE_FILE }}
-          export KEYSTORE_PASSWORD=${{ env.KEYSTORE_PASSWORD }}
-          export KEYSTORE_KEY_ALIAS=${{ env.KEYSTORE_KEY_ALIAS }}
-          export KEYSTORE_KEY_PASSWORD=${{ env.KEYSTORE_KEY_PASSWORD }}
 
       - name: "Enable hardware acceleration"
         run: |
@@ -56,15 +47,35 @@ jobs:
         run: chmod +x gradlew
 
       - name: "Assemble application"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assemble
 
       - name: "Assemble unit tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assembleDebugUnitTest
 
       - name: "Assemble Android tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assembleDebugAndroidTest
 
       - name: "Run unit tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew testDebugUnitTest
 
       - name: "Set up emulator caching"
@@ -90,6 +101,11 @@ jobs:
 
       - name: "Run instrumented tests"
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         with:
           api-level: 34
           target: google_apis
@@ -101,6 +117,11 @@ jobs:
 
       - name: "Run flow tests"
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         with:
           api-level: 34
           target: google_apis
@@ -111,9 +132,19 @@ jobs:
           script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.FlowSuite
 
       - name: "Code coverage"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew verifyCodeCoverage
 
       - name: "Detekt"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew detekt
 
   dependabot:
@@ -127,7 +158,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Auto-merge Dependabot PR"
-        run: "gh pr merge --auto --squash $PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "gh pr merge --auto --squash $PR_URL"
