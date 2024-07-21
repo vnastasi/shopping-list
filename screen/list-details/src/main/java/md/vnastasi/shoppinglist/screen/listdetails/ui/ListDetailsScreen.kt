@@ -1,7 +1,14 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -17,17 +24,19 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.max
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -47,7 +56,7 @@ fun ListDetailsScreen(
     navigator: ListDetailsScreenNavigator
 ) {
     ListDetailsScreen(
-        viewState = viewModel.screenState.collectAsState(),
+        viewState = viewModel.screenState.collectAsStateWithLifecycle(),
         events = Events(
             onNavigateUp = navigator::backToOverview,
             onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
@@ -84,6 +93,8 @@ private fun ListDetailsScreen(
                 },
                 navigationIcon = {
                     IconButton(
+                        modifier = Modifier
+                            .displayCutoutPadding(),
                         onClick = events.onNavigateUp
                     ) {
                         Icon(
@@ -97,8 +108,14 @@ private fun ListDetailsScreen(
             )
         },
         floatingActionButton = {
+            val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+            val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+            val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+
             FloatingActionButton(
-                modifier = Modifier.testTag(ADD_LIST_ITEMS_FAB),
+                modifier = Modifier
+                    .padding(end = fabEndPadding)
+                    .testTag(ADD_LIST_ITEMS_FAB),
                 shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                 onClick = { events.onAddNewItems.invoke(viewState.value.shoppingListId) }
             ) {
