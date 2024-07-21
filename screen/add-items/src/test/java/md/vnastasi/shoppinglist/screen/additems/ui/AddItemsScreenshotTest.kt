@@ -1,21 +1,37 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
 import app.cash.paparazzi.DeviceConfig
+import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
+import com.android.resources.NightMode
+import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
-import md.vnastasi.shoppinglist.support.screenshot.test.ScreenshotTest
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class AddItemsScreenshotTest(config: DeviceConfig, viewState: ViewState) : ScreenshotTest<ViewState>(config, viewState) {
+class AddItemsScreenshotTest(
+    config: DeviceConfig,
+    private val viewState: ViewState
+) {
+
+    @get:Rule
+    val paparazzi = Paparazzi(
+        deviceConfig = config,
+        showSystemUi = false,
+        renderingMode = SessionParams.RenderingMode.NORMAL,
+        validateAccessibility = true,
+        maxPercentDifference = 1.0
+    )
 
     @Test
-    fun verifyScreenshot() {
+    fun screenshot() {
         paparazzi.snapshot {
             AppTheme {
                 AddItemsScreen(
@@ -26,13 +42,58 @@ class AddItemsScreenshotTest(config: DeviceConfig, viewState: ViewState) : Scree
         }
     }
 
-    companion object : ParametersProvider<ViewState> {
+    companion object {
 
         @JvmStatic
         @Parameters
-        override fun parameters(): List<Array<Any>> = super.parameters()
+        fun parameters(): List<Array<Any>> = combine(deviceConfigurations(), viewStates())
+            .map { arrayOf(it.first, it.second) }
+            .toList()
 
-        override fun viewStates(): Sequence<ViewState> = sequenceOf(
+        private fun deviceConfigurations(): Sequence<DeviceConfig> = sequenceOf(
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            )
+        )
+
+        private fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState(
                 searchTerm = "",
                 suggestions = persistentListOf(),
@@ -48,5 +109,8 @@ class AddItemsScreenshotTest(config: DeviceConfig, viewState: ViewState) : Scree
                 toastMessage = null
             )
         )
+
+        private fun <T, U> combine(s1: Sequence<T>, s2: Sequence<U>): List<Pair<T, U>> =
+            s1.flatMap { s1Element -> s2.map { s2Element -> s1Element to s2Element } }.toList()
     }
 }
