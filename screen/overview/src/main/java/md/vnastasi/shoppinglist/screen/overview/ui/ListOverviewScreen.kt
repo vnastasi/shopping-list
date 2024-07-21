@@ -1,8 +1,14 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,12 +32,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.max
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
@@ -46,7 +54,6 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
-import java.nio.file.WatchEvent
 
 @Composable
 fun ListOverviewScreen(
@@ -125,8 +132,14 @@ private fun ListOverviewScreen(
                 )
             },
             floatingActionButton = {
+                val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+
                 FloatingActionButton(
-                    modifier = Modifier.testTag(NEW_SHOPPING_LIST_FAB),
+                    modifier = Modifier
+                        .padding(end = fabEndPadding)
+                        .testTag(NEW_SHOPPING_LIST_FAB),
                     shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                     onClick = events.onAddNewShoppingList
                 ) {
