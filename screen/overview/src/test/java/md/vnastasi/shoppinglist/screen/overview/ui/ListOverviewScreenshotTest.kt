@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.support.async.crossJoin
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import org.junit.Rule
 import org.junit.Test
@@ -47,7 +48,7 @@ class ListOverviewScreenshotTest(
 
         @JvmStatic
         @Parameters
-        fun parameters(): List<Array<Any>> = combine(deviceConfigurations(), viewStates())
+        fun parameters(): List<Array<Any>> = crossJoin(deviceConfigurations(), viewStates())
             .map { arrayOf(it.first, it.second) }
             .toList()
 
@@ -119,8 +120,5 @@ class ListOverviewScreenshotTest(
                 navigationTarget = NavigationTarget.ShoppingListForm
             )
         )
-
-        private fun <T, U> combine(s1: Sequence<T>, s2: Sequence<U>): List<Pair<T, U>> =
-            s1.flatMap { s1Element -> s2.map { s2Element -> s1Element to s2Element } }.toList()
     }
 }
