@@ -4,6 +4,7 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.NightMode
+import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
@@ -16,24 +17,23 @@ import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
 class ListDetailsScreenshotTest(
-    private val screenshotName: String,
-    private val viewState: ViewState,
-    private val nightMode: NightMode
+    config: DeviceConfig,
+    private val viewState: ViewState
 ) {
 
     @get:Rule
     val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_6,
+        deviceConfig = config,
         showSystemUi = false,
         renderingMode = SessionParams.RenderingMode.NORMAL,
-        validateAccessibility = false,
+        validateAccessibility = true,
         maxPercentDifference = 1.0
     )
 
     @Test
     fun screenshot() {
-        paparazzi.snapshot(screenshotName) {
-            AppTheme(useDarkTheme = nightMode == NightMode.NIGHT) {
+        paparazzi.snapshot {
+            AppTheme {
                 ListDetailsScreen(
                     viewModel = StubListDetailsViewModelSpec(viewState),
                     navigator = StubListDetailsScreenNavigator()
@@ -46,76 +46,78 @@ class ListDetailsScreenshotTest(
 
         @JvmStatic
         @Parameters
-        fun parameters(): List<Array<Any>> = listOf(
-            arguments {
-                screenshotName = "list_details_empty_night"
-                viewState = ViewState(
-                    shoppingListId = 1L,
-                    shoppingListName = "Test list",
-                    listOfShoppingItems = persistentListOf()
-                )
-                nightMode = NightMode.NIGHT
-            },
-            arguments {
-                screenshotName = "list_details_empty_light"
-                viewState = ViewState(
-                    shoppingListId = 1L,
-                    shoppingListName = "Test list",
-                    listOfShoppingItems = persistentListOf()
-                )
-                nightMode = NightMode.NOTNIGHT
-            },
-            arguments {
-                screenshotName = "list_details_dark"
-                viewState = ViewState(
-                    shoppingListId = 1L,
-                    shoppingListName = "Test list",
-                    listOfShoppingItems = persistentListOf(
-                        createShoppingItem {
-                            id = 1L
-                            name = "Item 1"
-                            isChecked = false
-                        },
-                        createShoppingItem {
-                            id = 2L
-                            name = "Item 2"
-                            isChecked = true
-                        }
-                    )
-                )
-                nightMode = NightMode.NIGHT
-            },
-            arguments {
-                screenshotName = "list_details_light"
-                viewState = ViewState(
-                    shoppingListId = 1L,
-                    shoppingListName = "Test list",
-                    listOfShoppingItems = persistentListOf(
-                        createShoppingItem {
-                            id = 1L
-                            name = "Item 1"
-                            isChecked = false
-                        },
-                        createShoppingItem {
-                            id = 2L
-                            name = "Item 2"
-                            isChecked = true
-                        }
-                    )
-                )
-                nightMode = NightMode.NOTNIGHT
-            }
+        fun parameters(): List<Array<Any>> = combine(deviceConfigurations(), viewStates())
+            .map { arrayOf(it.first, it.second) }
+            .toList()
+
+        private fun deviceConfigurations(): Sequence<DeviceConfig> = sequenceOf(
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            )
         )
+
+        private fun viewStates(): Sequence<ViewState> = sequenceOf(
+            ViewState(
+                shoppingListId = 1L,
+                shoppingListName = "Test list",
+                listOfShoppingItems = persistentListOf()
+            ),
+            ViewState(
+                shoppingListId = 1L,
+                shoppingListName = "Test list",
+                listOfShoppingItems = persistentListOf(
+                    createShoppingItem {
+                        id = 1L
+                        name = "Item 1"
+                        isChecked = false
+                    },
+                    createShoppingItem {
+                        id = 2L
+                        name = "Item 2"
+                        isChecked = true
+                    }
+                )
+            )
+        )
+
+        private fun <T, U> combine(s1: Sequence<T>, s2: Sequence<U>): List<Pair<T, U>> =
+            s1.flatMap { s1Element -> s2.map { s2Element -> s1Element to s2Element } }.toList()
     }
 }
-
-private class TestArguments {
-
-    lateinit var screenshotName: String
-    lateinit var viewState: ViewState
-    lateinit var nightMode: NightMode
-
-    fun toArray(): Array<Any> = arrayOf(screenshotName, viewState, nightMode)
-}
-
-private fun arguments(block: TestArguments.() -> Unit) = TestArguments().apply(block).toArray()

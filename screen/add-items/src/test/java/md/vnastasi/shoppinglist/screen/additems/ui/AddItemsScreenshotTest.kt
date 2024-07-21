@@ -4,6 +4,7 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.NightMode
+import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
@@ -16,24 +17,23 @@ import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
 class AddItemsScreenshotTest(
-    private val screenshotName: String,
-    private val viewState: ViewState,
-    private val nightMode: NightMode
+    config: DeviceConfig,
+    private val viewState: ViewState
 ) {
 
     @get:Rule
     val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_6,
+        deviceConfig = config,
         showSystemUi = false,
         renderingMode = SessionParams.RenderingMode.NORMAL,
-        validateAccessibility = false,
+        validateAccessibility = true,
         maxPercentDifference = 1.0
     )
 
     @Test
     fun screenshot() {
-        paparazzi.snapshot(screenshotName) {
-            AppTheme(useDarkTheme = nightMode == NightMode.NIGHT) {
+        paparazzi.snapshot {
+            AppTheme {
                 AddItemsScreen(
                     viewModel = StubAddItemsViewModelSpec(viewState),
                     navigator = StubAddItemsScreenNavigator()
@@ -46,62 +46,71 @@ class AddItemsScreenshotTest(
 
         @JvmStatic
         @Parameters
-        fun parameters(): List<Array<Any>> = listOf(
-            arguments {
-                screenshotName = "add_items_empty_dark"
-                viewState = ViewState(
-                    searchTerm = "",
-                    suggestions = persistentListOf(),
-                    toastMessage = null
-                )
-                nightMode = NightMode.NIGHT
-            },
-            arguments {
-                screenshotName = "add_items_empty_light"
-                viewState = ViewState(
-                    searchTerm = "",
-                    suggestions = persistentListOf(),
-                    toastMessage = null
-                )
-                nightMode = NightMode.NOTNIGHT
-            },
-            arguments {
-                screenshotName = "add_items_non_empty_dark"
-                viewState = ViewState(
-                    searchTerm = "Searching...",
-                    suggestions = persistentListOf(
-                        NameSuggestion(-1L, "New suggestion"),
-                        NameSuggestion(1L, "Old suggestion 1"),
-                        NameSuggestion(2L, "Old suggestion 2")
-                    ),
-                    toastMessage = null
-                )
-                nightMode = NightMode.NIGHT
-            },
-            arguments {
-                screenshotName = "add_items_non_empty_light"
-                viewState = ViewState(
-                    searchTerm = "Searching...",
-                    suggestions = persistentListOf(
-                        NameSuggestion(-1L, "New suggestion"),
-                        NameSuggestion(1L, "Old suggestion 1"),
-                        NameSuggestion(2L, "Old suggestion 2")
-                    ),
-                    toastMessage = null
-                )
-                nightMode = NightMode.NOTNIGHT
-            }
+        fun parameters(): List<Array<Any>> = combine(deviceConfigurations(), viewStates())
+            .map { arrayOf(it.first, it.second) }
+            .toList()
+
+        private fun deviceConfigurations(): Sequence<DeviceConfig> = sequenceOf(
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_6.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false,
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.PORTRAIT,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NOTNIGHT,
+                softButtons = false
+            ),
+            DeviceConfig.PIXEL_C.copy(
+                orientation = ScreenOrientation.LANDSCAPE,
+                nightMode = NightMode.NIGHT,
+                softButtons = false
+            )
         )
+
+        private fun viewStates(): Sequence<ViewState> = sequenceOf(
+            ViewState(
+                searchTerm = "",
+                suggestions = persistentListOf(),
+                toastMessage = null
+            ),
+            ViewState(
+                searchTerm = "A search term",
+                suggestions = persistentListOf(
+                    NameSuggestion(id = 1L, name = "Suggestion 1"),
+                    NameSuggestion(id = 2L, name = "Suggestion 2"),
+                    NameSuggestion(id = 3L, name = "Suggestion 3")
+                ),
+                toastMessage = null
+            )
+        )
+
+        private fun <T, U> combine(s1: Sequence<T>, s2: Sequence<U>): List<Pair<T, U>> =
+            s1.flatMap { s1Element -> s2.map { s2Element -> s1Element to s2Element } }.toList()
     }
 }
-
-private class TestArguments {
-
-    lateinit var screenshotName: String
-    lateinit var viewState: ViewState
-    lateinit var nightMode: NightMode
-
-    fun toArray(): Array<Any> = arrayOf(screenshotName, viewState, nightMode)
-}
-
-private fun arguments(block: TestArguments.() -> Unit) = TestArguments().apply(block).toArray()
