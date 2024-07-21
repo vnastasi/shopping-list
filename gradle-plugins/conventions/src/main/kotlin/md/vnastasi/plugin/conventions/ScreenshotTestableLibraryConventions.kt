@@ -9,6 +9,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.project
 
 @Suppress("UnstableApiUsage", "unused")
 class ScreenshotTestableLibraryConventions : Plugin<Project> {
@@ -16,6 +17,7 @@ class ScreenshotTestableLibraryConventions : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         dependencies {
             addProvider("testRuntimeOnly", libs.junit.vintage.engine)
+            addProvider("testImplementation", provider { project(":support:screenshot-test") })
         }
 
         extensions.configure<LibraryExtension> {

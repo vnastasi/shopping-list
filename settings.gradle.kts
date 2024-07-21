@@ -32,6 +32,7 @@ include(
     ":support:async",
     ":support:async-unit-test",
     ":support:lifecycle",
+    ":support:screenshot-test",
     ":support:ui",
     ":support:theme",
     ":resources",

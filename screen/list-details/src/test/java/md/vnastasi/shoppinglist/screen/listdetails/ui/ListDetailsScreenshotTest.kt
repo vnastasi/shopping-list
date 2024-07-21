@@ -1,37 +1,21 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Paparazzi
-import com.android.ide.common.rendering.api.SessionParams
-import com.android.resources.NightMode
-import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import md.vnastasi.shoppinglist.support.screenshot.test.ScreenshotTest
 import md.vnastasi.shoppinglist.support.theme.AppTheme
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class ListDetailsScreenshotTest(
-    config: DeviceConfig,
-    private val viewState: ViewState
-) {
-
-    @get:Rule
-    val paparazzi = Paparazzi(
-        deviceConfig = config,
-        showSystemUi = false,
-        renderingMode = SessionParams.RenderingMode.NORMAL,
-        validateAccessibility = true,
-        maxPercentDifference = 1.0
-    )
+class ListDetailsScreenshotTest(config: DeviceConfig, viewState: ViewState) : ScreenshotTest<ViewState>(config, viewState) {
 
     @Test
-    fun screenshot() {
+    fun verifyScreenshot() {
         paparazzi.snapshot {
             AppTheme {
                 ListDetailsScreen(
@@ -42,58 +26,13 @@ class ListDetailsScreenshotTest(
         }
     }
 
-    companion object {
+    companion object : ParametersProvider<ViewState> {
 
         @JvmStatic
         @Parameters
-        fun parameters(): List<Array<Any>> = combine(deviceConfigurations(), viewStates())
-            .map { arrayOf(it.first, it.second) }
-            .toList()
+        override fun parameters(): List<Array<Any>> = super.parameters()
 
-        private fun deviceConfigurations(): Sequence<DeviceConfig> = sequenceOf(
-            DeviceConfig.PIXEL_6.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-            ),
-            DeviceConfig.PIXEL_6.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NIGHT,
-                softButtons = false
-            ),
-            DeviceConfig.PIXEL_6.copy(
-                orientation = ScreenOrientation.LANDSCAPE,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false
-            ),
-            DeviceConfig.PIXEL_6.copy(
-                orientation = ScreenOrientation.LANDSCAPE,
-                nightMode = NightMode.NIGHT,
-                softButtons = false
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NIGHT,
-                softButtons = false
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.LANDSCAPE,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.LANDSCAPE,
-                nightMode = NightMode.NIGHT,
-                softButtons = false
-            )
-        )
-
-        private fun viewStates(): Sequence<ViewState> = sequenceOf(
+        override fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState(
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
@@ -116,8 +55,5 @@ class ListDetailsScreenshotTest(
                 )
             )
         )
-
-        private fun <T, U> combine(s1: Sequence<T>, s2: Sequence<U>): List<Pair<T, U>> =
-            s1.flatMap { s1Element -> s2.map { s2Element -> s1Element to s2Element } }.toList()
     }
 }

@@ -10,7 +10,6 @@ android {
 }
 
 dependencies {
-
     testImplementation(libs.androidx.lificycle.test)
 }
 
