@@ -25,6 +25,9 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 
+private const val CONTENT_WEIGHT = 0.75f
+private const val SPACER_WEIGHT = 0.25f
+
 @Composable
 internal fun EmptyListDetailsScreenContent(
     contentPaddings: PaddingValues
@@ -67,7 +70,7 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
     ) {
         Column(
             modifier = Modifier
-                .weight(0.75f)
+                .weight(CONTENT_WEIGHT)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center
         ) {
@@ -93,7 +96,7 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
         }
 
         Spacer(
-            modifier = Modifier.weight(0.25f)
+            modifier = Modifier.weight(SPACER_WEIGHT)
         )
     }
 }
