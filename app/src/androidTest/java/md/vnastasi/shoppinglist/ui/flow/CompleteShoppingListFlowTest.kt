@@ -9,6 +9,7 @@ import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
+import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
@@ -17,6 +18,9 @@ class CompleteShoppingListFlowTest {
 
     @get:Rule
     val composeRule = createAndroidComposeRule<MainActivity>()
+
+    @get:Rule
+    val animationsRule = disableAnimationsRule()
 
     @get:Rule
     val koinTestModeRule = createKoinTestModuleRule {

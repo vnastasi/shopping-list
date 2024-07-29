@@ -111,6 +111,7 @@ dependencies {
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.turbine)
+    androidTestImplementation(libs.uiautomator)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
