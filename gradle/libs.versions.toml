@@ -11,6 +11,7 @@ android-cache-fix = "3.0.1"
 android-tools = "8.5.1"
 androidx-activity = "1.9.0"
 androidx-core = "1.13.1"
+androidx-compose-material-adaptive = "1.0.0-beta04"
 androidx-lifecycle = "2.8.3"
 androidx-navigation = "2.7.7"
 androidx-test-junit = "1.2.1"
@@ -47,6 +48,7 @@ assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assert
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-material = { module = "androidx.compose.material3:material3" }
+compose-material-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-compose-material-adaptive" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -100,6 +102,7 @@ compose-ui = [
     "androidx-lificycle-runtime-compose",
     "compose-graphics",
     "compose-material",
+    "compose-material-adaptive",
     "compose-preview",
     "compose-ui"
 ]
