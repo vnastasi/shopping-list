@@ -1,8 +1,10 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -66,7 +68,8 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
         Column(
             modifier = Modifier
                 .weight(0.75f)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
             val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_anim_empty_box))
 
@@ -89,6 +92,9 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
             )
         }
 
+        Spacer(
+            modifier = Modifier.weight(0.25f)
+        )
     }
 }
 
