@@ -119,6 +119,7 @@ internal fun Project.configureComposeScreenLibrary() {
         addProvider("implementation", libs.androidx.core)
         addProvider("implementation", libs.koin.android.asProvider())
         addProvider("implementation", libs.kotlinx.collections)
+        addProvider("implementation", libs.lottie.compose)
         addProvider("implementation", libs.bundles.compose.ui)
         addProvider("debugImplementation", libs.bundles.compose.debug)
         addProvider("testImplementation", provider { project(":domain:test-data") })
