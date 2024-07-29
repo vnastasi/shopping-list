@@ -29,9 +29,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 internal fun EmptyListOverviewScreenContent(
     contentPaddings: PaddingValues
 ) {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
+    val windowHeightSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
 
-    if (windowSizeClass == WindowHeightSizeClass.COMPACT) {
+    if (windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
         CompactContent(contentPaddings)
     } else {
         ExtendedContent(contentPaddings)
