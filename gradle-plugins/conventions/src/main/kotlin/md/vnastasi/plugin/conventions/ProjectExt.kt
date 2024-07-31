@@ -69,6 +69,8 @@ internal fun Project.addUnitTestDependencies() {
         addProvider("testImplementation", libs.kotlin.reflect)
         addProvider("testImplementation", libs.kotlinx.coroutines.test)
         addProvider("testImplementation", libs.mockito.kotlin)
+        addProvider("testImplementation", libs.mockk.agent)
+        addProvider("testImplementation", libs.mockk.android)
         addProvider("testImplementation", libs.turbine)
         addProvider("testRuntimeOnly", libs.junit.jupiter.engine)
     }
