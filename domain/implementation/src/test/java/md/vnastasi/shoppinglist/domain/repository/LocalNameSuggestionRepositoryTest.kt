@@ -3,22 +3,20 @@ package md.vnastasi.shoppinglist.domain.repository
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import md.vnastasi.shoppinglist.db.model.NameSuggestion as NameSuggestionEntity
 
 internal class LocalNameSuggestionRepositoryTest {
 
-    private val mockNameSuggestionDao = mock<NameSuggestionDao>()
+    private val mockNameSuggestionDao = mockk<NameSuggestionDao>(relaxUnitFun = true)
 
     private val repository = LocalNameSuggestionRepository(mockNameSuggestionDao)
 
@@ -26,7 +24,7 @@ internal class LocalNameSuggestionRepositoryTest {
     @DisplayName("Given empty search term Then expect no suggestions")
     fun emptySearchTermReturnsNoSuggestions() = runTest {
         assertThat(repository.findAllMatching("")).isEmpty()
-        verify(mockNameSuggestionDao, never()).findAll(any())
+        coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
     }
 
     @Test
@@ -37,7 +35,8 @@ internal class LocalNameSuggestionRepositoryTest {
         assertThat(repository.findAllMatching(searchTerm))
             .containsExactly(NameSuggestion(-1L, searchTerm))
 
-        verify(mockNameSuggestionDao, never()).findAll(any())
+        coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
+        confirmVerified(mockNameSuggestionDao)
     }
 
     @Test
@@ -48,44 +47,53 @@ internal class LocalNameSuggestionRepositoryTest {
         assertThat(repository.findAllMatching(searchTerm))
             .containsExactly(NameSuggestion(-1L, searchTerm))
 
-        verify(mockNameSuggestionDao, never()).findAll(any())
+        coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
+        confirmVerified(mockNameSuggestionDao)
     }
 
     @Test
     @DisplayName("Given search term of length 3 and no values from database Then expect suggestions of search item")
     fun searchTermLength3AndNoDatabaseValuesReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "abc"
-        whenever(mockNameSuggestionDao.findAll(searchTerm)).doReturn(emptyList())
+        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns emptyList()
 
         assertThat(repository.findAllMatching(searchTerm))
             .containsExactly(NameSuggestion(-1L, searchTerm))
-        verify(mockNameSuggestionDao).findAll(searchTerm)
+
+        coVerify { mockNameSuggestionDao.findAll(searchTerm) }
+        confirmVerified(mockNameSuggestionDao)
     }
 
     @Test
     @DisplayName("Given search term of length 3 and existing values from database Then expect suggestions of search item plus values from database")
     fun searchTermLength3AndExistingDatabaseValuesReturnsSuggestionWithSearchTermAndDatabaseValues() = runTest {
         val searchTerm = "abc"
-        whenever(mockNameSuggestionDao.findAll(searchTerm)).doReturn(listOf(NameSuggestionEntity(1L, "def"), NameSuggestionEntity(2L, "ghi")))
+        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns listOf(NameSuggestionEntity(1L, "def"), NameSuggestionEntity(2L, "ghi"))
 
         assertThat(repository.findAllMatching(searchTerm))
             .containsExactly(NameSuggestion(-1L, searchTerm), NameSuggestion(1L, "def"), NameSuggestion(2L, "ghi"))
 
-        verify(mockNameSuggestionDao).findAll(searchTerm)
+        coVerify { mockNameSuggestionDao.findAll(searchTerm) }
+        confirmVerified(mockNameSuggestionDao)
     }
 
     @Test
     @DisplayName("Given a suggestion name When creating a suggestion Then expect suggestion to be created")
     fun create() = runTest {
         val name = "Some name"
+
         repository.create(name)
-        verify(mockNameSuggestionDao).create(NameSuggestionEntity(value = name))
+
+        coVerify { mockNameSuggestionDao.create(NameSuggestionEntity(value = name)) }
+        confirmVerified(mockNameSuggestionDao)
     }
 
     @Test
     @DisplayName("Given a suggestion name When deleting a suggestion Then expect suggestion to be deleted")
     fun delete() = runTest {
         repository.delete(NameSuggestion(id = 23L, name = "Sample"))
-        verify(mockNameSuggestionDao).delete(NameSuggestionEntity(id = 23L, value = "Sample"))
+
+        coVerify { mockNameSuggestionDao.delete(NameSuggestionEntity(id = 23L, value = "Sample")) }
+        confirmVerified(mockNameSuggestionDao)
     }
 }
