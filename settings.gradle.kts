@@ -24,7 +24,7 @@ dependencyResolutionManagement {
 rootProject.name = "Shopping list"
 
 include(
-    ":database:implementation",
+    ":database",
     ":domain:api",
     ":domain:implementation",
     ":support:async",

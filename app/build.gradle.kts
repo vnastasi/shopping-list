@@ -53,7 +53,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
+                srcDir("${project(":database").layout.projectDirectory}/schemas")
             }
         }
     }
@@ -72,7 +72,7 @@ androidComponents {
 
 dependencies {
 
-    implementation(project(":database:implementation"))
+    implementation(project(":database"))
     implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
     implementation(project(":resources"))
@@ -100,7 +100,7 @@ dependencies {
 
     testImplementation(libs.androidx.lificycle.test)
 
-    androidTestImplementation(testFixtures(project(":database:implementation")))
+    androidTestImplementation(testFixtures(project(":database")))
     androidTestImplementation(testFixtures(project(":domain:api")))
 
     androidTestImplementation(platform(libs.compose.bom))
