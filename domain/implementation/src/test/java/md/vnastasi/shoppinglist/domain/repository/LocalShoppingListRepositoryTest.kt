@@ -13,8 +13,8 @@ import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListDetailsView
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity

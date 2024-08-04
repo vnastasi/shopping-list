@@ -3,6 +3,8 @@ package md.vnastasi.plugin.conventions
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.TestExtension
+import com.android.build.api.dsl.TestedExtension
 import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
 import org.gradle.api.JavaVersion
@@ -82,6 +84,7 @@ internal fun Project.configureSimpleLibrary() {
 
     extensions.configure<LibraryExtension> {
         configureAndroid()
+        enableTestFixtures()
     }
 
     configureKotlin()
@@ -90,6 +93,7 @@ internal fun Project.configureSimpleLibrary() {
 internal fun Project.configureTestableLibrary() {
     extensions.configure<LibraryExtension> {
         configureUnitTests()
+        enableTestFixtures()
     }
     addUnitTestDependencies()
 }
@@ -123,8 +127,8 @@ internal fun Project.configureComposeScreenLibrary() {
         addProvider("implementation", libs.lottie.compose)
         addProvider("implementation", libs.bundles.compose.ui)
         addProvider("debugImplementation", libs.bundles.compose.debug)
-        addProvider("testImplementation", provider { project(":domain:test-data") })
         addProvider("testImplementation", provider { project(":support:async-unit-test") })
+        addProvider("testImplementation", provider { testFixtures(project(":domain:api")) })
     }
 }
 
@@ -142,4 +146,11 @@ internal fun Project.configureApplication() {
 
     addUnitTestDependencies()
     configureKotlin()
+}
+
+@Suppress("UnstableApiUsage")
+internal fun TestedExtension.enableTestFixtures() {
+    testFixtures {
+        enable = true
+    }
 }

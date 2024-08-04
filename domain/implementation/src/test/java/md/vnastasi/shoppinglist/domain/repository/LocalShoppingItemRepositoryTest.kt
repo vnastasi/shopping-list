@@ -14,7 +14,7 @@ import md.vnastasi.shoppinglist.db.TestData.createShoppingItemEntity
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import md.vnastasi.shoppinglist.db.model.ShoppingItem as ShoppingItemEntity

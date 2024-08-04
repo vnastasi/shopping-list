@@ -95,12 +95,13 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
 
-    testImplementation(project(":domain:test-data"))
     testImplementation(project(":support:async-unit-test"))
+    testImplementation(testFixtures(project(":domain:api")))
 
     testImplementation(libs.androidx.lificycle.test)
 
-    androidTestImplementation(project(":database:test-data"))
+    androidTestImplementation(testFixtures(project(":database:implementation")))
+    androidTestImplementation(testFixtures(project(":domain:api")))
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
