@@ -4,6 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -22,16 +26,11 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel.Compa
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 internal class ListDetailsViewModelTest {
 
-    private val mockShoppingListRepository = mock<ShoppingListRepository>()
-    private val mockShoppingItemRepository = mock<ShoppingItemRepository>()
+    private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
+    private val mockShoppingItemRepository = mockk<ShoppingItemRepository>(relaxUnitFun = true)
 
     @Test
     @DisplayName(
@@ -46,8 +45,8 @@ internal class ListDetailsViewModelTest {
         val shoppingList = createShoppingList {
             id = shoppingListId
         }
-        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
-        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
         createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
@@ -76,8 +75,8 @@ internal class ListDetailsViewModelTest {
             id = shoppingListId
         }
         val shoppingItem = createShoppingItem()
-        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(shoppingList))
-        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
         createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
@@ -101,22 +100,22 @@ internal class ListDetailsViewModelTest {
     )
     fun onShoppingListChecked() = runTest {
         val shoppingListId = 567L
-        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
 
         val shoppingItem = createShoppingItem {
             isChecked = false
         }
-        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
+
+        val shoppingItemSlot = slot<ShoppingItem>()
+        coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
         val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
-        argumentCaptor<ShoppingItem> {
-            verify(mockShoppingItemRepository).update(capture())
-            assertThat(firstValue).isDataClassEqualTo(shoppingItem.copy(isChecked = true))
-        }
+        assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem.copy(isChecked = true))
     }
 
     @Test
@@ -128,22 +127,22 @@ internal class ListDetailsViewModelTest {
     )
     fun onShoppingItemUnchecked() = runTest {
         val shoppingListId = 567L
-        whenever(mockShoppingListRepository.findById(shoppingListId)).doReturn(flowOf(createShoppingList()))
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
 
         val shoppingItem = createShoppingItem {
             isChecked = true
         }
-        whenever(mockShoppingItemRepository.findAll(shoppingListId)).doReturn(flowOf(listOf(shoppingItem)))
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
+
+        val shoppingItemSlot = slot<ShoppingItem>()
+        coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
         val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
 
-        argumentCaptor<ShoppingItem> {
-            verify(mockShoppingItemRepository).update(capture())
-            assertThat(firstValue).isDataClassEqualTo(shoppingItem.copy(isChecked = false))
-        }
+        assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem.copy(isChecked = false))
     }
 
     context(TestScope)

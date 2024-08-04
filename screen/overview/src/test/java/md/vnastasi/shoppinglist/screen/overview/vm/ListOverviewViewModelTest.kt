@@ -4,6 +4,12 @@ import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -22,16 +28,10 @@ import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 internal class ListOverviewViewModelTest {
 
-    private val mockShoppingListRepository = mock<ShoppingListRepository>()
+    private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
 
     @Test
     @DisplayName(
@@ -42,7 +42,7 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun screenStateWithNoLists() = runTest {
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         createViewModel().screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf()))
@@ -60,7 +60,7 @@ internal class ListOverviewViewModelTest {
     )
     fun screenStateWithLists() = runTest {
         val shoppingListDetails = createShoppingListDetails()
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(listOf(shoppingListDetails)))
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         createViewModel().screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
@@ -77,7 +77,7 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun onAddNewShoppingList() = runTest {
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.AddNewShoppingList)
@@ -102,16 +102,16 @@ internal class ListOverviewViewModelTest {
     )
     fun onShoppingListSaved() = runTest {
         val shoppingListName = "new list here"
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
+
+        val shoppingListSlot = slot<ShoppingList>()
+        coEvery { mockShoppingListRepository.create(capture(shoppingListSlot)) } returns Unit
 
         val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName))
         advanceUntilIdle()
 
-        argumentCaptor<ShoppingList> {
-            verify(mockShoppingListRepository).create(capture())
-            assertThat(firstValue.name).isEqualTo(shoppingListName)
-        }
+        assertThat(shoppingListSlot.captured.name).isEqualTo(shoppingListName)
     }
 
     @Test
@@ -125,7 +125,7 @@ internal class ListOverviewViewModelTest {
         val shoppingListDetails = createShoppingListDetails {
             id = 6578L
         }
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingListDetails))
@@ -150,13 +150,15 @@ internal class ListOverviewViewModelTest {
     )
     fun onShoppingListDeleted() = runTest {
         val shoppingListDetails = createShoppingListDetails()
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
         viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingListDetails))
         advanceUntilIdle()
 
-        verify(mockShoppingListRepository).delete(eq(createShoppingList()))
+        coVerify { mockShoppingListRepository.delete(createShoppingList()) }
+        coVerify { mockShoppingListRepository.findAll() }
+        confirmVerified(mockShoppingListRepository)
     }
 
     @Test
@@ -167,7 +169,7 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun onNavigationPerformed() = runTest {
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
 
@@ -190,7 +192,6 @@ internal class ListOverviewViewModelTest {
         }
     }
 
-
     @Test
     @DisplayName(
         """
@@ -199,7 +200,7 @@ internal class ListOverviewViewModelTest {
     """
     )
     fun onToastShown() = runTest {
-        whenever(mockShoppingListRepository.findAll()).doReturn(flowOf(emptyList()))
+        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
 
