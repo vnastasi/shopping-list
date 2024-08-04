@@ -9,7 +9,7 @@ android {
 
 dependencies {
 
-    implementation(project(":database:implementation"))
+    implementation(project(":database"))
     implementation(project(":domain:api"))
 
     implementation(platform(libs.kotlin.bom))
@@ -17,6 +17,6 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    testImplementation(project(":database:test-data"))
-    testImplementation(project(":domain:test-data"))
+    testImplementation(testFixtures(project(":database")))
+    testImplementation(testFixtures(project(":domain:api")))
 }

@@ -14,10 +14,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_NAME
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingItem
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
+import md.vnastasi.shoppinglist.domain.model.TestData.DEFAULT_SHOPPING_LIST_NAME
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent

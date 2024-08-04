@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import md.vnastasi.shoppinglist.domain.TestData.DEFAULT_SHOPPING_LIST_ID
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
+import md.vnastasi.shoppinglist.domain.model.TestData.DEFAULT_SHOPPING_LIST_ID
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository

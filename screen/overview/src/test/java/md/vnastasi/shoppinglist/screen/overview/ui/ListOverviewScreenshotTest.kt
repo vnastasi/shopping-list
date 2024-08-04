@@ -6,7 +6,7 @@ import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.NightMode
 import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.async.crossJoin

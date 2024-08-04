@@ -1,8 +1,4 @@
-package md.vnastasi.shoppinglist.domain
-
-import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
-import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
+package md.vnastasi.shoppinglist.domain.model
 
 object TestData {
 

@@ -53,7 +53,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${project(":database:implementation").layout.projectDirectory}/schemas")
+                srcDir("${project(":database").layout.projectDirectory}/schemas")
             }
         }
     }
@@ -72,7 +72,7 @@ androidComponents {
 
 dependencies {
 
-    implementation(project(":database:implementation"))
+    implementation(project(":database"))
     implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
     implementation(project(":resources"))
@@ -95,12 +95,13 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
 
-    testImplementation(project(":domain:test-data"))
     testImplementation(project(":support:async-unit-test"))
+    testImplementation(testFixtures(project(":domain:api")))
 
     testImplementation(libs.androidx.lificycle.test)
 
-    androidTestImplementation(project(":database:test-data"))
+    androidTestImplementation(testFixtures(project(":database")))
+    androidTestImplementation(testFixtures(project(":domain:api")))
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
