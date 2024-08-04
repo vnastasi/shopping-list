@@ -6,6 +6,11 @@ import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.prop
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -26,19 +31,12 @@ import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 internal class AddItemsViewModelTest {
 
-    private val mockNameSuggestionRepository = mock<NameSuggestionRepository>()
-    private val mockShoppingListRepository = mock<ShoppingListRepository>()
-    private val mockShoppingItemRepository = mock<ShoppingItemRepository>()
+    private val mockNameSuggestionRepository = mockk<NameSuggestionRepository>(relaxUnitFun = true)
+    private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
+    private val mockShoppingItemRepository = mockk<ShoppingItemRepository>(relaxUnitFun = true)
 
     @Test
     @DisplayName(
@@ -51,8 +49,8 @@ internal class AddItemsViewModelTest {
         val searchTerm = "test"
         val suggestion = NameSuggestion(1L, "Milk")
 
-        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
-        whenever(mockNameSuggestionRepository.findAllMatching(searchTerm)).doReturn(listOf(suggestion))
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
+        coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns listOf(suggestion)
 
         val viewModel = createViewModel()
         viewModel.screenState.test {
@@ -76,7 +74,7 @@ internal class AddItemsViewModelTest {
         val name = "Milk"
 
         val shoppingList = createShoppingList()
-        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(shoppingList))
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
         val viewModel = createViewModel()
         viewModel.screenState.test {
@@ -90,8 +88,9 @@ internal class AddItemsViewModelTest {
             cancelAndConsumeRemainingEvents()
         }
 
-        verify(mockShoppingItemRepository).create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList)))
-        verify(mockNameSuggestionRepository).create(name)
+        coVerify { mockShoppingItemRepository.create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList))) }
+        coVerify { mockNameSuggestionRepository.create(name) }
+        confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
     }
 
     @Test
@@ -105,7 +104,7 @@ internal class AddItemsViewModelTest {
         val name = ""
 
         val shoppingList = createShoppingList()
-        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(shoppingList))
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
         val viewModel = createViewModel()
         viewModel.screenState.test {
@@ -115,8 +114,9 @@ internal class AddItemsViewModelTest {
             expectNoEvents()
         }
 
-        verify(mockShoppingItemRepository, never()).create(any())
-        verify(mockNameSuggestionRepository, never()).create(any())
+        coVerify(exactly = 0) { mockShoppingItemRepository.create(any()) }
+        coVerify(exactly = 0) { mockNameSuggestionRepository.create(any()) }
+        confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
     }
 
     @Test
@@ -127,8 +127,8 @@ internal class AddItemsViewModelTest {
     """
     )
     fun onSuggestionDeleted() = runTest {
-        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
-        whenever(mockNameSuggestionRepository.findAllMatching(any())).doReturn(emptyList())
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns emptyList()
 
         val suggestion = NameSuggestion(name = "Milk")
 
@@ -144,7 +144,9 @@ internal class AddItemsViewModelTest {
             cancelAndConsumeRemainingEvents()
         }
 
-        verify(mockNameSuggestionRepository).delete(suggestion)
+        coVerify { mockNameSuggestionRepository.findAllMatching(any()) }
+        coVerify { mockNameSuggestionRepository.delete(suggestion) }
+        confirmVerified(mockNameSuggestionRepository)
     }
 
     @Test
@@ -155,8 +157,8 @@ internal class AddItemsViewModelTest {
     """
     )
     fun onToastShown() = runTest {
-        whenever(mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID)).doReturn(flowOf(createShoppingList()))
-        whenever(mockNameSuggestionRepository.findAllMatching(any())).doReturn(emptyList())
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns emptyList()
 
         val suggestion = NameSuggestion(name = "Milk")
 

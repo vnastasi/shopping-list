@@ -5,6 +5,9 @@ import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import io.mockk.coEvery
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListDetailsView
@@ -14,23 +17,18 @@ import md.vnastasi.shoppinglist.domain.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.TestData.createShoppingListDetails
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 
 internal class LocalShoppingListRepositoryTest {
 
-    private val mockShoppingListDao = mock<ShoppingListDao>()
+    private val mockShoppingListDao = mockk<ShoppingListDao>(relaxUnitFun = true)
 
     private val shoppingListRepository = LocalShoppingListRepository(mockShoppingListDao)
 
     @Test
     @DisplayName("Given no entities in DAO When getting available shopping lists Then expect empty list")
     fun getAvailableListsEmpty() = runTest {
-        whenever(mockShoppingListDao.findAll()).doReturn(flowOf(emptyList()))
+        coEvery { mockShoppingListDao.findAll() } returns flowOf(emptyList())
 
         shoppingListRepository.findAll().test {
             assertThat(awaitItem()).isEmpty()
@@ -53,7 +51,7 @@ internal class LocalShoppingListRepositoryTest {
             totalItems = 1L
             checkedItems = 1L
         }
-        whenever(mockShoppingListDao.findAll()).doReturn(flowOf(listOf(shoppingListDetailsView1, shoppingListDetailsView2)))
+        coEvery { mockShoppingListDao.findAll() } returns flowOf(listOf(shoppingListDetailsView1, shoppingListDetailsView2))
 
         val expectedList = listOf(
             createShoppingListDetails {
@@ -89,12 +87,12 @@ internal class LocalShoppingListRepositoryTest {
             name = "New List"
         }
 
+        val shoppingListSlot = slot<ShoppingListEntity>()
+        coEvery { mockShoppingListDao.create(capture(shoppingListSlot)) } returns Unit
+
         shoppingListRepository.create(shoppingList)
 
-        argumentCaptor<ShoppingListEntity> {
-            verify(mockShoppingListDao).create(capture())
-            assertThat(firstValue).isDataClassEqualTo(expectedShoppingListEntity)
-        }
+        assertThat(shoppingListSlot.captured).isDataClassEqualTo(expectedShoppingListEntity)
     }
 
     @Test
@@ -110,12 +108,12 @@ internal class LocalShoppingListRepositoryTest {
             name = "New List"
         }
 
+        val shoppingListSlot = slot<ShoppingListEntity>()
+        coEvery { mockShoppingListDao.update(capture(shoppingListSlot)) } returns Unit
+
         shoppingListRepository.update(shoppingList)
 
-        argumentCaptor<ShoppingListEntity> {
-            verify(mockShoppingListDao).update(capture())
-            assertThat(firstValue).isDataClassEqualTo(expectedShoppingListEntity)
-        }
+        assertThat(shoppingListSlot.captured).isDataClassEqualTo(expectedShoppingListEntity)
     }
 
     @Test
@@ -131,11 +129,11 @@ internal class LocalShoppingListRepositoryTest {
             name = "New List"
         }
 
+        val shoppingListSlot = slot<ShoppingListEntity>()
+        coEvery { mockShoppingListDao.delete(capture(shoppingListSlot)) } returns Unit
+
         shoppingListRepository.delete(shoppingList)
 
-        argumentCaptor<ShoppingListEntity> {
-            verify(mockShoppingListDao).delete(capture())
-            assertThat(firstValue).isDataClassEqualTo(expectedShoppingListEntity)
-        }
+        assertThat(shoppingListSlot.captured).isDataClassEqualTo(expectedShoppingListEntity)
     }
 }
