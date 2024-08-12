@@ -8,7 +8,7 @@ project-version-code = "9"
 project-version-name = "0.1.0"
 
 android-cache-fix = "3.0.1"
-android-tools = "8.5.1"
+android-tools = "8.5.2"
 androidx-activity = "1.9.1"
 androidx-core = "1.13.1"
 androidx-compose-material-adaptive = "1.0.0-beta04"
