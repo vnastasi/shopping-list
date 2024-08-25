@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
@@ -82,6 +83,7 @@ internal fun ShoppingItemRow(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     name = "Checked item",
     showBackground = true,
@@ -102,6 +104,7 @@ private fun ShoppingItemRowPreview1() {
     )
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     name = "Unchecked item",
     showBackground = true,

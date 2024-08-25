@@ -47,6 +47,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigato
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_LIST_ITEMS_FAB
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
@@ -140,6 +141,7 @@ private fun ListDetailsScreen(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @PreviewLightDark
 @PreviewDynamicColors
 @PreviewScreenSizes

@@ -21,6 +21,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
@@ -101,6 +102,7 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     showBackground = true,
     backgroundColor = 0xFFFFFBFE

@@ -115,6 +115,7 @@ internal fun Project.configureComposeScreenLibrary() {
     dependencies {
         addProvider("implementation", provider { project(":domain:api") })
         addProvider("implementation", provider { project(":resources") })
+        addProvider("implementation", provider { project(":support:annotation") })
         addProvider("implementation", provider { project(":support:async") })
         addProvider("implementation", provider { project(":support:theme") })
         addProvider("implementation", provider { project(":support:ui") })

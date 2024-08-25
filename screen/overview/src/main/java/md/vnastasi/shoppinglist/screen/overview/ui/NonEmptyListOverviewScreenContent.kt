@@ -15,6 +15,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LIST_CARD
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
@@ -45,6 +46,7 @@ internal fun NonEmptyListOverviewScreenContent(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     showBackground = true,
     backgroundColor = 0xFFFFFBFE
