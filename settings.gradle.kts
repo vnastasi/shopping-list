@@ -27,6 +27,7 @@ include(
     ":database",
     ":domain:api",
     ":domain:implementation",
+    ":support:annotation",
     ":support:async",
     ":support:async-unit-test",
     ":support:lifecycle",
