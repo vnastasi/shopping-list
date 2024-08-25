@@ -47,6 +47,7 @@ import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
@@ -173,6 +174,7 @@ private fun AddItemsScreen(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @PreviewLightDark
 @PreviewDynamicColors
 @PreviewScreenSizes

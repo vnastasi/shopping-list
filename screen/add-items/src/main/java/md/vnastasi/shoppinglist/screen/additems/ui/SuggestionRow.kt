@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM_DELETE_BUTTON
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
@@ -117,6 +117,7 @@ internal fun SuggestionRow(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     name = "Deletable",
     showBackground = true,
@@ -136,6 +137,7 @@ private fun SuggestionRowPreview1() {
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 @Preview(
     name = "Non-deletable",
     showBackground = true,
