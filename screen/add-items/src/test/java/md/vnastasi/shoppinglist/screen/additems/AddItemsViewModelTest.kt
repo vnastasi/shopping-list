@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
+import assertk.assertions.isEmpty
 import assertk.assertions.isNotNull
 import assertk.assertions.prop
 import io.mockk.coEvery
@@ -52,15 +53,18 @@ internal class AddItemsViewModelTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
         coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns listOf(suggestion)
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(currentSearchTermValue = searchTerm)
         viewModel.screenState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.SearchTermChanged(searchTerm))
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = searchTerm, suggestions = persistentListOf(suggestion), toastMessage = null))
+            viewModel.onUiEvent(UiEvent.SearchTermChanged)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(suggestion), toastMessage = null))
 
             cancelAndConsumeRemainingEvents()
         }
+
+        coVerify { mockNameSuggestionRepository.findAllMatching(searchTerm) }
+        confirmVerified(mockNameSuggestionRepository)
     }
 
     @Test
@@ -76,13 +80,13 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(currentSearchTermValue = name)
         viewModel.screenState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
+            viewModel.onUiEvent(UiEvent.ItemAddedToList)
             val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
-            val expectedViewState = ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
@@ -91,6 +95,8 @@ internal class AddItemsViewModelTest {
         coVerify { mockShoppingItemRepository.create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList))) }
         coVerify { mockNameSuggestionRepository.create(name) }
         confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
+
+        assertThat(viewModel.searchTermState.value).isEmpty()
     }
 
     @Test
@@ -101,16 +107,14 @@ internal class AddItemsViewModelTest {
     """
     )
     fun onEmptyItemAddedToList() = runTest {
-        val name = ""
-
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(currentSearchTermValue = "")
         viewModel.screenState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
+            viewModel.onUiEvent(UiEvent.ItemAddedToList)
             expectNoEvents()
         }
 
@@ -138,7 +142,7 @@ internal class AddItemsViewModelTest {
 
             viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
             val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf("Milk"))
-            val expectedViewState = ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
@@ -170,18 +174,18 @@ internal class AddItemsViewModelTest {
             assertThat(awaitItem()).prop(ViewState::toastMessage).isNotNull()
 
             viewModel.onUiEvent(UiEvent.ToastShown)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = null))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(), toastMessage = null))
 
             cancelAndConsumeRemainingEvents()
         }
     }
 
     context(TestScope)
-    private fun createViewModel() = AddItemsViewModel(
+    private fun createViewModel(currentSearchTermValue: String = "") = AddItemsViewModel(
         savedStateHandle = SavedStateHandle(mapOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to DEFAULT_SHOPPING_LIST_ID)),
         nameSuggestionRepository = mockNameSuggestionRepository,
         shoppingItemRepository = mockShoppingItemRepository,
         shoppingListRepository = mockShoppingListRepository,
         dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
-    )
+    ).apply { searchTermState.value = currentSearchTermValue }
 }

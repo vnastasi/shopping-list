@@ -22,11 +22,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -59,10 +59,11 @@ fun AddItemsScreen(
 ) {
     AddItemsScreen(
         viewState = viewModel.screenState.collectAsStateWithLifecycle(),
+        searchTermState = viewModel.searchTermState,
         events = Events(
             onNavigateUp = navigator::backToListDetails,
-            onSearchTermChanged = { searchTerm -> viewModel.onUiEvent(UiEvent.SearchTermChanged(searchTerm)) },
-            onItemAddedToList = { suggestedName -> viewModel.onUiEvent(UiEvent.ItemAddedToList(suggestedName)) },
+            onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
+            onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList) },
             onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
             onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
         )
@@ -72,8 +73,8 @@ fun AddItemsScreen(
 @Stable
 private class Events(
     val onNavigateUp: () -> Unit,
-    val onItemAddedToList: (String) -> Unit,
-    val onSearchTermChanged: (String) -> Unit,
+    val onItemAddedToList: () -> Unit,
+    val onSearchTermChanged: () -> Unit,
     val onSuggestionDeleted: (NameSuggestion) -> Unit,
     val onToastShown: () -> Unit
 )
@@ -81,11 +82,11 @@ private class Events(
 @Composable
 private fun AddItemsScreen(
     viewState: State<ViewState>,
+    searchTermState: MutableState<String>,
     events: Events
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val textFieldValue = rememberSaveable { mutableStateOf(viewState.value.searchTerm) }
 
     Scaffold(
         modifier = Modifier
@@ -118,8 +119,8 @@ private fun AddItemsScreen(
                                 .displayCutoutPadding()
                                 .padding(start = 56.dp)
                                 .testTag(SEARCH_BAR),
-                            searchTerm = textFieldValue,
-                            onDone = { events.onItemAddedToList.invoke(textFieldValue.value) }
+                            searchTerm = searchTermState,
+                            onValueAccepted = { events.onItemAddedToList.invoke() }
                         )
                     },
                     scrollBehavior = scrollBehavior,
@@ -157,7 +158,7 @@ private fun AddItemsScreen(
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
-                    onClick = { events.onItemAddedToList.invoke(suggestion.name) },
+                    onClick = { events.onItemAddedToList.invoke() },
                     onDelete = { events.onSuggestionDeleted.invoke(suggestion) }
                 )
             }
@@ -169,8 +170,8 @@ private fun AddItemsScreen(
         onToastShown = events.onToastShown
     )
 
-    LaunchedEffect(textFieldValue.value) {
-        events.onSearchTermChanged.invoke(textFieldValue.value)
+    LaunchedEffect(searchTermState.value) {
+        events.onSearchTermChanged.invoke()
     }
 }
 
@@ -182,7 +183,6 @@ private fun AddItemsScreen(
 @Composable
 fun AddItemsScreenPreview() {
     val viewState = ViewState(
-        searchTerm = "Search term",
         suggestions = persistentListOf(
             NameSuggestion(id = -1L, "Sample item"),
             NameSuggestion(id = 1L, "Item 1"),
@@ -199,6 +199,7 @@ fun AddItemsScreenPreview() {
     AppTheme {
         AddItemsScreen(
             viewState = remember { mutableStateOf(viewState) },
+            searchTermState = remember { mutableStateOf("") },
             events = Events(
                 onNavigateUp = { },
                 onItemAddedToList = { },
