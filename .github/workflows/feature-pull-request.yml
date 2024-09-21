@@ -85,13 +85,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-34-google_apis
+          key: avd-35-google_apis
 
       - name: "Create emulator snapshot"
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 35
           target: google_apis
           arch: x86_64
           force-avd-creation: false
@@ -107,7 +107,7 @@ jobs:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         with:
-          api-level: 34
+          api-level: 35
           target: google_apis
           arch: x86_64
           force-avd-creation: false
@@ -123,7 +123,7 @@ jobs:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         with:
-          api-level: 34
+          api-level: 35
           target: google_apis
           arch: x86_64
           force-avd-creation: false
