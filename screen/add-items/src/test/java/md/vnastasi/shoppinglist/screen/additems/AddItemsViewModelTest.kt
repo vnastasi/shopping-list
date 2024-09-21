@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.prop
 import io.mockk.coEvery
@@ -80,11 +81,11 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel(currentSearchTermValue = name)
+        val viewModel = createViewModel(currentSearchTermValue = "Search term")
         viewModel.screenState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList)
+            viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
             val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
             val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
@@ -110,17 +111,19 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel(currentSearchTermValue = "")
+        val viewModel = createViewModel(currentSearchTermValue = "Search term")
         viewModel.screenState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList)
+            viewModel.onUiEvent(UiEvent.ItemAddedToList(""))
             expectNoEvents()
         }
 
         coVerify(exactly = 0) { mockShoppingItemRepository.create(any()) }
         coVerify(exactly = 0) { mockNameSuggestionRepository.create(any()) }
         confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
+
+        assertThat(viewModel.searchTermState.value).isEqualTo("Search term")
     }
 
     @Test

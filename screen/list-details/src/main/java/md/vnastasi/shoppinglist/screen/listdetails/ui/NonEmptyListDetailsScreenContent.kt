@@ -16,7 +16,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
-import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LIST
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -30,7 +31,8 @@ internal fun NonEmptyListDetailsScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = AppDimensions.paddingSmall),
+            .padding(top = AppDimensions.paddingSmall)
+            .testTag(SHOPPING_ITEMS_LIST),
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -43,7 +45,7 @@ internal fun NonEmptyListDetailsScreenContent(
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
             ShoppingItemRow(
-                modifier = Modifier.testTag(LIST_ITEM),
+                modifier = Modifier.testTag(SHOPPING_ITEMS_ITEM),
                 shoppingItem = shoppingItem,
                 isLastItemInList = index == listOfShoppingItems.size - 1,
                 onClick = onClick

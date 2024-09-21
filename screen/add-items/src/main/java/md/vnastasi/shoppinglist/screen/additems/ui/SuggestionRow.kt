@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM_DELETE_BUTTON
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -90,7 +90,7 @@ internal fun SuggestionRow(
                 if (isDeletable) {
                     IconButton(
                         modifier = Modifier
-                            .testTag(SUGGESTION_ITEM_DELETE_BUTTON)
+                            .testTag(SUGGESTIONS_ITEM_DELETE_BUTTON)
                             .wrapContentSize()
                             .align(Alignment.CenterVertically),
                         onClick = { onDelete.invoke() }

@@ -12,13 +12,13 @@ import java.util.concurrent.TimeUnit
 class UiTestDispatcherProvider : DispatchersProvider {
 
     private val idlingThreadPoolExecutor = IdlingThreadPoolExecutor(
-        "idling-thread-pool",
-        4,
-        8,
-        10,
-        TimeUnit.SECONDS,
-        ArrayBlockingQueue(100),
-        Executors.defaultThreadFactory()
+        /* resourceName = */ "idling-thread-pool",
+        /* corePoolSize = */ 4,
+        /* maximumPoolSize = */ 8,
+        /* keepAliveTime = */ 10,
+        /* unit = */ TimeUnit.SECONDS,
+        /* workQueue = */ ArrayBlockingQueue(100),
+        /* threadFactory = */ Executors.defaultThreadFactory()
     )
 
     override val Main: CoroutineDispatcher = Dispatchers.Main

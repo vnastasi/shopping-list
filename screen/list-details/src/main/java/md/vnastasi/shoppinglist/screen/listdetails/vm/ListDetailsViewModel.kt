@@ -72,7 +72,12 @@ class ListDetailsViewModel internal constructor(
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            ListDetailsViewModel(createSavedStateHandle(), shoppingListRepository, shoppingItemRepository, dispatchersProvider)
+            ListDetailsViewModel(
+                savedStateHandle = createSavedStateHandle(),
+                shoppingListRepository = shoppingListRepository,
+                shoppingItemRepository = shoppingItemRepository,
+                dispatchersProvider = dispatchersProvider
+            )
         }
     })
 

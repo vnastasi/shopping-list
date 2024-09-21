@@ -51,7 +51,7 @@ class AddItemsViewModel internal constructor(
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.SearchTermChanged -> onSearchTermChanged()
-            is UiEvent.ItemAddedToList -> onItemAddedToList()
+            is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)
             is UiEvent.SuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
             is UiEvent.ToastShown -> onToastShown()
         }
@@ -61,23 +61,23 @@ class AddItemsViewModel internal constructor(
         viewModelScope.launch(dispatchersProvider.Main) {
             _screenState.update { viewState ->
                 viewState.copy(
-                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.trimmedValue).toImmutableList()
+                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value.trim()).toImmutableList()
                 )
             }
         }
     }
 
-    private fun onItemAddedToList() {
-        val trimmedItemName = searchTermState.trimmedValue
-        if (trimmedItemName.isBlank()) return
+    private fun onItemAddedToList(name: String) {
+        val sanitisedName = name.trim()
+        if (sanitisedName.isBlank()) return
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingList
-                .map { ShoppingItem(name = trimmedItemName, isChecked = false, list = it) }
+                .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
                     nameSuggestionRepository.create(shoppingItem.name)
                     _screenState.update { viewState ->
-                        val toastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(trimmedItemName))
+                        val toastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(sanitisedName))
                         viewState.copy(toastMessage = toastMessage)
                     }
                     searchTermState.value = ""
@@ -106,9 +106,6 @@ class AddItemsViewModel internal constructor(
         }
     }
 
-    private val MutableState<String>.trimmedValue: String
-        get() = value.trim()
-
     class Factory internal constructor(
         private val nameSuggestionRepository: NameSuggestionRepository,
         private val shoppingListRepository: ShoppingListRepository,
@@ -116,7 +113,13 @@ class AddItemsViewModel internal constructor(
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            AddItemsViewModel(createSavedStateHandle(), nameSuggestionRepository, shoppingListRepository, shoppingItemRepository, dispatchersProvider)
+            AddItemsViewModel(
+                savedStateHandle = createSavedStateHandle(),
+                nameSuggestionRepository = nameSuggestionRepository,
+                shoppingListRepository = shoppingListRepository,
+                shoppingItemRepository = shoppingItemRepository,
+                dispatchersProvider = dispatchersProvider
+            )
         }
     })
 

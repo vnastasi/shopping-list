@@ -44,8 +44,10 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.BACK_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
-import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
@@ -59,11 +61,11 @@ fun AddItemsScreen(
 ) {
     AddItemsScreen(
         viewState = viewModel.screenState.collectAsStateWithLifecycle(),
-        searchTermState = viewModel.searchTermState,
+        searchTermState = remember { viewModel.searchTermState },
         events = Events(
             onNavigateUp = navigator::backToListDetails,
             onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
-            onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList) },
+            onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList(it)) },
             onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
             onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
         )
@@ -73,7 +75,7 @@ fun AddItemsScreen(
 @Stable
 private class Events(
     val onNavigateUp: () -> Unit,
-    val onItemAddedToList: () -> Unit,
+    val onItemAddedToList: (String) -> Unit,
     val onSearchTermChanged: () -> Unit,
     val onSuggestionDeleted: (NameSuggestion) -> Unit,
     val onToastShown: () -> Unit
@@ -102,7 +104,8 @@ private fun AddItemsScreen(
                     navigationIcon = {
                         IconButton(
                             modifier = Modifier
-                                .displayCutoutPadding(),
+                                .displayCutoutPadding()
+                                .testTag(BACK_BUTTON),
                             onClick = events.onNavigateUp
                         ) {
                             Icon(
@@ -120,7 +123,7 @@ private fun AddItemsScreen(
                                 .padding(start = 56.dp)
                                 .testTag(SEARCH_BAR),
                             searchTerm = searchTermState,
-                            onValueAccepted = { events.onItemAddedToList.invoke() }
+                            onValueAccepted = { events.onItemAddedToList.invoke(searchTermState.value) }
                         )
                     },
                     scrollBehavior = scrollBehavior,
@@ -141,7 +144,8 @@ private fun AddItemsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .imePadding(),
+                .imePadding()
+                .testTag(SUGGESTIONS_LIST),
             contentPadding = PaddingValues(
                 start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
                 end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -154,11 +158,11 @@ private fun AddItemsScreen(
                 key = { _, suggestion -> suggestion.id }
             ) { index, suggestion ->
                 SuggestionRow(
-                    modifier = Modifier.testTag(SUGGESTION_ITEM),
+                    modifier = Modifier.testTag(SUGGESTIONS_ITEM),
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
-                    onClick = { events.onItemAddedToList.invoke() },
+                    onClick = { events.onItemAddedToList.invoke(suggestion.name) },
                     onDelete = { events.onSuggestionDeleted.invoke(suggestion) }
                 )
             }

@@ -6,7 +6,7 @@ sealed interface UiEvent {
 
     data object SearchTermChanged : UiEvent
 
-    data object ItemAddedToList: UiEvent
+    data class ItemAddedToList(val name: String): UiEvent
 
     data class SuggestionDeleted(val suggestion: NameSuggestion): UiEvent
 
