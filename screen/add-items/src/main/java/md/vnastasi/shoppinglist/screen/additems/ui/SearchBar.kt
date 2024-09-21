@@ -25,7 +25,7 @@ import md.vnastasi.shoppinglist.res.R
 fun SearchBar(
     modifier: Modifier = Modifier,
     searchTerm: MutableState<String>,
-    onDone: () -> Unit
+    onValueAccepted: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -63,10 +63,7 @@ fun SearchBar(
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
-            onDone = {
-                onDone.invoke()
-                searchTerm.value = ""
-            }
+            onDone = { onValueAccepted.invoke() }
         ),
     )
 

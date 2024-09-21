@@ -48,10 +48,10 @@ internal fun ShoppingItemRow(
                     .padding(AppDimensions.paddingSmall)
             ) {
                 Checkbox(
-                    modifier = Modifier
-                        .testTag(LIST_ITEM_CHECKBOX)
-                        .align(Alignment.CenterVertically),
                     checked = shoppingItem.isChecked,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .testTag(LIST_ITEM_CHECKBOX),
                     onCheckedChange = { onClick.invoke(shoppingItem) },
                     colors = CheckboxDefaults.colors().copy(
                         checkedBoxColor = MaterialTheme.colorScheme.tertiary,

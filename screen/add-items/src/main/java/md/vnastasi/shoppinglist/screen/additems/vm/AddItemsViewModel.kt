@@ -1,5 +1,7 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -40,42 +42,45 @@ class AddItemsViewModel internal constructor(
     private val _screenState = MutableStateFlow(ViewState.init())
     override val screenState: StateFlow<ViewState> = _screenState.asStateFlow()
 
+    override val searchTermState: MutableState<String> = mutableStateOf("")
+
     private val shoppingList = savedStateHandle.getStateFlow(ARG_KEY_SHOPPING_LIST_ID, Long.MIN_VALUE)
         .filter { it != Long.MIN_VALUE }
         .flatMapConcat { shoppingListRepository.findById(it) }
 
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
-            is UiEvent.SearchTermChanged -> onSearchTermChanged(uiEvent.newSearchTerm)
+            is UiEvent.SearchTermChanged -> onSearchTermChanged()
             is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)
             is UiEvent.SuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
             is UiEvent.ToastShown -> onToastShown()
         }
     }
 
-    private fun onSearchTermChanged(newSearchTerm: String) {
+    private fun onSearchTermChanged() {
         viewModelScope.launch(dispatchersProvider.Main) {
             _screenState.update { viewState ->
                 viewState.copy(
-                    searchTerm = newSearchTerm,
-                    suggestions = nameSuggestionRepository.findAllMatching(newSearchTerm).toImmutableList()
+                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value.trim()).toImmutableList()
                 )
             }
         }
     }
 
     private fun onItemAddedToList(name: String) {
-        if (name.isBlank()) return
+        val sanitisedName = name.trim()
+        if (sanitisedName.isBlank()) return
         viewModelScope.launch(dispatchersProvider.Main) {
             shoppingList
-                .map { ShoppingItem(name = name, isChecked = false, list = it) }
+                .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
                     nameSuggestionRepository.create(shoppingItem.name)
                     _screenState.update { viewState ->
-                        val toastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
+                        val toastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(sanitisedName))
                         viewState.copy(toastMessage = toastMessage)
                     }
+                    searchTermState.value = ""
                 }
         }
     }
@@ -86,7 +91,7 @@ class AddItemsViewModel internal constructor(
             _screenState.update { viewState ->
                 val toastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf(suggestion.name))
                 viewState.copy(
-                    suggestions = nameSuggestionRepository.findAllMatching(viewState.searchTerm).toImmutableList(),
+                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value).toImmutableList(),
                     toastMessage = toastMessage
                 )
             }
@@ -108,7 +113,13 @@ class AddItemsViewModel internal constructor(
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            AddItemsViewModel(createSavedStateHandle(), nameSuggestionRepository, shoppingListRepository, shoppingItemRepository, dispatchersProvider)
+            AddItemsViewModel(
+                savedStateHandle = createSavedStateHandle(),
+                nameSuggestionRepository = nameSuggestionRepository,
+                shoppingListRepository = shoppingListRepository,
+                shoppingItemRepository = shoppingItemRepository,
+                dispatchersProvider = dispatchersProvider
+            )
         }
     })
 

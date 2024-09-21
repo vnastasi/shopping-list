@@ -19,7 +19,8 @@ import org.junit.runners.Parameterized.Parameters
 @RunWith(Parameterized::class)
 class AddItemsScreenshotTest(
     config: DeviceConfig,
-    private val viewState: ViewState
+    private val viewState: ViewState,
+    private val searchTermValue: String
 ) {
 
     @get:Rule
@@ -36,7 +37,7 @@ class AddItemsScreenshotTest(
         paparazzi.snapshot {
             AppTheme {
                 AddItemsScreen(
-                    viewModel = StubAddItemsViewModelSpec(viewState),
+                    viewModel = StubAddItemsViewModelSpec(viewState = viewState, searchTermValue = searchTermValue),
                     navigator = StubAddItemsScreenNavigator()
                 )
             }
@@ -47,8 +48,8 @@ class AddItemsScreenshotTest(
 
         @JvmStatic
         @Parameters
-        fun parameters(): List<Array<Any>> = crossJoin(deviceConfigurations(), viewStates())
-            .map { arrayOf(it.first, it.second) }
+        fun parameters(): List<Array<Any>> = crossJoin(deviceConfigurations(), viewStates(), searchTermValues())
+            .map { arrayOf(it.first, it.second, it.third) }
             .toList()
 
         private fun deviceConfigurations(): Sequence<DeviceConfig> = sequenceOf(
@@ -96,12 +97,10 @@ class AddItemsScreenshotTest(
 
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState(
-                searchTerm = "",
                 suggestions = persistentListOf(),
                 toastMessage = null
             ),
             ViewState(
-                searchTerm = "A search term",
                 suggestions = persistentListOf(
                     NameSuggestion(id = 1L, name = "Suggestion 1"),
                     NameSuggestion(id = 2L, name = "Suggestion 2"),
@@ -109,6 +108,11 @@ class AddItemsScreenshotTest(
                 ),
                 toastMessage = null
             )
+        )
+
+        private fun searchTermValues(): Sequence<String> = sequenceOf(
+            "",
+            "A search term"
         )
     }
 }

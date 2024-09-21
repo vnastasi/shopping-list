@@ -8,13 +8,12 @@ import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 
 @Stable
 data class ViewState(
-    val searchTerm: String,
     val suggestions: ImmutableList<NameSuggestion>,
     val toastMessage: ToastMessage?
 ) {
 
     companion object {
 
-        fun init() = ViewState(searchTerm = "", suggestions = persistentListOf(), toastMessage = null)
+        fun init() = ViewState(suggestions = persistentListOf(), toastMessage = null)
     }
 }

@@ -14,7 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
-import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LIST_CARD
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -27,7 +28,9 @@ internal fun NonEmptyListOverviewScreenContent(
     onClick: (ShoppingListDetails) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(SHOPPING_LISTS_LIST),
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -37,7 +40,7 @@ internal fun NonEmptyListOverviewScreenContent(
     ) {
         items(items = list, key = { it.id }) { shoppingList ->
             ShoppingListCard(
-                modifier = Modifier.testTag(SHOPPING_LIST_CARD),
+                modifier = Modifier.testTag(SHOPPING_LISTS_ITEM),
                 list = shoppingList,
                 onClickItem = onClick,
                 onDeleteItem = onDelete

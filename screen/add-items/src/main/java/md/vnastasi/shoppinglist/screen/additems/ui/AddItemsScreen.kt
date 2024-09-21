@@ -22,11 +22,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -44,8 +44,10 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.BACK_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
-import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTION_ITEM
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM
+import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
@@ -59,10 +61,11 @@ fun AddItemsScreen(
 ) {
     AddItemsScreen(
         viewState = viewModel.screenState.collectAsStateWithLifecycle(),
+        searchTermState = remember { viewModel.searchTermState },
         events = Events(
             onNavigateUp = navigator::backToListDetails,
-            onSearchTermChanged = { searchTerm -> viewModel.onUiEvent(UiEvent.SearchTermChanged(searchTerm)) },
-            onItemAddedToList = { suggestedName -> viewModel.onUiEvent(UiEvent.ItemAddedToList(suggestedName)) },
+            onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
+            onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList(it)) },
             onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
             onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
         )
@@ -73,7 +76,7 @@ fun AddItemsScreen(
 private class Events(
     val onNavigateUp: () -> Unit,
     val onItemAddedToList: (String) -> Unit,
-    val onSearchTermChanged: (String) -> Unit,
+    val onSearchTermChanged: () -> Unit,
     val onSuggestionDeleted: (NameSuggestion) -> Unit,
     val onToastShown: () -> Unit
 )
@@ -81,11 +84,11 @@ private class Events(
 @Composable
 private fun AddItemsScreen(
     viewState: State<ViewState>,
+    searchTermState: MutableState<String>,
     events: Events
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val textFieldValue = rememberSaveable { mutableStateOf(viewState.value.searchTerm) }
 
     Scaffold(
         modifier = Modifier
@@ -101,7 +104,8 @@ private fun AddItemsScreen(
                     navigationIcon = {
                         IconButton(
                             modifier = Modifier
-                                .displayCutoutPadding(),
+                                .displayCutoutPadding()
+                                .testTag(BACK_BUTTON),
                             onClick = events.onNavigateUp
                         ) {
                             Icon(
@@ -118,8 +122,8 @@ private fun AddItemsScreen(
                                 .displayCutoutPadding()
                                 .padding(start = 56.dp)
                                 .testTag(SEARCH_BAR),
-                            searchTerm = textFieldValue,
-                            onDone = { events.onItemAddedToList.invoke(textFieldValue.value) }
+                            searchTerm = searchTermState,
+                            onValueAccepted = { events.onItemAddedToList.invoke(searchTermState.value) }
                         )
                     },
                     scrollBehavior = scrollBehavior,
@@ -140,7 +144,8 @@ private fun AddItemsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .imePadding(),
+                .imePadding()
+                .testTag(SUGGESTIONS_LIST),
             contentPadding = PaddingValues(
                 start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
                 end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -153,7 +158,7 @@ private fun AddItemsScreen(
                 key = { _, suggestion -> suggestion.id }
             ) { index, suggestion ->
                 SuggestionRow(
-                    modifier = Modifier.testTag(SUGGESTION_ITEM),
+                    modifier = Modifier.testTag(SUGGESTIONS_ITEM),
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
@@ -169,8 +174,8 @@ private fun AddItemsScreen(
         onToastShown = events.onToastShown
     )
 
-    LaunchedEffect(textFieldValue.value) {
-        events.onSearchTermChanged.invoke(textFieldValue.value)
+    LaunchedEffect(searchTermState.value) {
+        events.onSearchTermChanged.invoke()
     }
 }
 
@@ -182,7 +187,6 @@ private fun AddItemsScreen(
 @Composable
 fun AddItemsScreenPreview() {
     val viewState = ViewState(
-        searchTerm = "Search term",
         suggestions = persistentListOf(
             NameSuggestion(id = -1L, "Sample item"),
             NameSuggestion(id = 1L, "Item 1"),
@@ -199,6 +203,7 @@ fun AddItemsScreenPreview() {
     AppTheme {
         AddItemsScreen(
             viewState = remember { mutableStateOf(viewState) },
+            searchTermState = remember { mutableStateOf("") },
             events = Events(
                 onNavigateUp = { },
                 onItemAddedToList = { },

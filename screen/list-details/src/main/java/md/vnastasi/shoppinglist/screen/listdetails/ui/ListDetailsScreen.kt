@@ -44,7 +44,7 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
-import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_LIST_ITEMS_FAB
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_SHOPPING_LIST_ITEMS_FAB
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -116,7 +116,7 @@ private fun ListDetailsScreen(
             FloatingActionButton(
                 modifier = Modifier
                     .padding(end = fabEndPadding)
-                    .testTag(ADD_LIST_ITEMS_FAB),
+                    .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
                 shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
                 onClick = { events.onAddNewItems.invoke(viewState.value.shoppingListId) }
             ) {
