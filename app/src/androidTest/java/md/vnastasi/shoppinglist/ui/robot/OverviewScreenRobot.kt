@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.ui.robot
 
-import android.content.res.Resources
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnyDescendant
@@ -16,38 +15,43 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FA
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 
-context(AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
 @RobotDslMarker
-fun overviewScreen(block: OverviewScreenRobot.() -> Unit = {}) = with(activity.resources) { OverviewScreenRobot().apply(block) }
+fun overviewScreen(
+    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
+    block: OverviewScreenRobot.() -> Unit = {}
+) = OverviewScreenRobot(composeTestRule).apply(block)
 
-context(AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>, Resources)
-class OverviewScreenRobot {
+class OverviewScreenRobot(
+    private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
+) {
+
+    private val resources = composeTestRule.activity.resources
 
     fun hasEmptyOverviewMessage() {
-        val matcher = hasText(getString(R.string.overview_empty_list))
-        onNode(matcher).assertIsDisplayed()
+        val matcher = hasText(resources.getString(R.string.overview_empty_list))
+        composeTestRule.onNode(matcher).assertIsDisplayed()
     }
 
     fun hasNoEmptyOverviewMessage() {
-        val matcher = hasText(getString(R.string.overview_empty_list))
-        onNode(matcher).assertIsNotDisplayed()
+        val matcher = hasText(resources.getString(R.string.overview_empty_list))
+        composeTestRule.onNode(matcher).assertIsNotDisplayed()
     }
 
     fun clickOnNewShoppingListFab() {
         val matcher = hasTestTag(NEW_SHOPPING_LIST_FAB)
-        onNode(matcher).performClick()
+        composeTestRule.onNode(matcher).performClick()
     }
 
     fun hasShoppingListCard(name: String, totalItems: Int, completedItems: Int) {
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasText("$completedItems / $totalItems"))
-        onNode(hasTestTag(SHOPPING_LISTS_LIST))
+        composeTestRule.onNode(hasTestTag(SHOPPING_LISTS_LIST))
             .performScrollToNode(itemMatcher)
             .assertIsDisplayed()
     }
 
     fun clickOnShoppingListCard(name: String) {
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
-        onNode(hasTestTag(SHOPPING_LISTS_LIST)).performScrollToNode(itemMatcher)
-        onNode(itemMatcher).performClick()
+        composeTestRule.onNode(hasTestTag(SHOPPING_LISTS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(itemMatcher).performClick()
     }
 }

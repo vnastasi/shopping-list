@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.ui.robot
 
-import android.content.res.Resources
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.filter
@@ -24,46 +23,51 @@ import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 
-context(AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
 @RobotDslMarker
-fun addItemsScreen(block: AddItemsScreenRobot.() -> Unit = {}) = with(activity.resources) { AddItemsScreenRobot().apply(block) }
+fun addItemsScreen(
+    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
+    block: AddItemsScreenRobot.() -> Unit = {}
+) = AddItemsScreenRobot(composeTestRule).apply(block)
 
-context(AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>, Resources)
-class AddItemsScreenRobot {
+class AddItemsScreenRobot(
+    private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
+) {
+
+    private val resources = composeTestRule.activity.resources
 
     fun navigateBack() {
-        onNode(hasTestTag(BACK_BUTTON)).performClick()
+        composeTestRule.onNode(hasTestTag(BACK_BUTTON)).performClick()
     }
 
     fun hasEmptySearchbar() {
-        val matcher = hasTestTag(SEARCH_BAR) and hasAnyDescendant(hasText(getString(R.string.add_items_search_title)))
-        onNode(matcher, useUnmergedTree = true).assertIsDisplayed()
+        val matcher = hasTestTag(SEARCH_BAR) and hasAnyDescendant(hasText(resources.getString(R.string.add_items_search_title)))
+        composeTestRule.onNode(matcher, useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun typeSearchQuery(value: String) {
         val matcher = hasTestTag(SEARCH_BAR)
-        onNode(matcher, useUnmergedTree = true).performTextInput(value)
+        composeTestRule.onNode(matcher, useUnmergedTree = true).performTextInput(value)
     }
 
     fun clearSearchbar() {
         val matcher = hasTestTag(SEARCH_BAR)
-        onNode(matcher, useUnmergedTree = true).performTextClearance()
+        composeTestRule.onNode(matcher, useUnmergedTree = true).performTextClearance()
     }
 
     fun acceptValueFromKeyboard() {
         val matcher = hasTestTag(SEARCH_BAR)
-        onNode(matcher, useUnmergedTree = true).performImeAction()
+        composeTestRule.onNode(matcher, useUnmergedTree = true).performImeAction()
     }
 
     fun hasSuggestionItem(name: String) {
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
-        onNode(itemMatcher).assertIsDisplayed()
+        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(itemMatcher).assertIsDisplayed()
     }
 
     fun hasNoSuggestionItem(name: String) {
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        onNode(hasTestTag(SUGGESTIONS_LIST))
+        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST))
             .onChildren()
             .filter(itemMatcher)
             .assertCountEquals(0)
@@ -71,14 +75,14 @@ class AddItemsScreenRobot {
 
     fun clickOnSuggestionItem(name: String) {
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
-        onNode(itemMatcher).performClick()
+        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(itemMatcher).performClick()
     }
 
     fun deleteSuggestionItem(name: String) {
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
         val deleteButtonMatcher = hasTestTag(SUGGESTIONS_ITEM_DELETE_BUTTON) and hasAnyAncestor(itemMatcher)
-        onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
-        onNode(deleteButtonMatcher).performClick()
+        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(deleteButtonMatcher).performClick()
     }
 }
