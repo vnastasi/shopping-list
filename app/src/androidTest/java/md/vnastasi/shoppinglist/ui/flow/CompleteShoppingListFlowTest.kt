@@ -43,15 +43,15 @@ class CompleteShoppingListFlowTest {
     )
 
     @Test
-    fun completeShoppingList(): Unit = with(composeRule) {
-        overviewScreen {
+    fun completeShoppingList() {
+        overviewScreen(composeRule) {
             hasNoEmptyOverviewMessage()
             hasShoppingListCard("Groceries", 5, 0)
             hasShoppingListCard("Gardening", 2, 0)
             clickOnShoppingListCard("Groceries")
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             hasToolbarName("Groceries")
             hasUncheckedItem("Bread")
             hasUncheckedItem("Milk")
@@ -71,13 +71,13 @@ class CompleteShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen {
+        overviewScreen(composeRule) {
             hasShoppingListCard("Groceries", 5, 5)
             hasShoppingListCard("Gardening", 2, 0)
             clickOnShoppingListCard("Gardening")
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             hasToolbarName("Gardening")
             hasUncheckedItem("Rake")
             hasUncheckedItem("Soil")
@@ -86,7 +86,7 @@ class CompleteShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen {
+        overviewScreen(composeRule) {
             hasShoppingListCard("Groceries", 5, 5)
             hasShoppingListCard("Gardening", 2, 2)
         }

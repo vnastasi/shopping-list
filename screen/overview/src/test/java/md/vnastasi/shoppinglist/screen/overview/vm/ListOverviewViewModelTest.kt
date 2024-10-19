@@ -13,7 +13,7 @@ import io.mockk.slot
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -44,7 +44,7 @@ internal class ListOverviewViewModelTest {
     fun screenStateWithNoLists() = runTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        createViewModel().screenState.test {
+        createViewModel(testScheduler).screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf()))
             cancelAndConsumeRemainingEvents()
         }
@@ -62,7 +62,7 @@ internal class ListOverviewViewModelTest {
         val shoppingListDetails = createShoppingListDetails()
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
-        createViewModel().screenState.test {
+        createViewModel(testScheduler).screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Init)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(persistentListOf(shoppingListDetails)))
             cancelAndConsumeRemainingEvents()
@@ -79,7 +79,7 @@ internal class ListOverviewViewModelTest {
     fun onAddNewShoppingList() = runTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
         viewModel.screenState.test {
@@ -107,7 +107,7 @@ internal class ListOverviewViewModelTest {
         val shoppingListSlot = slot<ShoppingList>()
         coEvery { mockShoppingListRepository.create(capture(shoppingListSlot)) } returns Unit
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName))
         advanceUntilIdle()
 
@@ -127,7 +127,7 @@ internal class ListOverviewViewModelTest {
         }
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingListDetails))
 
         viewModel.screenState.test {
@@ -152,7 +152,7 @@ internal class ListOverviewViewModelTest {
         val shoppingListDetails = createShoppingListDetails()
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingListDetails))
         advanceUntilIdle()
 
@@ -171,7 +171,7 @@ internal class ListOverviewViewModelTest {
     fun onNavigationPerformed() = runTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
 
         viewModel.screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -202,7 +202,7 @@ internal class ListOverviewViewModelTest {
     fun onToastShown() = runTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        val viewModel = createViewModel()
+        val viewModel = createViewModel(testScheduler)
 
         viewModel.screenState.test {
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -223,8 +223,7 @@ internal class ListOverviewViewModelTest {
         }
     }
 
-    context(TestScope)
-    private fun createViewModel() = ListOverviewViewModel(
+    private fun createViewModel(testScheduler: TestCoroutineScheduler) = ListOverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
         dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
     )

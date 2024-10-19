@@ -40,16 +40,16 @@ class ManageSuggestionsFlowTest {
     )
 
     @Test
-    fun manageNameSuggestions(): Unit = with(composeRule) {
-        overviewScreen {
+    fun manageNameSuggestions() {
+        overviewScreen(composeRule) {
             clickOnShoppingListCard("My list")
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             clickOnAddItemsFab()
         }
 
-        addItemsScreen {
+        addItemsScreen(composeRule) {
             hasEmptySearchbar()
             typeSearchQuery("egg")
             hasSuggestionItem("egg")
@@ -65,7 +65,7 @@ class ManageSuggestionsFlowTest {
             navigateBack()
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             hasUncheckedItem("Boiled eggs")
             navigateBack()
         }

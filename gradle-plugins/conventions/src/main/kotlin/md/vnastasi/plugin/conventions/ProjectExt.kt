@@ -3,10 +3,10 @@ package md.vnastasi.plugin.conventions
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
-import com.android.build.api.dsl.TestExtension
 import com.android.build.api.dsl.TestedExtension
 import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -26,8 +26,7 @@ internal fun Project.configureKotlin() {
     }
 }
 
-context(Project)
-internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid() {
+internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid(libs: LibrariesForLibs) {
     compileSdk = libs.versions.project.compileSdk.get().toInt()
 
     defaultConfig {
@@ -56,7 +55,6 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
     }
 }
 
-context(Project)
 internal fun CommonExtension<*, *, *, *, *, *>.configureCompose() {
     buildFeatures {
         compose = true
@@ -83,7 +81,7 @@ internal fun Project.configureSimpleLibrary() {
     pluginManager.apply(libs.plugins.kotlin.android)
 
     extensions.configure<LibraryExtension> {
-        configureAndroid()
+        configureAndroid(libs)
         enableTestFixtures()
     }
 
@@ -140,7 +138,7 @@ internal fun Project.configureApplication() {
     pluginManager.apply(libs.plugins.compose.compiler)
 
     extensions.configure<ApplicationExtension> {
-        configureAndroid()
+        configureAndroid(libs)
         configureUnitTests()
         configureCompose()
     }

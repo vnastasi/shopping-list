@@ -11,7 +11,7 @@ import io.mockk.slot
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -48,7 +48,7 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
-        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
+        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState(
@@ -78,7 +78,7 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
-        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
+        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
             awaitItem()
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState(
@@ -110,7 +110,7 @@ internal class ListDetailsViewModelTest {
         val shoppingItemSlot = slot<ShoppingItem>()
         coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
-        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -137,7 +137,7 @@ internal class ListDetailsViewModelTest {
         val shoppingItemSlot = slot<ShoppingItem>()
         coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
-        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -145,8 +145,10 @@ internal class ListDetailsViewModelTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem.copy(isChecked = false))
     }
 
-    context(TestScope)
-    private fun createViewModel(initialState: Map<String, Any?> = emptyMap()) = ListDetailsViewModel(
+    private fun createViewModel(
+        testScheduler: TestCoroutineScheduler,
+        initialState: Map<String, Any?> = emptyMap()
+    ) = ListDetailsViewModel(
         savedStateHandle = SavedStateHandle(initialState),
         shoppingListRepository = mockShoppingListRepository,
         shoppingItemRepository = mockShoppingItemRepository,

@@ -31,30 +31,30 @@ class CreateShoppingListFlowTest {
     val databaseRule = createDatabaseRule()
 
     @Test
-    fun createNewShoppingList(): Unit = with(composeRule) {
-        overviewScreen {
+    fun createNewShoppingList() {
+        overviewScreen(composeRule) {
             hasEmptyOverviewMessage()
             clickOnNewShoppingListFab()
         }
 
-        shoppingListForm {
+        shoppingListForm(composeRule) {
             typeShoppingListName("Test new shopping list")
             clickOnSaveButton()
         }
 
-        overviewScreen {
+        overviewScreen(composeRule) {
             hasNoEmptyOverviewMessage()
             hasShoppingListCard("Test new shopping list", 0, 0)
             clickOnShoppingListCard("Test new shopping list")
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             hasToolbarName("Test new shopping list")
             hasEmptyShoppingListMessage()
             clickOnAddItemsFab()
         }
 
-        addItemsScreen {
+        addItemsScreen(composeRule) {
             hasEmptySearchbar()
             typeSearchQuery("Milk")
             clickOnSuggestionItem("Milk")
@@ -66,7 +66,7 @@ class CreateShoppingListFlowTest {
             navigateBack()
         }
 
-        listDetailsScreen {
+        listDetailsScreen(composeRule) {
             hasNoEmptyShoppingListMessage()
             hasUncheckedItem("Coconut oil")
             hasUncheckedItem("Bread")
@@ -74,7 +74,7 @@ class CreateShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen {
+        overviewScreen(composeRule) {
             hasShoppingListCard("Test new shopping list", 3, 0)
         }
     }
