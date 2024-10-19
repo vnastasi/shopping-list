@@ -11,25 +11,22 @@ import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
+import md.vnastasi.shoppinglist.ui.rule.enableRetryRule
 import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 
 class ManageSuggestionsFlowTest {
 
-    @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
+    private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule
-    val animationsRule = disableAnimationsRule()
-
-    @get:Rule
-    val koinTestModeRule = createKoinTestModuleRule {
+    private val koinTestModeRule = createKoinTestModuleRule {
         single<DispatchersProvider> { UiTestDispatcherProvider() }
     }
 
-    @get:Rule
-    val databaseRule = createDatabaseRule(
+    private val databaseRule = createDatabaseRule(
         setUp = {
             shoppingListDao().create(ShoppingList(1L, "My list"))
             shoppingItemNameSuggestionDao().create(NameSuggestion(1L, "Eggs"))
@@ -38,6 +35,14 @@ class ManageSuggestionsFlowTest {
             shoppingItemNameSuggestionDao().create(NameSuggestion(4L, "Boiled eggs"))
         }
     )
+
+    @get:Rule
+    val ruleChain: TestRule = RuleChain
+        .outerRule(composeRule)
+        .around(databaseRule)
+        .around(koinTestModeRule)
+        .around(disableAnimationsRule())
+        .around(enableRetryRule(maxAttempts = 3))
 
     @Test
     fun manageNameSuggestions() {
