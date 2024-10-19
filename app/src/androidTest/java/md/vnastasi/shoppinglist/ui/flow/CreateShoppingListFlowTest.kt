@@ -10,25 +10,28 @@ import md.vnastasi.shoppinglist.ui.robot.shoppingListForm
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
+import md.vnastasi.shoppinglist.ui.rule.enableRetryRule
 import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 
 class CreateShoppingListFlowTest {
 
-    @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
+    private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule
-    val animationsRule = disableAnimationsRule()
-
-    @get:Rule
-    val koinTestModeRule = createKoinTestModuleRule {
+    private val koinTestModeRule = createKoinTestModuleRule {
         single<DispatchersProvider> { UiTestDispatcherProvider() }
     }
 
     @get:Rule
-    val databaseRule = createDatabaseRule()
+    val ruleChain: TestRule = RuleChain
+        .outerRule(composeRule)
+        .around(createDatabaseRule())
+        .around(koinTestModeRule)
+        .around(disableAnimationsRule())
+        .around(enableRetryRule(maxAttempts = 3))
 
     @Test
     fun createNewShoppingList() {
