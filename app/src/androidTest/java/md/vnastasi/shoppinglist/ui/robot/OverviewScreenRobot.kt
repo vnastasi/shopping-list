@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.ui.robot
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnyDescendant
@@ -15,12 +16,15 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FA
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 
+private const val DEFAULT_TIMEOUT = 5_000L
+
 @RobotDslMarker
 fun overviewScreen(
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
     block: OverviewScreenRobot.() -> Unit = {}
 ) = OverviewScreenRobot(composeTestRule).apply(block)
 
+@OptIn(ExperimentalTestApi::class)
 class OverviewScreenRobot(
     private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
@@ -29,6 +33,7 @@ class OverviewScreenRobot(
 
     fun hasEmptyOverviewMessage() {
         val matcher = hasText(resources.getString(R.string.overview_empty_list))
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(matcher).assertIsDisplayed()
     }
 
@@ -39,19 +44,25 @@ class OverviewScreenRobot(
 
     fun clickOnNewShoppingListFab() {
         val matcher = hasTestTag(NEW_SHOPPING_LIST_FAB)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(matcher).performClick()
     }
 
     fun hasShoppingListCard(name: String, totalItems: Int, completedItems: Int) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasText("$completedItems / $totalItems"))
-        composeTestRule.onNode(hasTestTag(SHOPPING_LISTS_LIST))
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher)
             .performScrollToNode(itemMatcher)
             .assertIsDisplayed()
     }
 
     fun clickOnShoppingListCard(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
-        composeTestRule.onNode(hasTestTag(SHOPPING_LISTS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(itemMatcher).performClick()
     }
 }

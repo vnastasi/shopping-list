@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.ui.robot
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.filter
@@ -23,12 +24,15 @@ import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 
+private const val DEFAULT_TIMEOUT = 5_000L
+
 @RobotDslMarker
 fun addItemsScreen(
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
     block: AddItemsScreenRobot.() -> Unit = {}
 ) = AddItemsScreenRobot(composeTestRule).apply(block)
 
+@OptIn(ExperimentalTestApi::class)
 class AddItemsScreenRobot(
     private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
@@ -36,53 +40,70 @@ class AddItemsScreenRobot(
     private val resources = composeTestRule.activity.resources
 
     fun navigateBack() {
-        composeTestRule.onNode(hasTestTag(BACK_BUTTON)).performClick()
+        val matcher = hasTestTag(BACK_BUTTON)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(matcher).performClick()
     }
 
     fun hasEmptySearchbar() {
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(SEARCH_BAR), DEFAULT_TIMEOUT)
         val matcher = hasTestTag(SEARCH_BAR) and hasAnyDescendant(hasText(resources.getString(R.string.add_items_search_title)))
         composeTestRule.onNode(matcher, useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun typeSearchQuery(value: String) {
         val matcher = hasTestTag(SEARCH_BAR)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(matcher, useUnmergedTree = true).performTextInput(value)
     }
 
     fun clearSearchbar() {
         val matcher = hasTestTag(SEARCH_BAR)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(matcher, useUnmergedTree = true).performTextClearance()
     }
 
     fun acceptValueFromKeyboard() {
         val matcher = hasTestTag(SEARCH_BAR)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(matcher, useUnmergedTree = true).performImeAction()
     }
 
     fun hasSuggestionItem(name: String) {
+        val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(itemMatcher).assertIsDisplayed()
     }
 
     fun hasNoSuggestionItem(name: String) {
+        val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST))
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher)
             .onChildren()
             .filter(itemMatcher)
             .assertCountEquals(0)
     }
 
     fun clickOnSuggestionItem(name: String) {
+        val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
-        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(itemMatcher).performClick()
     }
 
     fun deleteSuggestionItem(name: String) {
+        val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
         val deleteButtonMatcher = hasTestTag(SUGGESTIONS_ITEM_DELETE_BUTTON) and hasAnyAncestor(itemMatcher)
-        composeTestRule.onNode(hasTestTag(SUGGESTIONS_LIST)).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(deleteButtonMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(deleteButtonMatcher).performClick()
     }
 }
