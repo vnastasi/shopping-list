@@ -22,6 +22,9 @@ jobs:
           echo "Operating system ${{ runner.os }}"
           echo "Architecture ${{ runner.arch }}"
 
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
       - name: "Clear caches"
         continue-on-error: true
         env:
@@ -30,9 +33,6 @@ jobs:
           gh extension install actions/gh-actions-cache
           gh actions-cache delete "unit-tests-exec-data" --confirm
           gh actions-cache delete "instrumented-tests-exec-data" --confirm
-
-      - name: "Check out repository"
-        uses: actions/checkout@v4
 
       - name: "Set up Java"
         uses: actions/setup-java@v3
@@ -261,16 +261,16 @@ jobs:
           key: instrumented-tests-exec-data
           fail-on-cache-miss: true
 
-#      - name: "Compile code"
-#        env:
-#          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-#          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-#          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-#          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-#        run: |
-#          ./gradlew compileDebugSources
-#          ./gradlew compileDebugUnitTestSources
-#          ./gradlew compileDebugAndroidTestSources
+      - name: "Compile code"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: |
+          ./gradlew compileDebugSources
+          ./gradlew compileDebugUnitTestSources
+          ./gradlew compileDebugAndroidTestSources
 
       - name: "Code coverage"
         env:
@@ -302,4 +302,4 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "gh pr merge --auto --squash $PR_URL"
+        run: gh pr merge --auto --squash $PR_URL
