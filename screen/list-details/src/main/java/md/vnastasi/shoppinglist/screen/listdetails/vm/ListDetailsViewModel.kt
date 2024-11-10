@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -32,13 +31,19 @@ class ListDetailsViewModel internal constructor(
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel(), ListDetailsViewModelSpec {
 
-    override val screenState: StateFlow<ViewState> = combine(getShoppingList(), getListOfShoppingItems()) { shoppingList, listOfShoppingItems ->
-        ViewState(
-            shoppingListId = shoppingList.id,
-            shoppingListName = shoppingList.name,
-            listOfShoppingItems = listOfShoppingItems.toImmutableList()
-        )
-    }.stateIn(
+    private val shoppingList = savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
+        .filterNotNull()
+        .flatMapLatest(shoppingListRepository::findById)
+
+    private val listOfShoppingItems = savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
+        .filterNotNull()
+        .flatMapLatest(shoppingItemRepository::findAll)
+
+    override val screenState: StateFlow<ViewState> = combine(
+        shoppingList,
+        listOfShoppingItems,
+        ::createViewState
+    ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.Init
@@ -56,15 +61,12 @@ class ListDetailsViewModel internal constructor(
         }
     }
 
-    private fun getShoppingList(): Flow<ShoppingList> =
-        savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
-            .filterNotNull()
-            .flatMapLatest(shoppingListRepository::findById)
-
-    private fun getListOfShoppingItems(): Flow<List<ShoppingItem>> =
-        savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
-            .filterNotNull()
-            .flatMapLatest(shoppingItemRepository::findAll)
+    private fun createViewState(shoppingList: ShoppingList, listOfShoppingItems: List<ShoppingItem>): ViewState =
+        ViewState(
+            shoppingListId = shoppingList.id,
+            shoppingListName = shoppingList.name,
+            listOfShoppingItems = listOfShoppingItems.toImmutableList()
+        )
 
     class Factory internal constructor(
         private val shoppingListRepository: ShoppingListRepository,
