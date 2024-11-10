@@ -1,0 +1,235 @@
+name: Feature pull request Workflow v2
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    types:
+      - opened
+      - synchronize
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: "Build application"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Assemble application"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew assemble
+
+      - name: "Assemble unit tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew assembleDebugUnitTest
+
+      - name: "Assemble instrumented tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew assembleDebugAndroidTest
+
+  unit-tests:
+    name: "Unit tests"
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Run unit tests"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew testDebugUnitTest
+
+  instrumented-tests:
+    name: "Instrumented tests"
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - name: "Enable hardware acceleration"
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Set up emulator caching"
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-35-google_apis
+
+      - name: "Create emulator snapshot"
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated emulator snapshot."
+
+      - name: "Run instrumented tests"
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
+
+  code-quality:
+    name: "Verify code quality"
+    runs-on: ubuntu-latest
+    needs:
+      - unit-test
+      - instrumented-test
+    steps:
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Code coverage"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew verifyCodeCoverage
+
+      - name: "Detekt"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: ./gradlew detekt
+
+  dependabot:
+    name: "Dependabot auto-merge"
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    needs:
+      - main
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v3
+
+      - name: "Auto-merge Dependabot PR"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "gh pr merge --auto --squash $PR_URL"
