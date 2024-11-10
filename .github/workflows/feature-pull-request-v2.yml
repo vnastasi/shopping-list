@@ -249,7 +249,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: unit-instrumented-exec-data
+          key: instrumented-tests-exec-data
           fail-on-cache-miss: true
 
       - name: "Code coverage"
