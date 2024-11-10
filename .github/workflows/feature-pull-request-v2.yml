@@ -223,7 +223,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     needs:
-      - main
+      - code-quality
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v3
