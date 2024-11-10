@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.additems
+package md.vnastasi.shoppinglist.screen.additems.vm
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
@@ -28,7 +28,6 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
-import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
