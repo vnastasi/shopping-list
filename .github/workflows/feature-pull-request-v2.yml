@@ -115,9 +115,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/unit-tests
-          key: unit-tests-exec-data-${{ github.run_id }}
-          restore-keys: |
-            unit-tests-exec-data
+          key: unit-tests-exec-data
 
   instrumented-tests:
     name: "Instrumented tests"
@@ -205,9 +203,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: instrumented-tests-exec-data-${{ github.run_id }}
-          restore-keys: |
-            instrumented-tests-exec-data
+          key: instrumented-tests-exec-data
 
   code-quality:
     name: "Verify code quality"
@@ -245,9 +241,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/unit-tests
-          key: unit-tests-exec-data-${{ github.run_id }}
-          restore-keys: |
-            unit-tests-exec-data
+          key: unit-tests-exec-data
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data"
@@ -255,9 +249,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: unit-instrumented-exec-data-${{ github.run_id }}
-          restore-keys: |
-            unit-instrumented-exec-data
+          key: unit-instrumented-exec-data
           fail-on-cache-miss: true
 
       - name: "Code coverage"
