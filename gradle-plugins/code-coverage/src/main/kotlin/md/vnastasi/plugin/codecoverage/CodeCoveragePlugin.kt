@@ -56,7 +56,7 @@ class CodeCoveragePlugin @Inject constructor(
             val allSourceDirectories = getAllSourceDirs()
             val allClassDirectories = getAllClassDirs(targetBuildType)
 
-            val copyUnitTestExecDataTask = tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
+            tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
                 group = TASK_GROUP
                 description = "Copy execution data for unit tests"
 
@@ -65,7 +65,7 @@ class CodeCoveragePlugin @Inject constructor(
                 outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
             }
 
-            val copyInstrumentedTestExecDataTask = tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
+            tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
                 group = TASK_GROUP
                 description = "Copy execution data for Android instrumented tests"
 
@@ -76,8 +76,6 @@ class CodeCoveragePlugin @Inject constructor(
 
             val coverageReportTask = tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
                 group = TASK_GROUP
-
-                dependsOn(copyUnitTestExecDataTask, copyInstrumentedTestExecDataTask)
 
                 executionData.setFrom(executionDataDirectories)
                 sourceDirectories.setFrom(allSourceDirectories)
