@@ -252,6 +252,17 @@ jobs:
           key: instrumented-tests-exec-data
           fail-on-cache-miss: true
 
+      - name: "Compile code"
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: |
+          ./gradlew compileDebugSources
+          ./gradlew compileDebugUnitTestSources
+          ./gradlew compileDebugAndroidTestSources
+
       - name: "Code coverage"
         env:
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
@@ -267,6 +278,15 @@ jobs:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew detekt
+
+      - name: "Clear cache"
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh extension install actions/gh-actions-cache
+          gh actions-cache delete "unit-tests-exec-data" --confirm
+          gh actions-cache delete "instrumented-tests-exec-data" --confirm
 
   dependabot:
     name: "Dependabot auto-merge"
