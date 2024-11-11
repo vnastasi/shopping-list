@@ -57,7 +57,7 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-      CACHE_KEY: unit-tests-exec-data
+      CACHE_KEY: "unit-tests-exec-data"
     needs:
       - build
     steps:
@@ -106,7 +106,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/unit-tests
-          key: $CACHE_KEY
+          key: ${{ env.CACHE_KEY }}
 
   instrumented-tests:
     name: "Instrumented tests"
@@ -117,7 +117,7 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-      CACHE_KEY: instrumented-tests-exec-data
+      CACHE_KEY: "instrumented-tests-exec-data"
     needs:
       - build
     steps:
@@ -201,7 +201,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: $CACHE_KEY
+          key: ${{ env.CACHE_KEY }}
 
   code-quality:
     name: "Verify code quality"
