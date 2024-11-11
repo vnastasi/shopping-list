@@ -15,6 +15,11 @@ jobs:
   build:
     name: "Build application"
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Environment"
         run: |
@@ -41,33 +46,23 @@ jobs:
         run: chmod +x gradlew
 
       - name: "Assemble application"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assemble
 
       - name: "Assemble unit tests"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assembleDebugUnitTest
 
       - name: "Assemble instrumented tests"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew assembleDebugAndroidTest
 
   unit-tests:
     name: "Unit tests"
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     needs:
       - build
     steps:
@@ -103,19 +98,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: "Run unit tests"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew testDebugUnitTest
 
       - name: "Save test execution data"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew copyUnitTestExecData
 
       - name: "Cache test execution data"
@@ -129,6 +114,11 @@ jobs:
     name: "Instrumented tests"
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     needs:
       - build
     steps:
@@ -192,11 +182,6 @@ jobs:
 
       - name: "Run instrumented tests"
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         with:
           api-level: 35
           target: google_apis
@@ -207,11 +192,6 @@ jobs:
           script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
 
       - name: "Save test execution data"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew copyInstrumentedTestExecData
 
       - name: "Cache test execution data"
@@ -224,6 +204,11 @@ jobs:
   code-quality:
     name: "Verify code quality"
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     needs:
       - unit-tests
       - instrumented-tests
@@ -269,30 +254,15 @@ jobs:
           fail-on-cache-miss: true
 
       - name: "Compile code"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: |
           ./gradlew compileDebugSources
           ./gradlew compileDebugUnitTestSources
           ./gradlew compileDebugAndroidTestSources
 
       - name: "Code coverage"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew verifyCodeCoverage
 
       - name: "Detekt"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
         run: ./gradlew detekt
 
   dependabot:
