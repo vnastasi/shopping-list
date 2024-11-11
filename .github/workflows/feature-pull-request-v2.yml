@@ -48,12 +48,6 @@ jobs:
       - name: "Assemble application"
         run: ./gradlew assemble
 
-      - name: "Assemble unit tests"
-        run: ./gradlew assembleDebugUnitTest
-
-      - name: "Assemble instrumented tests"
-        run: ./gradlew assembleDebugAndroidTest
-
   unit-tests:
     name: "Unit tests"
     runs-on: ubuntu-latest
@@ -63,6 +57,7 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      CACHE_KEY: unit-tests-exec-data
     needs:
       - build
     steps:
@@ -80,7 +75,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh cache delete "unit-tests-exec-data"
+          gh cache delete "$CACHE_KEY"
 
       - name: "Set up Java"
         uses: actions/setup-java@v3
@@ -97,6 +92,9 @@ jobs:
       - name: "Grant permissions"
         run: chmod +x gradlew
 
+      - name: "Assemble unit tests"
+        run: ./gradlew assembleDebugUnitTest
+
       - name: "Run unit tests"
         run: ./gradlew testDebugUnitTest
 
@@ -108,7 +106,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/unit-tests
-          key: unit-tests-exec-data
+          key: $CACHE_KEY
 
   instrumented-tests:
     name: "Instrumented tests"
@@ -119,6 +117,7 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      CACHE_KEY: instrumented-tests-exec-data
     needs:
       - build
     steps:
@@ -142,7 +141,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh cache delete "instrumented-tests-exec-data"
+          gh cache delete "$CACHE_KEY"
 
       - name: "Set up Java"
         uses: actions/setup-java@v3
@@ -180,6 +179,9 @@ jobs:
           disable-animations: true
           script: echo "Generated emulator snapshot."
 
+      - name: "Assemble instrumented tests"
+        run: ./gradlew assembleDebugAndroidTest
+
       - name: "Run instrumented tests"
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -199,7 +201,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: instrumented-tests-exec-data
+          key: $CACHE_KEY
 
   code-quality:
     name: "Verify code quality"
