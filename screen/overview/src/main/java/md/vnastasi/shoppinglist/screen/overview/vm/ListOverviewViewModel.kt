@@ -38,7 +38,7 @@ class ListOverviewViewModel internal constructor(
         list, navigationTarget, toastMessage, ::ViewState
     ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
-        started = SharingStarted.WhileSubscribed(5_000L),
+        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.Init
     )
 
@@ -90,4 +90,9 @@ class ListOverviewViewModel internal constructor(
             ListOverviewViewModel(shoppingListRepository, dispatchersProvider)
         }
     })
+
+    companion object {
+
+        private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
+    }
 }

@@ -8,10 +8,8 @@ import md.vnastasi.plugin.support.withPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
@@ -24,6 +22,8 @@ private const val EXTENSION_NAME = "codeCoverage"
 private const val TASK_GROUP = "verification"
 private const val COVERAGE_REPORT_TASK_NAME = "createCodeCoverageReport"
 private const val COVERAGE_VERIFICATION_TASK_NAME = "verifyCodeCoverage"
+private const val COPY_UNIT_TEST_EXEC_DATA = "copyUnitTestExecData"
+private const val COPY_INSTRUMENTED_TEST_EXEC_DATA = "copyInstrumentedTestExecData"
 
 @Suppress("unused")
 class CodeCoveragePlugin @Inject constructor(
@@ -52,13 +52,30 @@ class CodeCoveragePlugin @Inject constructor(
                 }
             }
 
-            val executionDataDirectories = getExecDataDirs(targetBuildType)
+            val executionDataDirectories = getExecDataDirs()
             val allSourceDirectories = getAllSourceDirs()
             val allClassDirectories = getAllClassDirs(targetBuildType)
 
+            tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
+                group = TASK_GROUP
+                description = "Copy execution data for unit tests"
+
+                execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage") })
+
+                outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
+            }
+
+            tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
+                group = TASK_GROUP
+                description = "Copy execution data for Android instrumented tests"
+
+                execDataLocation.setFrom(project(":app").layout.buildDirectory.dir("outputs/code_coverage"))
+
+                outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/instrumented-tests"))
+            }
+
             val coverageReportTask = tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
                 group = TASK_GROUP
-                dependsOn(subprojects.mapNotNull { it.tasks.findByName("test${targetBuildType.capitalized()}UnitTest") }.map { providers.provider { it } })
 
                 executionData.setFrom(executionDataDirectories)
                 sourceDirectories.setFrom(allSourceDirectories)
@@ -94,6 +111,7 @@ class CodeCoveragePlugin @Inject constructor(
                     }
                 }
             }
+
         }
     }
 
@@ -104,28 +122,13 @@ class CodeCoveragePlugin @Inject constructor(
     private fun Project.getAllClassDirs(buildType: String): List<Provider<Directory>> = subprojects
         .map { it.layout.buildDirectory.dir("tmp/kotlin-classes/${buildType}") }
 
-    private fun Project.getExecDataDirs(buildType: String): List<Provider<FileTree>> = buildList {
-        addAll(getUniTestExecDataDirs(buildType))
-        addAll(getInstrumentationTestExecDataDirs(buildType))
-    }
 
-    private fun Project.getUniTestExecDataDirs(buildType: String): List<Provider<FileTree>> = subprojects
-        .map { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage/${buildType}UnitTest") }
-        .map { provider ->
-            provider.map { directory ->
-                directory.asFileTree.matching {
-                    include("*.exec")
-                }
-            }
-        }
-
-    private fun Project.getInstrumentationTestExecDataDirs(buildType: String): List<Provider<FileTree>> = subprojects
-        .map { it.layout.buildDirectory.dir("outputs/code_coverage/${buildType}AndroidTest") }
-        .map { provider ->
-            provider.map { directory ->
-                directory.asFileTree.matching {
-                    include("**/*.ec")
-                }
+    private fun Project.getExecDataDirs() = layout.buildDirectory
+        .dir("exec-data")
+        .map {
+            it.asFileTree.matching {
+                include("**/*.exec")
+                include("**/*.ec")
             }
         }
 

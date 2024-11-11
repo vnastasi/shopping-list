@@ -87,6 +87,6 @@ class ListDetailsViewModel internal constructor(
 
         const val ARG_KEY_SHOPPING_LIST_ID = "SHOPPING_LIST_ID"
 
-        private const val FLOW_SUBSCRIPTION_TIMEOUT = 100L
+        private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }
 }
