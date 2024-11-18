@@ -4,7 +4,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-fun enableRetryRule(maxAttempts: Int = 1): TestRule = RetryRule(maxAttempts)
+fun retryOnFailureRule(maxAttempts: Int = 1): TestRule = RetryRule(maxAttempts)
 
 private class RetryRule(
     private val maxAttempts: Int

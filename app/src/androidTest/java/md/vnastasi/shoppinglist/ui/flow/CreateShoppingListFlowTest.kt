@@ -10,7 +10,7 @@ import md.vnastasi.shoppinglist.ui.robot.shoppingListForm
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
-import md.vnastasi.shoppinglist.ui.rule.enableRetryRule
+import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
 import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +27,7 @@ class CreateShoppingListFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(enableRetryRule(maxAttempts = 3))
+        .outerRule(retryOnFailureRule(maxAttempts = 3))
         .around(disableAnimationsRule())
         .around(koinTestModeRule)
         .around(createDatabaseRule())
