@@ -38,11 +38,11 @@ class ManageSuggestionsFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(composeRule)
-        .around(databaseRule)
-        .around(koinTestModeRule)
+        .outerRule(enableRetryRule(maxAttempts = 3))
         .around(disableAnimationsRule())
-        .around(enableRetryRule(maxAttempts = 3))
+        .around(koinTestModeRule)
+        .around(databaseRule)
+        .around(composeRule)
 
     @Test
     fun manageNameSuggestions() {

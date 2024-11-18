@@ -27,11 +27,11 @@ class CreateShoppingListFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(composeRule)
-        .around(createDatabaseRule())
-        .around(koinTestModeRule)
+        .outerRule(enableRetryRule(maxAttempts = 3))
         .around(disableAnimationsRule())
-        .around(enableRetryRule(maxAttempts = 3))
+        .around(koinTestModeRule)
+        .around(createDatabaseRule())
+        .around(composeRule)
 
     @Test
     fun createNewShoppingList() {
