@@ -23,7 +23,7 @@ class UiTestDispatcherProvider : DispatchersProvider {
 
     override val Main: CoroutineDispatcher = Dispatchers.Main
 
-    override val MainImmediate: CoroutineDispatcher = Dispatchers.Main
+    override val MainImmediate: CoroutineDispatcher = Dispatchers.Main.immediate
 
     override val Default: CoroutineDispatcher = idlingThreadPoolExecutor.asCoroutineDispatcher()
 
