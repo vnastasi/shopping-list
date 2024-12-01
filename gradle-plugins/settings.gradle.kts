@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 pluginManagement {
     repositories {
         google()
@@ -17,15 +15,18 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from(files("../../gradle/libs.versions.toml"))
+            from(files("../gradle/libs.versions.toml"))
         }
     }
 }
 
-includeBuild("../plugin-support") {
-    dependencySubstitution {
-        substitute(module("md.vnastasi.plugins:plugin-support")).using(project(":"))
-    }
-}
+rootProject.name = "gradle-plugins"
 
-rootProject.name = "detekt-aggregator"
+include(
+    ":app-build-support",
+    ":code-coverage",
+    ":conventions",
+    ":detekt-aggregator",
+    ":plugin-support",
+    ":secrets"
+)

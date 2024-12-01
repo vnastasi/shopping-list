@@ -18,7 +18,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
-    implementation("md.vnastasi.plugins:plugin-support")
+    implementation(project(":plugin-support"))
 }
 
 gradlePlugin {
