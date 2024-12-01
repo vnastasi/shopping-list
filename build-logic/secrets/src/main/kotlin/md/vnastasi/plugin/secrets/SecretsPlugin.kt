@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.of
 import java.util.Properties
 import javax.inject.Inject
 
+@Suppress("unused")
 class SecretsPlugin @Inject constructor(
     private val providers: ProviderFactory
 ) : Plugin<Project> {
