@@ -3,12 +3,12 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
 }
 
 gradlePlugin {
     plugins {
-        register("Screts") {
+        register("Secrets") {
             id = "secrets"
             implementationClass = "md.vnastasi.plugin.secrets.SecretsPlugin"
         }

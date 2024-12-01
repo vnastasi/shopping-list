@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }

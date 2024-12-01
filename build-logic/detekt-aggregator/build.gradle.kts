@@ -13,12 +13,13 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-    implementation(platform(libs.kotlin.bom))
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.detekt.gradlePlugin)
+    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    compileOnly(platform(libs.kotlin.bom))
+    compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.kotlin.gradlePlugin)
+
     implementation(project(":plugin-support"))
+    implementation(libs.detekt.gradlePlugin)
 }
 
 gradlePlugin {
