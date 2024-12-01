@@ -4,12 +4,6 @@ plugins {
     `kotlin-dsl`
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
-    }
-}
-
 dependencies {
     compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     compileOnly(libs.android.gradlePlugin)
