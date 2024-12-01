@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.nav
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.core.os.bundleOf
 import androidx.navigation.compose.NavHost
@@ -25,7 +26,11 @@ fun NavigationGraph() {
         startDestination = Routes.ListOverview
     ) {
 
-        composable<Routes.ListOverview> {
+        composable<Routes.ListOverview>(
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromRight() },
+            popExitTransition = { slideOutToRight() }
+        ) {
             val viewModel = viewModel<ListOverviewViewModel>(
                 factory = koinInject<ListOverviewViewModel.Factory>()
             )
@@ -35,7 +40,12 @@ fun NavigationGraph() {
             )
         }
 
-        composable<Routes.ListDetails> { backStackEntry ->
+        composable<Routes.ListDetails>(
+            enterTransition = { slideInFromLeft() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromRight() },
+            popExitTransition = { slideOutToRight() }
+        ) { backStackEntry ->
             val shoppingListId = backStackEntry.toRoute<Routes.ListDetails>().shoppingListId
             val viewModel = viewModel<ListDetailsViewModel>(
                 factory = koinInject<ListDetailsViewModel.Factory>(),
@@ -47,7 +57,12 @@ fun NavigationGraph() {
             )
         }
 
-        composable<Routes.AddItems> { backStackEntry ->
+        composable<Routes.AddItems>(
+            enterTransition = { slideInFromLeft() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromRight() },
+            popExitTransition = { slideOutToRight() }
+        ) { backStackEntry ->
             val shoppingListId = backStackEntry.toRoute<Routes.AddItems>().shoppingListId
             val viewModel = viewModel<AddItemsViewModel>(
                 factory = koinInject<AddItemsViewModel.Factory>(),
@@ -60,3 +75,15 @@ fun NavigationGraph() {
         }
     }
 }
+
+private fun AnimatedContentTransitionScope<*>.slideInFromLeft() =
+    slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left)
+
+private fun AnimatedContentTransitionScope<*>.slideInFromRight() =
+    slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right)
+
+private fun AnimatedContentTransitionScope<*>.slideOutToLeft() =
+    slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left)
+
+private fun AnimatedContentTransitionScope<*>.slideOutToRight() =
+    slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right)
