@@ -61,7 +61,7 @@ android {
 
 androidComponents {
     onVariants(selector().withBuildType("release")) { applicationVariant ->
-        project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.capitalized()}ApkArtifact") {
+        project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.toString().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}ApkArtifact") {
             artifactDirectory.set(applicationVariant.artifacts.get(SingleArtifact.APK))
             artifactLoader.set(applicationVariant.artifacts.getBuiltArtifactsLoader())
             targetDirectory.set(rootProject.layout.buildDirectory.dir("artifacts/apk"))

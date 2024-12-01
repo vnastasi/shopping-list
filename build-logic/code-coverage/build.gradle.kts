@@ -1,0 +1,21 @@
+plugins {
+    `kotlin-dsl`
+}
+
+dependencies {
+    @Suppress()
+    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
+
+    implementation(project(":plugin-support"))
+}
+
+gradlePlugin {
+    plugins {
+        register("CodeCoverage") {
+            id = "code-coverage"
+            implementationClass = "md.vnastasi.plugin.codecoverage.CodeCoveragePlugin"
+        }
+    }
+}

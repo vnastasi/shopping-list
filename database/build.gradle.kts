@@ -7,7 +7,7 @@ android {
     namespace = "md.vnastasi.shoppinglist.db.impl"
 
     ksp {
-        arg(roomSchemaDir(file("${layout.projectDirectory}/schemas")))
+        arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
     }
 }
 
