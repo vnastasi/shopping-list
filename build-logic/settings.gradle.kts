@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google()
@@ -20,7 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "gradle-plugins"
+rootProject.name = "build-logic"
 
 include(
     ":app-build-support",
