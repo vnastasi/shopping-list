@@ -1,6 +1,5 @@
 import com.android.build.api.artifact.SingleArtifact
 import md.vnastasi.plugin.abs.task.CopyAndroidArtifact
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -8,6 +7,7 @@ plugins {
     id("secrets")
     id("app-build-support")
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
 
@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(project(":support:async-unit-test"))
     testImplementation(testFixtures(project(":domain:api")))

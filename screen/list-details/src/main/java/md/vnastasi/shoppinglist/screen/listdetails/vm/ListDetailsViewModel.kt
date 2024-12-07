@@ -85,7 +85,7 @@ class ListDetailsViewModel internal constructor(
 
     companion object {
 
-        const val ARG_KEY_SHOPPING_LIST_ID = "SHOPPING_LIST_ID"
+        const val ARG_KEY_SHOPPING_LIST_ID = "shoppingListId"
 
         private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }

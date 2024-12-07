@@ -125,6 +125,6 @@ class AddItemsViewModel internal constructor(
 
     companion object {
 
-        const val ARG_KEY_SHOPPING_LIST_ID = "SHOPPING_LIST_ID"
+        const val ARG_KEY_SHOPPING_LIST_ID = "shoppingListId"
     }
 }
