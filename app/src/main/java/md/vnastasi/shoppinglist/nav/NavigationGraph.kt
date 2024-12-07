@@ -2,11 +2,9 @@ package md.vnastasi.shoppinglist.nav
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
-import androidx.core.os.bundleOf
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
@@ -46,10 +44,8 @@ fun NavigationGraph() {
             popEnterTransition = { slideInFromRight() },
             popExitTransition = { slideOutToRight() }
         ) { backStackEntry ->
-            val shoppingListId = backStackEntry.toRoute<Routes.ListDetails>().shoppingListId
             val viewModel = viewModel<ListDetailsViewModel>(
-                factory = koinInject<ListDetailsViewModel.Factory>(),
-                extraArguments = bundleOf(ListDetailsViewModel.ARG_KEY_SHOPPING_LIST_ID to shoppingListId)
+                factory = koinInject<ListDetailsViewModel.Factory>()
             )
             ListDetailsScreen(
                 viewModel = viewModel,
@@ -63,10 +59,8 @@ fun NavigationGraph() {
             popEnterTransition = { slideInFromRight() },
             popExitTransition = { slideOutToRight() }
         ) { backStackEntry ->
-            val shoppingListId = backStackEntry.toRoute<Routes.AddItems>().shoppingListId
             val viewModel = viewModel<AddItemsViewModel>(
                 factory = koinInject<AddItemsViewModel.Factory>(),
-                extraArguments = bundleOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to shoppingListId)
             )
             AddItemsScreen(
                 viewModel = viewModel,
