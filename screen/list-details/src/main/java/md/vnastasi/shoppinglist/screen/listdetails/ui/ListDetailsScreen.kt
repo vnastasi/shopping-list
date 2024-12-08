@@ -103,7 +103,7 @@ private fun ListDetailsScreen(
         Crossfade(
             modifier = Modifier.fillMaxSize(),
             targetState = viewState.value,
-            label = "List details scene cross-fade"
+            label = "List details cross-fade"
         ) { viewState ->
             when (viewState) {
                 is ViewState.Loading -> {

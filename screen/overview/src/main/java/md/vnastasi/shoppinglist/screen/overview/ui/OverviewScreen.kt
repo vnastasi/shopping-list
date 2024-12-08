@@ -1,5 +1,7 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -20,11 +22,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +42,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
@@ -53,6 +56,7 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.toast.Toast
+import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -62,36 +66,28 @@ fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
     navigator: OverviewScreenNavigator
 ) {
-
     OverviewScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        events = Events(
-            onAddNewShoppingList = { viewModel.onUiEvent(UiEvent.AddNewShoppingList) },
-            onShoppingListSaved = { shoppingListName -> viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName)) },
-            onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
-            onShoppingListSelected = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList)) },
-            onNavigationPerformed = { viewModel.onUiEvent(UiEvent.NavigationPerformed) },
-            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) },
-            onNavigateToListDetails = navigator::toListDetails
-        )
+        onAddNewShoppingList = { viewModel.onUiEvent(UiEvent.AddNewShoppingList) },
+        onShoppingListSaved = { shoppingListName -> viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName)) },
+        onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
+        onShoppingListSelected = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingList)) },
+        onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) },
+        onNavigateToListDetails = navigator::toListDetails,
+        onNavigationPerformed = { viewModel.onUiEvent(UiEvent.NavigationPerformed) }
     )
 }
-
-@Stable
-private data class Events(
-    val onAddNewShoppingList: () -> Unit,
-    val onShoppingListSaved: (String) -> Unit,
-    val onShoppingListDeleted: (ShoppingListDetails) -> Unit,
-    val onShoppingListSelected: (ShoppingListDetails) -> Unit,
-    val onNavigationPerformed: () -> Unit,
-    val onToastShown: () -> Unit,
-    val onNavigateToListDetails: (Long) -> Unit
-)
 
 @Composable
 private fun OverviewScreen(
     viewState: State<ViewState>,
-    events: Events
+    onAddNewShoppingList: () -> Unit,
+    onShoppingListSaved: (String) -> Unit,
+    onShoppingListDeleted: (ShoppingListDetails) -> Unit,
+    onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onToastShown: () -> Unit,
+    onNavigateToListDetails: (Long) -> Unit,
+    onNavigationPerformed: () -> Unit
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -99,7 +95,10 @@ private fun OverviewScreen(
             initialValue = SheetValue.Hidden
         )
     )
-    val bottomSheetScope = rememberCoroutineScope()
+    val bottomSheetBehaviour = BottomSheetBehaviour(
+        state = bottomSheetScaffoldState.bottomSheetState,
+        scope = rememberCoroutineScope()
+    )
 
     BottomSheetScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -107,11 +106,8 @@ private fun OverviewScreen(
         sheetContent = {
             ShoppingListFormBottomSheet(
                 modifier = Modifier.imePadding(),
-                behaviour = BottomSheetBehaviour(
-                    state = bottomSheetScaffoldState.bottomSheetState,
-                    scope = bottomSheetScope
-                ),
-                onShoppingListSaved = events.onShoppingListSaved
+                behaviour = bottomSheetBehaviour,
+                onShoppingListSaved = onShoppingListSaved
             )
         },
         sheetPeekHeight = AppDimensions.zero
@@ -123,85 +119,138 @@ private fun OverviewScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                CenterAlignedTopAppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = {
-                        Text(
-                            text = stringResource(R.string.overview_toolbar_title)
-                        )
-                    },
-                    scrollBehavior = scrollBehavior
+                OverviewTopAppBar(
+                    scrollBehavior = scrollBehavior,
                 )
             },
             floatingActionButton = {
                 if (viewState.value is ViewState.Ready) {
-                    val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                    val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                    val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
-
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .padding(end = fabEndPadding)
-                            .testTag(NEW_SHOPPING_LIST_FAB),
-                        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
-                        onClick = events.onAddNewShoppingList
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.overview_btn_add_list_acc)
-                        )
-                    }
+                    NewShoppingListFloatingActionButton(
+                        onClick = onAddNewShoppingList
+                    )
                 }
             }
         ) { contentPaddings ->
-            when (val viewStateValue = viewState.value) {
-                is ViewState.Idle -> {
-                    AnimatedMessageContent(
-                        contentPaddings = contentPaddings,
-                        animationResId = R.raw.lottie_anim_loading,
-                        messageResId = R.string.overview_loading
-                    )
-                }
-
-                is ViewState.Ready -> {
-                    Toast(
-                        message = viewStateValue.toastMessage,
-                        onToastShown = events.onToastShown
-                    )
-
-                    LaunchedEffect(key1 = viewStateValue.navigationTarget) {
-                        when (val navigationTarget = viewStateValue.navigationTarget) {
-                            is NavigationTarget.ShoppingListDetails -> {
-                                events.onNavigateToListDetails.invoke(navigationTarget.id)
-                                events.onNavigationPerformed.invoke()
-                            }
-
-                            is NavigationTarget.ShoppingListForm -> {
-                                bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                                events.onNavigationPerformed.invoke()
-                            }
-
-                            null -> Unit
-                        }
-                    }
-
-                    if (viewStateValue.shoppingLists.isEmpty()) {
+            Crossfade(
+                modifier = Modifier.fillMaxSize(),
+                targetState = viewState.value,
+                label = "Overview cross-fade"
+            ) { viewState ->
+                when (viewState) {
+                    is ViewState.Idle -> {
                         AnimatedMessageContent(
                             contentPaddings = contentPaddings,
-                            animationResId = R.raw.lottie_anim_shopping_cart,
-                            messageResId = R.string.overview_empty_list
+                            animationResId = R.raw.lottie_anim_loading,
+                            messageResId = R.string.overview_loading
                         )
-                    } else {
-                        OverviewContent(
+                    }
+
+                    is ViewState.Ready -> {
+                        ReadyOverviewContent(
                             contentPaddings = contentPaddings,
-                            list = viewStateValue.shoppingLists,
-                            onClick = events.onShoppingListSelected,
-                            onDelete = events.onShoppingListDeleted
+                            bottomSheetBehaviour = bottomSheetBehaviour,
+                            shoppingLists = viewState.shoppingLists,
+                            toastMessage = viewState.toastMessage,
+                            navigationTarget = viewState.navigationTarget,
+                            onShoppingListDeleted = onShoppingListDeleted,
+                            onShoppingListSelected = onShoppingListSelected,
+                            onToastShown = onToastShown,
+                            onNavigateToListDetails = onNavigateToListDetails,
+                            onNavigationPerformed = onNavigationPerformed
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun OverviewTopAppBar(
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior
+) {
+    CenterAlignedTopAppBar(
+        modifier = modifier.fillMaxWidth(),
+        title = {
+            Text(
+                text = stringResource(R.string.overview_toolbar_title)
+            )
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
+@Composable
+private fun NewShoppingListFloatingActionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+    val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+    val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+
+    FloatingActionButton(
+        modifier = modifier
+            .padding(end = fabEndPadding)
+            .testTag(NEW_SHOPPING_LIST_FAB),
+        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(R.string.overview_btn_add_list_acc)
+        )
+    }
+}
+
+@Composable
+private fun ReadyOverviewContent(
+    contentPaddings: PaddingValues,
+    bottomSheetBehaviour: BottomSheetBehaviour,
+    shoppingLists: ImmutableList<ShoppingListDetails>,
+    toastMessage: ToastMessage?,
+    navigationTarget: NavigationTarget?,
+    onShoppingListDeleted: (ShoppingListDetails) -> Unit,
+    onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onToastShown: () -> Unit,
+    onNavigateToListDetails: (Long) -> Unit,
+    onNavigationPerformed: () -> Unit
+) {
+    Toast(
+        message = toastMessage,
+        onToastShown = onToastShown
+    )
+
+    LaunchedEffect(key1 = navigationTarget) {
+        when (navigationTarget) {
+            is NavigationTarget.ShoppingListDetails -> {
+                onNavigateToListDetails(navigationTarget.id)
+                onNavigationPerformed()
+            }
+
+            is NavigationTarget.ShoppingListForm -> {
+                bottomSheetBehaviour.scope.launch { bottomSheetBehaviour.state.expand() }
+                onNavigationPerformed()
+            }
+
+            null -> Unit
+        }
+    }
+
+    if (shoppingLists.isEmpty()) {
+        AnimatedMessageContent(
+            contentPaddings = contentPaddings,
+            animationResId = R.raw.lottie_anim_shopping_cart,
+            messageResId = R.string.overview_empty_list
+        )
+    } else {
+        OverviewContent(
+            contentPaddings = contentPaddings,
+            list = shoppingLists,
+            onClick = onShoppingListSelected,
+            onDelete = onShoppingListDeleted
+        )
     }
 }
 
@@ -230,15 +279,13 @@ private fun ListOverviewScreenPreview() {
     AppTheme {
         OverviewScreen(
             viewState = remember { mutableStateOf<ViewState>(ViewState.Ready(list)) },
-            events = Events(
-                onShoppingListSelected = { },
-                onShoppingListDeleted = { },
-                onShoppingListSaved = { },
-                onAddNewShoppingList = { },
-                onNavigationPerformed = { },
-                onToastShown = { },
-                onNavigateToListDetails = { }
-            )
+            onShoppingListSelected = { },
+            onShoppingListDeleted = { },
+            onShoppingListSaved = { },
+            onAddNewShoppingList = { },
+            onNavigationPerformed = { },
+            onToastShown = { },
+            onNavigateToListDetails = { }
         )
     }
 }
