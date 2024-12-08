@@ -20,10 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,32 +62,24 @@ fun AddItemsScreen(
     AddItemsScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         searchTermState = remember { viewModel.searchTermState },
-        events = Events(
-            onNavigateUp = navigator::backToListDetails,
-            onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
-            onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList(it)) },
-            onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
-            onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
-        )
+        onNavigateUp = navigator::backToListDetails,
+        onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
+        onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList(it)) },
+        onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
+        onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
     )
 }
-
-@Stable
-private class Events(
-    val onNavigateUp: () -> Unit,
-    val onItemAddedToList: (String) -> Unit,
-    val onSearchTermChanged: () -> Unit,
-    val onSuggestionDeleted: (NameSuggestion) -> Unit,
-    val onToastShown: () -> Unit
-)
 
 @Composable
 private fun AddItemsScreen(
     viewState: State<ViewState>,
     searchTermState: MutableState<String>,
-    events: Events
+    onNavigateUp: () -> Unit,
+    onItemAddedToList: (String) -> Unit,
+    onSearchTermChanged: () -> Unit,
+    onSuggestionDeleted: (NameSuggestion) -> Unit,
+    onToastShown: () -> Unit
 ) {
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -98,49 +90,15 @@ private fun AddItemsScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                TopAppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = { },
-                    navigationIcon = {
-                        IconButton(
-                            modifier = Modifier
-                                .displayCutoutPadding()
-                                .testTag(BACK_BUTTON),
-                            onClick = events.onNavigateUp
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.add_items_btn_back_acc),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
-                    actions = {
-                        SearchBar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .displayCutoutPadding()
-                                .padding(start = 56.dp)
-                                .testTag(SEARCH_BAR),
-                            searchTerm = searchTermState,
-                            onValueAccepted = { events.onItemAddedToList.invoke(searchTermState.value) }
-                        )
-                    },
+                AddItemsTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    colors = TopAppBarDefaults.topAppBarColors().copy(
-                        scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor
-                    )
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.tertiary
+                    searchTermState = searchTermState,
+                    onItemAddedToList = onItemAddedToList,
+                    onNavigateUp = onNavigateUp
                 )
             }
         }
     ) { contentPaddings ->
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -158,12 +116,13 @@ private fun AddItemsScreen(
                 key = { _, suggestion -> suggestion.id }
             ) { index, suggestion ->
                 SuggestionRow(
-                    modifier = Modifier.testTag(SUGGESTIONS_ITEM),
+                    modifier = Modifier
+                        .testTag(SUGGESTIONS_ITEM),
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
-                    onClick = { events.onItemAddedToList.invoke(suggestion.name) },
-                    onDelete = { events.onSuggestionDeleted.invoke(suggestion) }
+                    onClick = { onItemAddedToList(suggestion.name) },
+                    onDelete = { onSuggestionDeleted(suggestion) }
                 )
             }
         }
@@ -171,12 +130,61 @@ private fun AddItemsScreen(
 
     Toast(
         message = viewState.value.toastMessage,
-        onToastShown = events.onToastShown
+        onToastShown = onToastShown
     )
 
     LaunchedEffect(searchTermState.value) {
-        events.onSearchTermChanged.invoke()
+        onSearchTermChanged()
     }
+}
+
+@Composable
+private fun AddItemsTopAppBar(
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior,
+    searchTermState: MutableState<String>,
+    onItemAddedToList: (String) -> Unit,
+    onNavigateUp: () -> Unit
+) {
+    TopAppBar(
+        modifier = modifier.fillMaxWidth(),
+        title = { },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier
+                    .displayCutoutPadding()
+                    .testTag(BACK_BUTTON),
+                onClick = onNavigateUp
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.add_items_btn_back_acc),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        actions = {
+            SearchBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .displayCutoutPadding()
+                    .padding(start = 56.dp)
+                    .testTag(SEARCH_BAR),
+                searchTerm = searchTermState,
+                onValueAccepted = { onItemAddedToList(searchTermState.value) }
+            )
+        },
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor
+        )
+    )
+
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.tertiary
+    )
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -204,13 +212,11 @@ fun AddItemsScreenPreview() {
         AddItemsScreen(
             viewState = remember { mutableStateOf(viewState) },
             searchTermState = remember { mutableStateOf("") },
-            events = Events(
-                onNavigateUp = { },
-                onItemAddedToList = { },
-                onSearchTermChanged = { },
-                onSuggestionDeleted = { },
-                onToastShown = { }
-            )
+            onNavigateUp = { },
+            onItemAddedToList = { },
+            onSearchTermChanged = { },
+            onSuggestionDeleted = { },
+            onToastShown = { }
         )
     }
 }

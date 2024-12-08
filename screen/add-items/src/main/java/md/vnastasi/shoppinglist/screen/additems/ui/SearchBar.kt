@@ -30,15 +30,12 @@ fun SearchBar(
     val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
-        modifier = modifier
-            .focusRequester(focusRequester),
+        modifier = modifier.focusRequester(focusRequester),
         value = searchTerm.value,
         placeholder = {
             Text(text = stringResource(R.string.add_items_search_title))
         },
-        onValueChange = { newValue ->
-            searchTerm.value = newValue
-        },
+        onValueChange = { searchTerm.value = it },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
@@ -49,9 +46,7 @@ fun SearchBar(
         ),
         trailingIcon = {
             IconButton(
-                onClick = {
-                    searchTerm.value = ""
-                }
+                onClick = { searchTerm.value = "" }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
