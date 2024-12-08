@@ -67,8 +67,8 @@ class ListDetailsScreenRobot(
         val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasTestTag(LIST_ITEM_CHECKBOX) and isOn())
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).assertIsDisplayed()
     }
 
@@ -76,8 +76,8 @@ class ListDetailsScreenRobot(
         val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasTestTag(LIST_ITEM_CHECKBOX) and isOff())
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).assertIsDisplayed()
     }
 
@@ -85,8 +85,8 @@ class ListDetailsScreenRobot(
         val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name))
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
     }
 }

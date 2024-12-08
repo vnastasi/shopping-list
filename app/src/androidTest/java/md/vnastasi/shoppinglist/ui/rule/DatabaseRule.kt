@@ -19,7 +19,9 @@ private class DatabaseRule(
 
     override fun starting(description: Description?) {
         runBlocking {
-            setUp.invoke(GlobalContext.get().get())
+            val shoppingListDatabase = GlobalContext.get().get<ShoppingListDatabase>()
+            shoppingListDatabase.truncate()
+            setUp.invoke(shoppingListDatabase)
         }
     }
 
@@ -27,11 +29,15 @@ private class DatabaseRule(
         runBlocking {
             val shoppingListDatabase = GlobalContext.get().get<ShoppingListDatabase>()
             cleanUp.invoke(shoppingListDatabase)
-            shoppingListDatabase.openHelper.writableDatabase.run {
-                execSQL("DELETE FROM name_suggestions")
-                execSQL("DELETE FROM shopping_items")
-                execSQL("DELETE FROM shopping_lists")
-            }
+            shoppingListDatabase.truncate()
+        }
+    }
+
+    private fun ShoppingListDatabase.truncate() {
+        openHelper.writableDatabase.run {
+            execSQL("DELETE FROM name_suggestions")
+            execSQL("DELETE FROM shopping_items")
+            execSQL("DELETE FROM shopping_lists")
         }
     }
 }

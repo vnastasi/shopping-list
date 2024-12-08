@@ -73,8 +73,8 @@ class AddItemsScreenRobot(
         val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).assertIsDisplayed()
     }
 
@@ -92,8 +92,8 @@ class AddItemsScreenRobot(
         val listMatcher = hasTestTag(SUGGESTIONS_LIST)
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
     }
 
@@ -102,8 +102,8 @@ class AddItemsScreenRobot(
         val itemMatcher = hasTestTag(SUGGESTIONS_ITEM) and hasAnyDescendant(hasText(name))
         val deleteButtonMatcher = hasTestTag(SUGGESTIONS_ITEM_DELETE_BUTTON) and hasAnyAncestor(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(deleteButtonMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(deleteButtonMatcher).performClick()
     }
 }

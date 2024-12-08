@@ -39,6 +39,7 @@ class OverviewScreenRobot(
 
     fun hasNoEmptyOverviewMessage() {
         val matcher = hasText(resources.getString(R.string.overview_empty_list))
+        composeTestRule.waitUntilDoesNotExist(matcher)
         composeTestRule.onNode(matcher).assertIsNotDisplayed()
     }
 
@@ -52,6 +53,7 @@ class OverviewScreenRobot(
         val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasText("$completedItems / $totalItems"))
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher)
             .performScrollToNode(itemMatcher)
             .assertIsDisplayed()
@@ -61,8 +63,8 @@ class OverviewScreenRobot(
         val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
     }
 }
