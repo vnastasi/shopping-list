@@ -45,7 +45,9 @@ internal fun ListDetailsContent(
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
             ShoppingItemRow(
-                modifier = Modifier.testTag(SHOPPING_ITEMS_ITEM),
+                modifier = Modifier
+                    .animateItem()
+                    .testTag(SHOPPING_ITEMS_ITEM),
                 shoppingItem = shoppingItem,
                 isLastItemInList = index == listOfShoppingItems.size - 1,
                 onClick = onItemClick

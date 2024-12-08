@@ -38,9 +38,14 @@ internal fun OverviewContent(
             bottom = contentPaddings.calculateBottomPadding() + AppDimensions.paddingMedium
         )
     ) {
-        items(items = list, key = { it.id }) { shoppingList ->
+        items(
+            items = list,
+            key = { it.id }
+        ) { shoppingList ->
             ShoppingListCard(
-                modifier = Modifier.testTag(SHOPPING_LISTS_ITEM),
+                modifier = Modifier
+                    .animateItem()
+                    .testTag(SHOPPING_LISTS_ITEM),
                 list = shoppingList,
                 onClickItem = onClick,
                 onDeleteItem = onDelete

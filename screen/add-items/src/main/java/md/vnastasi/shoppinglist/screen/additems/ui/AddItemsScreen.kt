@@ -117,6 +117,7 @@ private fun AddItemsScreen(
             ) { index, suggestion ->
                 SuggestionRow(
                     modifier = Modifier
+                        .animateItem()
                         .testTag(SUGGESTIONS_ITEM),
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
