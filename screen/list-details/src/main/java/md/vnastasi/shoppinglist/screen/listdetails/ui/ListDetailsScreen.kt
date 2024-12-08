@@ -1,5 +1,10 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -21,8 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +42,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -59,25 +65,18 @@ fun ListDetailsScreen(
 ) {
     ListDetailsScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        events = Events(
-            onNavigateUp = navigator::backToOverview,
-            onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
-            onAddNewItems = { shoppingListId -> navigator.toAddItems(shoppingListId) }
-        )
+        onNavigateUp = navigator::backToOverview,
+        onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
+        onAddNewItems = { shoppingListId -> navigator.toAddItems(shoppingListId) }
     )
 }
-
-@Stable
-private class Events(
-    val onNavigateUp: () -> Unit,
-    val onItemClicked: (ShoppingItem) -> Unit,
-    val onAddNewItems: (Long) -> Unit
-)
 
 @Composable
 private fun ListDetailsScreen(
     viewState: State<ViewState>,
-    events: Events
+    onNavigateUp: () -> Unit,
+    onItemClicked: (ShoppingItem) -> Unit,
+    onAddNewItems: (Long) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -86,76 +85,124 @@ private fun ListDetailsScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(LIST_DETAILS_TOOLBAR),
-                title = title@{
-                    val viewStateValue = viewState.value as? ViewState.Ready ?: return@title
-                    Text(text = viewStateValue.shoppingListName)
-                },
-                navigationIcon = {
-                    IconButton(
-                        modifier = Modifier
-                            .displayCutoutPadding(),
-                        onClick = events.onNavigateUp
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.list_details_btn_back_acc),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
+            ListDetailsTopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = (viewState.value as? ViewState.Ready)?.shoppingListName,
+                onNavigateUp = onNavigateUp
             )
         },
-        floatingActionButton = floatingActionButton@{
-            val viewStateValue = viewState.value as? ViewState.Ready ?: return@floatingActionButton
-
-            val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-            val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-            val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
-
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(end = fabEndPadding)
-                    .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
-                shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
-                onClick = { events.onAddNewItems.invoke(viewStateValue.shoppingListId) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.list_details_btn_add_acc)
+        floatingActionButton = {
+            val viewStateValue = viewState.value
+            if (viewStateValue is ViewState.Ready) {
+                AddItemsFloatingActionButton(
+                    onClick = { onAddNewItems(viewStateValue.shoppingListId) }
                 )
             }
         }
     ) { contentPaddings ->
-        when (val viewStateValue = viewState.value) {
-            is ViewState.Loading -> {
-                AnimatedMessageContent(
-                    contentPaddings = contentPaddings,
-                    animationResId = R.raw.lottie_anim_loading,
-                    messageResId = R.string.list_details_loading
-                )
-            }
-
-            is ViewState.Ready -> {
-                if (viewStateValue.listOfShoppingItems.isEmpty()) {
+        Crossfade(
+            modifier = Modifier.fillMaxSize(),
+            targetState = viewState.value,
+            label = "List details scene cross-fade"
+        ) { viewState ->
+            when (viewState) {
+                is ViewState.Loading -> {
                     AnimatedMessageContent(
                         contentPaddings = contentPaddings,
-                        animationResId = R.raw.lottie_anim_empty_box,
-                        messageResId = R.string.list_details_empty
+                        animationResId = R.raw.lottie_anim_loading,
+                        messageResId = R.string.list_details_loading
                     )
-                } else {
-                    ListDetailsContent(
+                }
+
+                is ViewState.Ready -> {
+                    ReadyListDetailsContent(
                         contentPaddings = contentPaddings,
-                        listOfShoppingItems = viewStateValue.listOfShoppingItems,
-                        onClick = events.onItemClicked
+                        listOfShoppingItems = viewState.listOfShoppingItems,
+                        onItemClick = onItemClicked
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ListDetailsTopAppBar(
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior,
+    title: String?,
+    onNavigateUp: () -> Unit,
+) {
+    CenterAlignedTopAppBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(LIST_DETAILS_TOOLBAR),
+        title = {
+            AnimatedVisibility(
+                visible = !title.isNullOrBlank(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Text(text = title.orEmpty())
+            }
+        },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier.displayCutoutPadding(),
+                onClick = onNavigateUp
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.list_details_btn_back_acc),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
+@Composable
+private fun AddItemsFloatingActionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+    val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+    val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+
+    FloatingActionButton(
+        modifier = modifier
+            .padding(end = fabEndPadding)
+            .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
+        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(R.string.list_details_btn_add_acc)
+        )
+    }
+}
+
+@Composable
+private fun ReadyListDetailsContent(
+    contentPaddings: PaddingValues,
+    listOfShoppingItems: ImmutableList<ShoppingItem>,
+    onItemClick: (ShoppingItem) -> Unit
+) {
+    if (listOfShoppingItems.isEmpty()) {
+        AnimatedMessageContent(
+            contentPaddings = contentPaddings,
+            animationResId = R.raw.lottie_anim_empty_box,
+            messageResId = R.string.list_details_empty
+        )
+    } else {
+        ListDetailsContent(
+            contentPaddings = contentPaddings,
+            listOfShoppingItems = listOfShoppingItems,
+            onItemClick = onItemClick
+        )
     }
 }
 
@@ -182,11 +229,9 @@ private fun ListDetailsScreenPreview() {
     AppTheme {
         ListDetailsScreen(
             viewState = remember { mutableStateOf(viewState) },
-            events = Events(
-                onNavigateUp = { },
-                onItemClicked = { },
-                onAddNewItems = { }
-            )
+            onNavigateUp = { },
+            onItemClicked = { },
+            onAddNewItems = { }
         )
     }
 }
