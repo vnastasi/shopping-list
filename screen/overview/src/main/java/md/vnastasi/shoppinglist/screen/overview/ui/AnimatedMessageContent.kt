@@ -1,5 +1,7 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.annotation.RawRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowHeightSizeClass
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -30,20 +33,32 @@ private const val CONTENT_WEIGHT = 0.75f
 private const val SPACER_WEIGHT = 0.25f
 
 @Composable
-internal fun EmptyListOverviewScreenContent(
-    contentPaddings: PaddingValues
+internal fun AnimatedMessageContent(
+    contentPaddings: PaddingValues,
+    @RawRes animationResId: Int,
+    @StringRes messageResId: Int
 ) {
     val windowHeightSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
 
     if (windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
-        CompactContent(contentPaddings)
+        CompactContent(
+            contentPaddings = contentPaddings,
+            messageResId = messageResId
+        )
     } else {
-        ExtendedContent(contentPaddings)
+        ExtendedContent(
+            contentPaddings = contentPaddings,
+            animationResId = animationResId,
+            messageResId = messageResId
+        )
     }
 }
 
 @Composable
-private fun CompactContent(contentPaddings: PaddingValues) {
+private fun CompactContent(
+    contentPaddings: PaddingValues,
+    @StringRes messageResId: Int
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -58,14 +73,18 @@ private fun CompactContent(contentPaddings: PaddingValues) {
                     end = AppDimensions.paddingMedium
                 )
                 .align(Alignment.Center),
-            text = stringResource(R.string.overview_empty_list),
+            text = stringResource(messageResId),
             style = AppTypography.headlineMedium
         )
     }
 }
 
 @Composable
-private fun ExtendedContent(contentPaddings: PaddingValues) {
+private fun ExtendedContent(
+    contentPaddings: PaddingValues,
+    @RawRes animationResId: Int,
+    @StringRes messageResId: Int
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,12 +99,12 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center
         ) {
-            val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_anim_shopping_cart))
+            val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(animationResId))
 
             LottieAnimation(
                 modifier = Modifier.fillMaxWidth(),
-                composition = composition,
-                iterations = 1
+                composition = lottieComposition,
+                iterations =  LottieConstants.IterateForever
             )
 
             Text(
@@ -96,10 +115,9 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
                         end = AppDimensions.paddingMedium
                     )
                     .align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.overview_empty_list),
+                text = stringResource(messageResId),
                 style = AppTypography.headlineMedium
             )
-
         }
 
         Spacer(
@@ -116,8 +134,10 @@ private fun ExtendedContent(contentPaddings: PaddingValues) {
 @Composable
 private fun EmptyListOverviewScreenContentPreview() {
     AppTheme {
-        EmptyListOverviewScreenContent(
-            contentPaddings = PaddingValues(AppDimensions.paddingMedium)
+        AnimatedMessageContent(
+            contentPaddings = PaddingValues(AppDimensions.paddingMedium),
+            animationResId = R.raw.lottie_anim_loading,
+            messageResId = R.string.overview_loading
         )
     }
 }

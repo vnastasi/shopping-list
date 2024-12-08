@@ -4,6 +4,7 @@
 
     <string name="overview_toolbar_title">Shopping lists</string>
     <string name="overview_btn_add_list_acc">Add new shopping list</string>
+    <string name="overview_loading">Loading shopping lists…</string>
     <string name="overview_empty_list">No shopping lists available</string>
     <string name="overview_btn_delete_list_acc">Delete shopping list</string>
 

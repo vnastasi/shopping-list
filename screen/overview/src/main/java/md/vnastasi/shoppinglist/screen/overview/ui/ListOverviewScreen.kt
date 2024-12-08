@@ -133,55 +133,73 @@ private fun ListOverviewScreen(
                 )
             },
             floatingActionButton = {
-                val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+                if (viewState.value is ViewState.Ready) {
+                    val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                    val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                    val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
 
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(end = fabEndPadding)
-                        .testTag(NEW_SHOPPING_LIST_FAB),
-                    shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
-                    onClick = events.onAddNewShoppingList
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.overview_btn_add_list_acc)
-                    )
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .padding(end = fabEndPadding)
+                            .testTag(NEW_SHOPPING_LIST_FAB),
+                        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+                        onClick = events.onAddNewShoppingList
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.overview_btn_add_list_acc)
+                        )
+                    }
                 }
             }
         ) { contentPaddings ->
-            if (viewState.value.shoppingLists.isEmpty()) {
-                EmptyListOverviewScreenContent(contentPaddings)
-            } else {
-                NonEmptyListOverviewScreenContent(
-                    contentPaddings = contentPaddings,
-                    list = viewState.value.shoppingLists,
-                    onClick = events.onShoppingListSelected,
-                    onDelete = events.onShoppingListDeleted
-                )
+            when (val viewStateValue = viewState.value) {
+                is ViewState.Idle -> {
+                    AnimatedMessageContent(
+                        contentPaddings = contentPaddings,
+                        animationResId = R.raw.lottie_anim_loading,
+                        messageResId = R.string.overview_loading
+                    )
+                }
+
+                is ViewState.Ready -> {
+                    ToastEffect(
+                        message = viewStateValue.toastMessage,
+                        onToastShown = events.onToastShown
+                    )
+
+                    LaunchedEffect(key1 = viewStateValue.navigationTarget) {
+                        when (val navigationTarget = viewStateValue.navigationTarget) {
+                            is NavigationTarget.ShoppingListDetails -> {
+                                events.onNavigateToListDetails.invoke(navigationTarget.id)
+                                events.onNavigationPerformed.invoke()
+                            }
+
+                            is NavigationTarget.ShoppingListForm -> {
+                                bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+                                events.onNavigationPerformed.invoke()
+                            }
+
+                            null -> Unit
+                        }
+                    }
+
+                    if (viewStateValue.shoppingLists.isEmpty()) {
+                        AnimatedMessageContent(
+                            contentPaddings = contentPaddings,
+                            animationResId = R.raw.lottie_anim_shopping_cart,
+                            messageResId = R.string.overview_empty_list
+                        )
+                    } else {
+                        NonEmptyListOverviewScreenContent(
+                            contentPaddings = contentPaddings,
+                            list = viewStateValue.shoppingLists,
+                            onClick = events.onShoppingListSelected,
+                            onDelete = events.onShoppingListDeleted
+                        )
+                    }
+                }
             }
-        }
-    }
-
-    ToastEffect(
-        message = viewState.value.toastMessage,
-        onToastShown = events.onToastShown
-    )
-
-    LaunchedEffect(key1 = viewState.value.navigationTarget) {
-        when (val navigationTarget = viewState.value.navigationTarget) {
-            is NavigationTarget.ShoppingListDetails -> {
-                events.onNavigateToListDetails.invoke(navigationTarget.id)
-                events.onNavigationPerformed.invoke()
-            }
-
-            is NavigationTarget.ShoppingListForm -> {
-                bottomSheetScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                events.onNavigationPerformed.invoke()
-            }
-
-            null -> Unit
         }
     }
 }
@@ -210,7 +228,7 @@ private fun ListOverviewScreenPreview() {
 
     AppTheme {
         ListOverviewScreen(
-            viewState = remember { mutableStateOf(ViewState(list)) },
+            viewState = remember { mutableStateOf<ViewState>(ViewState.Ready(list)) },
             events = Events(
                 onShoppingListSelected = { },
                 onShoppingListDeleted = { },

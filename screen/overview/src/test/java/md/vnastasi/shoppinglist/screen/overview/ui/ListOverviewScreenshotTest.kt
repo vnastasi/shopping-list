@@ -96,10 +96,10 @@ class ListOverviewScreenshotTest(
         )
 
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
-            ViewState(
+            ViewState.Ready(
                 shoppingLists = persistentListOf()
             ),
-            ViewState(
+            ViewState.Ready(
                 shoppingLists = persistentListOf(
                     createShoppingListDetails {
                         id = 1L
@@ -115,10 +115,11 @@ class ListOverviewScreenshotTest(
                     }
                 )
             ),
-            ViewState(
+            ViewState.Ready(
                 shoppingLists = persistentListOf(),
                 navigationTarget = NavigationTarget.ShoppingListForm
-            )
+            ),
+            ViewState.Idle
         )
     }
 }
