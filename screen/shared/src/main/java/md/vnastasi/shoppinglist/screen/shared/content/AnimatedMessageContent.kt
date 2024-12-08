@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview.ui
+package md.vnastasi.shoppinglist.screen.shared.content
 
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
@@ -33,7 +33,7 @@ private const val CONTENT_WEIGHT = 0.75f
 private const val SPACER_WEIGHT = 0.25f
 
 @Composable
-internal fun AnimatedMessageContent(
+fun AnimatedMessageContent(
     contentPaddings: PaddingValues,
     @RawRes animationResId: Int,
     @StringRes messageResId: Int

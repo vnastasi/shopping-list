@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.support.ui.toast
+package md.vnastasi.shoppinglist.screen.shared.toast
 
 import androidx.annotation.IntDef
 import androidx.annotation.StringRes

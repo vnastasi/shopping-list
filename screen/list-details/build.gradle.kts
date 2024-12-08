@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":screen:shared"))
     testImplementation(libs.androidx.lificycle.test)
 }
 

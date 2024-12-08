@@ -50,11 +50,12 @@ import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FAB
 import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
+import md.vnastasi.shoppinglist.screen.shared.bottomsheet.BottomSheetBehaviour
+import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
+import md.vnastasi.shoppinglist.screen.shared.toast.Toast
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
-import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
-import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun ListOverviewScreen(
@@ -163,7 +164,7 @@ private fun ListOverviewScreen(
                 }
 
                 is ViewState.Ready -> {
-                    ToastEffect(
+                    Toast(
                         message = viewStateValue.toastMessage,
                         onToastShown = events.onToastShown
                     )

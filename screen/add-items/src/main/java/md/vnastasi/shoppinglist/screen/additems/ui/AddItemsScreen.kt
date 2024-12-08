@@ -49,10 +49,10 @@ import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
+import md.vnastasi.shoppinglist.screen.shared.toast.Toast
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
-import md.vnastasi.shoppinglist.support.ui.toast.ToastEffect
 
 @Composable
 fun AddItemsScreen(
@@ -169,7 +169,7 @@ private fun AddItemsScreen(
         }
     }
 
-    ToastEffect(
+    Toast(
         message = viewState.value.toastMessage,
         onToastShown = events.onToastShown
     )

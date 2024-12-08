@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.delayEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -26,9 +24,8 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
-import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class ListOverviewViewModel internal constructor(

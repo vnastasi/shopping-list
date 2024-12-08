@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.support.ui.bottomsheet
+package md.vnastasi.shoppinglist.screen.shared.bottomsheet
 
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Stable

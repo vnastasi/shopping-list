@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.support.ui.toast
+package md.vnastasi.shoppinglist.screen.shared.toast
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -6,7 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun ToastEffect(
+fun Toast(
     message: ToastMessage?,
     onToastShown: () -> Unit = { }
 ) {
