@@ -1,7 +1,16 @@
   version: 2
   updates:
-    - package-ecosystem: gradle
-      directory: /
+    - package-ecosystem: "gradle"
+      directory: "/"
       schedule:
-        interval: weekly
+        interval: "weekly"
       target-branch: "main"
+      groups:
+        kotlin:
+          patterns:
+            - "org.jetbrains.kotlin*"
+            - "com.google.devtools.ksp"
+            - "io.gitlab.arturbosch.detekt"
+          applies-to: version-updates
+      reviewers:
+        - "vnastasi"
