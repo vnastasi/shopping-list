@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowHeightSizeClass
 import com.airbnb.lottie.compose.LottieAnimation
@@ -116,7 +117,8 @@ private fun ExtendedContent(
                     )
                     .align(Alignment.CenterHorizontally),
                 text = stringResource(messageResId),
-                style = AppTypography.headlineMedium
+                style = AppTypography.headlineMedium,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -137,7 +139,7 @@ private fun EmptyListOverviewScreenContentPreview() {
         AnimatedMessageContent(
             contentPaddings = PaddingValues(AppDimensions.paddingMedium),
             animationResId = R.raw.lottie_anim_loading,
-            messageResId = R.string.overview_loading
+            messageResId = R.string.list_details_loading
         )
     }
 }

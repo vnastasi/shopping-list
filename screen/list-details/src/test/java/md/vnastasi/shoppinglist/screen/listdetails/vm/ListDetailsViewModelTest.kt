@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
+import assertk.assertions.isEqualTo
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -49,9 +50,9 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            awaitItem()
+            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState(
+                ViewState.Ready(
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
                     listOfShoppingItems = persistentListOf()
@@ -79,9 +80,9 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            awaitItem()
+            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState(
+                ViewState.Ready(
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
                     listOfShoppingItems = persistentListOf(shoppingItem)

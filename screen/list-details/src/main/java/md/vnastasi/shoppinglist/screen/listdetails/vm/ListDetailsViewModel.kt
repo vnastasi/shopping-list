@@ -8,11 +8,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -23,6 +25,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
+import kotlin.time.Duration.Companion.seconds
 
 class ListDetailsViewModel internal constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -34,6 +37,7 @@ class ListDetailsViewModel internal constructor(
     private val shoppingList = savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
         .filterNotNull()
         .flatMapLatest(shoppingListRepository::findById)
+        .onEach { delay(1.seconds) }
 
     private val listOfShoppingItems = savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
         .filterNotNull()
@@ -46,7 +50,7 @@ class ListDetailsViewModel internal constructor(
     ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.Init
+        initialValue = ViewState.Idle
     )
 
     override fun onUiEvent(event: UiEvent) {
@@ -62,7 +66,7 @@ class ListDetailsViewModel internal constructor(
     }
 
     private fun createViewState(shoppingList: ShoppingList, listOfShoppingItems: List<ShoppingItem>): ViewState =
-        ViewState(
+        ViewState.Ready(
             shoppingListId = shoppingList.id,
             shoppingListName = shoppingList.name,
             listOfShoppingItems = listOfShoppingItems.toImmutableList()

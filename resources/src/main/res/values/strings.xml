@@ -15,6 +15,7 @@
 
     <string name="list_details_btn_back_acc">Back to overview</string>
     <string name="list_details_btn_add_acc">Add items</string>
+    <string name="list_details_loading">Loading shopping list contents…</string>
     <string name="list_details_empty">Shopping list is empty</string>
 
     <string name="add_items_btn_back_acc">Back to list details</string>

@@ -47,6 +47,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigato
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_SHOPPING_LIST_ITEMS_FAB
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
+import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -90,7 +91,8 @@ private fun ListDetailsScreen(
                     .fillMaxWidth()
                     .testTag(LIST_DETAILS_TOOLBAR),
                 title = {
-                    Text(text = viewState.value.shoppingListName)
+                    val name = (viewState.value as? ViewState.Ready)?.shoppingListName.orEmpty()
+                    Text(text = name)
                 },
                 navigationIcon = {
                     IconButton(
@@ -109,34 +111,50 @@ private fun ListDetailsScreen(
             )
         },
         floatingActionButton = {
-            val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-            val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-            val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+            if (viewState.value is ViewState.Ready) {
+                val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+                val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
 
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(end = fabEndPadding)
-                    .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
-                shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
-                onClick = { events.onAddNewItems.invoke(viewState.value.shoppingListId) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.list_details_btn_add_acc)
-                )
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(end = fabEndPadding)
+                        .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
+                    shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+                    onClick = { events.onAddNewItems.invoke((viewState.value as ViewState.Ready).shoppingListId) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.list_details_btn_add_acc)
+                    )
+                }
             }
         }
     ) { contentPaddings ->
-        if (viewState.value.listOfShoppingItems.isEmpty()) {
-            EmptyListDetailsScreenContent(
-                contentPaddings = contentPaddings
-            )
-        } else {
-            NonEmptyListDetailsScreenContent(
-                contentPaddings = contentPaddings,
-                listOfShoppingItems = viewState.value.listOfShoppingItems,
-                onClick = events.onItemClicked
-            )
+        when (val viewStateValue = viewState.value) {
+            is ViewState.Idle -> {
+                AnimatedMessageContent(
+                    contentPaddings = contentPaddings,
+                    animationResId = R.raw.lottie_anim_loading,
+                    messageResId = R.string.list_details_loading
+                )
+            }
+
+            is ViewState.Ready -> {
+                if (viewStateValue.listOfShoppingItems.isEmpty()) {
+                    AnimatedMessageContent(
+                        contentPaddings = contentPaddings,
+                        animationResId = R.raw.lottie_anim_empty_box,
+                        messageResId = R.string.list_details_empty
+                    )
+                } else {
+                    NonEmptyListDetailsScreenContent(
+                        contentPaddings = contentPaddings,
+                        listOfShoppingItems = viewStateValue.listOfShoppingItems,
+                        onClick = events.onItemClicked
+                    )
+                }
+            }
         }
     }
 }
@@ -155,7 +173,7 @@ private fun ListDetailsScreenPreview() {
         ShoppingItem(id = 3L, name = "Minced meat", isChecked = true, list = shoppingList),
         ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
     )
-    val viewState = ViewState(
+    val viewState = ViewState.Ready(
         shoppingListId = 1L,
         shoppingListName = "My list",
         listOfShoppingItems = listOfShoppingItems
