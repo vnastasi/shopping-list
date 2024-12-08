@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 sealed class Routes {
 
     @Serializable
-    data object ListOverview : Routes()
+    data object Overview : Routes()
 
     @Serializable
     data class ListDetails(val shoppingListId: Long) : Routes()

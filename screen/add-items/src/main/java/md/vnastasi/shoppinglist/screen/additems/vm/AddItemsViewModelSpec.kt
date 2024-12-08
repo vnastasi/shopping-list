@@ -7,7 +7,7 @@ import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 
 interface AddItemsViewModelSpec {
 
-    val screenState: StateFlow<ViewState>
+    val viewState: StateFlow<ViewState>
 
     val searchTermState: MutableState<String>
 

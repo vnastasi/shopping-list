@@ -9,9 +9,9 @@ import org.junit.runners.Suite
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
     value = [
+        CompleteShoppingListFlowTest::class,
         CreateShoppingListFlowTest::class,
         ManageSuggestionsFlowTest::class,
-        CompleteShoppingListFlowTest::class
     ]
 )
 class FlowSuite

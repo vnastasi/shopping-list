@@ -13,7 +13,7 @@ class StubAddItemsViewModelSpec(
     searchTermValue: String
 ) : AddItemsViewModelSpec {
 
-    override val screenState: StateFlow<ViewState> = MutableStateFlow(viewState)
+    override val viewState: StateFlow<ViewState> = MutableStateFlow(viewState)
 
     override val searchTermState: MutableState<String> = mutableStateOf(searchTermValue)
 

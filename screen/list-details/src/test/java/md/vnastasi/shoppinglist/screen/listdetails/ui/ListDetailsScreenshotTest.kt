@@ -95,12 +95,12 @@ class ListDetailsScreenshotTest(
         )
 
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
-            ViewState(
+            ViewState.Ready(
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
                 listOfShoppingItems = persistentListOf()
             ),
-            ViewState(
+            ViewState.Ready(
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
                 listOfShoppingItems = persistentListOf(
@@ -115,7 +115,8 @@ class ListDetailsScreenshotTest(
                         isChecked = true
                     }
                 )
-            )
+            ),
+            ViewState.Loading
         )
     }
 }

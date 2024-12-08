@@ -6,7 +6,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 
 interface ListDetailsViewModelSpec {
 
-    val screenState: StateFlow<ViewState>
+    val viewState: StateFlow<ViewState>
 
     fun onUiEvent(event: UiEvent)
 }

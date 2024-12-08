@@ -9,6 +9,10 @@ android {
     namespace = "md.vnastasi.shoppinglist.screen.overview"
 }
 
+dependencies {
+    implementation(project(":screen:shared"))
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(

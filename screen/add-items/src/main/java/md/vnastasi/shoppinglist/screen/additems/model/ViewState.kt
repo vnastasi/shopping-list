@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
-import md.vnastasi.shoppinglist.support.ui.toast.ToastMessage
+import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 
 @Stable
 data class ViewState(

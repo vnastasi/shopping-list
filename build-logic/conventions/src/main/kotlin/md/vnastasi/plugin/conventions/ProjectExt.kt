@@ -115,7 +115,6 @@ internal fun Project.configureComposeScreenLibrary() {
         addProvider("implementation", provider { project(":support:annotation") })
         addProvider("implementation", provider { project(":support:async") })
         addProvider("implementation", provider { project(":support:theme") })
-        addProvider("implementation", provider { project(":support:ui") })
         addProvider("implementation", platform(libs.compose.bom))
         addProvider("implementation", platform(libs.kotlin.bom))
         addProvider("implementation", platform(libs.kotlinx.coroutines.bom))

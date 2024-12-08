@@ -33,7 +33,7 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_TE
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
-import md.vnastasi.shoppinglist.support.ui.bottomsheet.BottomSheetBehaviour
+import md.vnastasi.shoppinglist.screen.shared.bottomsheet.BottomSheetBehaviour
 
 @Composable
 internal fun ShoppingListFormBottomSheet(
