@@ -1,6 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.nav
 
-interface ListOverviewScreenNavigator {
+interface OverviewScreenNavigator {
 
     fun toListDetails(shoppingListId: Long)
 }

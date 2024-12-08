@@ -28,16 +28,16 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import kotlin.time.Duration.Companion.seconds
 
-class ListOverviewViewModel internal constructor(
+class OverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
-) : ViewModel(), ListOverviewViewModelSpec {
+) : ViewModel(), OverviewViewModelSpec {
 
     private val list = shoppingListRepository.findAll().onEach { delay(1.seconds) }.map { it.toImmutableList() }
     private val navigationTarget = MutableStateFlow<NavigationTarget?>(null)
     private val toastMessage = MutableStateFlow<ToastMessage?>(null)
 
-    override val screenState: StateFlow<ViewState> = combine(
+    override val viewState: StateFlow<ViewState> = combine(
         list, navigationTarget, toastMessage, ViewState::Ready
     ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
@@ -90,7 +90,7 @@ class ListOverviewViewModel internal constructor(
         private val dispatchersProvider: DispatchersProvider
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            ListOverviewViewModel(shoppingListRepository, dispatchersProvider)
+            OverviewViewModel(shoppingListRepository, dispatchersProvider)
         }
     })
 

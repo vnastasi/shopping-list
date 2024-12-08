@@ -43,14 +43,14 @@ class ListDetailsViewModel internal constructor(
         .filterNotNull()
         .flatMapLatest(shoppingItemRepository::findAll)
 
-    override val screenState: StateFlow<ViewState> = combine(
+    override val viewState: StateFlow<ViewState> = combine(
         shoppingList,
         listOfShoppingItems,
         ::createViewState
     ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.Idle
+        initialValue = ViewState.Loading
     )
 
     override fun onUiEvent(event: UiEvent) {

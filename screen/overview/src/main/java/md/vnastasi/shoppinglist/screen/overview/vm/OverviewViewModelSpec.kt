@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.StateFlow
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 
-interface ListOverviewViewModelSpec {
+interface OverviewViewModelSpec {
 
-    val screenState: StateFlow<ViewState>
+    val viewState: StateFlow<ViewState>
 
     fun onUiEvent(uiEvent: UiEvent)
 }

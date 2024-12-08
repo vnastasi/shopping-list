@@ -47,9 +47,9 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
-import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FAB
-import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModelSpec
+import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.bottomsheet.BottomSheetBehaviour
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.toast.Toast
@@ -58,13 +58,13 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun ListOverviewScreen(
-    viewModel: ListOverviewViewModelSpec,
-    navigator: ListOverviewScreenNavigator
+fun OverviewScreen(
+    viewModel: OverviewViewModelSpec,
+    navigator: OverviewScreenNavigator
 ) {
 
-    ListOverviewScreen(
-        viewState = viewModel.screenState.collectAsStateWithLifecycle(),
+    OverviewScreen(
+        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         events = Events(
             onAddNewShoppingList = { viewModel.onUiEvent(UiEvent.AddNewShoppingList) },
             onShoppingListSaved = { shoppingListName -> viewModel.onUiEvent(UiEvent.ShoppingListSaved(shoppingListName)) },
@@ -89,7 +89,7 @@ private data class Events(
 )
 
 @Composable
-private fun ListOverviewScreen(
+private fun OverviewScreen(
     viewState: State<ViewState>,
     events: Events
 ) {
@@ -192,7 +192,7 @@ private fun ListOverviewScreen(
                             messageResId = R.string.overview_empty_list
                         )
                     } else {
-                        NonEmptyListOverviewScreenContent(
+                        OverviewContent(
                             contentPaddings = contentPaddings,
                             list = viewStateValue.shoppingLists,
                             onClick = events.onShoppingListSelected,
@@ -228,7 +228,7 @@ private fun ListOverviewScreenPreview() {
     )
 
     AppTheme {
-        ListOverviewScreen(
+        OverviewScreen(
             viewState = remember { mutableStateOf<ViewState>(ViewState.Ready(list)) },
             events = Events(
                 onShoppingListSelected = { },

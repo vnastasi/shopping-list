@@ -29,7 +29,7 @@ import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-internal class ListOverviewViewModelTest {
+internal class OverviewViewModelTest {
 
     private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
 
@@ -37,14 +37,14 @@ internal class ListOverviewViewModelTest {
     @DisplayName(
         """
         Given repository returns no shopping lists
-        When creating list overview screen state
-        Then expect ScreenState.Empty
+        When creating overview screen state
+        Then expect view state with empty list
     """
     )
-    fun screenStateWithNoLists() = runTest {
+    fun viewStateWithNoLists() = runTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
-        createViewModel(testScheduler).screenState.test {
+        createViewModel(testScheduler).viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(persistentListOf()))
             cancelAndConsumeRemainingEvents()
@@ -56,14 +56,14 @@ internal class ListOverviewViewModelTest {
         """
         Given repository returns shopping lists
         When creating list overview screen state
-        Then expect ScreenState.Ready with a list of shopping lists
+        Then expect view state with a list of shopping lists
     """
     )
-    fun screenStateWithLists() = runTest {
+    fun viewStateWithLists() = runTest {
         val shoppingListDetails = createShoppingListDetails()
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
-        createViewModel(testScheduler).screenState.test {
+        createViewModel(testScheduler).viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(persistentListOf(shoppingListDetails)))
             cancelAndConsumeRemainingEvents()
@@ -83,7 +83,7 @@ internal class ListOverviewViewModelTest {
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListForm)
@@ -130,7 +130,7 @@ internal class ListOverviewViewModelTest {
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingListDetails))
 
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListDetails(6578L))
@@ -172,7 +172,7 @@ internal class ListOverviewViewModelTest {
 
         val viewModel = createViewModel(testScheduler)
 
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
 
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -205,7 +205,7 @@ internal class ListOverviewViewModelTest {
 
         val viewModel = createViewModel(testScheduler)
 
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Idle)
 
             assertThat(awaitItem()).isDataClassEqualTo(
@@ -226,7 +226,7 @@ internal class ListOverviewViewModelTest {
         }
     }
 
-    private fun createViewModel(testScheduler: TestCoroutineScheduler) = ListOverviewViewModel(
+    private fun createViewModel(testScheduler: TestCoroutineScheduler) = OverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
         dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
     )

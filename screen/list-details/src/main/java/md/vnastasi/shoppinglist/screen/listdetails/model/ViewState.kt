@@ -7,7 +7,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 @Stable
 sealed class ViewState {
 
-    data object Idle : ViewState()
+    data object Loading : ViewState()
 
     data class Ready(
         val shoppingListId: Long,

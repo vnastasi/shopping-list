@@ -9,8 +9,8 @@ import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
-import md.vnastasi.shoppinglist.screen.overview.ui.ListOverviewScreen
-import md.vnastasi.shoppinglist.screen.overview.vm.ListOverviewViewModel
+import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
+import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.support.lifecycle.viewModel
 import org.koin.compose.koinInject
 
@@ -21,18 +21,18 @@ fun NavigationGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.ListOverview
+        startDestination = Routes.Overview
     ) {
 
-        composable<Routes.ListOverview>(
+        composable<Routes.Overview>(
             exitTransition = { slideOutToLeft() },
             popEnterTransition = { slideInFromRight() },
             popExitTransition = { slideOutToRight() }
         ) {
-            val viewModel = viewModel<ListOverviewViewModel>(
-                factory = koinInject<ListOverviewViewModel.Factory>()
+            val viewModel = viewModel<OverviewViewModel>(
+                factory = koinInject<OverviewViewModel.Factory>()
             )
-            ListOverviewScreen(
+            OverviewScreen(
                 viewModel = viewModel,
                 navigator = ScreenNavigators.overview(navController)
             )

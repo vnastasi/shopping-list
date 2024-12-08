@@ -38,10 +38,10 @@ internal class ListDetailsViewModelTest {
         """
         Given repository returns no shopping items for list 567
         When creating list details screen state for list 567
-        Then expect ScreenState.Ready with empty list of shopping items
+        Then expect view state with empty list of shopping items
     """
     )
-    fun screenStateWithNoShoppingItems() = runTest {
+    fun viewStateWithNoShoppingItems() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
             id = shoppingListId
@@ -49,8 +49,8 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(
                     shoppingListId = shoppingListId,
@@ -67,10 +67,10 @@ internal class ListDetailsViewModelTest {
         """
         Given repository returns shopping items for list 567
         When creating list details screen state for list 567
-        Then expect ScreenState.Ready with non-empty list of shopping items
+        Then expect view state with non-empty list of shopping items
     """
     )
-    fun screenStateWithShoppingItems() = runTest {
+    fun viewStateWithShoppingItems() = runTest {
         val shoppingListId = 567L
         val shoppingList = createShoppingList {
             id = shoppingListId
@@ -79,8 +79,8 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).screenState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(
                     shoppingListId = shoppingListId,

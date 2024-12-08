@@ -5,12 +5,12 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
-import md.vnastasi.shoppinglist.screen.overview.nav.ListOverviewScreenNavigator
+import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
 
 object ScreenNavigators {
 
     @Composable
-    fun overview(navController: NavController) = remember<ListOverviewScreenNavigator> { ListOverviewScreenNavigatorImpl(navController) }
+    fun overview(navController: NavController) = remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navController) }
 
     @Composable
     fun listDetails(navController: NavController) = remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navController) }
@@ -19,9 +19,9 @@ object ScreenNavigators {
     fun addItems(navController: NavController) = remember<AddItemsScreenNavigator> { AddItemsScreenNavigatorImpl(navController) }
 }
 
-private class ListOverviewScreenNavigatorImpl(
+private class OverviewScreenNavigatorImpl(
     private val navController: NavController
-) : ListOverviewScreenNavigator {
+) : OverviewScreenNavigator {
 
     override fun toListDetails(shoppingListId: Long) {
         navController.navigate(Routes.ListDetails(shoppingListId))

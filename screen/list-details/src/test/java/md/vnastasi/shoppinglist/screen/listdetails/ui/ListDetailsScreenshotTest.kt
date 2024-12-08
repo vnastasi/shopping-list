@@ -116,7 +116,7 @@ class ListDetailsScreenshotTest(
                     }
                 )
             ),
-            ViewState.Idle
+            ViewState.Loading
         )
     }
 }

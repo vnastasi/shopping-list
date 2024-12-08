@@ -54,7 +54,7 @@ internal class AddItemsViewModelTest {
         coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns listOf(suggestion)
 
         val viewModel = createViewModel(testScheduler, currentSearchTermValue = searchTerm)
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.SearchTermChanged)
@@ -81,7 +81,7 @@ internal class AddItemsViewModelTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
         val viewModel = createViewModel(testScheduler, currentSearchTermValue = "Search term")
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
@@ -111,7 +111,7 @@ internal class AddItemsViewModelTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
         val viewModel = createViewModel(testScheduler, currentSearchTermValue = "Search term")
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.ItemAddedToList(""))
@@ -139,7 +139,7 @@ internal class AddItemsViewModelTest {
         val suggestion = NameSuggestion(name = "Milk")
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
@@ -169,7 +169,7 @@ internal class AddItemsViewModelTest {
         val suggestion = NameSuggestion(name = "Milk")
 
         val viewModel = createViewModel(testScheduler)
-        viewModel.screenState.test {
+        viewModel.viewState.test {
             skipItems(1)
 
             viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))

@@ -58,7 +58,7 @@ fun ListDetailsScreen(
     navigator: ListDetailsScreenNavigator
 ) {
     ListDetailsScreen(
-        viewState = viewModel.screenState.collectAsStateWithLifecycle(),
+        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         events = Events(
             onNavigateUp = navigator::backToOverview,
             onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
@@ -90,9 +90,9 @@ private fun ListDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag(LIST_DETAILS_TOOLBAR),
-                title = {
-                    val name = (viewState.value as? ViewState.Ready)?.shoppingListName.orEmpty()
-                    Text(text = name)
+                title = title@{
+                    val viewStateValue = viewState.value as? ViewState.Ready ?: return@title
+                    Text(text = viewStateValue.shoppingListName)
                 },
                 navigationIcon = {
                     IconButton(
@@ -110,29 +110,29 @@ private fun ListDetailsScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = {
-            if (viewState.value is ViewState.Ready) {
-                val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
-                val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+        floatingActionButton = floatingActionButton@{
+            val viewStateValue = viewState.value as? ViewState.Ready ?: return@floatingActionButton
 
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(end = fabEndPadding)
-                        .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
-                    shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
-                    onClick = { events.onAddNewItems.invoke((viewState.value as ViewState.Ready).shoppingListId) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.list_details_btn_add_acc)
-                    )
-                }
+            val navBarEndPadding = WindowInsets.navigationBars.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+            val displayCutoutEndPadding = WindowInsets.displayCutout.asPaddingValues().calculateEndPadding(LocalLayoutDirection.current)
+            val fabEndPadding = max(navBarEndPadding, displayCutoutEndPadding)
+
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(end = fabEndPadding)
+                    .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
+                shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+                onClick = { events.onAddNewItems.invoke(viewStateValue.shoppingListId) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.list_details_btn_add_acc)
+                )
             }
         }
     ) { contentPaddings ->
         when (val viewStateValue = viewState.value) {
-            is ViewState.Idle -> {
+            is ViewState.Loading -> {
                 AnimatedMessageContent(
                     contentPaddings = contentPaddings,
                     animationResId = R.raw.lottie_anim_loading,
@@ -148,7 +148,7 @@ private fun ListDetailsScreen(
                         messageResId = R.string.list_details_empty
                     )
                 } else {
-                    NonEmptyListDetailsScreenContent(
+                    ListDetailsContent(
                         contentPaddings = contentPaddings,
                         listOfShoppingItems = viewStateValue.listOfShoppingItems,
                         onClick = events.onItemClicked

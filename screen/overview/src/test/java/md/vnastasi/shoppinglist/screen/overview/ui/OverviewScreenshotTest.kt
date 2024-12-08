@@ -18,7 +18,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class ListOverviewScreenshotTest(
+class OverviewScreenshotTest(
     config: DeviceConfig,
     private val viewState: ViewState
 ) {
@@ -36,9 +36,9 @@ class ListOverviewScreenshotTest(
     fun screenshot() {
         paparazzi.snapshot {
             AppTheme {
-                ListOverviewScreen(
-                    viewModel = StubListOverviewViewModel(viewState),
-                    navigator = StubListOverviewScreenNavigator()
+                OverviewScreen(
+                    viewModel = StubOverviewViewModel(viewState),
+                    navigator = StubOverviewScreenNavigator()
                 )
             }
         }

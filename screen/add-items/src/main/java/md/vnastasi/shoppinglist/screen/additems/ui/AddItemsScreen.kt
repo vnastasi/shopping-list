@@ -60,7 +60,7 @@ fun AddItemsScreen(
     navigator: AddItemsScreenNavigator
 ) {
     AddItemsScreen(
-        viewState = viewModel.screenState.collectAsStateWithLifecycle(),
+        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         searchTermState = remember { viewModel.searchTermState },
         events = Events(
             onNavigateUp = navigator::backToListDetails,
