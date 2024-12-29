@@ -1,0 +1,37 @@
+name: "Automatic Gradle Wrapper Upgrade"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 0 ? * 1L *"
+
+jobs:
+  upgrade-gradle:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+
+      - name: "Check out repository"
+        uses: actions/checkout@v3
+
+      - name: "Set up git"
+        run: |
+          git config --global user.email "pragmatiku@protonmail.com"
+          git config --global user.name "Valentin Nastasi"
+          git config --global url."https://unused-username:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Upgrade Gradle"
+        run: ./gradlew upgradeGradleWrapperRoot
