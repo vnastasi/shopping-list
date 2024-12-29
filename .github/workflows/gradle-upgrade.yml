@@ -14,7 +14,8 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-      WRAPPER_UPGRADE_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      WRAPPER_UPGRADE_GIT_TOKEN: ${{ secrets.WRAPPER_UPGRADE_GIT_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
 
       - name: "Check out repository"
@@ -24,7 +25,7 @@ jobs:
         run: |
           git config --global user.email "pragmatiku@protonmail.com"
           git config --global user.name "Valentin Nastasi"
-          git config --global url."https://unused-username:${WRAPPER_UPGRADE_GIT_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://unused-username:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
 
       - name: "Set up Java"
         uses: actions/setup-java@v3
