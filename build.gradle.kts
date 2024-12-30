@@ -27,6 +27,7 @@ wrapperUpgrade {
             options {
                 labels.add("dependencies")
                 reviewers.add("vnastasi")
+                recreateClosedPullRequest.set(true)
             }
         }
     }
