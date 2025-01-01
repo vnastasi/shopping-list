@@ -26,6 +26,12 @@ jobs:
           ref: "main"
           fetch-depth: 1
 
+      - name: "Set up git"
+        run: |
+          git config --global user.email "pragmatiku@protonmail.com"
+          git config --global user.name "Valentin Nastasi"
+          git config --global url."https://unused-username:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
       - name: "Set up Java"
         uses: actions/setup-java@v3
         with:
