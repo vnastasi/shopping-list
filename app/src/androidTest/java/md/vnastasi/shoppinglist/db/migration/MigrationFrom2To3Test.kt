@@ -26,7 +26,7 @@ class MigrationFrom2To3Test {
     @Test
     fun migrateFrom1To2() {
         helper.createDatabase(TEST_DB_NAME, 2).use { db ->
-            db.execSQL(INSERT_SHOPPING_LIST_SQL, arrayOf(1L, "My list"))
+            db.execSQL(INSERT_SHOPPING_LIST_SQL, arrayOf<Any>(1L, "My list"))
         }
 
         helper.runMigrationsAndValidate(TEST_DB_NAME, 3, true, MigrationFrom2To3()).use { db ->

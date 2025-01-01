@@ -27,10 +27,10 @@ class MigrationFrom3To4Test {
     @Test
     fun migrateFrom1To2() {
         helper.createDatabase(TEST_DB_NAME, 3).use { db ->
-            db.execSQL(INSERT_SHOPPING_LIST_SQL, arrayOf(1L, "My list"))
-            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf(1L, "Item 1", 1, 1L))
-            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf(2L, "Item 2", 0, 1L))
-            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf(3L, "Item 3", 0, 1L))
+            db.execSQL(INSERT_SHOPPING_LIST_SQL, arrayOf<Any>(1L, "My list"))
+            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf<Any>(1L, "Item 1", 1, 1L))
+            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf<Any>(2L, "Item 2", 0, 1L))
+            db.execSQL(INSERT_SHOPPING_ITEM_SQL, arrayOf<Any>(3L, "Item 3", 0, 1L))
         }
 
         helper.runMigrationsAndValidate(TEST_DB_NAME, 4, true, MigrationFrom3To4()).use { db ->
