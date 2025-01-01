@@ -48,8 +48,8 @@ abstract class UpdateProjectVersion @Inject constructor(
         var versionName = projectVersionName.value.replace("\"", "").split(" = ")[1]
         var versionCode = projectVersionCode.value.replace("\"", "").split(" = ")[1].toInt()
 
-        val newVersion = providers.gradleProperty(TASK_PROPERTY_VERSION).orNull
-        if (newVersion != null) {
+        val newVersion = providers.gradleProperty(TASK_PROPERTY_VERSION).getOrElse("")
+        if (newVersion.isNotEmpty()) {
             versionName = newVersion
         } else {
             val tokens = versionName.split(".")
