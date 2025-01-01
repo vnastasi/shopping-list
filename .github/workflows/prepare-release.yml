@@ -1,0 +1,45 @@
+name: "Prepare release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: false
+        default: ""
+        type: string
+        description: "Optional version name, in x.y.z format"
+
+jobs:
+  prepare-release:
+    name: "Prepare release version"
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+        with:
+          ref: "main"
+          fetch-depth: 1
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Update version name"
+        run: ./gradlew updateProjectVersion -Pversion=${{ inputs.version }}
+
+      - name: "Create release tag"
+        run: ./gradlew createReleaseTag
