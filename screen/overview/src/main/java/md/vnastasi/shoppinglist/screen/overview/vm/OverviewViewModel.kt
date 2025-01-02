@@ -7,13 +7,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -26,14 +24,13 @@ import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
-import kotlin.time.Duration.Companion.seconds
 
 class OverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel(), OverviewViewModelSpec {
 
-    private val list = shoppingListRepository.findAll().onEach { delay(1.seconds) }.map { it.toImmutableList() }
+    private val list = shoppingListRepository.findAll().map { it.toImmutableList() }
     private val navigationTarget = MutableStateFlow<NavigationTarget?>(null)
     private val toastMessage = MutableStateFlow<ToastMessage?>(null)
 
