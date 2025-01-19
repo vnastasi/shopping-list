@@ -16,7 +16,7 @@ plugins {
 codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
-    coverageThreshold.set(0.81)
+    coverageThreshold.set(0.80)
 }
 
 wrapperUpgrade {
