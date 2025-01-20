@@ -9,7 +9,7 @@ project-version-name = "0.3.1"
 
 android-cache-fix = "3.0.1"
 android-tools = "8.8.0"
-androidx-activity = "1.9.3"
+androidx-activity = "1.10.0"
 androidx-core = "1.15.0"
 androidx-compose-material-adaptive = "1.0.0"
 androidx-lifecycle = "2.8.7"
