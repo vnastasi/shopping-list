@@ -17,7 +17,6 @@ import md.vnastasi.shoppinglist.screen.overview.OverviewScreenModule
 import md.vnastasi.shoppinglist.screen.overview.OverviewScreenModule.invoke
 import md.vnastasi.shoppinglist.support.async.AsyncSupportModule
 import md.vnastasi.shoppinglist.support.async.AsyncSupportModule.invoke
-import md.vnastasi.shoppinglist.support.di.ActivityFactory
 import md.vnastasi.shoppinglist.support.di.activityFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -29,7 +28,10 @@ class ComponentFactory : AppComponentFactory() {
     private val activityFactory = activityFactory()
 
     override fun instantiateApplicationCompat(cl: ClassLoader, className: String): Application =
-        super.instantiateApplicationCompat(cl, className).also(::setupKoin)
+        when (cl.loadClass(className)) {
+            ShoppingListApplication::class.java -> ShoppingListApplication().also(::setupKoin)
+            else -> super.instantiateApplicationCompat(cl, className)
+        }
 
     override fun instantiateActivityCompat(cl: ClassLoader, className: String, intent: Intent?): Activity =
         activityFactory.instantiateActivityCompat(cl, className) ?: super.instantiateActivityCompat(cl, className, intent)

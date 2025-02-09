@@ -7,7 +7,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
-import md.vnastasi.shoppinglist.nav.NavigationGraph
+import md.vnastasi.shoppinglist.screen.ApplicationScreenContainer
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 class MainActivity(
@@ -22,7 +22,7 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                NavigationGraph(viewModelFactories)
+                ApplicationScreenContainer(viewModelFactories)
             }
         }
     }

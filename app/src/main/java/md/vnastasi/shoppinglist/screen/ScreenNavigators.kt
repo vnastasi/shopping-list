@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.nav
+package md.vnastasi.shoppinglist.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

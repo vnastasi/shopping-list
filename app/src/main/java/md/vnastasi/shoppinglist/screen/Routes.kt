@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.nav
+package md.vnastasi.shoppinglist.screen
 
 import kotlinx.serialization.Serializable
 

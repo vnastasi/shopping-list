@@ -7,6 +7,7 @@ import md.vnastasi.shoppinglist.ui.robot.addItemsScreen
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.robot.shoppingListForm
+import md.vnastasi.shoppinglist.ui.rule.createComponentFactoryRule
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
@@ -27,7 +28,8 @@ class CreateShoppingListFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(composeRule)
+        .outerRule(createComponentFactoryRule())
+        .around(composeRule)
         .around(retryOnFailureRule(maxAttempts = 3))
         .around(createDatabaseRule())
         .around(koinTestModeRule)
