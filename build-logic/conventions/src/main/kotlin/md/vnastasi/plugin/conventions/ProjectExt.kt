@@ -119,7 +119,7 @@ internal fun Project.configureComposeScreenLibrary() {
         addProvider("implementation", platform(libs.kotlin.bom))
         addProvider("implementation", platform(libs.kotlinx.coroutines.bom))
         addProvider("implementation", libs.androidx.core)
-        addProvider("implementation", libs.koin.android.asProvider())
+        addProvider("implementation", libs.koin.android)
         addProvider("implementation", libs.kotlinx.collections)
         addProvider("implementation", libs.lottie.compose)
         addProvider("implementation", libs.bundles.compose.ui)
