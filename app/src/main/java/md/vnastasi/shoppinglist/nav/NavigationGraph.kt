@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import md.vnastasi.shoppinglist.component.ViewModelFactoryCreator
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
@@ -12,11 +13,11 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.support.lifecycle.viewModel
-import org.koin.compose.koinInject
 
 @Composable
-fun NavigationGraph() {
-
+fun NavigationGraph(
+    viewModelFactories: ViewModelFactoryCreator
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -30,7 +31,7 @@ fun NavigationGraph() {
             popExitTransition = { slideOutToRight() }
         ) {
             val viewModel = viewModel<OverviewViewModel>(
-                factory = koinInject<OverviewViewModel.Factory>()
+                factory = viewModelFactories.create<OverviewViewModel.Factory>()
             )
             OverviewScreen(
                 viewModel = viewModel,
@@ -43,9 +44,9 @@ fun NavigationGraph() {
             exitTransition = { slideOutToLeft() },
             popEnterTransition = { slideInFromRight() },
             popExitTransition = { slideOutToRight() }
-        ) { backStackEntry ->
+        ) {
             val viewModel = viewModel<ListDetailsViewModel>(
-                factory = koinInject<ListDetailsViewModel.Factory>()
+                factory = viewModelFactories.create<ListDetailsViewModel.Factory>()
             )
             ListDetailsScreen(
                 viewModel = viewModel,
@@ -58,9 +59,9 @@ fun NavigationGraph() {
             exitTransition = { slideOutToLeft() },
             popEnterTransition = { slideInFromRight() },
             popExitTransition = { slideOutToRight() }
-        ) { backStackEntry ->
+        ) {
             val viewModel = viewModel<AddItemsViewModel>(
-                factory = koinInject<AddItemsViewModel.Factory>(),
+                factory = viewModelFactories.create<AddItemsViewModel.Factory>(),
             )
             AddItemsScreen(
                 viewModel = viewModel,

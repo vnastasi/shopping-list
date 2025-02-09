@@ -6,10 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import md.vnastasi.shoppinglist.component.ViewModelFactoryCreator
 import md.vnastasi.shoppinglist.nav.NavigationGraph
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity(
+    private val viewModelFactories: ViewModelFactoryCreator
+) : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -19,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                NavigationGraph()
+                NavigationGraph(viewModelFactories)
             }
         }
     }
