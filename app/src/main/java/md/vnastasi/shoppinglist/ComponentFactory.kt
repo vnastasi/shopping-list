@@ -28,10 +28,7 @@ class ComponentFactory : AppComponentFactory() {
     private val activityFactory = activityFactory()
 
     override fun instantiateApplicationCompat(cl: ClassLoader, className: String): Application =
-        when (cl.loadClass(className)) {
-            ShoppingListApplication::class.java -> ShoppingListApplication().also(::setupKoin)
-            else -> super.instantiateApplicationCompat(cl, className)
-        }
+        super.instantiateApplicationCompat(cl, className).also(::setupKoin)
 
     override fun instantiateActivityCompat(cl: ClassLoader, className: String, intent: Intent?): Activity =
         activityFactory.instantiateActivityCompat(cl, className) ?: super.instantiateActivityCompat(cl, className, intent)
