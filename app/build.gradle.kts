@@ -92,7 +92,6 @@ dependencies {
     implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
     implementation(libs.kotlinx.collections)
     implementation(libs.kotlinx.serialization.json)
 
