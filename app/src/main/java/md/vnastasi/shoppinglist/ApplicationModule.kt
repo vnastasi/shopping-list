@@ -1,11 +1,11 @@
 package md.vnastasi.shoppinglist
 
 import kotlinx.collections.immutable.persistentMapOf
-import md.vnastasi.shoppinglist.component.ViewModelFactoryCreator
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
-import org.koin.core.module.dsl.factoryOf
+import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
+import md.vnastasi.shoppinglist.support.di.activityOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -22,6 +22,6 @@ object ApplicationModule {
             )
         }
 
-        factoryOf(::MainActivity)
+        activityOf(::MainActivity)
     }
 }

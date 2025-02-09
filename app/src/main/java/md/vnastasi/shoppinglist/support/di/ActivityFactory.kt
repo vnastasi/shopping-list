@@ -1,7 +1,9 @@
-package md.vnastasi.shoppinglist.component
+package md.vnastasi.shoppinglist.support.di
 
 import android.app.Activity
 import org.koin.core.component.KoinComponent
+
+fun activityFactory() = ActivityFactory()
 
 class ActivityFactory : KoinComponent {
 

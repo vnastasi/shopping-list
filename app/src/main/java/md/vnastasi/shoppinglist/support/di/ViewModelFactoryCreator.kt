@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.component
+package md.vnastasi.shoppinglist.support.di
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModelProvider

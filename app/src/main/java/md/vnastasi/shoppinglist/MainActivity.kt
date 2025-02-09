@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import md.vnastasi.shoppinglist.component.ViewModelFactoryCreator
+import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
 import md.vnastasi.shoppinglist.nav.NavigationGraph
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
