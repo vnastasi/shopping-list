@@ -10,7 +10,6 @@ import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.rule.createComponentFactoryRule
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
-import md.vnastasi.shoppinglist.ui.rule.createKoinTestModuleRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
 import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
@@ -23,7 +22,7 @@ class ManageSuggestionsFlowTest {
 
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val koinTestModeRule = createKoinTestModuleRule {
+    private val componentFactoryRule = createComponentFactoryRule {
         single<DispatchersProvider> { UiTestDispatcherProvider() }
     }
 
@@ -39,11 +38,10 @@ class ManageSuggestionsFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(createComponentFactoryRule())
+        .outerRule(componentFactoryRule)
         .around(composeRule)
         .around(retryOnFailureRule(maxAttempts = 3))
         .around(databaseRule)
-        .around(koinTestModeRule)
         .around(disableAnimationsRule())
 
     @Test

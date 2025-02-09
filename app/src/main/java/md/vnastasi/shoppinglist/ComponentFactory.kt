@@ -21,9 +21,10 @@ import md.vnastasi.shoppinglist.support.di.activityFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 
 @Suppress("unused")
-class ComponentFactory : AppComponentFactory() {
+open class ComponentFactory : AppComponentFactory() {
 
     private val activityFactory = activityFactory()
 
@@ -33,19 +34,21 @@ class ComponentFactory : AppComponentFactory() {
     override fun instantiateActivityCompat(cl: ClassLoader, className: String, intent: Intent?): Activity =
         activityFactory.instantiateActivityCompat(cl, className) ?: super.instantiateActivityCompat(cl, className, intent)
 
+    protected open fun modules(): List<Module> = listOf(
+        ApplicationModule(),
+        AsyncSupportModule(),
+        DatabaseModule(),
+        DomainModule(),
+        OverviewScreenModule(),
+        ListDetailsScreenModule(),
+        AddItemsScreenModule()
+    )
+
     private fun setupKoin(application: Application) {
         startKoin {
             androidLogger()
             androidContext(application)
-            modules(
-                ApplicationModule(),
-                AsyncSupportModule(),
-                DatabaseModule(),
-                DomainModule(),
-                OverviewScreenModule(),
-                ListDetailsScreenModule(),
-                AddItemsScreenModule()
-            )
+            modules(this@ComponentFactory.modules())
         }
     }
 }
