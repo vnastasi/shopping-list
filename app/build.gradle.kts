@@ -95,11 +95,6 @@ dependencies {
     implementation(libs.kotlinx.collections)
     implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(project(":support:async-unit-test"))
-    testImplementation(testFixtures(project(":domain:api")))
-
-    testImplementation(libs.androidx.lificycle.test)
-
     androidTestImplementation(testFixtures(project(":database")))
     androidTestImplementation(testFixtures(project(":domain:api")))
 

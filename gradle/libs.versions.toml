@@ -61,9 +61,9 @@ compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 espresso-idling-concurrent = { module = "androidx.test.espresso.idling:idling-concurrent", version.ref = "espresso" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
-junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
-junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
