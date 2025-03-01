@@ -71,6 +71,7 @@ internal fun Project.addUnitTestDependencies() {
         addProvider("testImplementation", libs.mockk.android)
         addProvider("testImplementation", libs.turbine)
         addProvider("testRuntimeOnly", libs.junit.jupiter.engine)
+        add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
     }
 }
 
