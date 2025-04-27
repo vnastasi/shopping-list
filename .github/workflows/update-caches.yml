@@ -6,6 +6,37 @@ on:
       - "main"
 
 jobs:
+  gradle-cache:
+    name: "Update Gradle cache"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Environment"
+        run: |
+          echo "Agent ${{ runner.name }}"
+          echo "Operating system ${{ runner.os }}"
+          echo "Architecture ${{ runner.arch }}"
+
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Grant permissions"
+        run: chmod +x gradlew
+
+      - name: "Assemble application"
+        run: ./gradlew assemble
+
   emulator-cache:
     name: "Update emulator snapshot cache"
     runs-on: ubuntu-latest
