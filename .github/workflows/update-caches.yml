@@ -33,7 +33,6 @@ jobs:
       - name: "Set up Gradle"
         uses: gradle/actions/setup-gradle@v3
         with:
-          cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: "Assemble application"
@@ -71,7 +70,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ matrix.target }}
-          restore-keys: avd-
 
       - name: "Create emulator snapshot"
         if: steps.avd-cache.outputs.cache-hit != 'true'
