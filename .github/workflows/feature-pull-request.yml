@@ -166,7 +166,7 @@ jobs:
       - name: "Assemble instrumented tests"
         run: ./gradlew assembleDebugAndroidTest
 
-      - name: "Set up emulator caching"
+      - name: "Restore emulator snapshots"
         uses: actions/cache@v4
         id: avd-cache
         with:
@@ -174,18 +174,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ matrix.target }}
-
-      - name: "Create emulator snapshot"
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated emulator snapshot."
 
       - name: "Run instrumented tests"
         uses: reactivecircus/android-emulator-runner@v2
