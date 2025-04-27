@@ -43,9 +43,6 @@ jobs:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: "Grant permissions"
-        run: chmod +x gradlew
-
       - name: "Assemble application"
         run: ./gradlew assemble
 
@@ -89,9 +86,6 @@ jobs:
         with:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: "Grant permissions"
-        run: chmod +x gradlew
 
       - name: "Assemble unit tests"
         run: ./gradlew assembleDebugUnitTest
@@ -160,9 +154,6 @@ jobs:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: "Grant permissions"
-        run: chmod +x gradlew
-
       - name: "Assemble instrumented tests"
         run: ./gradlew assembleDebugAndroidTest
 
@@ -228,9 +219,6 @@ jobs:
         with:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: "Grant permissions"
-        run: chmod +x gradlew
 
       - name: "Restore unit test execution data"
         uses: actions/cache/restore@v4

@@ -25,9 +25,6 @@ jobs:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: "Grant permissions"
-        run: chmod +x gradlew
-
       - name: "Assemble application"
         env:
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
