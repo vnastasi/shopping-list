@@ -25,13 +25,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Set up Java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: "21"
           distribution: "temurin"
 
       - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
@@ -71,7 +71,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ matrix.target }}
-          restore-keys: avd-
 
       - name: "Create emulator snapshot"
         if: steps.avd-cache.outputs.cache-hit != 'true'
