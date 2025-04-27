@@ -1,13 +1,20 @@
 package md.vnastasi.plugin.codecoverage
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
+import javax.inject.Inject
 
-interface CodeCoverageExtension {
+abstract class CodeCoverageExtension @Inject constructor(objectFactory: ObjectFactory) {
 
-    val targetBuildType: Property<String>
+    val targetBuildType: Property<String> = objectFactory.property()
 
-    val reportDirectory: DirectoryProperty
+    val reportDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
-    val coverageThreshold: Property<Double>
+    val coverageThreshold: Property<Double> = objectFactory.property()
+
+    val exclusions: ListProperty<String> = objectFactory.listProperty()
 }

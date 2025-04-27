@@ -8,6 +8,7 @@ import md.vnastasi.plugin.support.withPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.configure
@@ -54,7 +55,7 @@ class CodeCoveragePlugin @Inject constructor(
 
             val executionDataDirectories = getExecDataDirs()
             val allSourceDirectories = getAllSourceDirs()
-            val allClassDirectories = getAllClassDirs(targetBuildType)
+            val allClassDirectories = getAllClassDirs(buildType = targetBuildType, exclusions = codeCoverageExtension.exclusions.get())
 
             tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
                 group = TASK_GROUP
@@ -111,22 +112,25 @@ class CodeCoveragePlugin @Inject constructor(
                     }
                 }
             }
-
         }
     }
 
     private fun Project.getAllSourceDirs(): List<Provider<Directory>> = subprojects
-        .map { it.layout.projectDirectory.dir("src/main/java") }
-        .map { providers.provider { it } }
+        .map { project -> project.layout.projectDirectory.dir("src/main/java") }
+        .map { directory -> providers.provider { directory } }
 
-    private fun Project.getAllClassDirs(buildType: String): List<Provider<Directory>> = subprojects
-        .map { it.layout.buildDirectory.dir("tmp/kotlin-classes/${buildType}") }
+    private fun Project.getAllClassDirs(buildType: String, exclusions: List<String>): List<Provider<FileTree>> = subprojects
+        .map { project ->
+            project.layout.buildDirectory.dir("tmp/kotlin-classes/${buildType}").map { directory ->
+                directory.asFileTree.matching {
+                    exclude(exclusions)
+                }
+            }
+        }
 
-
-    private fun Project.getExecDataDirs() = layout.buildDirectory
-        .dir("exec-data")
-        .map {
-            it.asFileTree.matching {
+    private fun Project.getExecDataDirs() = layout.buildDirectory.dir("exec-data")
+        .map { directory ->
+            directory.asFileTree.matching {
                 include("**/*.exec")
                 include("**/*.ec")
             }
