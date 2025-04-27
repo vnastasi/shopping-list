@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-apk:
-    name: Create release APK
+    name: "Create release APK"
     runs-on: ubuntu-latest
     steps:
       - name: "Check out repository"
@@ -50,7 +50,7 @@ jobs:
       - create-apk
     runs-on: ubuntu-latest
     steps:
-      - id: download_artifact
+      - id: download-artifact
         name: "Download APK from build"
         uses: actions/download-artifact@v4
         with:
@@ -67,7 +67,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - id: upload_release_asset
+      - id: upload-release-package
         name: "Upload release package"
         uses: actions/upload-release-asset@v1.0.1
         env:
