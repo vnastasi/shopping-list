@@ -2,13 +2,13 @@ package md.vnastasi.shoppinglist.db.dao
 
 import app.cash.turbine.test
 import assertk.all
+import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isFailure
-import assertk.assertions.isNull
 import md.vnastasi.shoppinglist.db.TestData.DEFAULT_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.db.TestData.DEFAULT_SHOPPING_LIST_NAME
 import md.vnastasi.shoppinglist.db.TestData.createShoppingItemEntity
@@ -160,7 +160,7 @@ class ShoppingListDaoTest {
         shoppingListDao.create(shoppingList)
 
         shoppingListDao.findById(-1L).test {
-            assertThat(awaitItem()).isNull()
+            assertFailure { awaitItem() }
             cancelAndIgnoreRemainingEvents()
         }
     }
