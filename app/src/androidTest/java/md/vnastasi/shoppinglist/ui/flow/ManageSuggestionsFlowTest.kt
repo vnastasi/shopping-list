@@ -2,7 +2,7 @@ package md.vnastasi.shoppinglist.ui.flow
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import md.vnastasi.shoppinglist.MainActivity
-import md.vnastasi.shoppinglist.db.model.NameSuggestion
+import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
 import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.ui.robot.addItemsScreen
@@ -28,11 +28,20 @@ class ManageSuggestionsFlowTest {
 
     private val databaseRule = createDatabaseRule(
         setUp = {
-            shoppingListDao().create(ShoppingList(1L, "My list"))
-            shoppingItemNameSuggestionDao().create(NameSuggestion(1L, "Eggs"))
-            shoppingItemNameSuggestionDao().create(NameSuggestion(2L, "Egg white"))
-            shoppingItemNameSuggestionDao().create(NameSuggestion(3L, "Egg yolks"))
-            shoppingItemNameSuggestionDao().create(NameSuggestion(4L, "Boiled eggs"))
+            val shoppingListDao = shoppingListDao()
+            val shoppingItemDao = shoppingItemDao()
+
+            shoppingListDao.create(ShoppingList(1L, "My list"))
+
+            sequenceOf(
+                ShoppingItem(id = 1L, name = "Eggs", isChecked = false, listId = 1L),
+                ShoppingItem(id = 2L, name = "Egg white", isChecked = false, listId = 1L),
+                ShoppingItem(id = 3L, name = "Egg yolks", isChecked = false, listId = 1L),
+                ShoppingItem(id = 4L, name = "Boiled eggs", isChecked = false, listId = 1L),
+            ).forEach { shoppingItem ->
+                shoppingItemDao.create(shoppingItem)
+                shoppingItemDao.delete(shoppingItem)
+            }
         }
     )
 

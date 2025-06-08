@@ -6,7 +6,5 @@ interface NameSuggestionRepository {
 
     suspend fun findAllMatching(searchTerm: String): List<NameSuggestion>
 
-    suspend fun create(value: String)
-
     suspend fun delete(suggestion: NameSuggestion)
 }

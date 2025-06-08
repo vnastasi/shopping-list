@@ -75,7 +75,6 @@ class AddItemsViewModel internal constructor(
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
-                    nameSuggestionRepository.create(shoppingItem.name)
                     _viewState.update { viewState ->
                         val toastMessage = ToastMessage(
                             textResourceId = R.string.toast_item_added,

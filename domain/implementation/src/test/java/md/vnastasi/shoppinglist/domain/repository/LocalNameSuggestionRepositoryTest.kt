@@ -78,17 +78,6 @@ internal class LocalNameSuggestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Given a suggestion name When creating a suggestion Then expect suggestion to be created")
-    fun create() = runTest {
-        val name = "Some name"
-
-        repository.create(name)
-
-        coVerify { mockNameSuggestionDao.create(NameSuggestionEntity(value = name)) }
-        confirmVerified(mockNameSuggestionDao)
-    }
-
-    @Test
     @DisplayName("Given a suggestion name When deleting a suggestion Then expect suggestion to be deleted")
     fun delete() = runTest {
         repository.delete(NameSuggestion(id = 23L, name = "Sample"))
