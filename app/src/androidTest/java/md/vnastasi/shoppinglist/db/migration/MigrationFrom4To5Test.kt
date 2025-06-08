@@ -17,10 +17,10 @@ class MigrationFrom4To5Test {
 
     @get:Rule
     val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        ShoppingListDatabase::class.java,
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory()
+        instrumentation = InstrumentationRegistry.getInstrumentation(),
+        databaseClass = ShoppingListDatabase::class.java,
+        specs = emptyList(),
+        openFactory = FrameworkSQLiteOpenHelperFactory()
     )
 
     @Test

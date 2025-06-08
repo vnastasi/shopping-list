@@ -9,18 +9,18 @@ import org.junit.Rule
 import org.junit.Test
 
 private const val TEST_DB_NAME = "testing_migrations_db"
-private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO shopping_lists (`id`, `name`) VALUES (?, ?)"
-private const val INSERT_SHOPPING_LIST_ITEM_SQL = "INSERT INTO shopping_items (`id`, `name`, `is_checked`, `list_id`) VALUES (?, ?, ?, ?)"
-private const val SELECT_SUGGESTIONS = "SELECT `value` FROM name_suggestions"
+private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO `shopping_lists` (`id`, `name`) VALUES (?, ?)"
+private const val INSERT_SHOPPING_LIST_ITEM_SQL = "INSERT INTO `shopping_items` (`id`, `name`, `is_checked`, `list_id`) VALUES (?, ?, ?, ?)"
+private const val SELECT_SUGGESTIONS = "SELECT `value` FROM `name_suggestions`"
 
 class MigrationFrom1To2Test {
 
     @get:Rule
     val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        ShoppingListDatabase::class.java,
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory()
+        instrumentation = InstrumentationRegistry.getInstrumentation(),
+        databaseClass = ShoppingListDatabase::class.java,
+        specs = emptyList(),
+        openFactory = FrameworkSQLiteOpenHelperFactory()
     )
 
     @Test

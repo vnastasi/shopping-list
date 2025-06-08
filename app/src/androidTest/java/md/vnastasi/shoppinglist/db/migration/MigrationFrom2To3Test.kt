@@ -10,8 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 
 private const val TEST_DB_NAME = "testing_migrations_db"
-private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO shopping_lists (`id`, `name`) VALUES (?, ?)"
-private const val SELECT_INDICES = "SELECT * FROM sqlite_master WHERE `type` = 'index' and `tbl_name` = 'shopping_items' and name = 'index_shopping_items_list_id'"
+private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO `shopping_lists` (`id`, `name`) VALUES (?, ?)"
+private const val SELECT_INDICES = "SELECT * FROM `sqlite_master` WHERE `type` = 'index' and `tbl_name` = 'shopping_items' and `name` = 'index_shopping_items_list_id'"
 
 class MigrationFrom2To3Test {
 
