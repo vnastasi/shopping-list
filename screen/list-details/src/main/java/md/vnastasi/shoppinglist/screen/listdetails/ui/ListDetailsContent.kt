@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -25,6 +27,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @Composable
 internal fun ListDetailsContent(
     contentPaddings: PaddingValues,
+    listState: LazyListState,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
     onItemClick: (ShoppingItem) -> Unit
 ) {
@@ -33,6 +36,7 @@ internal fun ListDetailsContent(
             .fillMaxWidth()
             .padding(top = AppDimensions.paddingSmall)
             .testTag(SHOPPING_ITEMS_LIST),
+        state = listState,
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -74,6 +78,7 @@ private fun NonEmptyListDetailsScreenContentPreview() {
     AppTheme {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
+            listState = rememberLazyListState(),
             listOfShoppingItems = listOfShoppingItems,
             onItemClick = { }
         )
