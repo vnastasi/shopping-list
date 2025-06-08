@@ -16,7 +16,7 @@ object DatabaseModule {
         single<ShoppingListDatabase> {
             Room.databaseBuilder(androidApplication(), ShoppingListDatabase::class.java, ShoppingListDatabase.DB_NAME)
                 .addMigrations(MigrationFrom1To2(), MigrationFrom2To3(), MigrationFrom3To4())
-                .fallbackToDestructiveMigrationOnDowngrade()
+                .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()
         }
 
