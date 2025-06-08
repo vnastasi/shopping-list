@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -79,6 +81,7 @@ private fun ListDetailsScreen(
     onAddNewItems: (Long) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val listState = rememberLazyListState()
 
     Scaffold(
         modifier = Modifier
@@ -117,6 +120,7 @@ private fun ListDetailsScreen(
                 is ViewState.Ready -> {
                     ReadyListDetailsContent(
                         contentPaddings = contentPaddings,
+                        listState = listState,
                         listOfShoppingItems = viewState.listOfShoppingItems,
                         onItemClick = onItemClicked
                     )
@@ -188,6 +192,7 @@ private fun AddItemsFloatingActionButton(
 @Composable
 private fun ReadyListDetailsContent(
     contentPaddings: PaddingValues,
+    listState: LazyListState,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
     onItemClick: (ShoppingItem) -> Unit
 ) {
@@ -200,6 +205,7 @@ private fun ReadyListDetailsContent(
     } else {
         ListDetailsContent(
             contentPaddings = contentPaddings,
+            listState = listState,
             listOfShoppingItems = listOfShoppingItems,
             onItemClick = onItemClick
         )
