@@ -13,7 +13,7 @@ import md.vnastasi.shoppinglist.db.model.ShoppingListDetails
 @Database(
     entities = [ShoppingItem::class, ShoppingList::class, NameSuggestion::class],
     views = [ShoppingListDetails::class],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class ShoppingListDatabase : RoomDatabase() {

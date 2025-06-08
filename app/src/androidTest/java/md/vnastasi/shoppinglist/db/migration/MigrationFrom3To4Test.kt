@@ -12,16 +12,15 @@ import org.junit.Test
 private const val TEST_DB_NAME = "testing_migrations_db"
 private const val INSERT_SHOPPING_LIST_SQL = "INSERT INTO shopping_lists (`id`, `name`) VALUES (?, ?)"
 private const val INSERT_SHOPPING_ITEM_SQL = "INSERT INTO shopping_items (`id`, `name`, `is_checked`, `list_id`) VALUES (?, ?, ?, ?)"
-private const val SELECT_SHOPPING_LIST_DETAILS_SQL = "SELECT * FROM shopping_list_details"
+private const val SELECT_SHOPPING_LIST_DETAILS_SQL = "SELECT * FROM `shopping_list_details`"
 
 class MigrationFrom3To4Test {
 
     @get:Rule
     val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        ShoppingListDatabase::class.java,
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory()
+        instrumentation = InstrumentationRegistry.getInstrumentation(),
+        databaseClass = ShoppingListDatabase::class.java,
+        specs = emptyList()
     )
 
     @Test

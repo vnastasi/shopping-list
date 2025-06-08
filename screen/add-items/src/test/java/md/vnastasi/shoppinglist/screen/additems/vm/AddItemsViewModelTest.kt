@@ -71,7 +71,7 @@ internal class AddItemsViewModelTest {
     @DisplayName(
         """
         When handling a `ItemAddedToList` UI event
-        Then expect item to be added to the list and name to be added to the suggestions and a toast message to be displayed
+        Then expect item to be added to the list and a toast message to be displayed
     """
     )
     fun onItemAddedToList() = runTest {
@@ -93,7 +93,6 @@ internal class AddItemsViewModelTest {
         }
 
         coVerify { mockShoppingItemRepository.create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList))) }
-        coVerify { mockNameSuggestionRepository.create(name) }
         confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
 
         assertThat(viewModel.searchTermState.value).isEmpty()
@@ -119,7 +118,6 @@ internal class AddItemsViewModelTest {
         }
 
         coVerify(exactly = 0) { mockShoppingItemRepository.create(any()) }
-        coVerify(exactly = 0) { mockNameSuggestionRepository.create(any()) }
         confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
 
         assertThat(viewModel.searchTermState.value).isEqualTo("Search term")

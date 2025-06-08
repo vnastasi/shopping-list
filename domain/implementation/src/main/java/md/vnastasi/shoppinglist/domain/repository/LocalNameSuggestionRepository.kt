@@ -16,10 +16,6 @@ internal class LocalNameSuggestionRepository(
         else -> listOf(NameSuggestion(-1L, searchTerm)) + nameSuggestionDao.findAll(searchTerm).map { it.toDomainModel() }
     }
 
-    override suspend fun create(value: String) {
-        nameSuggestionDao.create(NameSuggestionEntity(value = value))
-    }
-
     override suspend fun delete(suggestion: NameSuggestion) {
         nameSuggestionDao.delete(suggestion.toEntity())
     }
