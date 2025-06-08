@@ -17,10 +17,9 @@ class MigrationFrom2To3Test {
 
     @get:Rule
     val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        ShoppingListDatabase::class.java,
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory()
+        instrumentation = InstrumentationRegistry.getInstrumentation(),
+        databaseClass = ShoppingListDatabase::class.java,
+        specs = emptyList()
     )
 
     @Test

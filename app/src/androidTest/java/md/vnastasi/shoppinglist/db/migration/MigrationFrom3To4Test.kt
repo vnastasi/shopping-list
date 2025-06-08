@@ -20,8 +20,7 @@ class MigrationFrom3To4Test {
     val helper = MigrationTestHelper(
         instrumentation = InstrumentationRegistry.getInstrumentation(),
         databaseClass = ShoppingListDatabase::class.java,
-        specs = emptyList(),
-        openFactory = FrameworkSQLiteOpenHelperFactory()
+        specs = emptyList()
     )
 
     @Test
