@@ -3,7 +3,7 @@ package md.vnastasi.shoppinglist.db.callback
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-internal class CreateNameSuggestionTriggerCallback : RoomDatabase.Callback() {
+class CreateNameSuggestionTriggerCallback : RoomDatabase.Callback() {
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         db.execSQL(SQL_STATEMENT)
