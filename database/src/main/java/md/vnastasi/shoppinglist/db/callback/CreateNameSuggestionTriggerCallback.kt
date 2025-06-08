@@ -12,12 +12,13 @@ internal class CreateNameSuggestionTriggerCallback : RoomDatabase.Callback() {
     companion object {
 
         const val SQL_STATEMENT = """
-            CREATE TRIGGER `create_name_suggestion_trigger` IF NOT EXISTS
+            CREATE TRIGGER IF NOT EXISTS `trigger_create_name_suggestion`
                 AFTER INSERT ON `shopping_items`
                 FOR EACH ROW
             BEGIN
-                INSERT OR REPLACE INTO `name_suggestions` (`value`) 
+                INSERT INTO `name_suggestions` (`value`) 
                 VALUES (trim(NEW.`name`))
+                ON CONFLICT (`value`) DO NOTHING;
             END;
         """
     }
