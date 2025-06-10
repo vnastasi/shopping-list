@@ -55,6 +55,7 @@ compose-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-material = { module = "androidx.compose.material3:material3" }
 compose-material-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-compose-material-adaptive" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
