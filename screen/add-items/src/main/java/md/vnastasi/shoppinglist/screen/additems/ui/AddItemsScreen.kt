@@ -55,7 +55,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun AddItemsScreen(
+internal fun AddItemsScreen(
     viewModel: AddItemsViewModelSpec,
     navigator: AddItemsScreenNavigator
 ) {
@@ -194,7 +194,7 @@ private fun AddItemsTopAppBar(
 @PreviewScreenSizes
 @PreviewFontScale
 @Composable
-fun AddItemsScreenPreview() {
+private fun AddItemsScreenPreview() {
     val viewState = ViewState(
         suggestions = persistentListOf(
             NameSuggestion(id = -1L, "Sample item"),
