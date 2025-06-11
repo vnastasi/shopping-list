@@ -62,6 +62,8 @@ class CreateShoppingListFlowTest {
             typeSearchQuery("Milk")
             clickOnSuggestionItem("Milk")
             clearSearchbar()
+            typeSearchQuery("Hammer")
+            acceptValueFromKeyboard()
             typeSearchQuery("Bread")
             acceptValueFromKeyboard()
             typeSearchQuery("Coconut oil")
@@ -74,6 +76,9 @@ class CreateShoppingListFlowTest {
             hasUncheckedItem("Coconut oil")
             hasUncheckedItem("Bread")
             hasUncheckedItem("Milk")
+            hasUncheckedItem("Hammer")
+            deleteItem("Hammer")
+            hasNoItem("Hammer")
             navigateBack()
         }
 
