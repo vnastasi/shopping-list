@@ -52,10 +52,9 @@ internal class ListDetailsViewModelTest {
         createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(
+                ViewState.Empty(
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
-                    listOfShoppingItems = persistentListOf()
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -99,7 +98,7 @@ internal class ListDetailsViewModelTest {
         Then expect shopping item to be updated to checked state
     """
     )
-    fun onShoppingListChecked() = runTest {
+    fun onShoppingItemChecked() = runTest {
         val shoppingListId = 567L
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
 

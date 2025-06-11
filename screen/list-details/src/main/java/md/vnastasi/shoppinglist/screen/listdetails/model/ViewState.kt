@@ -9,6 +9,11 @@ sealed class ViewState {
 
     data object Loading : ViewState()
 
+    data class Empty(
+        val shoppingListId: Long,
+        val shoppingListName: String
+    ) : ViewState()
+
     data class Ready(
         val shoppingListId: Long,
         val shoppingListName: String,

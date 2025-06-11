@@ -194,7 +194,7 @@ private fun AddItemsTopAppBar(
 @PreviewScreenSizes
 @PreviewFontScale
 @Composable
-fun AddItemsScreenPreview() {
+private fun AddItemsScreenPreview() {
     val viewState = ViewState(
         suggestions = persistentListOf(
             NameSuggestion(id = -1L, "Sample item"),

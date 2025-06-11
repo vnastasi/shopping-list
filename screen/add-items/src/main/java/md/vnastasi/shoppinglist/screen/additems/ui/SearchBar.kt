@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import md.vnastasi.shoppinglist.res.R
 
 @Composable
-fun SearchBar(
+internal fun SearchBar(
     modifier: Modifier = Modifier,
     searchTerm: MutableState<String>,
     onValueAccepted: () -> Unit

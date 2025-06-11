@@ -59,12 +59,22 @@ class ListDetailsViewModel internal constructor(
         }
     }
 
-    private fun createViewState(shoppingList: ShoppingList, listOfShoppingItems: List<ShoppingItem>): ViewState =
-        ViewState.Ready(
-            shoppingListId = shoppingList.id,
-            shoppingListName = shoppingList.name,
-            listOfShoppingItems = listOfShoppingItems.toImmutableList()
-        )
+    private fun createViewState(
+        shoppingList: ShoppingList,
+        listOfShoppingItems: List<ShoppingItem>
+    ): ViewState =
+        if (listOfShoppingItems.isEmpty()) {
+            ViewState.Empty(
+                shoppingListId = shoppingList.id,
+                shoppingListName = shoppingList.name
+            )
+        } else {
+            ViewState.Ready(
+                shoppingListId = shoppingList.id,
+                shoppingListName = shoppingList.name,
+                listOfShoppingItems = listOfShoppingItems.toImmutableList()
+            )
+        }
 
     class Factory internal constructor(
         private val shoppingListRepository: ShoppingListRepository,
