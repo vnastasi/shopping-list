@@ -55,7 +55,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-internal fun AddItemsScreen(
+fun AddItemsScreen(
     viewModel: AddItemsViewModelSpec,
     navigator: AddItemsScreenNavigator
 ) {
