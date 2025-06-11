@@ -1,7 +1,10 @@
 package md.vnastasi.shoppinglist.ui.robot
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -10,6 +13,7 @@ import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -19,6 +23,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LIST
 
 private const val DEFAULT_TIMEOUT = 5_000L
@@ -63,6 +68,13 @@ class ListDetailsScreenRobot(
         composeTestRule.onNode(matcher).performClick()
     }
 
+    fun hasNoItem(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
+        val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name))
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).onChildren().filter(itemMatcher).assertCountEquals(0)
+    }
+
     fun hasCheckedItem(name: String) {
         val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name)) and hasAnyDescendant(hasTestTag(LIST_ITEM_CHECKBOX) and isOn())
@@ -88,5 +100,15 @@ class ListDetailsScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
+    }
+
+    fun deleteItem(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
+        val itemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name))
+        val deleteButtonMatcher = hasTestTag(SHOPPING_ITEMS_ITEM_DELETE_BUTTON) and hasAnyAncestor(itemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(deleteButtonMatcher).performClick()
     }
 }

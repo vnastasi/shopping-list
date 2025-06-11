@@ -145,6 +145,31 @@ internal class ListDetailsViewModelTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem.copy(isChecked = false))
     }
 
+    @Test
+    @DisplayName(
+        """
+        When handling a `ShoppingItemDeleted` UI event on a shopping item
+        Then expect shopping item to be deleted
+    """
+    )
+    fun onShoppingItemDeleted() = runTest {
+        val shoppingListId = 567L
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
+
+        val shoppingItem = createShoppingItem()
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
+
+        val shoppingItemSlot = slot<ShoppingItem>()
+        coEvery { mockShoppingItemRepository.delete(capture(shoppingItemSlot)) } returns Unit
+
+        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+
+        viewModel.onUiEvent(UiEvent.ShoppingItemDeleted(shoppingItem))
+        advanceUntilIdle()
+
+        assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem)
+    }
+
     private fun createViewModel(
         testScheduler: TestCoroutineScheduler,
         initialState: Map<String, Any?> = emptyMap()

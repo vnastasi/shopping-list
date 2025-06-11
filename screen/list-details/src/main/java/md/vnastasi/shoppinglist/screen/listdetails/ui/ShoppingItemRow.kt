@@ -4,23 +4,32 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
+import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -31,7 +40,8 @@ internal fun ShoppingItemRow(
     modifier: Modifier = Modifier,
     shoppingItem: ShoppingItem,
     isLastItemInList: Boolean,
-    onClick: (ShoppingItem) -> Unit
+    onClick: (ShoppingItem) -> Unit,
+    onDelete: (ShoppingItem) -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxWidth()
@@ -68,6 +78,26 @@ internal fun ShoppingItemRow(
                         textDecoration = if (shoppingItem.isChecked) TextDecoration.LineThrough else TextDecoration.None
                     )
                 )
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+
+                IconButton(
+                    modifier = Modifier
+                        .testTag(SHOPPING_ITEMS_ITEM_DELETE_BUTTON)
+                        .wrapContentSize()
+                        .align(Alignment.CenterVertically),
+                    onClick = { onDelete.invoke(shoppingItem) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
 
             if (!isLastItemInList) {
@@ -100,7 +130,8 @@ private fun ShoppingItemRowPreview1() {
     ShoppingItemRow(
         shoppingItem = shoppingItem,
         isLastItemInList = true,
-        onClick = { }
+        onClick = { },
+        onDelete = { }
     )
 }
 
@@ -123,7 +154,8 @@ private fun ShoppingItemRowPreview2() {
         ShoppingItemRow(
             shoppingItem = shoppingItem,
             isLastItemInList = true,
-            onClick = { }
+            onClick = { },
+            onDelete = { }
         )
     }
 }

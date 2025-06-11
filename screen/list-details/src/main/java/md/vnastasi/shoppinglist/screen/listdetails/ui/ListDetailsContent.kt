@@ -26,7 +26,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 internal fun ListDetailsContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
-    onItemClick: (ShoppingItem) -> Unit
+    onItemClick: (ShoppingItem) -> Unit,
+    onItemDelete: (ShoppingItem) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -50,7 +51,8 @@ internal fun ListDetailsContent(
                     .testTag(SHOPPING_ITEMS_ITEM),
                 shoppingItem = shoppingItem,
                 isLastItemInList = index == listOfShoppingItems.size - 1,
-                onClick = onItemClick
+                onClick = onItemClick,
+                onDelete = onItemDelete
             )
         }
     }
@@ -75,7 +77,8 @@ private fun NonEmptyListDetailsScreenContentPreview() {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             listOfShoppingItems = listOfShoppingItems,
-            onItemClick = { }
+            onItemClick = { },
+            onItemDelete = { }
         )
     }
 }

@@ -50,12 +50,19 @@ class ListDetailsViewModel internal constructor(
     override fun onUiEvent(event: UiEvent) {
         when (event) {
             is UiEvent.ShoppingItemClicked -> onShoppingItemClicked(event.shoppingItem)
+            is UiEvent.ShoppingItemDeleted -> onShoppingItemDeleted(event.shoppingItem)
         }
     }
 
     private fun onShoppingItemClicked(shoppingItem: ShoppingItem) {
         viewModelScope.launch(dispatchersProvider.IO) {
             shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
+        }
+    }
+
+    private fun onShoppingItemDeleted(shoppingItem: ShoppingItem) {
+        viewModelScope.launch(dispatchersProvider.IO) {
+            shoppingItemRepository.delete(shoppingItem)
         }
     }
 
