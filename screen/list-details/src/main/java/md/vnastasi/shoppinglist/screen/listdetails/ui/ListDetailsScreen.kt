@@ -1,10 +1,8 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -14,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -44,7 +40,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -69,7 +64,7 @@ fun ListDetailsScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         onNavigateUp = navigator::backToOverview,
         onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
-        onAddNewItems = { shoppingListId -> navigator.toAddItems(shoppingListId) }
+        onAddNewItems = navigator::toAddItems
     )
 }
 
@@ -81,7 +76,6 @@ private fun ListDetailsScreen(
     onAddNewItems: (Long) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val listState = rememberLazyListState()
 
     Scaffold(
         modifier = Modifier
@@ -90,41 +84,43 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = (viewState.value as? ViewState.Ready)?.shoppingListName,
+                title = viewState.value.getShoppingListNameOrNull(),
                 onNavigateUp = onNavigateUp
             )
         },
         floatingActionButton = {
-            val viewStateValue = viewState.value
-            if (viewStateValue is ViewState.Ready) {
+            val shoppingListId = viewState.value.getShoppingListIdOrNull()
+            if (shoppingListId != null) {
                 AddItemsFloatingActionButton(
-                    onClick = { onAddNewItems(viewStateValue.shoppingListId) }
+                    onClick = { onAddNewItems(shoppingListId) }
                 )
             }
         }
     ) { contentPaddings ->
-        Crossfade(
-            modifier = Modifier.fillMaxSize(),
-            targetState = viewState.value,
-            label = "List details cross-fade"
-        ) { viewState ->
-            when (viewState) {
-                is ViewState.Loading -> {
-                    AnimatedMessageContent(
-                        contentPaddings = contentPaddings,
-                        animationResId = R.raw.lottie_anim_loading,
-                        messageResId = R.string.list_details_loading
-                    )
-                }
+        val localViewState = viewState.value
+        when (localViewState) {
+            is ViewState.Loading -> {
+                AnimatedMessageContent(
+                    contentPaddings = contentPaddings,
+                    animationResId = R.raw.lottie_anim_loading,
+                    messageResId = R.string.list_details_loading
+                )
+            }
 
-                is ViewState.Ready -> {
-                    ReadyListDetailsContent(
-                        contentPaddings = contentPaddings,
-                        listState = listState,
-                        listOfShoppingItems = viewState.listOfShoppingItems,
-                        onItemClick = onItemClicked
-                    )
-                }
+            is ViewState.Empty -> {
+                AnimatedMessageContent(
+                    contentPaddings = contentPaddings,
+                    animationResId = R.raw.lottie_anim_empty_box,
+                    messageResId = R.string.list_details_empty
+                )
+            }
+
+            is ViewState.Ready -> {
+                ListDetailsContent(
+                    contentPaddings = contentPaddings,
+                    listOfShoppingItems = localViewState.listOfShoppingItems,
+                    onItemClick = onItemClicked
+                )
             }
         }
     }
@@ -189,28 +185,19 @@ private fun AddItemsFloatingActionButton(
     }
 }
 
-@Composable
-private fun ReadyListDetailsContent(
-    contentPaddings: PaddingValues,
-    listState: LazyListState,
-    listOfShoppingItems: ImmutableList<ShoppingItem>,
-    onItemClick: (ShoppingItem) -> Unit
-) {
-    if (listOfShoppingItems.isEmpty()) {
-        AnimatedMessageContent(
-            contentPaddings = contentPaddings,
-            animationResId = R.raw.lottie_anim_empty_box,
-            messageResId = R.string.list_details_empty
-        )
-    } else {
-        ListDetailsContent(
-            contentPaddings = contentPaddings,
-            listState = listState,
-            listOfShoppingItems = listOfShoppingItems,
-            onItemClick = onItemClick
-        )
+private fun ViewState.getShoppingListNameOrNull(): String? =
+    when (this) {
+        is ViewState.Loading -> null
+        is ViewState.Empty -> shoppingListName
+        is ViewState.Ready -> shoppingListName
     }
-}
+
+private fun ViewState.getShoppingListIdOrNull(): Long? =
+    when (this) {
+        is ViewState.Loading -> null
+        is ViewState.Empty -> shoppingListId
+        is ViewState.Ready -> shoppingListId
+    }
 
 @ExcludeFromJacocoGeneratedReport
 @PreviewLightDark
