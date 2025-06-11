@@ -45,8 +45,8 @@ internal class OverviewViewModelTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
 
         createViewModel(testScheduler).viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(persistentListOf()))
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Empty())
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -64,7 +64,7 @@ internal class OverviewViewModelTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         createViewModel(testScheduler).viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(persistentListOf(shoppingListDetails)))
             cancelAndConsumeRemainingEvents()
         }
@@ -84,9 +84,9 @@ internal class OverviewViewModelTest {
         viewModel.onUiEvent(UiEvent.AddNewShoppingList)
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListForm)
+                ViewState.Empty(navigationTarget = NavigationTarget.ShoppingListForm)
             )
 
             cancelAndConsumeRemainingEvents()
@@ -125,15 +125,15 @@ internal class OverviewViewModelTest {
         val shoppingListDetails = createShoppingListDetails {
             id = 6578L
         }
-        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListSelected(shoppingListDetails))
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListDetails(6578L))
+                ViewState.Ready(shoppingLists = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.ShoppingListDetails(6578L))
             )
 
             cancelAndConsumeRemainingEvents()
@@ -149,7 +149,7 @@ internal class OverviewViewModelTest {
     )
     fun onShoppingListDeleted() = runTest {
         val shoppingListDetails = createShoppingListDetails()
-        every { mockShoppingListRepository.findAll() } returns flowOf(emptyList())
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         val viewModel = createViewModel(testScheduler)
         viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingListDetails))
@@ -173,20 +173,20 @@ internal class OverviewViewModelTest {
         val viewModel = createViewModel(testScheduler)
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
 
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = null)
+                ViewState.Empty(navigationTarget = null)
             )
 
             viewModel.onUiEvent(UiEvent.AddNewShoppingList)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = NavigationTarget.ShoppingListForm)
+                ViewState.Empty(navigationTarget = NavigationTarget.ShoppingListForm)
             )
 
             viewModel.onUiEvent(UiEvent.NavigationPerformed)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = null)
+                ViewState.Empty(navigationTarget = null)
             )
 
             cancelAndConsumeRemainingEvents()
@@ -206,20 +206,20 @@ internal class OverviewViewModelTest {
         val viewModel = createViewModel(testScheduler)
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Idle)
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
 
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), navigationTarget = null)
+                ViewState.Empty(navigationTarget = null)
             )
 
             viewModel.onUiEvent(UiEvent.ShoppingListSaved("test"))
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), toastMessage = ToastMessage(textResourceId = R.string.toast_list_created, arguments = persistentListOf("test")))
+                ViewState.Empty(toastMessage = ToastMessage(textResourceId = R.string.toast_list_created, arguments = persistentListOf("test")))
             )
 
             viewModel.onUiEvent(UiEvent.ToastShown)
             assertThat(awaitItem()).isDataClassEqualTo(
-                ViewState.Ready(shoppingLists = persistentListOf(), toastMessage = null)
+                ViewState.Empty(toastMessage = null)
             )
 
             cancelAndConsumeRemainingEvents()

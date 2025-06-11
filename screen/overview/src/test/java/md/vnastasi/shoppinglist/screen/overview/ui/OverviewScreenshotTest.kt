@@ -119,7 +119,7 @@ class OverviewScreenshotTest(
                 shoppingLists = persistentListOf(),
                 navigationTarget = NavigationTarget.ShoppingListForm
             ),
-            ViewState.Idle
+            ViewState.Loading
         )
     }
 }

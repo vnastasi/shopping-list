@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -28,6 +27,8 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,6 +115,8 @@ private fun OverviewScreen(
     ) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+        val showFloatingActionButton by remember { derivedStateOf { viewState.value != ViewState.Loading } }
+
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,41 +127,48 @@ private fun OverviewScreen(
                 )
             },
             floatingActionButton = {
-                if (viewState.value is ViewState.Ready) {
+                if (showFloatingActionButton) {
                     NewShoppingListFloatingActionButton(
                         onClick = onAddNewShoppingList
                     )
                 }
             }
         ) { contentPaddings ->
-            Crossfade(
-                modifier = Modifier.fillMaxSize(),
-                targetState = viewState.value,
-                label = "Overview cross-fade"
-            ) { viewState ->
-                when (viewState) {
-                    is ViewState.Idle -> {
-                        AnimatedMessageContent(
-                            contentPaddings = contentPaddings,
-                            animationResId = R.raw.lottie_anim_loading,
-                            messageResId = R.string.overview_loading
-                        )
-                    }
+            val localViewState = viewState.value
+            when (localViewState) {
+                is ViewState.Loading -> {
+                    AnimatedMessageContent(
+                        contentPaddings = contentPaddings,
+                        animationResId = R.raw.lottie_anim_loading,
+                        messageResId = R.string.overview_loading
+                    )
+                }
 
-                    is ViewState.Ready -> {
-                        ReadyOverviewContent(
-                            contentPaddings = contentPaddings,
-                            bottomSheetBehaviour = bottomSheetBehaviour,
-                            shoppingLists = viewState.shoppingLists,
-                            toastMessage = viewState.toastMessage,
-                            navigationTarget = viewState.navigationTarget,
-                            onShoppingListDeleted = onShoppingListDeleted,
-                            onShoppingListSelected = onShoppingListSelected,
-                            onToastShown = onToastShown,
-                            onNavigateToListDetails = onNavigateToListDetails,
-                            onNavigationPerformed = onNavigationPerformed
-                        )
-                    }
+                is ViewState.Empty -> {
+                    EmptyOverviewContent(
+                        contentPaddings = contentPaddings,
+                        bottomSheetBehaviour = bottomSheetBehaviour,
+                        toastMessage = localViewState.toastMessage,
+                        navigationTarget = localViewState.navigationTarget,
+                        onToastShown = onToastShown,
+                        onNavigateToListDetails = onNavigateToListDetails,
+                        onNavigationPerformed = onNavigationPerformed
+                    )
+                }
+
+                is ViewState.Ready -> {
+                    ReadyOverviewContent(
+                        contentPaddings = contentPaddings,
+                        bottomSheetBehaviour = bottomSheetBehaviour,
+                        shoppingLists = localViewState.shoppingLists,
+                        toastMessage = localViewState.toastMessage,
+                        navigationTarget = localViewState.navigationTarget,
+                        onShoppingListDeleted = onShoppingListDeleted,
+                        onShoppingListSelected = onShoppingListSelected,
+                        onToastShown = onToastShown,
+                        onNavigateToListDetails = onNavigateToListDetails,
+                        onNavigationPerformed = onNavigationPerformed
+                    )
                 }
             }
         }
@@ -205,6 +215,35 @@ private fun NewShoppingListFloatingActionButton(
 }
 
 @Composable
+private fun EmptyOverviewContent(
+    contentPaddings: PaddingValues,
+    bottomSheetBehaviour: BottomSheetBehaviour,
+    toastMessage: ToastMessage?,
+    navigationTarget: NavigationTarget?,
+    onToastShown: () -> Unit,
+    onNavigateToListDetails: (Long) -> Unit,
+    onNavigationPerformed: () -> Unit
+) {
+    Toast(
+        message = toastMessage,
+        onToastShown = onToastShown
+    )
+
+    NavigationHandler(
+        bottomSheetBehaviour = bottomSheetBehaviour,
+        navigationTarget = navigationTarget,
+        onNavigateToListDetails = onNavigateToListDetails,
+        onNavigationPerformed = onNavigationPerformed
+    )
+
+    AnimatedMessageContent(
+        contentPaddings = contentPaddings,
+        animationResId = R.raw.lottie_anim_shopping_cart,
+        messageResId = R.string.overview_empty_list
+    )
+}
+
+@Composable
 private fun ReadyOverviewContent(
     contentPaddings: PaddingValues,
     bottomSheetBehaviour: BottomSheetBehaviour,
@@ -222,7 +261,29 @@ private fun ReadyOverviewContent(
         onToastShown = onToastShown
     )
 
-    LaunchedEffect(key1 = navigationTarget) {
+    NavigationHandler(
+        bottomSheetBehaviour = bottomSheetBehaviour,
+        navigationTarget = navigationTarget,
+        onNavigateToListDetails = onNavigateToListDetails,
+        onNavigationPerformed = onNavigationPerformed
+    )
+
+    OverviewContent(
+        contentPaddings = contentPaddings,
+        list = shoppingLists,
+        onClick = onShoppingListSelected,
+        onDelete = onShoppingListDeleted
+    )
+}
+
+@Composable
+private fun NavigationHandler(
+    bottomSheetBehaviour: BottomSheetBehaviour,
+    navigationTarget: NavigationTarget?,
+    onNavigateToListDetails: (Long) -> Unit,
+    onNavigationPerformed: () -> Unit
+) {
+    LaunchedEffect(navigationTarget) {
         when (navigationTarget) {
             is NavigationTarget.ShoppingListDetails -> {
                 onNavigateToListDetails(navigationTarget.id)
@@ -236,21 +297,6 @@ private fun ReadyOverviewContent(
 
             null -> Unit
         }
-    }
-
-    if (shoppingLists.isEmpty()) {
-        AnimatedMessageContent(
-            contentPaddings = contentPaddings,
-            animationResId = R.raw.lottie_anim_shopping_cart,
-            messageResId = R.string.overview_empty_list
-        )
-    } else {
-        OverviewContent(
-            contentPaddings = contentPaddings,
-            list = shoppingLists,
-            onClick = onShoppingListSelected,
-            onDelete = onShoppingListDeleted
-        )
     }
 }
 

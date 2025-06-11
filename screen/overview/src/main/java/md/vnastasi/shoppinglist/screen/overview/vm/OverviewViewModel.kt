@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,11 +36,11 @@ class OverviewViewModel internal constructor(
     private val toastMessage = MutableStateFlow<ToastMessage?>(null)
 
     override val viewState: StateFlow<ViewState> = combine(
-        list, navigationTarget, toastMessage, ViewState::Ready
+        list, navigationTarget, toastMessage, ::createViewState
     ).stateIn(
         scope = viewModelScope + dispatchersProvider.MainImmediate,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.Idle
+        initialValue = ViewState.Loading
     )
 
     override fun onUiEvent(uiEvent: UiEvent) {
@@ -52,6 +53,13 @@ class OverviewViewModel internal constructor(
             is UiEvent.ToastShown -> onToastShown()
         }
     }
+
+    private fun createViewState(
+        list: ImmutableList<ShoppingListDetails>,
+        navigationTarget: NavigationTarget?,
+        toastMessage: ToastMessage?
+    ): ViewState =
+        if (list.isEmpty()) ViewState.Empty(navigationTarget, toastMessage) else ViewState.Ready(list, navigationTarget, toastMessage)
 
     private fun onShoppingListDeleted(shoppingListDetails: ShoppingListDetails) {
         viewModelScope.launch(dispatchersProvider.IO) {

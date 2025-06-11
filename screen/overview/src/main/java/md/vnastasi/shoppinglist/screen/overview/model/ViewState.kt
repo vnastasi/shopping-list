@@ -8,7 +8,12 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 @Stable
 sealed class ViewState {
 
-    data object Idle : ViewState()
+    data object Loading : ViewState()
+
+    data class Empty(
+        val navigationTarget: NavigationTarget? = null,
+        val toastMessage: ToastMessage? = null
+    ) : ViewState()
 
     data class Ready(
         val shoppingLists: ImmutableList<ShoppingListDetails>,
