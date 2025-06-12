@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.paparazzi).apply(false)
+    alias(libs.plugins.gradle.dependencies).apply(false)
     alias(libs.plugins.gradle.wrapper.upgrade)
     id("code-coverage")
     id("detekt-aggregator")

@@ -76,6 +76,7 @@ internal fun Project.addUnitTestDependencies() {
 }
 
 internal fun Project.configureSimpleLibrary() {
+    pluginManager.apply(libs.plugins.gradle.dependencies)
     pluginManager.apply(libs.plugins.android.library)
     pluginManager.apply(libs.plugins.android.cacheFix)
     pluginManager.apply(libs.plugins.kotlin.android)
@@ -131,6 +132,7 @@ internal fun Project.configureComposeScreenLibrary() {
 }
 
 internal fun Project.configureApplication() {
+    pluginManager.apply(libs.plugins.gradle.dependencies)
     pluginManager.apply(libs.plugins.android.application)
     pluginManager.apply(libs.plugins.android.cacheFix)
     pluginManager.apply(libs.plugins.kotlin.android)
