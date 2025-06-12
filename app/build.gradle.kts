@@ -77,8 +77,8 @@ dependencies {
     implementation(project(":screen:add-items"))
     implementation(project(":screen:list-details"))
     implementation(project(":screen:overview"))
+    implementation(project(":screen:shared"))
     implementation(project(":support:async"))
-    implementation(project(":support:lifecycle"))
     implementation(project(":support:theme"))
 
     implementation(platform(libs.compose.bom))

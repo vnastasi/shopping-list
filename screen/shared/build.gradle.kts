@@ -8,11 +8,14 @@ android {
     namespace = "md.vnastasi.shoppinglist.screen.shared"
 }
 
+dependencies {
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.lificycle.viewmodel.compose)
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(
-//            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-//            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         )
     }
