@@ -30,7 +30,7 @@ dependencies {
     implementation(libs.androidx.lificycle.common)
     implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.lificycle.viewmodel)
-    implementation(libs.compose.animations)
+    implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
     implementation(libs.compose.graphics)
     implementation(libs.compose.material)
