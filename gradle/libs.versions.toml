@@ -53,6 +53,7 @@ androidx-window = { module = "androidx.window:window", version.ref = "androidx-w
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-foudation = { module = "androidx.compose.foundation:foundation" }
 compose-material = { module = "androidx.compose.material3:material3" }
 compose-material-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-compose-material-adaptive" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
@@ -61,6 +62,8 @@ compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-text = { module = "androidx.compose.ui:ui-text" }
+compose-ui-unit = { module = "androidx.compose.ui:ui-unit" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 espresso-idling-concurrent = { module = "androidx.test.espresso.idling:idling-concurrent", version.ref = "espresso" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
