@@ -12,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -111,24 +110,24 @@ internal fun Project.configureComposeScreenLibrary() {
     configureComposeLibrary()
     configureTestableLibrary()
 
-    dependencies {
-        addProvider("implementation", provider { project(":domain:api") })
-        addProvider("implementation", provider { project(":resources") })
-        addProvider("implementation", provider { project(":support:annotation") })
-        addProvider("implementation", provider { project(":support:async") })
-        addProvider("implementation", provider { project(":support:theme") })
-        addProvider("implementation", platform(libs.compose.bom))
-        addProvider("implementation", platform(libs.kotlin.bom))
-        addProvider("implementation", platform(libs.kotlinx.coroutines.bom))
-        addProvider("implementation", libs.androidx.core)
-        addProvider("implementation", libs.koin.android)
-        addProvider("implementation", libs.kotlinx.collections)
-        addProvider("implementation", libs.lottie.compose)
-        addProvider("implementation", libs.bundles.compose.ui)
-        addProvider("debugImplementation", libs.bundles.compose.debug)
-        addProvider("testImplementation", provider { project(":support:async-unit-test") })
-        addProvider("testImplementation", provider { testFixtures(project(":domain:api")) })
-    }
+//    dependencies {
+//        addProvider("implementation", provider { project(":domain:api") })
+//        addProvider("implementation", provider { project(":resources") })
+//        addProvider("implementation", provider { project(":support:annotation") })
+//        addProvider("implementation", provider { project(":support:async") })
+//        addProvider("implementation", provider { project(":support:theme") })
+//        addProvider("implementation", platform(libs.compose.bom))
+//        addProvider("implementation", platform(libs.kotlin.bom))
+//        addProvider("implementation", platform(libs.kotlinx.coroutines.bom))
+//        addProvider("implementation", libs.androidx.core)
+//        addProvider("implementation", libs.koin.android)
+//        addProvider("implementation", libs.kotlinx.collections)
+//        addProvider("implementation", libs.lottie.compose)
+//        addProvider("implementation", libs.bundles.compose.ui)
+//        addProvider("debugImplementation", libs.bundles.compose.debug)
+//        addProvider("testImplementation", provider { project(":support:async-unit-test") })
+//        addProvider("testImplementation", provider { testFixtures(project(":domain:api")) })
+//    }
 }
 
 internal fun Project.configureApplication() {
