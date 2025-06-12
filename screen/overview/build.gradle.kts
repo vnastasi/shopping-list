@@ -63,6 +63,7 @@ dependencies {
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.vintage.engine)
 
 //    testImplementation("com.android.tools.layoutlib:layoutlib-api:31.4.2")
 //    testImplementation("com.android.tools.layoutlib:layoutlib:14.0.11")

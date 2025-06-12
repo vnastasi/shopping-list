@@ -71,7 +71,6 @@ androidComponents {
 }
 
 dependencies {
-
     implementation(project(":database"))
     implementation(project(":domain:implementation"))
     implementation(project(":screen:add-items"))
@@ -84,25 +83,51 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))
+
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.lificycle.viewmodel)
+    implementation(libs.androidx.lificycle.viewmodel.compose)
+    implementation(libs.androidx.lificycle.viewmodel.savedstate)
+    implementation(libs.androidx.navigation.common)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.runtime)
+    implementation(libs.compose.animations)
+    implementation(libs.compose.animations.core)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
     implementation(libs.koin.android)
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.collections)
+    implementation(libs.kotlinx.serialization.core)
 
     androidTestImplementation(project(":resources"))
 
     androidTestImplementation(testFixtures(project(":database")))
 
     androidTestImplementation(platform(libs.compose.bom))
+
+    androidTestImplementation(libs.androidx.sqlite)
+    androidTestImplementation(libs.androidx.sqlite.framework)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.monitor)
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)
+    androidTestImplementation(libs.compose.ui.test)
     androidTestImplementation(libs.espresso.idling.concurrent)
+    androidTestImplementation(libs.koin.core)
     androidTestImplementation(libs.kotlin.reflect)
+    androidTestImplementation(libs.kotlinx.coroutines.core)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.room.runtime)
     androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.uiautomator)
+
+    //androidTestImplementation("junit:junit:4.13.2")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
