@@ -1,13 +1,8 @@
 plugins {
-    id("simple-library.conventions")
-}
-
-android {
-    namespace = "md.vnastasi.shoppinglist.support.async"
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
-
     implementation(project(":support:annotation"))
 
     implementation(platform(libs.kotlin.bom))
