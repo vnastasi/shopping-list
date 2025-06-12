@@ -64,7 +64,7 @@ internal fun Project.addUnitTestDependencies() {
     dependencies {
         addProvider("testImplementation", platform(libs.kotlinx.coroutines.bom))
         addProvider("testImplementation", libs.assertk)
-        addProvider("testImplementation", libs.junit.jupiter.asProvider())
+        addProvider("testImplementation", libs.junit.jupiter.api)
         addProvider("testImplementation", libs.kotlin.reflect)
         addProvider("testImplementation", libs.kotlinx.coroutines.test)
         addProvider("testImplementation", libs.mockk.agent)
@@ -94,7 +94,7 @@ internal fun Project.configureTestableLibrary() {
         configureUnitTests()
         enableTestFixtures()
     }
-    addUnitTestDependencies()
+    //addUnitTestDependencies()
 }
 
 internal fun Project.configureComposeLibrary() {

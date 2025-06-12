@@ -68,8 +68,9 @@ compose-ui-text = { module = "androidx.compose.ui:ui-text" }
 compose-ui-unit = { module = "androidx.compose.ui:ui-unit" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 espresso-idling-concurrent = { module = "androidx.test.espresso.idling:idling-concurrent", version.ref = "espresso" }
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -83,8 +84,10 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+mockk-core = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+mockk-dsl = { module = "io.mockk:mockk-dsl", version.ref = "mockk" }
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-common = { module = "androidx.room:room-common", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
