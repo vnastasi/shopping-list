@@ -13,10 +13,6 @@ import org.gradle.kotlin.dsl.named
 class ScreenshotTestableLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
-//        dependencies {
-//            addProvider("testRuntimeOnly", libs.junit.vintage.engine)
-//        }
-
         extensions.configure<LibraryExtension> {
             testOptions {
                 unitTests {

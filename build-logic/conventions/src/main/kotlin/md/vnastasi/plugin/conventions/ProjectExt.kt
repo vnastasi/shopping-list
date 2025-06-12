@@ -11,7 +11,6 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -38,7 +37,6 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid(libs: LibrariesF
 }
 
 internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
-    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -56,21 +54,6 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
 internal fun CommonExtension<*, *, *, *, *, *>.configureCompose() {
     buildFeatures {
         compose = true
-    }
-}
-
-internal fun Project.addUnitTestDependencies() {
-    dependencies {
-        addProvider("testImplementation", platform(libs.kotlinx.coroutines.bom))
-        addProvider("testImplementation", libs.assertk)
-        addProvider("testImplementation", libs.junit.jupiter.api)
-        addProvider("testImplementation", libs.kotlin.reflect)
-        addProvider("testImplementation", libs.kotlinx.coroutines.test)
-        addProvider("testImplementation", libs.mockk.agent)
-        addProvider("testImplementation", libs.mockk.android)
-        addProvider("testImplementation", libs.turbine)
-        addProvider("testRuntimeOnly", libs.junit.jupiter.engine)
-        add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
     }
 }
 
@@ -93,7 +76,6 @@ internal fun Project.configureTestableLibrary() {
         configureUnitTests()
         enableTestFixtures()
     }
-    //addUnitTestDependencies()
 }
 
 internal fun Project.configureComposeLibrary() {
@@ -109,25 +91,6 @@ internal fun Project.configureComposeLibrary() {
 internal fun Project.configureComposeScreenLibrary() {
     configureComposeLibrary()
     configureTestableLibrary()
-
-//    dependencies {
-//        addProvider("implementation", provider { project(":domain:api") })
-//        addProvider("implementation", provider { project(":resources") })
-//        addProvider("implementation", provider { project(":support:annotation") })
-//        addProvider("implementation", provider { project(":support:async") })
-//        addProvider("implementation", provider { project(":support:theme") })
-//        addProvider("implementation", platform(libs.compose.bom))
-//        addProvider("implementation", platform(libs.kotlin.bom))
-//        addProvider("implementation", platform(libs.kotlinx.coroutines.bom))
-//        addProvider("implementation", libs.androidx.core)
-//        addProvider("implementation", libs.koin.android)
-//        addProvider("implementation", libs.kotlinx.collections)
-//        addProvider("implementation", libs.lottie.compose)
-//        addProvider("implementation", libs.bundles.compose.ui)
-//        addProvider("debugImplementation", libs.bundles.compose.debug)
-//        addProvider("testImplementation", provider { project(":support:async-unit-test") })
-//        addProvider("testImplementation", provider { testFixtures(project(":domain:api")) })
-//    }
 }
 
 internal fun Project.configureApplication() {
