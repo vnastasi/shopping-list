@@ -144,7 +144,6 @@ internal fun Project.configureApplication() {
         configureCompose()
     }
 
-    addUnitTestDependencies()
     configureKotlin()
 }
 

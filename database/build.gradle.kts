@@ -16,7 +16,6 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.koin.android)
-    implementation(libs.room)
     implementation(libs.room.runtime)
 
     ksp(libs.room.compiler)

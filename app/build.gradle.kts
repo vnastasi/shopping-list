@@ -73,9 +73,7 @@ androidComponents {
 dependencies {
 
     implementation(project(":database"))
-    implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
-    implementation(project(":resources"))
     implementation(project(":screen:add-items"))
     implementation(project(":screen:list-details"))
     implementation(project(":screen:overview"))
@@ -88,21 +86,18 @@ dependencies {
     implementation(platform(libs.kotlinx.coroutines.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
-    implementation(libs.androidx.lificycle.runtime)
-    implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.koin.android)
     implementation(libs.kotlinx.collections)
-    implementation(libs.kotlinx.serialization.json)
+
+    androidTestImplementation(project(":resources"))
 
     androidTestImplementation(testFixtures(project(":database")))
-    androidTestImplementation(testFixtures(project(":domain:api")))
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)
-    androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.espresso.idling.concurrent)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.test)

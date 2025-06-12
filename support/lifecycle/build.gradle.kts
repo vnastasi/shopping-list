@@ -9,7 +9,5 @@ android {
 dependencies {
 
     implementation(libs.androidx.core)
-    implementation(libs.androidx.lificycle.runtime)
-    implementation(libs.androidx.lificycle.runtime.compose)
     implementation(libs.androidx.lificycle.viewmodel.compose)
 }

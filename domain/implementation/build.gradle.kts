@@ -14,7 +14,7 @@ dependencies {
 
     implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.koin.android)
+    implementation(libs.koin.core)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(testFixtures(project(":database")))
