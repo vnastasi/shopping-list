@@ -14,21 +14,21 @@ dependencies {
     implementation(project(":domain:api"))
 
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(platform(libs.coroutines.bom))
 
     implementation(libs.koin.core)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.coroutines.core)
 
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))
 
-    testImplementation(platform(libs.kotlinx.coroutines.bom))
+    testImplementation(platform(libs.coroutines.bom))
 
     testImplementation(libs.assertk)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk.core)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 

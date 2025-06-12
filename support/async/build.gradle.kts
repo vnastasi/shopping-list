@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":support:annotation"))
 
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(platform(libs.coroutines.bom))
     implementation(libs.koin.core)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.coroutines.core)
 }

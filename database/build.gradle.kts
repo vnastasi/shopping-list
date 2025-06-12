@@ -13,11 +13,11 @@ ksp {
 
 dependencies {
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(platform(libs.coroutines.bom))
 
-    api(libs.androidx.sqlite)
+    api(libs.sqlite)
     api(libs.koin.core)
-    api(libs.kotlinx.coroutines.core)
+    api(libs.coroutines.core)
 
     implementation(libs.koin.android)
     implementation(libs.room.common)

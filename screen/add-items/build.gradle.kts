@@ -13,24 +13,24 @@ android {
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
+    implementation(platform(libs.coroutines.bom))
 
     api(project(":domain:api"))
     api(project(":screen:shared"))
 
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
-    api(libs.kotlinx.coroutines.core)
+    api(libs.coroutines.core)
 
     implementation(project(":resources"))
     implementation(project(":support:annotation"))
     implementation(project(":support:theme") )
     implementation(project(":support:async") )
 
-    implementation(libs.androidx.lificycle.common)
-    implementation(libs.androidx.lificycle.runtime.compose)
-    implementation(libs.androidx.lificycle.viewmodel)
-    implementation(libs.androidx.lificycle.viewmodel.savedstate)
+    implementation(libs.lifecycle.common)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.viewmodel.savedstate)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
     implementation(libs.compose.graphics)
@@ -41,13 +41,13 @@ dependencies {
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
     implementation(libs.koin.core)
-    implementation(libs.kotlinx.collections)
+    implementation(libs.collections.immutable)
 
     debugImplementation(libs.compose.tooling)
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testImplementation(platform(libs.kotlinx.coroutines.bom))
+    testImplementation(platform(libs.coroutines.bom))
 
     testImplementation(project(":support:async-unit-test"))
 
@@ -56,8 +56,8 @@ dependencies {
     testImplementation(libs.assertk)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk.core)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 

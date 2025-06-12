@@ -6,6 +6,6 @@ plugins {
 dependencies {
     api(project(":support:async"))
 
-    implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(platform(libs.coroutines.bom))
+    implementation(libs.coroutines.core)
 }
