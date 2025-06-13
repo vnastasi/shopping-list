@@ -1,14 +1,11 @@
 plugins {
-    id("simple-library.conventions")
-}
-
-android {
-    namespace = "md.vnastasi.shoppinglist.support.async.test"
+    alias(libs.plugins.gradle.dependencies)
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
+    api(project(":support:async"))
 
-    implementation(project(":support:async"))
-    implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(platform(libs.coroutines.bom))
+    implementation(libs.coroutines.core)
 }

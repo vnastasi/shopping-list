@@ -5,9 +5,11 @@ plugins {
     alias(libs.plugins.android.application).apply(false)
     alias(libs.plugins.compose.compiler).apply(false)
     alias(libs.plugins.kotlin.android).apply(false)
+    alias(libs.plugins.kotlin.jvm).apply(false)
     alias(libs.plugins.kotlin.parcelize).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.paparazzi).apply(false)
+    alias(libs.plugins.gradle.dependencies)
     alias(libs.plugins.gradle.wrapper.upgrade)
     id("code-coverage")
     id("detekt-aggregator")
@@ -18,6 +20,34 @@ codeCoverage {
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
     exclusions.add("**/*Preview*")
     coverageThreshold.set(0.90)
+}
+
+dependencyAnalysis {
+    issues {
+       all {
+           onUnusedDependencies {
+              severity("fail")
+           }
+
+           onRedundantPlugins {
+               severity("fail")
+           }
+
+           onUnusedAnnotationProcessors {
+               severity("fail")
+           }
+
+           onUsedTransitiveDependencies {
+               // Let Paparazzi configure these
+               exclude(
+                   "com.android.tools.layoutlib:layoutlib-api",
+                   "com.android.tools.layoutlib:layoutlib",
+                   "junit:junit"
+               )
+               severity("warn")
+           }
+       }
+    }
 }
 
 wrapperUpgrade {

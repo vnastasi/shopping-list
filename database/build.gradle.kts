@@ -4,19 +4,23 @@ plugins {
 }
 
 android {
-    namespace = "md.vnastasi.shoppinglist.db.impl"
+    namespace = "md.vnastasi.shoppinglist.db"
+}
 
-    ksp {
-        arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
-    }
+ksp {
+    arg("room.schemaLocation", "${layout.projectDirectory}/schemas")
 }
 
 dependencies {
-
+    implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
+
+    api(libs.coroutines.core)
+    api(libs.koin.core)
+    api(libs.sqlite)
+
     implementation(libs.koin.android)
-    implementation(libs.room)
+    implementation(libs.room.common)
     implementation(libs.room.runtime)
 
     ksp(libs.room.compiler)

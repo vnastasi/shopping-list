@@ -8,15 +8,28 @@ android {
 }
 
 dependencies {
-
     implementation(project(":database"))
     implementation(project(":domain:api"))
 
+    implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
-    implementation(platform(libs.kotlinx.coroutines.bom))
-    implementation(libs.koin.android)
-    implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.coroutines.core)
+    implementation(libs.koin.core)
 
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))
+
+    testImplementation(platform(libs.coroutines.bom))
+
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.dsl)
+    testImplementation(libs.turbine)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

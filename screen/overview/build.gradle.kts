@@ -10,7 +10,58 @@ android {
 }
 
 dependencies {
-    implementation(project(":screen:shared"))
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.coroutines.bom))
+
+    api(project(":domain:api"))
+    api(project(":screen:shared"))
+
+    api(libs.compose.foudation.layout)
+    api(libs.compose.runtime)
+    api(libs.coroutines.core)
+
+    implementation(project(":resources"))
+    implementation(project(":support:annotation"))
+    implementation(project(":support:async"))
+    implementation(project(":support:theme"))
+
+    implementation(libs.collections.immutable)
+    implementation(libs.compose.animations.core)
+    implementation(libs.compose.foudation)
+    implementation(libs.compose.graphics)
+    implementation(libs.compose.material)
+    implementation(libs.compose.material.icons)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.runtime.saveable)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.text)
+    implementation(libs.compose.ui.unit)
+    implementation(libs.koin.core)
+    implementation(libs.lifecycle.common)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel)
+
+    debugImplementation(libs.compose.tooling)
+
+    debugRuntimeOnly(libs.compose.test.manifest)
+
+    testImplementation(platform(libs.coroutines.bom))
+
+    testImplementation(project(":support:async-unit-test"))
+
+    testImplementation(testFixtures(project(":domain:api")))
+
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.dsl)
+    testImplementation(libs.turbine)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

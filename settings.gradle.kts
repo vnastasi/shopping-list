@@ -25,7 +25,6 @@ include(
     ":support:annotation",
     ":support:async",
     ":support:async-unit-test",
-    ":support:lifecycle",
     ":support:theme",
     ":resources",
     ":screen:shared",

@@ -1,6 +1,6 @@
 @file:JvmName("ViewModelSupport")
 
-package md.vnastasi.shoppinglist.support.lifecycle
+package md.vnastasi.shoppinglist.screen.shared.lifecycle
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
