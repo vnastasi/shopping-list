@@ -1,5 +1,3 @@
-import md.vnastasi.plugin.support.libs
-
 plugins {
     id("simple-library.conventions")
     id("testable-library.conventions")
@@ -13,11 +11,11 @@ dependencies {
     implementation(project(":database"))
     implementation(project(":domain:api"))
 
-    implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
 
-    implementation(libs.koin.core)
     implementation(libs.coroutines.core)
+    implementation(libs.koin.core)
 
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))
@@ -25,9 +23,9 @@ dependencies {
     testImplementation(platform(libs.coroutines.bom))
 
     testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)

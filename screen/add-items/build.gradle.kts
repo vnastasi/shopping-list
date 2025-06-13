@@ -12,8 +12,8 @@ android {
 
 dependencies {
     implementation(platform(libs.compose.bom))
-    implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
 
     api(project(":domain:api"))
     api(project(":screen:shared"))
@@ -24,13 +24,10 @@ dependencies {
 
     implementation(project(":resources"))
     implementation(project(":support:annotation"))
-    implementation(project(":support:theme") )
-    implementation(project(":support:async") )
+    implementation(project(":support:async"))
+    implementation(project(":support:theme"))
 
-    implementation(libs.lifecycle.common)
-    implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.lifecycle.viewmodel)
-    implementation(libs.lifecycle.viewmodel.savedstate)
+    implementation(libs.collections.immutable)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
     implementation(libs.compose.graphics)
@@ -41,7 +38,10 @@ dependencies {
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
     implementation(libs.koin.core)
-    implementation(libs.collections.immutable)
+    implementation(libs.lifecycle.common)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.viewmodel.savedstate)
 
     debugImplementation(libs.compose.tooling)
 
@@ -54,9 +54,9 @@ dependencies {
     testImplementation(testFixtures(project(":domain:api")))
 
     testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlin.reflect)
-    testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
@@ -64,10 +64,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.vintage.engine)
-
-//    testImplementation("com.android.tools.layoutlib:layoutlib-api:31.4.2")
-//    testImplementation("com.android.tools.layoutlib:layoutlib:14.0.11")
-//    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.withType<KotlinCompile>().configureEach {

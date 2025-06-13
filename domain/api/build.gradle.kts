@@ -8,9 +8,9 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.kotlin.bom))
     implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
 
-    implementation(libs.kotlin.parcelize)
     implementation(libs.coroutines.core)
+    implementation(libs.kotlin.parcelize)
 }
