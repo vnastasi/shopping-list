@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.window.core.layout.WindowHeightSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -39,17 +39,17 @@ fun AnimatedMessageContent(
     @RawRes animationResId: Int,
     @StringRes messageResId: Int
 ) {
-    val windowHeightSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
-
-    if (windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
-        CompactContent(
-            contentPaddings = contentPaddings,
-            messageResId = messageResId
-        )
-    } else {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isExtended = windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    if (isExtended) {
         ExtendedContent(
             contentPaddings = contentPaddings,
             animationResId = animationResId,
+            messageResId = messageResId
+        )
+    } else {
+        CompactContent(
+            contentPaddings = contentPaddings,
             messageResId = messageResId
         )
     }
@@ -105,7 +105,7 @@ private fun ExtendedContent(
             LottieAnimation(
                 modifier = Modifier.fillMaxWidth(),
                 composition = lottieComposition,
-                iterations =  LottieConstants.IterateForever
+                iterations = LottieConstants.IterateForever
             )
 
             Text(
