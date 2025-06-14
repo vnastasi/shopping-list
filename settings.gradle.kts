@@ -16,7 +16,9 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Shopping list"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "shopping-list"
 
 include(
     ":database",

@@ -14,17 +14,17 @@ dependencies {
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
 
-    api(project(":domain:api"))
-    api(project(":screen:shared"))
+    api(projects.domain.api)
+    api(projects.screen.shared)
 
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
 
-    implementation(project(":resources"))
-    implementation(project(":support:annotation"))
-    implementation(project(":support:async"))
-    implementation(project(":support:theme"))
+    implementation(projects.resources)
+    implementation(projects.support.annotation)
+    implementation(projects.support.async)
+    implementation(projects.support.theme)
 
     implementation(libs.collections.immutable)
     implementation(libs.compose.animations)
@@ -49,9 +49,9 @@ dependencies {
 
     testImplementation(platform(libs.coroutines.bom))
 
-    testImplementation(project(":support:async-unit-test"))
+    testImplementation(projects.support.asyncUnitTest)
 
-    testImplementation(testFixtures(project(":domain:api")))
+    testImplementation(testFixtures(projects.domain.api))
 
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
