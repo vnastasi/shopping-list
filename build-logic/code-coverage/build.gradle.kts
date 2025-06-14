@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    @Suppress()
     compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)

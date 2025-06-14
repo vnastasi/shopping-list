@@ -7,7 +7,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
 
-    implementation(project(":plugin-support"))
+    implementation(projects.pluginSupport)
 }
 
 gradlePlugin {
