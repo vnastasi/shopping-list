@@ -8,8 +8,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":database"))
-    implementation(project(":domain:api"))
+    implementation(projects.database)
+    implementation(projects.domain.api)
 
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
@@ -17,8 +17,8 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.koin.core)
 
-    testImplementation(testFixtures(project(":database")))
-    testImplementation(testFixtures(project(":domain:api")))
+    testImplementation(testFixtures(projects.database))
+    testImplementation(testFixtures(projects.domain.api))
 
     testImplementation(platform(libs.coroutines.bom))
 

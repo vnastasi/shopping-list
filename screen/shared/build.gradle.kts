@@ -17,9 +17,9 @@ dependencies {
     api(libs.compose.runtime)
     api(libs.coroutines.core)
 
-    implementation(project(":resources"))
-    implementation(project(":support:annotation"))
-    implementation(project(":support:theme"))
+    implementation(projects.resources)
+    implementation(projects.support.annotation)
+    implementation(projects.support.theme)
 
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)

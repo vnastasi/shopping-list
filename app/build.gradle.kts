@@ -71,14 +71,14 @@ androidComponents {
 }
 
 dependencies {
-    implementation(project(":database"))
-    implementation(project(":domain:implementation"))
-    implementation(project(":screen:add-items"))
-    implementation(project(":screen:list-details"))
-    implementation(project(":screen:overview"))
-    implementation(project(":screen:shared"))
-    implementation(project(":support:async"))
-    implementation(project(":support:theme"))
+    implementation(projects.database)
+    implementation(projects.domain.implementation)
+    implementation(projects.screen.addItems)
+    implementation(projects.screen.listDetails)
+    implementation(projects.screen.overview)
+    implementation(projects.screen.shared)
+    implementation(projects.support.async)
+    implementation(projects.support.theme)
 
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
@@ -103,9 +103,9 @@ dependencies {
     implementation(libs.navigation.runtime)
     implementation(libs.serialization.core)
 
-    androidTestImplementation(project(":resources"))
+    androidTestImplementation(projects.resources)
 
-    androidTestImplementation(testFixtures(project(":database")))
+    androidTestImplementation(testFixtures(projects.database))
 
     androidTestImplementation(platform(libs.compose.bom))
 
