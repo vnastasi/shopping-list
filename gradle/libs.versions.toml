@@ -39,7 +39,7 @@ turbine = "1.2.0"
 uiautomator = "2.3.0"
 uitest-core = "1.6.1"
 uitest-junit = "1.2.1"
-uitest-monitor = "1.7.1"
+uitest-monitor = "1.7.2"
 window = "1.4.0"
 
 
