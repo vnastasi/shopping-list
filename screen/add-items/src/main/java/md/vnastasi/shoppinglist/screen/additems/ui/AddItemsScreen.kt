@@ -2,13 +2,21 @@ package md.vnastasi.shoppinglist.screen.additems.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -86,6 +94,7 @@ private fun AddItemsScreen(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
+        contentWindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
         topBar = {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -149,11 +158,12 @@ private fun AddItemsTopAppBar(
 ) {
     TopAppBar(
         modifier = modifier.fillMaxWidth(),
+        windowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Top),
         title = { },
         navigationIcon = {
             IconButton(
                 modifier = Modifier
-                    .displayCutoutPadding()
+                    .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start))
                     .testTag(BACK_BUTTON),
                 onClick = onNavigateUp
             ) {
@@ -168,7 +178,7 @@ private fun AddItemsTopAppBar(
             SearchBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .displayCutoutPadding()
+                    .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start + WindowInsetsSides.End))
                     .padding(start = 56.dp)
                     .testTag(SEARCH_BAR),
                 searchTerm = searchTermState,
