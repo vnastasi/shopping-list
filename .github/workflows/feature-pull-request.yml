@@ -117,7 +117,7 @@ jobs:
       - build
     strategy:
       matrix:
-        api-level: [35]
+        api-level: [36]
         target: [default]
     steps:
       - name: "Environment"
