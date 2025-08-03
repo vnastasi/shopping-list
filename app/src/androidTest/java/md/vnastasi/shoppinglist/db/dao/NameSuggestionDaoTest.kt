@@ -60,16 +60,16 @@ class NameSuggestionDaoTest {
         val shoppingListDao = shoppingListDao()
         val shoppingItemDao = shoppingItemDao()
 
-        shoppingListDao.create(ShoppingList(id = 1L, name = "Test"))
+        val shoppingListId = shoppingListDao.create(ShoppingList(name = "Test"))
 
         sequenceOf(
-            ShoppingItem(id = 1L, name = "Bread", isChecked = false, listId = 1L),
-            ShoppingItem(id = 2L, name = "Eggs", isChecked = false, listId = 1L),
-            ShoppingItem(id = 3L, name = "Pasta", isChecked = false, listId = 1L),
-            ShoppingItem(id = 4L, name = "Nutmeg", isChecked = false, listId = 1L),
-            ShoppingItem(id = 5L, name = "Butter", isChecked = false, listId = 1L),
-            ShoppingItem(id = 6L, name = "Toothpaste", isChecked = false, listId = 1L),
-            ShoppingItem(id = 7L, name = "Toothbrush", isChecked = false, listId = 1L)
+            ShoppingItem(name = "Bread", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Eggs", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Pasta", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Nutmeg", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Butter", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Toothpaste", isChecked = false, listId = shoppingListId),
+            ShoppingItem(name = "Toothbrush", isChecked = false, listId = shoppingListId)
         ).forEach { shoppingItem ->
             shoppingItemDao.create(shoppingItem)
         }

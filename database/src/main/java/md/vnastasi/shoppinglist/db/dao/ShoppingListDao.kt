@@ -20,7 +20,7 @@ interface ShoppingListDao {
     fun findById(id: Long): Flow<ShoppingList>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun create(list: ShoppingList)
+    suspend fun create(list: ShoppingList): Long
 
     @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun update(list: ShoppingList)
