@@ -18,7 +18,7 @@ plugins {
 codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
-    excludedModules.addAll(project(":support:annotation"), project(":support:async"), project(":support:async-unit-test"))
+    excludedModules.addAll(projects.support.annotation, projects.support.async, projects.support.asyncUnitTest)
     excludedClasses.add("**/*Preview*")
     coverageThreshold.set(0.80)
 }
