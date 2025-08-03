@@ -116,21 +116,24 @@ class CodeCoveragePlugin @Inject constructor(
         }
     }
 
-    context(targetProject: Project)
+    context(targetProject: Project, extension: CodeCoverageExtension)
     private fun getAllSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
+        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
         .map { project -> project.layout.projectDirectory.dir("src/main/java") }
         .map { directory -> providers.provider { directory } }
 
     context(targetProject: Project, extension: CodeCoverageExtension)
     private fun getAllGeneratedSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
+        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
         .map { project -> project.layout.buildDirectory.dir("generated/ksp/${extension.targetBuildType.get()}/kotlin") }
 
     context(targetProject: Project, extension: CodeCoverageExtension)
     private fun getAllClassDirs(): List<Provider<FileTree>> = targetProject.subprojects
+        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
         .map { project ->
             project.layout.buildDirectory.dir("tmp/kotlin-classes/${extension.targetBuildType.get()}").map { directory ->
                 directory.asFileTree.matching {
-                    exclude(extension.exclusions.get())
+                    exclude(extension.excludedClasses.get())
                 }
             }
         }
