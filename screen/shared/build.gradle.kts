@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("compose-screen-library.conventions")
+    id("compose-library.conventions")
 }
 
 android {
