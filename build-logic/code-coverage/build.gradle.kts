@@ -2,6 +2,12 @@ plugins {
     `kotlin-dsl`
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
 dependencies {
     compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     compileOnly(libs.android.gradlePlugin)

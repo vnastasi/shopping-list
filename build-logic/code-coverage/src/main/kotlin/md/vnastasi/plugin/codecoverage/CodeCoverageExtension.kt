@@ -1,5 +1,6 @@
 package md.vnastasi.plugin.codecoverage
 
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -16,5 +17,7 @@ abstract class CodeCoverageExtension @Inject constructor(objectFactory: ObjectFa
 
     val coverageThreshold: Property<Double> = objectFactory.property()
 
-    val exclusions: ListProperty<String> = objectFactory.listProperty()
+    val excludedModules: ListProperty<ProjectDependency> = objectFactory.listProperty()
+
+    val excludedClasses: ListProperty<String> = objectFactory.listProperty()
 }

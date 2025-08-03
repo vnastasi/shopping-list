@@ -18,8 +18,9 @@ plugins {
 codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
-    exclusions.add("**/*Preview*")
-    coverageThreshold.set(0.80)
+    excludedModules.addAll(projects.support.annotation, projects.support.async, projects.support.asyncUnitTest)
+    excludedClasses.addAll("**/*Preview*", "**/*Database_Impl.**", "**/*Database_Impl$*$*$1.**", "**/Routes$**")
+    coverageThreshold.set(0.88)
 }
 
 dependencyAnalysis {

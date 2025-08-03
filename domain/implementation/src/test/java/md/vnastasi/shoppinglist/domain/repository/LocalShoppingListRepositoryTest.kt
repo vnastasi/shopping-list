@@ -88,7 +88,7 @@ internal class LocalShoppingListRepositoryTest {
         }
 
         val shoppingListSlot = slot<ShoppingListEntity>()
-        coEvery { mockShoppingListDao.create(capture(shoppingListSlot)) } returns Unit
+        coEvery { mockShoppingListDao.create(capture(shoppingListSlot)) } returns 0L
 
         shoppingListRepository.create(shoppingList)
 

@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 data class NameSuggestion(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long = 0L,
+    val id: Long,
 
     @ColumnInfo(
         name = "value",
