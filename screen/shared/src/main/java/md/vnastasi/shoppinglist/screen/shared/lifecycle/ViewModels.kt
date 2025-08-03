@@ -10,7 +10,6 @@ import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,15 +18,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 inline fun <reified VM : ViewModel> viewModel(
     viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) { "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner" },
     key: String? = null,
-    factory: ViewModelProvider.Factory? = null,
+    factory: ViewModelProvider.Factory,
     extraArguments: Bundle = bundleOf()
 ): VM {
-    val defaultExtras = when (viewModelStoreOwner) {
-        is HasDefaultViewModelProviderFactory -> viewModelStoreOwner.defaultViewModelCreationExtras
-        else -> CreationExtras.Empty
-    }
+    val defaultExtras = (viewModelStoreOwner as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras
     val arguments = defaultExtras[DEFAULT_ARGS_KEY] + extraArguments
     val newExtras = MutableCreationExtras(defaultExtras).apply { set(DEFAULT_ARGS_KEY, arguments) }
-
     return viewModel(viewModelStoreOwner, key, factory, newExtras)
 }
