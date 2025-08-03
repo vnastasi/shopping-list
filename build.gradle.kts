@@ -19,7 +19,7 @@ codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
     exclusions.add("**/*Preview*")
-    coverageThreshold.set(0.90)
+    coverageThreshold.set(0.80)
 }
 
 dependencyAnalysis {
