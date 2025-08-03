@@ -31,83 +31,84 @@ class CodeCoveragePlugin @Inject constructor(
     private val providers: ProviderFactory
 ) : Plugin<Project> {
 
-    override fun apply(target: Project): Unit = with(target) {
-        val codeCoverageExtension = extensions.create<CodeCoverageExtension>(EXTENSION_NAME)
+    override fun apply(target: Project) {
+        val codeCoverageExtension = target.extensions.create<CodeCoverageExtension>(EXTENSION_NAME)
 
-        pluginManager.apply("jacoco")
+        target.pluginManager.apply("jacoco")
 
-        extensions.configure<JacocoPluginExtension> {
-            toolVersion = libs.versions.jacoco.get()
+        target.extensions.configure<JacocoPluginExtension> {
+            toolVersion = target.libs.versions.jacoco.get()
         }
 
-        afterEvaluate {
-            val targetBuildType = codeCoverageExtension.targetBuildType.get()
+        target.afterEvaluate {
+            with(codeCoverageExtension) {
 
-            subprojects.forEach { subProject ->
-                subProject.pluginManager.withPlugin(libs.plugins.android.library) {
-                    subProject.extensions.configure<LibraryExtension> { enableTestCoverageData(targetBuildType, libs.versions.jacoco.get()) }
-                }
-
-                subProject.pluginManager.withPlugin(libs.plugins.android.application) {
-                    subProject.extensions.configure<ApplicationExtension> { enableTestCoverageData(targetBuildType, libs.versions.jacoco.get()) }
-                }
-            }
-
-            val executionDataDirectories = getExecDataDirs()
-            val allSourceDirectories = getAllSourceDirs() + getAllGeneratedSourceDirs(targetBuildType)
-            val allClassDirectories = getAllClassDirs(buildType = targetBuildType, exclusions = codeCoverageExtension.exclusions.get())
-
-            tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
-                group = TASK_GROUP
-                description = "Copy execution data for unit tests"
-
-                execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage") })
-
-                outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
-            }
-
-            tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
-                group = TASK_GROUP
-                description = "Copy execution data for Android instrumented tests"
-
-                execDataLocation.setFrom(project(":app").layout.buildDirectory.dir("outputs/code_coverage"))
-
-                outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/instrumented-tests"))
-            }
-
-            val coverageReportTask = tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
-                group = TASK_GROUP
-
-                executionData.setFrom(executionDataDirectories)
-                sourceDirectories.setFrom(allSourceDirectories)
-                classDirectories.setFrom(allClassDirectories)
-
-                reports {
-                    html.apply {
-                        required.set(true)
-                        outputLocation.set(codeCoverageExtension.reportDirectory)
+                subprojects.forEach { subProject ->
+                    subProject.pluginManager.withPlugin(libs.plugins.android.library) {
+                        subProject.extensions.configure<LibraryExtension> { enableTestCoverageData() }
                     }
-                    xml.apply {
-                        required.set(false)
-                    }
-                    csv.apply {
-                        required.set(false)
+
+                    subProject.pluginManager.withPlugin(libs.plugins.android.application) {
+                        subProject.extensions.configure<ApplicationExtension> { enableTestCoverageData() }
                     }
                 }
-            }
 
-            tasks.register<JacocoCoverageVerification>(COVERAGE_VERIFICATION_TASK_NAME) {
-                group = TASK_GROUP
-                dependsOn(coverageReportTask)
+                val executionDataDirectories = getExecDataDirs()
+                val allSourceDirectories = getAllSourceDirs() + getAllGeneratedSourceDirs()
+                val allClassDirectories = getAllClassDirs()
 
-                executionData.setFrom(executionDataDirectories)
-                sourceDirectories.setFrom(allSourceDirectories)
-                classDirectories.setFrom(allClassDirectories)
+                tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
+                    group = TASK_GROUP
+                    description = "Copy execution data for unit tests"
 
-                violationRules {
-                    rule {
-                        limit {
-                            minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal() }.get()
+                    execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage") })
+
+                    outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
+                }
+
+                tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
+                    group = TASK_GROUP
+                    description = "Copy execution data for Android instrumented tests"
+
+                    execDataLocation.setFrom(project(":app").layout.buildDirectory.dir("outputs/code_coverage"))
+
+                    outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/instrumented-tests"))
+                }
+
+                val coverageReportTask = tasks.register<JacocoReport>(COVERAGE_REPORT_TASK_NAME) {
+                    group = TASK_GROUP
+
+                    executionData.setFrom(executionDataDirectories)
+                    sourceDirectories.setFrom(allSourceDirectories)
+                    classDirectories.setFrom(allClassDirectories)
+
+                    reports {
+                        html.apply {
+                            required.set(true)
+                            outputLocation.set(codeCoverageExtension.reportDirectory)
+                        }
+                        xml.apply {
+                            required.set(false)
+                        }
+                        csv.apply {
+                            required.set(false)
+                        }
+                    }
+                }
+
+                tasks.register<JacocoCoverageVerification>(COVERAGE_VERIFICATION_TASK_NAME) {
+                    group = TASK_GROUP
+                    dependsOn(coverageReportTask)
+
+                    executionData.setFrom(executionDataDirectories)
+                    sourceDirectories.setFrom(allSourceDirectories)
+                    classDirectories.setFrom(allClassDirectories)
+
+                    violationRules {
+                        rule {
+                            limit {
+                                minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal() }.get()
+                            }
                         }
                     }
                 }
@@ -115,23 +116,27 @@ class CodeCoveragePlugin @Inject constructor(
         }
     }
 
-    private fun Project.getAllSourceDirs(): List<Provider<Directory>> = subprojects
+    context(targetProject: Project)
+    private fun getAllSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
         .map { project -> project.layout.projectDirectory.dir("src/main/java") }
         .map { directory -> providers.provider { directory } }
 
-    private fun Project.getAllGeneratedSourceDirs(buildType: String): List<Provider<Directory>> = subprojects
-        .map { project -> project.layout.buildDirectory.dir("generated/ksp/$buildType/kotlin") }
+    context(targetProject: Project, extension: CodeCoverageExtension)
+    private fun getAllGeneratedSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
+        .map { project -> project.layout.buildDirectory.dir("generated/ksp/${extension.targetBuildType.get()}/kotlin") }
 
-    private fun Project.getAllClassDirs(buildType: String, exclusions: List<String>): List<Provider<FileTree>> = subprojects
+    context(targetProject: Project, extension: CodeCoverageExtension)
+    private fun getAllClassDirs(): List<Provider<FileTree>> = targetProject.subprojects
         .map { project ->
-            project.layout.buildDirectory.dir("tmp/kotlin-classes/${buildType}").map { directory ->
+            project.layout.buildDirectory.dir("tmp/kotlin-classes/${extension.targetBuildType.get()}").map { directory ->
                 directory.asFileTree.matching {
-                    exclude(exclusions)
+                    exclude(extension.exclusions.get())
                 }
             }
         }
 
-    private fun Project.getExecDataDirs() = layout.buildDirectory.dir("exec-data")
+    context(targetProject: Project)
+    private fun getExecDataDirs() = targetProject.layout.buildDirectory.dir("exec-data")
         .map { directory ->
             directory.asFileTree.matching {
                 include("**/*.exec")
@@ -139,16 +144,17 @@ class CodeCoveragePlugin @Inject constructor(
             }
         }
 
-    private fun CommonExtension<*, *, *, *, *, *>.enableTestCoverageData(buildType: String, jacocoAgentVersion: String) {
+    context(targetProject: Project, extension: CodeCoverageExtension)
+    private fun CommonExtension<*, *, *, *, *, *>.enableTestCoverageData() {
         buildTypes {
-            getByName(buildType) {
+            getByName(extension.targetBuildType.get()) {
                 enableUnitTestCoverage = true
                 enableAndroidTestCoverage = true
             }
         }
 
         testCoverage {
-            jacocoVersion = jacocoAgentVersion
+            jacocoVersion = targetProject.libs.versions.jacoco.get()
         }
     }
 }
