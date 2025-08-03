@@ -19,7 +19,7 @@ codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
     excludedModules.addAll(projects.support.annotation, projects.support.async, projects.support.asyncUnitTest)
-    excludedClasses.add("**/*Preview*")
+    excludedClasses.addAll("**/*Preview*", "**/*Database_Impl.**", "**/*Database_Impl$*$*$1.**")
     coverageThreshold.set(0.80)
 }
 
