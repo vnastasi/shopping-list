@@ -54,7 +54,7 @@ class CodeCoveragePlugin @Inject constructor(
             }
 
             val executionDataDirectories = getExecDataDirs()
-            val allSourceDirectories = getAllSourceDirs()
+            val allSourceDirectories = getAllSourceDirs() + getAllGeneratedSourceDirs(targetBuildType)
             val allClassDirectories = getAllClassDirs(buildType = targetBuildType, exclusions = codeCoverageExtension.exclusions.get())
 
             tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
@@ -118,6 +118,9 @@ class CodeCoveragePlugin @Inject constructor(
     private fun Project.getAllSourceDirs(): List<Provider<Directory>> = subprojects
         .map { project -> project.layout.projectDirectory.dir("src/main/java") }
         .map { directory -> providers.provider { directory } }
+
+    private fun Project.getAllGeneratedSourceDirs(buildType: String): List<Provider<Directory>> = subprojects
+        .map { project -> project.layout.buildDirectory.dir("generated/ksp/$buildType/kotlin") }
 
     private fun Project.getAllClassDirs(buildType: String, exclusions: List<String>): List<Provider<FileTree>> = subprojects
         .map { project ->
