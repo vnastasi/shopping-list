@@ -8,6 +8,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +18,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
@@ -24,12 +26,11 @@ import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
-import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class OverviewViewModel internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
-    private val dispatchersProvider: DispatchersProvider
-) : ViewModel(), OverviewViewModelSpec {
+    coroutineScope: CoroutineScope
+) : ViewModel(coroutineScope), OverviewViewModelSpec {
 
     private val list = shoppingListRepository.findAll().map { it.toImmutableList() }
     private val navigationTarget = MutableStateFlow<NavigationTarget?>(null)
@@ -38,7 +39,7 @@ class OverviewViewModel internal constructor(
     override val viewState: StateFlow<ViewState> = combine(
         list, navigationTarget, toastMessage, ::createViewState
     ).stateIn(
-        scope = viewModelScope + dispatchersProvider.MainImmediate,
+        scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.Loading
     )
@@ -62,7 +63,7 @@ class OverviewViewModel internal constructor(
         if (list.isEmpty()) ViewState.Empty(navigationTarget, toastMessage) else ViewState.Ready(list, navigationTarget, toastMessage)
 
     private fun onShoppingListDeleted(shoppingListDetails: ShoppingListDetails) {
-        viewModelScope.launch(dispatchersProvider.IO) {
+        viewModelScope.launch {
             shoppingListRepository.delete(shoppingListDetails.toShoppingList())
         }
     }
@@ -76,7 +77,7 @@ class OverviewViewModel internal constructor(
     }
 
     private fun onShoppingListSaved(name: String) {
-        viewModelScope.launch(dispatchersProvider.Main) {
+        viewModelScope.launch {
             shoppingListRepository.create(ShoppingList(name = name))
             toastMessage.value = ToastMessage(textResourceId = R.string.toast_list_created, arguments = persistentListOf(name))
         }
@@ -91,11 +92,10 @@ class OverviewViewModel internal constructor(
     }
 
     class Factory internal constructor(
-        private val shoppingListRepository: ShoppingListRepository,
-        private val dispatchersProvider: DispatchersProvider
+        private val shoppingListRepository: ShoppingListRepository
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
-            OverviewViewModel(shoppingListRepository, dispatchersProvider)
+            OverviewViewModel(shoppingListRepository, CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()))
         }
     })
 
