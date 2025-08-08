@@ -4,14 +4,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
-import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
-import md.vnastasi.shoppinglist.ui.rule.createComponentFactoryRule
 import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
-import md.vnastasi.shoppinglist.ui.support.UiTestDispatcherProvider
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -20,10 +17,6 @@ import org.junit.rules.TestRule
 class CompleteShoppingListFlowTest {
 
     private val composeRule = createAndroidComposeRule<MainActivity>()
-
-    private val componentFactoryRule = createComponentFactoryRule {
-        single<DispatchersProvider> { UiTestDispatcherProvider() }
-    }
 
     private val databaseRule = createDatabaseRule(
         setUp = {
@@ -41,8 +34,7 @@ class CompleteShoppingListFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(componentFactoryRule)
-        .around(composeRule)
+        .outerRule(composeRule)
         .around(retryOnFailureRule(maxAttempts = 3))
         .around(databaseRule)
         .around(disableAnimationsRule())
