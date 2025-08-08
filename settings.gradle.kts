@@ -25,8 +25,6 @@ include(
     ":domain:api",
     ":domain:implementation",
     ":support:annotation",
-    ":support:async",
-    ":support:async-unit-test",
     ":support:theme",
     ":resources",
     ":screen:shared",

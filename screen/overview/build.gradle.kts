@@ -46,9 +46,8 @@ dependencies {
 
     testImplementation(platform(libs.coroutines.bom))
 
-    testImplementation(projects.support.asyncUnitTest)
-
     testImplementation(testFixtures(projects.domain.api))
+    testImplementation(testFixtures(projects.screen.shared))
 
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)

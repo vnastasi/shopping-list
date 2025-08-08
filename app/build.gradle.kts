@@ -77,7 +77,6 @@ dependencies {
     implementation(projects.screen.listDetails)
     implementation(projects.screen.overview)
     implementation(projects.screen.shared)
-    implementation(projects.support.async)
     implementation(projects.support.theme)
 
     implementation(platform(libs.compose.bom))
