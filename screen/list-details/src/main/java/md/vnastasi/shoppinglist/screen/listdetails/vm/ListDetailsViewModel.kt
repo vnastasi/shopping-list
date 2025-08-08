@@ -8,6 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -15,21 +18,19 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
-import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class ListDetailsViewModel internal constructor(
     private val savedStateHandle: SavedStateHandle,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
-    private val dispatchersProvider: DispatchersProvider
-) : ViewModel(), ListDetailsViewModelSpec {
+    coroutineScope: CoroutineScope
+) : ViewModel(coroutineScope), ListDetailsViewModelSpec {
 
     private val shoppingList = savedStateHandle.getStateFlow<Long?>(ARG_KEY_SHOPPING_LIST_ID, null)
         .filterNotNull()
@@ -42,7 +43,7 @@ class ListDetailsViewModel internal constructor(
     override val viewState: StateFlow<ViewState> = combine(
         shoppingList, listOfShoppingItems, ::createViewState
     ).stateIn(
-        scope = viewModelScope + dispatchersProvider.MainImmediate,
+        scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.Loading
     )
@@ -55,13 +56,13 @@ class ListDetailsViewModel internal constructor(
     }
 
     private fun onShoppingItemClicked(shoppingItem: ShoppingItem) {
-        viewModelScope.launch(dispatchersProvider.IO) {
+        viewModelScope.launch {
             shoppingItemRepository.update(shoppingItem.copy(isChecked = !shoppingItem.isChecked))
         }
     }
 
     private fun onShoppingItemDeleted(shoppingItem: ShoppingItem) {
-        viewModelScope.launch(dispatchersProvider.IO) {
+        viewModelScope.launch {
             shoppingItemRepository.delete(shoppingItem)
         }
     }
@@ -85,15 +86,14 @@ class ListDetailsViewModel internal constructor(
 
     class Factory internal constructor(
         private val shoppingListRepository: ShoppingListRepository,
-        private val shoppingItemRepository: ShoppingItemRepository,
-        private val dispatchersProvider: DispatchersProvider
+        private val shoppingItemRepository: ShoppingItemRepository
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
             ListDetailsViewModel(
                 savedStateHandle = createSavedStateHandle(),
                 shoppingListRepository = shoppingListRepository,
                 shoppingItemRepository = shoppingItemRepository,
-                dispatchersProvider = dispatchersProvider
+                coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
             )
         }
     })
