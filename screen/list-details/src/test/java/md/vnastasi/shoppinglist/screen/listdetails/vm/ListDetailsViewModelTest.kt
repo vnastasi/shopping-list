@@ -10,9 +10,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -24,7 +25,6 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel.Companion.ARG_KEY_SHOPPING_LIST_ID
-import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -49,7 +49,7 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
+        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Empty(
@@ -78,7 +78,7 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(shoppingList)
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
-        createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
+        createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId)).viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(
@@ -110,7 +110,7 @@ internal class ListDetailsViewModelTest {
         val shoppingItemSlot = slot<ShoppingItem>()
         coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
-        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -137,7 +137,7 @@ internal class ListDetailsViewModelTest {
         val shoppingItemSlot = slot<ShoppingItem>()
         coEvery { mockShoppingItemRepository.update(capture(shoppingItemSlot)) } returns Unit
 
-        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem))
         advanceUntilIdle()
@@ -162,7 +162,7 @@ internal class ListDetailsViewModelTest {
         val shoppingItemSlot = slot<ShoppingItem>()
         coEvery { mockShoppingItemRepository.delete(capture(shoppingItemSlot)) } returns Unit
 
-        val viewModel = createViewModel(testScheduler, mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
 
         viewModel.onUiEvent(UiEvent.ShoppingItemDeleted(shoppingItem))
         advanceUntilIdle()
@@ -170,13 +170,11 @@ internal class ListDetailsViewModelTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem)
     }
 
-    private fun createViewModel(
-        testScheduler: TestCoroutineScheduler,
-        initialState: Map<String, Any?> = emptyMap()
-    ) = ListDetailsViewModel(
-        savedStateHandle = SavedStateHandle(initialState),
-        shoppingListRepository = mockShoppingListRepository,
-        shoppingItemRepository = mockShoppingItemRepository,
-        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
-    )
+    private fun TestScope.createViewModel(initialState: Map<String, Any?> = emptyMap()) =
+        ListDetailsViewModel(
+            savedStateHandle = SavedStateHandle(initialState),
+            shoppingListRepository = mockShoppingListRepository,
+            shoppingItemRepository = mockShoppingItemRepository,
+            coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+        )
 }

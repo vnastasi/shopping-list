@@ -8,7 +8,7 @@ import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
-import md.vnastasi.shoppinglist.support.async.crossJoin
+import md.vnastasi.shoppinglist.support.collection.crossJoin
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import org.junit.Rule
 import org.junit.Test

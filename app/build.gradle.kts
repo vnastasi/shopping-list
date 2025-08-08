@@ -77,7 +77,6 @@ dependencies {
     implementation(projects.screen.listDetails)
     implementation(projects.screen.overview)
     implementation(projects.screen.shared)
-    implementation(projects.support.async)
     implementation(projects.support.theme)
 
     implementation(platform(libs.compose.bom))
@@ -114,7 +113,6 @@ dependencies {
     androidTestImplementation(libs.compose.ui.test)
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
-    androidTestImplementation(libs.espresso.idling.concurrent)
     androidTestImplementation(libs.koin.core)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.runtime)

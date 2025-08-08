@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
-import md.vnastasi.shoppinglist.support.async.crossJoin
+import md.vnastasi.shoppinglist.support.collection.crossJoin
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import org.junit.Rule
 import org.junit.Test

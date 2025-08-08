@@ -14,9 +14,10 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -29,7 +30,6 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
-import md.vnastasi.shoppinglist.support.async.TestDispatchersProvider
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -53,7 +53,7 @@ internal class AddItemsViewModelTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
         coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns listOf(suggestion)
 
-        val viewModel = createViewModel(testScheduler, currentSearchTermValue = searchTerm)
+        val viewModel = createViewModel(currentSearchTermValue = searchTerm)
         viewModel.viewState.test {
             skipItems(1)
 
@@ -80,7 +80,7 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel(testScheduler, currentSearchTermValue = "Search term")
+        val viewModel = createViewModel(currentSearchTermValue = "Search term")
         viewModel.viewState.test {
             skipItems(1)
 
@@ -109,7 +109,7 @@ internal class AddItemsViewModelTest {
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
-        val viewModel = createViewModel(testScheduler, currentSearchTermValue = "Search term")
+        val viewModel = createViewModel(currentSearchTermValue = "Search term")
         viewModel.viewState.test {
             skipItems(1)
 
@@ -136,7 +136,7 @@ internal class AddItemsViewModelTest {
 
         val suggestion = NameSuggestion(name = "Milk")
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.viewState.test {
             skipItems(1)
 
@@ -166,7 +166,7 @@ internal class AddItemsViewModelTest {
 
         val suggestion = NameSuggestion(name = "Milk")
 
-        val viewModel = createViewModel(testScheduler)
+        val viewModel = createViewModel()
         viewModel.viewState.test {
             skipItems(1)
 
@@ -180,14 +180,12 @@ internal class AddItemsViewModelTest {
         }
     }
 
-    private fun createViewModel(
-        testScheduler: TestCoroutineScheduler,
-        currentSearchTermValue: String = ""
-    ) = AddItemsViewModel(
-        savedStateHandle = SavedStateHandle(mapOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to DEFAULT_SHOPPING_LIST_ID)),
-        nameSuggestionRepository = mockNameSuggestionRepository,
-        shoppingItemRepository = mockShoppingItemRepository,
-        shoppingListRepository = mockShoppingListRepository,
-        dispatchersProvider = TestDispatchersProvider(StandardTestDispatcher(testScheduler))
-    ).apply { searchTermState.value = currentSearchTermValue }
+    private fun TestScope.createViewModel(currentSearchTermValue: String = "") =
+        AddItemsViewModel(
+            savedStateHandle = SavedStateHandle(mapOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to DEFAULT_SHOPPING_LIST_ID)),
+            nameSuggestionRepository = mockNameSuggestionRepository,
+            shoppingItemRepository = mockShoppingItemRepository,
+            shoppingListRepository = mockShoppingListRepository,
+            coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+        ).apply { searchTermState.value = currentSearchTermValue }
 }

@@ -11,6 +11,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,15 +32,14 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
-import md.vnastasi.shoppinglist.support.async.DispatchersProvider
 
 class AddItemsViewModel internal constructor(
     savedStateHandle: SavedStateHandle,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
-    private val dispatchersProvider: DispatchersProvider
-) : ViewModel(), AddItemsViewModelSpec {
+    coroutineScope: CoroutineScope
+) : ViewModel(coroutineScope), AddItemsViewModelSpec {
 
     private val _viewState = MutableStateFlow(ViewState.init())
     override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
@@ -58,7 +60,7 @@ class AddItemsViewModel internal constructor(
     }
 
     private fun onSearchTermChanged() {
-        viewModelScope.launch(dispatchersProvider.Main) {
+        viewModelScope.launch {
             _viewState.update { viewState ->
                 viewState.copy(
                     suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value.trim()).toImmutableList()
@@ -70,7 +72,7 @@ class AddItemsViewModel internal constructor(
     private fun onItemAddedToList(name: String) {
         val sanitisedName = name.trim()
         if (sanitisedName.isBlank()) return
-        viewModelScope.launch(dispatchersProvider.Main) {
+        viewModelScope.launch {
             shoppingList
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
@@ -88,7 +90,7 @@ class AddItemsViewModel internal constructor(
     }
 
     private fun onSuggestionDeleted(suggestion: NameSuggestion) {
-        viewModelScope.launch(dispatchersProvider.Main) {
+        viewModelScope.launch {
             nameSuggestionRepository.delete(suggestion)
             _viewState.update { viewState ->
                 val toastMessage = ToastMessage(
@@ -104,7 +106,7 @@ class AddItemsViewModel internal constructor(
     }
 
     private fun onToastShown() {
-        viewModelScope.launch(dispatchersProvider.Main) {
+        viewModelScope.launch {
             _viewState.update { viewState ->
                 viewState.copy(toastMessage = null)
             }
@@ -114,8 +116,7 @@ class AddItemsViewModel internal constructor(
     class Factory internal constructor(
         private val nameSuggestionRepository: NameSuggestionRepository,
         private val shoppingListRepository: ShoppingListRepository,
-        private val shoppingItemRepository: ShoppingItemRepository,
-        private val dispatchersProvider: DispatchersProvider
+        private val shoppingItemRepository: ShoppingItemRepository
     ) : ViewModelProvider.Factory by viewModelFactory({
         initializer {
             AddItemsViewModel(
@@ -123,7 +124,7 @@ class AddItemsViewModel internal constructor(
                 nameSuggestionRepository = nameSuggestionRepository,
                 shoppingListRepository = shoppingListRepository,
                 shoppingItemRepository = shoppingItemRepository,
-                dispatchersProvider = dispatchersProvider
+                coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
             )
         }
     })

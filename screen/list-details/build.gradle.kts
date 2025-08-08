@@ -23,7 +23,6 @@ dependencies {
 
     implementation(projects.resources)
     implementation(projects.support.annotation)
-    implementation(projects.support.async)
     implementation(projects.support.theme)
 
     implementation(libs.collections.immutable)
@@ -49,9 +48,8 @@ dependencies {
 
     testImplementation(platform(libs.coroutines.bom))
 
-    testImplementation(projects.support.asyncUnitTest)
-
     testImplementation(testFixtures(projects.domain.api))
+    testImplementation(testFixtures(projects.screen.shared))
 
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
