@@ -17,7 +17,6 @@ collections-immutable = "0.4.0"
 compose-bom = "2025.07.00"
 coroutines = "1.10.2"
 detekt = "1.23.8"
-espresso = "3.7.0"
 gradle-dependencies = "2.19.0"
 gradle-wrapper-upgrade = "0.12"
 jacoco = "0.8.13"
@@ -78,8 +77,6 @@ compose-ui-unit = { module = "androidx.compose.ui:ui-unit" }
 coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "coroutines" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
-
-espresso-idling-concurrent = { module = "androidx.test.espresso.idling:idling-concurrent", version.ref = "espresso" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

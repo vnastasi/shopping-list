@@ -113,7 +113,6 @@ dependencies {
     androidTestImplementation(libs.compose.ui.test)
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
-    androidTestImplementation(libs.espresso.idling.concurrent)
     androidTestImplementation(libs.koin.core)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.runtime)
