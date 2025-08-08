@@ -24,7 +24,6 @@ dependencies {
 
     implementation(projects.resources)
     implementation(projects.support.annotation)
-    implementation(projects.support.async)
     implementation(projects.support.theme)
 
     implementation(libs.collections.immutable)
