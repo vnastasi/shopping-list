@@ -8,9 +8,9 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Stable
 data class ToastMessage(
-    @StringRes val textResourceId: Int,
+    @get:StringRes val textResourceId: Int,
     val arguments: ImmutableList<Any> = persistentListOf(),
-    @ToastDuration val duration: Int = DURATION_SHORT
+    @get:ToastDuration val duration: Int = DURATION_SHORT
 ) {
 
     companion object {
