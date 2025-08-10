@@ -1,0 +1,31 @@
+name: Update Gradle Wrapper
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * MON" # Runs at 00:00 UTC every Monday
+
+jobs:
+  update-gradle-wrapper:
+    name: "Update Gradle wrapper"
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Update Gradle Wrapper"
+        uses: gradle-update/update-gradle-wrapper-action@v2
+        with:
+          repo-token: ${{ secrets.GRADLE_WRAPPERBOT_PAT }}
+          base-branch: wrapperbot/testing
