@@ -1,0 +1,60 @@
+name: "Initiate new app version release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      newAppVersion:
+        type: string
+        description: "New application version"
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+
+jobs:
+  initiate-release:
+    name: "Initiate release"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: "Update project version"
+        run: ./gradlew updateProjectVersion
+
+      - name: "Verify project build"
+        run: ./gradlew assemble
+
+      - name: "Commit changes"
+        run: |
+          git config --global user.name "Releasebot"
+          git config --global user.email "releasebot@users.noreply.github.com"
+          git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
+          git commit -am "Prepare release for version ${{ env.newAppVersion }}"
+          git push
+
+      - name: "Create release tag"
+        run: |
+          git config --global user.name "Releasebot"
+          git config --global user.email "releasebot@users.noreply.github.com"
+          git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
+          git tag v${{ env.newAppVersion }}
+          git push
