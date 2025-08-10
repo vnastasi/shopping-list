@@ -12,22 +12,20 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+  UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{github.event.pull_request.number}}
+  IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{github.event.pull_request.number}}
+
 jobs:
   build:
     name: "Build application"
     runs-on: ubuntu-latest
-    env:
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Check out repository"
         uses: actions/checkout@v4
 
@@ -50,30 +48,15 @@ jobs:
     name: "Unit tests"
     runs-on: ubuntu-latest
     permissions: write-all
-    env:
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-      CACHE_KEY: "unit-tests-exec-data"
     needs:
       - build
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Check out repository"
         uses: actions/checkout@v4
 
       - name: "Clear caches"
         continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh cache delete "$CACHE_KEY"
+        run: gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
 
       - name: "Set up Java"
         uses: actions/setup-java@v4
@@ -99,20 +82,13 @@ jobs:
       - name: "Cache test execution data"
         uses: actions/cache/save@v4
         with:
-          path: |
-            ${{ github.workspace }}/build/exec-data/unit-tests
-          key: ${{ env.CACHE_KEY }}
+          path: ${{ github.workspace }}/build/exec-data/unit-tests
+          key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
 
   instrumented-tests:
     name: "Instrumented tests"
     runs-on: ubuntu-latest
     permissions: write-all
-    env:
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-      CACHE_KEY: "instrumented-tests-exec-data"
     needs:
       - build
     strategy:
@@ -120,12 +96,6 @@ jobs:
         api-level: [35]
         target: [default]
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Enable hardware acceleration"
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -139,8 +109,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh cache delete "$CACHE_KEY"
+        run: gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
 
       - name: "Set up Java"
         uses: actions/setup-java@v4
@@ -182,28 +151,16 @@ jobs:
       - name: "Cache test execution data"
         uses: actions/cache/save@v4
         with:
-          path: |
-            ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.CACHE_KEY }}
+          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
 
   code-quality:
     name: "Verify code quality"
     runs-on: ubuntu-latest
-    env:
-      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     needs:
       - unit-tests
       - instrumented-tests
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Check out repository"
         uses: actions/checkout@v4
 
@@ -225,19 +182,18 @@ jobs:
       - name: "Restore unit test execution data"
         uses: actions/cache/restore@v4
         with:
-          path: |
-            ${{ github.workspace }}/build/exec-data/unit-tests
-          key: unit-tests-exec-data
+          path: ${{ github.workspace }}/build/exec-data/unit-tests
+          key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data"
         uses: actions/cache/restore@v4
         with:
-          path: |
-            ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: instrumented-tests-exec-data
+          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
-      - name: "Compile code"
+
+      - name: "Compile sources"
         run: |
           ./gradlew compileDebugSources
           ./gradlew compileDebugUnitTestSources
@@ -249,10 +205,16 @@ jobs:
       - name: "Detekt"
         run: ./gradlew detekt
 
+      - name: "Clear caches"
+        continue-on-error: true
+        run: |
+          gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
+          gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
+
   dependencies-update-auto-merge:
-    name: "Auto merge when updating dependencies"
+    name: "Auto merge on dependencies update"
     runs-on: ubuntu-latest
-    if: ${{ (contains(github.event.pull_request.labels.*.name, 'dependencies')) && (github.actor == 'dependabot[bot]' || github.actor == 'vnastasi') }}
+    if: ${{ startsWith(github.ref_name, 'dependabot/') }}
     needs:
       - code-quality
     steps:
@@ -262,5 +224,4 @@ jobs:
       - name: "Auto-merge PR"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge --auto --squash $PR_URL

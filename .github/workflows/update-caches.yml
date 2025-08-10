@@ -15,12 +15,6 @@ jobs:
       KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Check out repository"
         uses: actions/checkout@v4
 
@@ -48,12 +42,6 @@ jobs:
         api-level: [35]
         target: [default]
     steps:
-      - name: "Environment"
-        run: |
-          echo "Agent ${{ runner.name }}"
-          echo "Operating system ${{ runner.os }}"
-          echo "Architecture ${{ runner.arch }}"
-
       - name: "Enable hardware acceleration"
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
