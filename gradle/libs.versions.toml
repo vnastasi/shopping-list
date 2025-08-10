@@ -18,7 +18,6 @@ compose-bom = "2025.07.00"
 coroutines = "1.10.2"
 detekt = "1.23.8"
 gradle-dependencies = "2.19.0"
-gradle-wrapper-upgrade = "0.12"
 jacoco = "0.8.13"
 junit = "5.13.4"
 koin = "4.1.0"
@@ -141,7 +140,6 @@ android-library = { id = "com.android.library", version.ref = "android-tools" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 gradle-dependencies = { id = "com.autonomousapps.dependency-analysis", version.ref = "gradle-dependencies" }
-gradle-wrapper-upgrade = { id = "org.gradle.wrapper-upgrade", version.ref = "gradle-wrapper-upgrade" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

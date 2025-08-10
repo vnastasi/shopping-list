@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.paparazzi).apply(false)
     alias(libs.plugins.gradle.dependencies)
-    alias(libs.plugins.gradle.wrapper.upgrade)
     id("code-coverage")
     id("detekt-aggregator")
 }
@@ -48,19 +47,5 @@ dependencyAnalysis {
                severity("warn")
            }
        }
-    }
-}
-
-wrapperUpgrade {
-    gradle {
-        register("root") {
-            repo.set("vnastasi/shopping-list")
-            baseBranch.set("main")
-            options {
-                labels.add("dependencies")
-                reviewers.add("vnastasi")
-                recreateClosedPullRequest.set(true)
-            }
-        }
     }
 }
