@@ -54,10 +54,6 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v4
 
-      - name: "Clear caches"
-        continue-on-error: true
-        run: gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
-
       - name: "Set up Java"
         uses: actions/setup-java@v4
         with:
@@ -74,10 +70,13 @@ jobs:
         run: ./gradlew assembleDebugUnitTest
 
       - name: "Run unit tests"
-        run: ./gradlew testDebugUnitTest
+        run: |
+          ./gradlew testDebugUnitTest
+          ./gradlew copyUnitTestExecData
 
-      - name: "Save test execution data"
-        run: ./gradlew copyUnitTestExecData
+      - name: "Clear any previously cached execution data"
+        continue-on-error: true
+        run: gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
 
       - name: "Cache test execution data"
         uses: actions/cache/save@v4
@@ -104,12 +103,6 @@ jobs:
 
       - name: "Check out repository"
         uses: actions/checkout@v4
-
-      - name: "Clear caches"
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
 
       - name: "Set up Java"
         uses: actions/setup-java@v4
@@ -143,10 +136,13 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
-          script: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
+          script: |
+            ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
+            ./gradlew copyInstrumentedTestExecData
 
-      - name: "Save test execution data"
-        run: ./gradlew copyInstrumentedTestExecData
+      - name: "Clear any previously cached execution data"
+        continue-on-error: true
+        run: gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
 
       - name: "Cache test execution data"
         uses: actions/cache/save@v4
