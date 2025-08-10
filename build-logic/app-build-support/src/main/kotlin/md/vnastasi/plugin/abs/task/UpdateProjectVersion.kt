@@ -11,7 +11,7 @@ import javax.inject.Inject
 private const val CATALOG_KEY_PROJECT_VERSION_NAME = "project-version-name"
 private const val CATALOG_KEY_PROJECT_VERSION_CODE = "project-version-code"
 
-private const val PROPERTY_VERSION = "newAppVersion"
+private const val PROPERTY_VERSION = "md.vnastasi.shoppinglist.newAppVersion"
 
 abstract class UpdateProjectVersion @Inject constructor(
     private val providers: ProviderFactory
@@ -21,7 +21,7 @@ abstract class UpdateProjectVersion @Inject constructor(
     abstract val versionCatalogFile: RegularFileProperty
 
     private val providedVersion: Provider<String>
-        get() = providers.environmentVariable(PROPERTY_VERSION).orElse(providers.gradleProperty(PROPERTY_VERSION))
+        get() = providers.gradleProperty(PROPERTY_VERSION)
 
     @TaskAction
     fun update() {

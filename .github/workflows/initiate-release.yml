@@ -38,7 +38,7 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: "Update project version"
-        run: ./gradlew updateProjectVersion
+        run: ./gradlew updateProjectVersion -Pmd.vnastasi.shoppinglist.newAppVersion=${{ inputs.newAppVersion }}
 
       - name: "Verify project build"
         run: ./gradlew assemble
@@ -48,7 +48,7 @@ jobs:
           git config --global user.name "Releasebot"
           git config --global user.email "releasebot@users.noreply.github.com"
           git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
-          git commit -am "Prepare release for version ${{ env.newAppVersion }}"
+          git commit -am "Prepare release for version ${{ inputs.newAppVersion }}"
           git push
 
       - name: "Create release tag"
@@ -56,5 +56,5 @@ jobs:
           git config --global user.name "Releasebot"
           git config --global user.email "releasebot@users.noreply.github.com"
           git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
-          git tag v${{ env.newAppVersion }}
+          git tag v${{ inputs.newAppVersion }}
           git push
