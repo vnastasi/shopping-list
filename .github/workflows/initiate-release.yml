@@ -45,7 +45,7 @@ jobs:
 
       - name: "Commit changes"
         run: |
-          git config --global user.name "Releasebot"
+          git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
           git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
           git commit -am "Prepare release for version ${{ inputs.newAppVersion }}"
@@ -53,7 +53,7 @@ jobs:
 
       - name: "Create release tag"
         run: |
-          git config --global user.name "Releasebot"
+          git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
           git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
           git tag v${{ inputs.newAppVersion }}
