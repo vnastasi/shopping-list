@@ -9,7 +9,7 @@ on:
         required: true
 
 env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PAT: ${{ secrets.RELEASEBOT_PAT }}
   KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: "Set up Java"
         uses: actions/setup-java@v4
@@ -47,7 +49,6 @@ jobs:
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
-          git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
           git commit -am "Prepare release for version ${{ inputs.newAppVersion }}"
           git push
 
@@ -55,6 +56,5 @@ jobs:
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
-          git remote set-url --push origin https://${{ github.actor }}:$GH_TOKEN@github.com/${{ github.repository }}.git
           git tag v${{ inputs.newAppVersion }}
           git push origin tag v${{ inputs.newAppVersion }}
