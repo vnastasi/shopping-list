@@ -9,7 +9,6 @@ on:
         required: true
 
 env:
-  PAT: ${{ secrets.RELEASEBOT_PAT }}
   KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
@@ -25,7 +24,7 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.RELEASEBOT_PAT }}
 
       - name: "Set up Java"
         uses: actions/setup-java@v4
