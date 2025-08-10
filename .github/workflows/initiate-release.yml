@@ -1,11 +1,11 @@
-name: "Initiate new app version release"
+name: Initiate new release
 
 on:
   workflow_dispatch:
     inputs:
       newAppVersion:
         type: string
-        description: "New application version"
+        description: "New app version"
         required: true
 
 env:

@@ -1,13 +1,20 @@
-name: Release
+name: Create release
 
 on:
   push:
     tags:
       - 'v*'
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+
 jobs:
-  create-apk:
-    name: "Create release APK"
+  create-artifact:
+    name: "Create release artifact"
     runs-on: ubuntu-latest
     steps:
       - name: "Check out repository"
@@ -25,17 +32,12 @@ jobs:
           cache-read-only: false
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: "Assemble application"
-        env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      - name: "Create release artifact"
         run: |
           ./gradlew assembleRelease
           ./gradlew copyReleaseApkArtifact
 
-      - name: "Upload APK"
+      - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
           name: "apk"
@@ -44,34 +46,30 @@ jobs:
           retention-days: 14
           overwrite: true
 
-  release-apk:
-    name: "Release APK"
+  release-artifact:
+    name: "Release artifact"
     needs:
-      - create-apk
+      - create-artifact
     runs-on: ubuntu-latest
     steps:
       - id: download-artifact
         name: "Download APK from build"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: "apk"
 
       - id: create-release
-        name: "Create release package"
+        name: "Create release"
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
-      - id: upload-release-package
-        name: "Upload release package"
+      - id: upload-release-artifact
+        name: "Upload release artifact"
         uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./shopping-list-${{ github.ref_name }}.apk
