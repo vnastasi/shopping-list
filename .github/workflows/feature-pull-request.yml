@@ -157,6 +157,7 @@ jobs:
   code-quality:
     name: "Verify code quality"
     runs-on: ubuntu-latest
+    permissions: write-all
     needs:
       - unit-tests
       - instrumented-tests
