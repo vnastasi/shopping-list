@@ -31,7 +31,7 @@ android {
         versionCode = libs.versions.project.version.code.get().toInt()
         versionName = libs.versions.project.version.name.get()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "md.vnastasi.shoppinglist.runner.HiltAppRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -116,6 +116,7 @@ dependencies {
     androidTestImplementation(libs.compose.ui.test)
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.hilt.test)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.runtime)
     androidTestImplementation(libs.room.test)
@@ -126,6 +127,9 @@ dependencies {
     androidTestImplementation(libs.uitest.core)
     androidTestImplementation(libs.uitest.junit)
     androidTestImplementation(libs.uitest.monitor)
+    androidTestImplementation(libs.uitest.runner)
+
+    kspAndroidTest(libs.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
