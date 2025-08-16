@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name="md.vnastasi.shoppinglist.ShoppingListApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,9 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingList"
-        android:appComponentFactory="md.vnastasi.shoppinglist.ComponentFactory"
-        tools:targetApi="31"
-        tools:replace="android:appComponentFactory">
+        tools:targetApi="31">
 
         <activity
             android:name="md.vnastasi.shoppinglist.MainActivity"

@@ -1,5 +1,6 @@
 plugins {
     id("simple-library.conventions")
+    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
@@ -18,8 +19,10 @@ dependencies {
     api(libs.coroutines.core)
     api(libs.sqlite)
 
+    implementation(libs.hilt)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
 
+    ksp(libs.hilt.compiler)
     ksp(libs.room.compiler)
 }

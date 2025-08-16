@@ -1,7 +1,6 @@
 package md.vnastasi.shoppinglist.ui.rule
 
 import androidx.test.ext.junit.rules.AppComponentFactoryRule
-import md.vnastasi.shoppinglist.ComponentFactory
 import org.junit.rules.TestRule
 import org.koin.core.module.Module
 import org.koin.dsl.module

@@ -6,6 +6,7 @@ plugins {
     id("application.conventions")
     id("secrets")
     id("app-build-support")
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -92,6 +93,8 @@ dependencies {
     implementation(libs.compose.animations.core)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
+    implementation(libs.hilt)
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
@@ -99,6 +102,8 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.navigation.runtime)
     implementation(libs.serialization.core)
+
+    ksp(libs.hilt.compiler)
 
     androidTestImplementation(projects.resources)
 

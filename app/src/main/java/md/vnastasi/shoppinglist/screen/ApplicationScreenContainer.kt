@@ -3,12 +3,9 @@ package md.vnastasi.shoppinglist.screen
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
 
 @Composable
-fun ApplicationScreenContainer(
-    viewModelFactories: ViewModelFactoryCreator
-) {
+fun ApplicationScreenContainer() {
     val navController = rememberNavController()
 
     NavHost(
@@ -17,18 +14,15 @@ fun ApplicationScreenContainer(
     ) {
 
         overview(
-            navController = navController,
-            viewModelFactories = viewModelFactories
+            navController = navController
         )
 
         listDetails(
-            navController = navController,
-            viewModelFactories = viewModelFactories
+            navController = navController
         )
 
         addItems(
-            navController = navController,
-            viewModelFactories = viewModelFactories
+            navController = navController
         )
     }
 }
