@@ -19,11 +19,11 @@ coroutines = "1.10.2"
 detekt = "1.23.8"
 gradle-dependencies = "2.19.0"
 hilt = "1.2.0"
-hilt-dagger = "2.56.2"
+hilt-dagger = "2.57"
 jacoco = "0.8.13"
 junit = "5.13.4"
-kotlin = "2.2.0"
-ksp = "2.2.0-2.0.2"
+kotlin = "2.2.10"
+ksp = "2.2.10-2.0.2"
 lifecycle = "2.9.2"
 lottie = "6.6.7"
 material-adaptive = "1.1.0"
@@ -81,6 +81,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt-dagger" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt-dagger" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt" }
+hilt-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt-dagger" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
