@@ -1,6 +1,7 @@
 package md.vnastasi.shoppinglist.screen
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -10,58 +11,44 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
-import md.vnastasi.shoppinglist.screen.shared.lifecycle.viewModel
-import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
 
 fun NavGraphBuilder.overview(
-    navController: NavController,
-    viewModelFactories: ViewModelFactoryCreator
+    navController: NavController
 ) = composable<Routes.Overview>(
     exitTransition = { slideOutToLeft() },
     popEnterTransition = { slideInFromRight() },
     popExitTransition = { slideOutToRight() }
-) {
-    val viewModel = viewModel<OverviewViewModel>(
-        factory = viewModelFactories.create<OverviewViewModel.Factory>()
-    )
+) { backStackEntry ->
     OverviewScreen(
-        viewModel = viewModel,
+        viewModel = hiltViewModel<OverviewViewModel>(backStackEntry),
         navigator = ScreenNavigators.overview(navController)
     )
 }
 
 fun NavGraphBuilder.listDetails(
-    navController: NavController,
-    viewModelFactories: ViewModelFactoryCreator
+    navController: NavController
 ) = composable<Routes.ListDetails>(
     enterTransition = { slideInFromLeft() },
     exitTransition = { slideOutToLeft() },
     popEnterTransition = { slideInFromRight() },
     popExitTransition = { slideOutToRight() }
-) {
-    val viewModel = viewModel<ListDetailsViewModel>(
-        factory = viewModelFactories.create<ListDetailsViewModel.Factory>()
-    )
+) { backStackEntry ->
     ListDetailsScreen(
-        viewModel = viewModel,
+        viewModel = hiltViewModel<ListDetailsViewModel>(backStackEntry),
         navigator = ScreenNavigators.listDetails(navController)
     )
 }
 
 fun NavGraphBuilder.addItems(
-    navController: NavController,
-    viewModelFactories: ViewModelFactoryCreator
+    navController: NavController
 ) = composable<Routes.AddItems>(
     enterTransition = { slideInFromLeft() },
     exitTransition = { slideOutToLeft() },
     popEnterTransition = { slideInFromRight() },
     popExitTransition = { slideOutToRight() }
-) {
-    val viewModel = viewModel<AddItemsViewModel>(
-        factory = viewModelFactories.create<AddItemsViewModel.Factory>(),
-    )
+) { backStackEntry ->
     AddItemsScreen(
-        viewModel = viewModel,
+        viewModel = hiltViewModel<AddItemsViewModel>(backStackEntry),
         navigator = ScreenNavigators.addItems(navController)
     )
 }

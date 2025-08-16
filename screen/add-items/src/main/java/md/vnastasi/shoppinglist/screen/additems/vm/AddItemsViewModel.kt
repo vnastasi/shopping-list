@@ -4,16 +4,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +27,10 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
+import javax.inject.Inject
 
-class AddItemsViewModel internal constructor(
+@HiltViewModel
+class AddItemsViewModel @Inject internal constructor(
     savedStateHandle: SavedStateHandle,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
@@ -112,22 +109,6 @@ class AddItemsViewModel internal constructor(
             }
         }
     }
-
-    class Factory internal constructor(
-        private val nameSuggestionRepository: NameSuggestionRepository,
-        private val shoppingListRepository: ShoppingListRepository,
-        private val shoppingItemRepository: ShoppingItemRepository
-    ) : ViewModelProvider.Factory by viewModelFactory({
-        initializer {
-            AddItemsViewModel(
-                savedStateHandle = createSavedStateHandle(),
-                nameSuggestionRepository = nameSuggestionRepository,
-                shoppingListRepository = shoppingListRepository,
-                shoppingItemRepository = shoppingItemRepository,
-                coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-            )
-        }
-    })
 
     companion object {
 
