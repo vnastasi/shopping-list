@@ -16,10 +16,8 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
 
     api(libs.coroutines.core)
-    api(libs.koin.core)
     api(libs.sqlite)
 
-    implementation(libs.koin.android)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
 

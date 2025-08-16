@@ -35,7 +35,6 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
-    implementation(libs.koin.core)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)

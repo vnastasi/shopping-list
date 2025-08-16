@@ -20,7 +20,6 @@ detekt = "1.23.8"
 gradle-dependencies = "2.19.0"
 jacoco = "0.8.13"
 junit = "5.13.4"
-koin = "4.1.0"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
 lifecycle = "2.9.2"
@@ -81,9 +80,6 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit" }
-
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
 kotlin-parcelize = { module = "org.jetbrains.kotlin:kotlin-parcelize-runtime" }

@@ -15,7 +15,6 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
 
     implementation(libs.coroutines.core)
-    implementation(libs.koin.core)
 
     testImplementation(testFixtures(projects.database))
     testImplementation(testFixtures(projects.domain.api))
