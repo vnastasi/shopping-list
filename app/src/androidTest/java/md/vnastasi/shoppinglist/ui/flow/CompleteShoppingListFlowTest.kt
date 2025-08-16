@@ -4,22 +4,17 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import md.vnastasi.shoppinglist.MainActivity
-import md.vnastasi.shoppinglist.db.ShoppingListDatabase
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
+import md.vnastasi.shoppinglist.ui.rule.databaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
-import md.vnastasi.shoppinglist.ui.rule.onSetUp
-import md.vnastasi.shoppinglist.ui.rule.onTearDown
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
-import javax.inject.Inject
 
 @HiltAndroidTest
 class CompleteShoppingListFlowTest {
@@ -28,20 +23,8 @@ class CompleteShoppingListFlowTest {
 
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule
-    val ruleChain: TestRule = RuleChain
-        .outerRule(hiltAndroidRule)
-        .around(composeRule)
-        .around(retryOnFailureRule(maxAttempts = 3))
-        .around(disableAnimationsRule())
-
-    @Inject
-    lateinit var shoppingListDatabase: ShoppingListDatabase
-
-    @Before
-    fun setUp() {
-        hiltAndroidRule.inject()
-        shoppingListDatabase.onSetUp {
+    private val databaseRule = databaseRule(
+        onSetUp = {
             val shoppingListDao = shoppingListDao()
             val shoppingItemDao = shoppingItemDao()
 
@@ -55,12 +38,15 @@ class CompleteShoppingListFlowTest {
             shoppingItemDao.create(ShoppingItem(6L, "Rake", false, 2L))
             shoppingItemDao.create(ShoppingItem(7L, "Soil", false, 2L))
         }
-    }
+    )
 
-    @After
-    fun tearDown() {
-        shoppingListDatabase.onTearDown()
-    }
+    @get:Rule
+    val ruleChain: TestRule = RuleChain
+        .outerRule(hiltAndroidRule)
+        .around(databaseRule)
+        .around(composeRule)
+        .around(retryOnFailureRule(maxAttempts = 3))
+        .around(disableAnimationsRule())
 
     @Test
     fun completeShoppingList() {
