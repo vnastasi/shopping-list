@@ -15,6 +15,7 @@ A modern Android application for managing shopping lists.
     <td><img src="docs/images/Screenshot_20250817_174619.png" alt="Screenshot_20250817_174619.png" width="320" /></td>
   </tr>
   <tr>
+    <td><img src="docs/images/Screenshot_20250817_182923.png" alt="Screenshot_20250817_182923.png" width="320" /></td>
     <td><img src="docs/images/Screenshot_20250817_174632.png" alt="Screenshot_20250817_174632.png" width="320" /></td>
     <td><img src="docs/images/Screenshot_20250817_174653.png" alt="Screenshot_20250817_174653.png" width="320" /></td>
   </tr>
