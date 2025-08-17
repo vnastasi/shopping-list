@@ -1,15 +1,24 @@
 # Shopping List App
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/val/shopping-list/feature-pull-request.yml?branch=main&style=for-the-badge)](https://github.com/val/shopping-list/actions/workflows/feature-pull-request.yml)
-<!-- TODO: Add other relevant badges, e.g., code coverage -->
+![Feature](https://github.com/vnastasi/shopping-list/actions/workflows/feature-pull-request.yml/badge.svg)
+
+![Release](https://github.com/vnastasi/shopping-list/actions/workflows/create-release.yml/badge.svg)
+
+
 
 A modern Android application for managing shopping lists.
 
-<img src="docs/images/Screenshot_20250817_174114.png" alt="Screenshot_20250817_174114.png" width="320" />
-<img src="docs/images/Screenshot_20250817_174204.png" alt="Screenshot_20250817_174204.png" width="320" />
-<img src="docs/images/Screenshot_20250817_174619.png" alt="Screenshot_20250817_174619.png" width="320" />
-<img src="docs/images/Screenshot_20250817_174632.png" alt="Screenshot_20250817_174632.png" width="320" />
-<img src="docs/images/Screenshot_20250817_174653.png" alt="Screenshot_20250817_174653.png" width="320" />
+<table>
+  <tr>
+    <td><img src="docs/images/Screenshot_20250817_174114.png" alt="Screenshot_20250817_174114.png" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20250817_174204.png" alt="Screenshot_20250817_174204.png" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20250817_174619.png" alt="Screenshot_20250817_174619.png" width="320" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/Screenshot_20250817_174632.png" alt="Screenshot_20250817_174632.png" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20250817_174653.png" alt="Screenshot_20250817_174653.png" width="320" /></td>
+  </tr>
+</table>
 
 ## Table of Contents
 
