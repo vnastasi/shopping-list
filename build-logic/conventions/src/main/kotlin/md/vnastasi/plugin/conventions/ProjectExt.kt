@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.fromTarget(libs.versions.project.jdk.get()))
         }
     }
 }
@@ -31,8 +31,9 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid(libs: LibrariesF
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+
+        sourceCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
+        targetCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
     }
 }
 

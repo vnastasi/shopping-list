@@ -2,6 +2,7 @@
 
 project-application-id = "md.vnastasi.shoppinglist"
 project-compileSdk = "36"
+project-jdk = "21"
 project-minSdk = "28"
 project-targetSdk = "36"
 project-version-code = "20"
