@@ -97,6 +97,8 @@ Follow these instructions to get the project up and running on your local machin
 
 ## Running Tests
 
+![Test coverage](.github/badges/jacoco.svg)
+
 This project includes unit tests and instrumented (UI) tests.
 
 ### Unit Tests
