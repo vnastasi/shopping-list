@@ -1,9 +1,10 @@
 [versions]
 
 project-application-id = "md.vnastasi.shoppinglist"
-project-compileSdk = "35"
+project-compileSdk = "36"
+project-jdk = "21"
 project-minSdk = "28"
-project-targetSdk = "35"
+project-targetSdk = "36"
 project-version-code = "20"
 project-version-name = "0.4.0"
 
@@ -29,7 +30,7 @@ material-adaptive = "1.1.0"
 material-icons = "1.7.8"
 mockk = "1.14.5"
 navigation = "2.9.3"
-paparazzi = "1.3.5"
+paparazzi = "2.0.0-alpha02"
 room = "2.7.2"
 serialization = "1.9.0"
 sqlite = "2.5.2"
