@@ -211,7 +211,7 @@ jobs:
   dependencies-update-auto-merge:
     name: "Auto merge on dependencies update"
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.ref_name, 'dependabot/') }}
+    if: startsWith(github.head_ref, 'dependabot/') || startsWith(github.head_ref, 'wrapperbot/')
     needs:
       - code-quality
     steps:
