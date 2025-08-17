@@ -24,7 +24,6 @@ A modern Android application for managing shopping lists.
   - [Unit Tests](#unit-tests)
   - [Instrumented Tests](#instrumented-tests)
 - [CI/CD](#cicd)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Features
