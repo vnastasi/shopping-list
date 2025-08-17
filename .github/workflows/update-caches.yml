@@ -58,7 +58,7 @@ jobs:
     name: "Update test coverage badge"
     runs-on: ubuntu-latest
     needs:
-      - emulator-cache
+      - update-emulator-cache
     steps:
       - name: "Enable hardware acceleration"
         run: |
