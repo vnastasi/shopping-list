@@ -31,12 +31,15 @@ jobs:
         uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Update project version"
+        shell: bash
         run: ./gradlew updateProjectVersion -Pmd.vnastasi.shoppinglist.newAppVersion=${{ inputs.newAppVersion }}
 
       - name: "Verify project build"
+        shell: bash
         run: ./gradlew assemble
 
       - name: "Commit changes"
+        shell: bash
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
@@ -44,6 +47,7 @@ jobs:
           git push
 
       - name: "Create release tag"
+        shell: bash
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"

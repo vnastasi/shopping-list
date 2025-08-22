@@ -34,6 +34,7 @@ jobs:
         uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Assemble application"
+        shell: bash
         run: ./gradlew assemble
 
   unit-tests:
@@ -89,9 +90,11 @@ jobs:
         uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Check Gradle project health"
+        shell: bash
         run: ./gradlew projectHealth
 
       - name: "Detekt"
+        shell: bash
         run: ./gradlew detekt
 
       - name: "Restore unit test execution data"
@@ -113,6 +116,7 @@ jobs:
 
       - name: "Clear caches"
         continue-on-error: true
+        shell: bash
         run: |
           gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
           gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
@@ -130,4 +134,5 @@ jobs:
       - name: "Auto-merge PR"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+        shell: bash
         run: gh pr merge --auto --squash $PR_URL

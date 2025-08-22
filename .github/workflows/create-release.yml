@@ -24,6 +24,7 @@ jobs:
         uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Create release artifact"
+        shell: bash
         run: |
           ./gradlew assembleRelease
           ./gradlew copyReleaseApkArtifact
