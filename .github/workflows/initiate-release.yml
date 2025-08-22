@@ -1,4 +1,4 @@
-name: Initiate new release
+name: "Initiate new release"
 
 on:
   workflow_dispatch:
