@@ -49,23 +49,10 @@ jobs:
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
 
-      - name: "Assemble unit tests"
-        run: ./gradlew assembleDebugUnitTest
-
       - name: "Run unit tests"
-        run: |
-          ./gradlew testDebugUnitTest
-          ./gradlew copyUnitTestExecData
-
-      - name: "Clear any previously cached execution data"
-        continue-on-error: true
-        run: gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
-
-      - name: "Cache test execution data"
-        uses: actions/cache/save@v4
+        uses: ./.github/actions/run-unit-tests-action
         with:
-          path: ${{ github.workspace }}/build/exec-data/unit-tests
-          key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
+          exec-data-cache-key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
 
   instrumented-tests:
     name: "Instrumented tests"

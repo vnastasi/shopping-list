@@ -80,9 +80,7 @@ jobs:
           ./gradlew assembleDebugAndroidTest
 
       - name: "Run unit tests"
-        run: |
-          ./gradlew testDebugUnitTest
-          ./gradlew copyUnitTestExecData
+        uses: ./.github/actions/run-unit-tests-action
 
       - name: "Restore emulator snapshots"
         uses: actions/cache@v4
