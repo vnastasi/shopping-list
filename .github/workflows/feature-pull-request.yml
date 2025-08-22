@@ -18,6 +18,7 @@ env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
   KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
   UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{github.event.pull_request.number}}
   IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{github.event.pull_request.number}}
 
@@ -29,17 +30,8 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Assemble application"
         run: ./gradlew assemble
@@ -54,17 +46,8 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Assemble unit tests"
         run: ./gradlew assembleDebugUnitTest
@@ -104,17 +87,8 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Assemble instrumented tests"
         run: ./gradlew assembleDebugAndroidTest
@@ -161,17 +135,8 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Check Gradle project health"
         run: ./gradlew projectHealth

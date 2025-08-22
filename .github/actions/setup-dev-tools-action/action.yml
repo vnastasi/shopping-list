@@ -1,0 +1,16 @@
+name: "Set up development tools"
+
+runs:
+  using: composite
+  steps:
+    - name: "Set up Java"
+      uses: actions/setup-java@v5
+      with:
+        java-version: "21"
+        distribution: "temurin"
+
+    - name: "Set up Gradle"
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: false
+        cache-encryption-key: ${{ env.GRADLE_ENCRYPTION_KEY }}
