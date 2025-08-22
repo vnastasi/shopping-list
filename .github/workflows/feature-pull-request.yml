@@ -60,56 +60,19 @@ jobs:
     permissions: write-all
     needs:
       - build
-    strategy:
-      matrix:
-        api-level: [35]
-        target: [default]
     steps:
-      - name: "Enable hardware acceleration"
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
 
-      - name: "Assemble instrumented tests"
-        run: ./gradlew assembleDebugAndroidTest
-
-      - name: "Restore emulator snapshots"
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{ matrix.target }}
-
       - name: "Run instrumented tests"
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: ./.github/actions/run-instrumented-tests-action
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: |
-            ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
-            ./gradlew copyInstrumentedTestExecData
-
-      - name: "Clear any previously cached execution data"
-        continue-on-error: true
-        run: gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
-
-      - name: "Cache test execution data"
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
+          avd-api-level: 35
+          avd-target: default
+          exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
 
   code-quality:
     name: "Verify code quality"
