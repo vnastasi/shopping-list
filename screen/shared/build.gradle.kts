@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("compose-library.conventions")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,12 +32,15 @@ dependencies {
     implementation(libs.compose.preview)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
+    implementation(libs.hilt)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
     implementation(libs.window.core)
+
+    ksp(libs.hilt.compiler)
 
     debugImplementation(libs.compose.tooling)
 
