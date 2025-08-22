@@ -91,6 +91,9 @@ jobs:
       - name: "Check Gradle project health"
         run: ./gradlew projectHealth
 
+      - name: "Detekt"
+        run: ./gradlew detekt
+
       - name: "Restore unit test execution data"
         uses: actions/cache/restore@v4
         with:
@@ -105,17 +108,8 @@ jobs:
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
-#      - name: "Compile sources"
-#        run: |
-#          ./gradlew compileDebugSources
-#          ./gradlew compileDebugUnitTestSources
-#          ./gradlew compileDebugAndroidTestSources
-
       - name: "Code coverage"
-        run: ./gradlew verifyCodeCoverage
-
-      - name: "Detekt"
-        run: ./gradlew detekt
+        uses: ./.github/actions/code-coverage-action
 
       - name: "Clear caches"
         continue-on-error: true
