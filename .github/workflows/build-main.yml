@@ -1,0 +1,51 @@
+name: "Build main"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v5.0.0
+
+      - name: "Create Android emulator snapshot"
+        uses: ./.github/actions/create-emulator-snapshot-action
+        with:
+          avd-api-level: 35
+          avd-target: default
+
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
+
+      - name: "Assemble application"
+        shell: bash
+        run: ./gradlew assemble
+
+      - name: "Run unit tests"
+        uses: ./.github/actions/run-unit-tests-action
+
+      - name: "Run instrumented tests"
+        uses: ./.github/actions/run-instrumented-tests-action
+        with:
+          avd-api-level: 35
+          avd-target: default
+
+      - name: "Code coverage"
+        uses: ./.github/actions/code-coverage-action
+        with:
+          update-badge: true

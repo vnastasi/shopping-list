@@ -1,4 +1,4 @@
-name: Pull request
+name: "Pull request"
 
 on:
   pull_request:
@@ -18,6 +18,7 @@ env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
   KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
   UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{github.event.pull_request.number}}
   IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{github.event.pull_request.number}}
 
@@ -29,19 +30,11 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Assemble application"
+        shell: bash
         run: ./gradlew assemble
 
   unit-tests:
@@ -54,35 +47,13 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: "Assemble unit tests"
-        run: ./gradlew assembleDebugUnitTest
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Run unit tests"
-        run: |
-          ./gradlew testDebugUnitTest
-          ./gradlew copyUnitTestExecData
-
-      - name: "Clear any previously cached execution data"
-        continue-on-error: true
-        run: gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
-
-      - name: "Cache test execution data"
-        uses: actions/cache/save@v4
+        uses: ./.github/actions/run-unit-tests-action
         with:
-          path: ${{ github.workspace }}/build/exec-data/unit-tests
-          key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
+          exec-data-cache-key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
 
   instrumented-tests:
     name: "Instrumented tests"
@@ -90,65 +61,19 @@ jobs:
     permissions: write-all
     needs:
       - build
-    strategy:
-      matrix:
-        api-level: [35]
-        target: [default]
     steps:
-      - name: "Enable hardware acceleration"
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-
-      - name: "Assemble instrumented tests"
-        run: ./gradlew assembleDebugAndroidTest
-
-      - name: "Restore emulator snapshots"
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{ matrix.target }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Run instrumented tests"
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: ./.github/actions/run-instrumented-tests-action
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: |
-            ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
-            ./gradlew copyInstrumentedTestExecData
-
-      - name: "Clear any previously cached execution data"
-        continue-on-error: true
-        run: gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
-
-      - name: "Cache test execution data"
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
+          avd-api-level: 35
+          avd-target: default
+          exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
 
   code-quality:
     name: "Verify code quality"
@@ -161,20 +86,16 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Check Gradle project health"
+        shell: bash
         run: ./gradlew projectHealth
+
+      - name: "Detekt"
+        shell: bash
+        run: ./gradlew detekt
 
       - name: "Restore unit test execution data"
         uses: actions/cache/restore@v4
@@ -190,20 +111,12 @@ jobs:
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
-      - name: "Compile sources"
-        run: |
-          ./gradlew compileDebugSources
-          ./gradlew compileDebugUnitTestSources
-          ./gradlew compileDebugAndroidTestSources
-
       - name: "Code coverage"
-        run: ./gradlew verifyCodeCoverage
-
-      - name: "Detekt"
-        run: ./gradlew detekt
+        uses: ./.github/actions/code-coverage-action
 
       - name: "Clear caches"
         continue-on-error: true
+        shell: bash
         run: |
           gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
           gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
@@ -221,4 +134,5 @@ jobs:
       - name: "Auto-merge PR"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+        shell: bash
         run: gh pr merge --auto --squash $PR_URL

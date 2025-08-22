@@ -1,0 +1,32 @@
+name: "Run unit tests"
+
+inputs:
+  exec-data-cache-key:
+    description: "Cache key used for unit test execution data. Required for determining code coverage."
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: "Assemble"
+      shell: bash
+      run: ./gradlew assembleDebugUnitTest
+
+    - name: "Run unit tests"
+      shell: bash
+      run: |
+        ./gradlew testDebugUnitTest
+        ./gradlew copyUnitTestExecData
+
+    - name: "Clear any previously cached execution data"
+      if: ${{ inputs.exec-data-cache-key != '' }}
+      continue-on-error: true
+      shell: bash
+      run: gh cache delete "${{ inputs.exec-data-cache-key }}"
+
+    - name: "Cache test execution data"
+      if: ${{ inputs.exec-data-cache-key != '' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ github.workspace }}/build/exec-data/unit-tests
+        key: ${{ inputs.exec-data-cache-key }}

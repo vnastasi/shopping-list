@@ -1,4 +1,4 @@
-name: Create release
+name: "Create release"
 
 on:
   push:
@@ -20,19 +20,11 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Create release artifact"
+        shell: bash
         run: |
           ./gradlew assembleRelease
           ./gradlew copyReleaseApkArtifact

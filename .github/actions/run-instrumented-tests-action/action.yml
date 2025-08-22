@@ -1,0 +1,60 @@
+name: "Run instrumented tests"
+
+inputs:
+  avd-api-level:
+    description: "Android emulator image API level"
+    required: true
+  avd-target:
+    description: "Android emulator image target"
+    required: true
+  exec-data-cache-key:
+    description: "Cache key used for instrumented test execution data. Required for determining code coverage."
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: "Enable hardware acceleration"
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: "Assemble"
+      shell: bash
+      run: ./gradlew assembleDebugAndroidTest
+
+    - name: "Restore emulator snapshot"
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
+
+    - name: "Run instrumented tests"
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.avd-api-level }}
+        target: ${{ inputs.avd-target }}
+        arch: x86_64
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: |
+          ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
+          ./gradlew copyInstrumentedTestExecData
+
+    - name: "Clear any previously cached execution data"
+      if: ${{ inputs.exec-data-cache-key != '' }}
+      continue-on-error: true
+      shell: bash
+      run: gh cache delete "${{ inputs.exec-data-cache-key }}"
+
+    - name: "Cache test execution data"
+      if: ${{ inputs.exec-data-cache-key != '' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+        key: ${{ inputs.exec-data-cache-key }}
