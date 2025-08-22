@@ -1,4 +1,4 @@
-name: Initiate new release
+name: "Initiate new release"
 
 on:
   workflow_dispatch:
@@ -13,6 +13,7 @@ env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
   KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
 jobs:
   initiate-release:
@@ -26,25 +27,19 @@ jobs:
         with:
           token: ${{ secrets.RELEASEBOT_PAT }}
 
-      - name: "Set up Java"
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: "Set up Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
 
       - name: "Update project version"
+        shell: bash
         run: ./gradlew updateProjectVersion -Pmd.vnastasi.shoppinglist.newAppVersion=${{ inputs.newAppVersion }}
 
       - name: "Verify project build"
+        shell: bash
         run: ./gradlew assemble
 
       - name: "Commit changes"
+        shell: bash
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"
@@ -52,6 +47,7 @@ jobs:
           git push
 
       - name: "Create release tag"
+        shell: bash
         run: |
           git config --global user.name "releasebot[bot]"
           git config --global user.email "releasebot@users.noreply.github.com"

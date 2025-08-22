@@ -1,0 +1,40 @@
+name: "Create Android emulator snapshot"
+
+inputs:
+  avd-api-level:
+    description: "Android emulator image API level"
+    required: true
+  avd-target:
+    description: "Android emulator image target"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: "Enable hardware acceleration"
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: "Set up emulator cache"
+      uses: actions/cache@v4
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
+
+    - name: "Create emulator snapshot"
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.avd-api-level }}
+        target: ${{ inputs.avd-target }}
+        arch: x86_64
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated emulator snapshot."
