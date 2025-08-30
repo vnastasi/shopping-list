@@ -1,16 +1,12 @@
 package md.vnastasi.shoppinglist.screen.overview.vm
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +22,10 @@ import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
+import javax.inject.Inject
 
-class OverviewViewModel internal constructor(
+@HiltViewModel
+class OverviewViewModel @Inject internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), OverviewViewModelSpec {
@@ -90,14 +88,6 @@ class OverviewViewModel internal constructor(
     private fun onToastShown() {
         toastMessage.value = null
     }
-
-    class Factory internal constructor(
-        private val shoppingListRepository: ShoppingListRepository
-    ) : ViewModelProvider.Factory by viewModelFactory({
-        initializer {
-            OverviewViewModel(shoppingListRepository, CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()))
-        }
-    })
 
     companion object {
 
