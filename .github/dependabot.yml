@@ -12,5 +12,3 @@
             - "com.google.devtools.ksp"
             - "io.gitlab.arturbosch.detekt"
           applies-to: version-updates
-      reviewers:
-        - "vnastasi"
