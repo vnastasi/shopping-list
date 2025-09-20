@@ -2,15 +2,10 @@ package md.vnastasi.shoppinglist.screen.listdetails.vm
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -24,9 +19,11 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import javax.inject.Inject
 
-class ListDetailsViewModel internal constructor(
-    private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class ListDetailsViewModel @Inject internal constructor(
+    savedStateHandle: SavedStateHandle,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
     coroutineScope: CoroutineScope
@@ -83,20 +80,6 @@ class ListDetailsViewModel internal constructor(
                 listOfShoppingItems = listOfShoppingItems.toImmutableList()
             )
         }
-
-    class Factory internal constructor(
-        private val shoppingListRepository: ShoppingListRepository,
-        private val shoppingItemRepository: ShoppingItemRepository
-    ) : ViewModelProvider.Factory by viewModelFactory({
-        initializer {
-            ListDetailsViewModel(
-                savedStateHandle = createSavedStateHandle(),
-                shoppingListRepository = shoppingListRepository,
-                shoppingItemRepository = shoppingItemRepository,
-                coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-            )
-        }
-    })
 
     companion object {
 

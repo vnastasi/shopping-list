@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("compose-screen-library.conventions")
     id("screenshot-testable-library.conventions")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -36,7 +38,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
-    implementation(libs.koin.core)
+    implementation(libs.hilt)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)
@@ -45,6 +47,8 @@ dependencies {
     debugImplementation(libs.compose.tooling)
 
     debugRuntimeOnly(libs.compose.test.manifest)
+
+    ksp(libs.hilt.compiler)
 
     testImplementation(platform(libs.coroutines.bom))
 

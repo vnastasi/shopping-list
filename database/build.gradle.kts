@@ -1,5 +1,6 @@
 plugins {
     id("simple-library.conventions")
+    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
@@ -16,12 +17,12 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
 
     api(libs.coroutines.core)
-    api(libs.koin.core)
     api(libs.sqlite)
 
-    implementation(libs.koin.android)
+    implementation(libs.hilt)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
 
+    ksp(libs.hilt.compiler)
     ksp(libs.room.compiler)
 }

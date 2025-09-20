@@ -6,13 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import md.vnastasi.shoppinglist.support.di.ViewModelFactoryCreator
+import dagger.hilt.android.AndroidEntryPoint
 import md.vnastasi.shoppinglist.screen.ApplicationScreenContainer
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
-class MainActivity(
-    private val viewModelFactories: ViewModelFactoryCreator
-) : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -22,7 +21,7 @@ class MainActivity(
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                ApplicationScreenContainer(viewModelFactories)
+                ApplicationScreenContainer()
             }
         }
     }
