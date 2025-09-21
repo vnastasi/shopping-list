@@ -5,6 +5,8 @@ import assertk.all
 import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.containsExactly
+import assertk.assertions.extracting
 import assertk.assertions.hasSize
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
@@ -13,6 +15,7 @@ import md.vnastasi.shoppinglist.db.TestData.DEFAULT_SHOPPING_LIST_ID
 import md.vnastasi.shoppinglist.db.TestData.DEFAULT_SHOPPING_LIST_ITEM_ID
 import md.vnastasi.shoppinglist.db.TestData.createShoppingItemEntity
 import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
+import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.support.runDatabaseTest
 import org.junit.Test
 
@@ -92,6 +95,28 @@ class ShoppingItemDaoTest {
 
             shoppingItemDao.delete(shoppingItem)
             assertThat(awaitItem()).isEmpty()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+
+    @Test
+    fun reorderShoppingItems() = runDatabaseTest { db ->
+        val shoppingListDao = db.shoppingListDao()
+        val shoppingItemDao = db.shoppingItemDao()
+
+        shoppingListDao.create(createShoppingListEntity())
+
+        val a = createShoppingItemEntity { id = 0L; name = "A" }.also { shoppingItemDao.create(it) }
+        val b = createShoppingItemEntity { id = 0L; name = "B" }.also { shoppingItemDao.create(it) }
+        val c = createShoppingItemEntity { id = 0L; name = "C" }.also { shoppingItemDao.create(it) }
+
+        shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
+            assertThat(awaitItem()).extracting(ShoppingItem::name).containsExactly("C", "B", "A")
+
+            shoppingItemDao.reorder(listOf(c, a, b))
+            assertThat(awaitItem()).extracting(ShoppingItem::name).containsExactly("B", "A", "C")
 
             cancelAndIgnoreRemainingEvents()
         }

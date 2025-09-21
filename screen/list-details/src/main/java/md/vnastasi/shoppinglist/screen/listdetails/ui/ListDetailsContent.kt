@@ -32,21 +32,23 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 internal fun ListDetailsContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
-    onItemClick: (ShoppingItem) -> Unit,
-    onItemDelete: (ShoppingItem) -> Unit
+    onItemClicked: (ShoppingItem) -> Unit,
+    onItemDeleted: (ShoppingItem) -> Unit,
+    onItemsReordered: (List<ShoppingItem>) -> Unit
 ) {
 
-    val localListOfShoppingItems = listOfShoppingItems.toMutableStateList()
+    val snapshotListOfShoppingItems = remember(listOfShoppingItems) { listOfShoppingItems.toMutableStateList() }
 
     val listState = rememberLazyListState()
     val reorderableListState = rememberReorderableLazyListState(listState) { from, to ->
-        localListOfShoppingItems.add(to.index, localListOfShoppingItems.removeAt(from.index))
+        snapshotListOfShoppingItems.add(to.index, snapshotListOfShoppingItems.removeAt(from.index))
     }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = AppDimensions.paddingSmall)
+
             .testTag(SHOPPING_ITEMS_LIST),
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
@@ -57,7 +59,7 @@ internal fun ListDetailsContent(
         state = listState
     ) {
         itemsIndexed(
-            items = localListOfShoppingItems,
+            items = snapshotListOfShoppingItems,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
             ReorderableItem(
@@ -70,9 +72,10 @@ internal fun ListDetailsContent(
                         .testTag(SHOPPING_ITEMS_ITEM),
                     interactionSource = remember { MutableInteractionSource() },
                     shoppingItem = shoppingItem,
-                    isLastItemInList = index == localListOfShoppingItems.size - 1,
-                    onClick = onItemClick,
-                    onDelete = onItemDelete
+                    isLastItemInList = index == snapshotListOfShoppingItems.size - 1,
+                    onClicked = onItemClicked,
+                    onDeleted = onItemDeleted,
+                    onOrderChanged = { onItemsReordered(snapshotListOfShoppingItems) }
                 )
             }
         }
@@ -98,8 +101,9 @@ private fun NonEmptyListDetailsScreenContentPreview() {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             listOfShoppingItems = listOfShoppingItems,
-            onItemClick = { },
-            onItemDelete = { }
+            onItemClicked = { },
+            onItemDeleted = { },
+            onItemsReordered = { }
         )
     }
 }

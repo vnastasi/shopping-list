@@ -13,7 +13,7 @@ import md.vnastasi.shoppinglist.db.model.ShoppingList as ShoppingListEntity
 internal class LocalShoppingItemRepository(
     private val shoppingListDao: ShoppingListDao,
     private val shoppingItemDao: ShoppingItemDao
-) : ShoppingItemRepository{
+) : ShoppingItemRepository {
 
     override fun findAll(shoppingListId: Long): Flow<List<ShoppingItem>> = combine(
         shoppingListDao.findById(shoppingListId).filterNotNull(),
@@ -32,6 +32,11 @@ internal class LocalShoppingItemRepository(
 
     override suspend fun delete(item: ShoppingItem) {
         shoppingItemDao.delete(item.toEntity())
+    }
+
+    override suspend fun reorder(items: List<ShoppingItem>) {
+        require(items.isNotEmpty())
+        shoppingItemDao.reorder(items.reversed().map { it.toEntity().copy(id = 0L) })
     }
 
     private fun ShoppingItem.toEntity() = ShoppingItemEntity(id, name, isChecked, list.id)

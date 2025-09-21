@@ -1,9 +1,10 @@
 package md.vnastasi.shoppinglist.db
 
+import android.util.Log
 import androidx.room.Room
 import md.vnastasi.shoppinglist.db.callback.CreateNameSuggestionTriggerCallback
-import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
+import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom1To2
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom2To3
@@ -11,6 +12,7 @@ import md.vnastasi.shoppinglist.db.migration.MigrationFrom3To4
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom4To5
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
+import kotlin.coroutines.EmptyCoroutineContext
 
 object DatabaseModule {
 
@@ -20,6 +22,13 @@ object DatabaseModule {
                 .addMigrations(MigrationFrom1To2(), MigrationFrom2To3(), MigrationFrom3To4(), MigrationFrom4To5())
                 .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .addCallback(CreateNameSuggestionTriggerCallback())
+                .apply {
+                    if (BuildConfig.DEBUG) {
+                        setQueryCallback(EmptyCoroutineContext) { sqlQuery, bindArgs ->
+                            Log.d("DATABASE SQL statement", "$sqlQuery with arguments $bindArgs")
+                        }
+                    }
+                }
                 .build()
         }
 

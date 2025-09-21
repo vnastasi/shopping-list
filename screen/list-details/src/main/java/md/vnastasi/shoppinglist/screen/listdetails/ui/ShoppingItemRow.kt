@@ -48,8 +48,9 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     interactionSource: MutableInteractionSource,
     shoppingItem: ShoppingItem,
     isLastItemInList: Boolean,
-    onClick: (ShoppingItem) -> Unit,
-    onDelete: (ShoppingItem) -> Unit
+    onClicked: (ShoppingItem) -> Unit,
+    onDeleted: (ShoppingItem) -> Unit,
+    onOrderChanged: () -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxWidth()
@@ -62,7 +63,7 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(interactionSource = interactionSource) { onClick.invoke(shoppingItem) }
+                    .clickable(interactionSource = interactionSource) { onClicked.invoke(shoppingItem) }
                     .padding(AppDimensions.paddingSmall)
             ) {
                 Checkbox(
@@ -70,7 +71,7 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .testTag(LIST_ITEM_CHECKBOX),
-                    onCheckedChange = { onClick.invoke(shoppingItem) },
+                    onCheckedChange = { onClicked.invoke(shoppingItem) },
                     colors = CheckboxDefaults.colors().copy(
                         checkedBoxColor = MaterialTheme.colorScheme.tertiary,
                         checkedBorderColor = MaterialTheme.colorScheme.tertiary,
@@ -98,7 +99,7 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
                         .testTag(SHOPPING_ITEMS_ITEM_DELETE_BUTTON)
                         .wrapContentSize()
                         .align(Alignment.CenterVertically),
-                    onClick = { onDelete.invoke(shoppingItem) }
+                    onClick = { onDeleted.invoke(shoppingItem) }
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
@@ -112,7 +113,8 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
                         .wrapContentSize()
                         .align(Alignment.CenterVertically)
                         .draggableHandle(
-                            interactionSource = interactionSource
+                            interactionSource = interactionSource,
+                            onDragStopped = onOrderChanged
                         )
                         .clearAndSetSemantics {
                             testTag = SHOPPING_ITEMS_ITEM_DELETE_BUTTON
@@ -158,8 +160,9 @@ private fun ShoppingItemRowPreview1() {
             interactionSource = remember { MutableInteractionSource() },
             shoppingItem = shoppingItem,
             isLastItemInList = true,
-            onClick = { },
-            onDelete = { }
+            onClicked = { },
+            onDeleted = { },
+            onOrderChanged = { }
         )
     }
 }
@@ -183,8 +186,9 @@ private fun ShoppingItemRowPreview2() {
             interactionSource = remember { MutableInteractionSource() },
             shoppingItem = shoppingItem,
             isLastItemInList = true,
-            onClick = { },
-            onDelete = { }
+            onClicked = { },
+            onDeleted = { },
+            onOrderChanged = { }
         )
     }
 }
