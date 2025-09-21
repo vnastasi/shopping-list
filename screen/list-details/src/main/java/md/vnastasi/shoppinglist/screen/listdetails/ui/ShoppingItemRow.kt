@@ -1,6 +1,7 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +20,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -32,12 +38,14 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBO
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
-import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
+import sh.calvin.reorderable.DragGestureDetector
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
-internal fun ShoppingItemRow(
+internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource,
     shoppingItem: ShoppingItem,
     isLastItemInList: Boolean,
     onClick: (ShoppingItem) -> Unit,
@@ -54,7 +62,7 @@ internal fun ShoppingItemRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onClick.invoke(shoppingItem) }
+                    .clickable(interactionSource = interactionSource) { onClick.invoke(shoppingItem) }
                     .padding(AppDimensions.paddingSmall)
             ) {
                 Checkbox(
@@ -98,6 +106,24 @@ internal fun ShoppingItemRow(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
+
+                IconButton(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.CenterVertically)
+                        .draggableHandle(
+                            interactionSource = interactionSource
+                        )
+                        .clearAndSetSemantics {
+                            testTag = SHOPPING_ITEMS_ITEM_DELETE_BUTTON
+                        },
+                    onClick = { }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.drag_indicator),
+                        contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc),
+                    )
+                }
             }
 
             if (!isLastItemInList) {
@@ -127,12 +153,15 @@ private fun ShoppingItemRowPreview1() {
         isChecked = true,
         list = ShoppingList(1, "list")
     )
-    ShoppingItemRow(
-        shoppingItem = shoppingItem,
-        isLastItemInList = true,
-        onClick = { },
-        onDelete = { }
-    )
+    with(PreviewReorderableCollectionItemScope) {
+        ShoppingItemRow(
+            interactionSource = remember { MutableInteractionSource() },
+            shoppingItem = shoppingItem,
+            isLastItemInList = true,
+            onClick = { },
+            onDelete = { }
+        )
+    }
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -149,13 +178,32 @@ private fun ShoppingItemRowPreview2() {
         isChecked = false,
         list = ShoppingList(1, "list")
     )
-
-    AppTheme {
+    with(PreviewReorderableCollectionItemScope) {
         ShoppingItemRow(
+            interactionSource = remember { MutableInteractionSource() },
             shoppingItem = shoppingItem,
             isLastItemInList = true,
             onClick = { },
             onDelete = { }
         )
     }
+}
+
+@ExcludeFromJacocoGeneratedReport
+private object PreviewReorderableCollectionItemScope : ReorderableCollectionItemScope {
+
+    override fun Modifier.draggableHandle(
+        enabled: Boolean,
+        interactionSource: MutableInteractionSource?,
+        onDragStarted: (Offset) -> Unit,
+        onDragStopped: () -> Unit,
+        dragGestureDetector: DragGestureDetector
+    ): Modifier = this
+
+    override fun Modifier.longPressDraggableHandle(
+        enabled: Boolean,
+        interactionSource: MutableInteractionSource?,
+        onDragStarted: (Offset) -> Unit,
+        onDragStopped: () -> Unit
+    ): Modifier = this
 }

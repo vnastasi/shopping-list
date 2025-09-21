@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -7,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -21,6 +25,8 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LI
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 internal fun ListDetailsContent(
@@ -29,6 +35,14 @@ internal fun ListDetailsContent(
     onItemClick: (ShoppingItem) -> Unit,
     onItemDelete: (ShoppingItem) -> Unit
 ) {
+
+    val localListOfShoppingItems = listOfShoppingItems.toMutableStateList()
+
+    val listState = rememberLazyListState()
+    val reorderableListState = rememberReorderableLazyListState(listState) { from, to ->
+        localListOfShoppingItems.add(to.index, localListOfShoppingItems.removeAt(from.index))
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,21 +53,28 @@ internal fun ListDetailsContent(
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
             top = contentPaddings.calculateTopPadding(),
             bottom = contentPaddings.calculateBottomPadding() + AppDimensions.paddingMedium
-        )
+        ),
+        state = listState
     ) {
         itemsIndexed(
-            items = listOfShoppingItems,
+            items = localListOfShoppingItems,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
-            ShoppingItemRow(
-                modifier = Modifier
-                    .animateItem()
-                    .testTag(SHOPPING_ITEMS_ITEM),
-                shoppingItem = shoppingItem,
-                isLastItemInList = index == listOfShoppingItems.size - 1,
-                onClick = onItemClick,
-                onDelete = onItemDelete
-            )
+            ReorderableItem(
+                state = reorderableListState,
+                key = shoppingItem.id,
+            ) {
+                ShoppingItemRow(
+                    modifier = Modifier
+                        .animateItem()
+                        .testTag(SHOPPING_ITEMS_ITEM),
+                    interactionSource = remember { MutableInteractionSource() },
+                    shoppingItem = shoppingItem,
+                    isLastItemInList = index == localListOfShoppingItems.size - 1,
+                    onClick = onItemClick,
+                    onDelete = onItemDelete
+                )
+            }
         }
     }
 }
