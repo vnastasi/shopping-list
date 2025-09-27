@@ -5,6 +5,10 @@ plugins {
 
 android {
     namespace = "md.vnastasi.shoppinglist.db"
+    
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 ksp {

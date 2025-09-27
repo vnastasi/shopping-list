@@ -65,6 +65,7 @@ fun ListDetailsScreen(
         onNavigateUp = navigator::backToOverview,
         onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
         onItemDeleted = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemDeleted(shoppingItem)) },
+        onItemsReordered = { listOfShoppingItems -> viewModel.onUiEvent(UiEvent.ShoppingItemsReordered(listOfShoppingItems)) },
         onAddNewItems = navigator::toAddItems
     )
 }
@@ -75,6 +76,7 @@ private fun ListDetailsScreen(
     onNavigateUp: () -> Unit,
     onItemClicked: (ShoppingItem) -> Unit,
     onItemDeleted: (ShoppingItem) -> Unit,
+    onItemsReordered: (List<ShoppingItem>) -> Unit,
     onAddNewItems: (Long) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -122,8 +124,9 @@ private fun ListDetailsScreen(
                 ListDetailsContent(
                     contentPaddings = contentPaddings,
                     listOfShoppingItems = localViewState.listOfShoppingItems,
-                    onItemClick = onItemClicked,
-                    onItemDelete = onItemDeleted
+                    onItemClicked = onItemClicked,
+                    onItemDeleted = onItemDeleted,
+                    onItemsReordered = onItemsReordered
                 )
             }
         }
@@ -226,6 +229,7 @@ private fun ListDetailsScreenPreview() {
             onNavigateUp = { },
             onItemClicked = { },
             onItemDeleted = { },
+            onItemsReordered = { },
             onAddNewItems = { }
         )
     }

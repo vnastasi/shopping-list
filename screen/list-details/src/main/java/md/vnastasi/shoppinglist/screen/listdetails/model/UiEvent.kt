@@ -7,4 +7,6 @@ sealed interface UiEvent {
     data class ShoppingItemClicked(val shoppingItem: ShoppingItem): UiEvent
 
     data class ShoppingItemDeleted(val shoppingItem: ShoppingItem): UiEvent
+
+    data class ShoppingItemsReordered(val shoppingItems: List<ShoppingItem>): UiEvent
 }

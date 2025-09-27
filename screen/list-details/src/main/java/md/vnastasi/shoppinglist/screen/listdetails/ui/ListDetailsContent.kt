@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -7,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -21,39 +25,59 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LI
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 internal fun ListDetailsContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
-    onItemClick: (ShoppingItem) -> Unit,
-    onItemDelete: (ShoppingItem) -> Unit
+    onItemClicked: (ShoppingItem) -> Unit,
+    onItemDeleted: (ShoppingItem) -> Unit,
+    onItemsReordered: (List<ShoppingItem>) -> Unit
 ) {
+
+    val snapshotListOfShoppingItems = remember(listOfShoppingItems) { listOfShoppingItems.toMutableStateList() }
+
+    val listState = rememberLazyListState()
+    val reorderableListState = rememberReorderableLazyListState(listState) { from, to ->
+        snapshotListOfShoppingItems.add(to.index, snapshotListOfShoppingItems.removeAt(from.index))
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = AppDimensions.paddingSmall)
+
             .testTag(SHOPPING_ITEMS_LIST),
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
             top = contentPaddings.calculateTopPadding(),
             bottom = contentPaddings.calculateBottomPadding() + AppDimensions.paddingMedium
-        )
+        ),
+        state = listState
     ) {
         itemsIndexed(
-            items = listOfShoppingItems,
+            items = snapshotListOfShoppingItems,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
-            ShoppingItemRow(
-                modifier = Modifier
-                    .animateItem()
-                    .testTag(SHOPPING_ITEMS_ITEM),
-                shoppingItem = shoppingItem,
-                isLastItemInList = index == listOfShoppingItems.size - 1,
-                onClick = onItemClick,
-                onDelete = onItemDelete
-            )
+            ReorderableItem(
+                state = reorderableListState,
+                key = shoppingItem.id,
+            ) {
+                ShoppingItemRow(
+                    modifier = Modifier
+                        .animateItem()
+                        .testTag(SHOPPING_ITEMS_ITEM),
+                    interactionSource = remember { MutableInteractionSource() },
+                    shoppingItem = shoppingItem,
+                    isLastItemInList = index == snapshotListOfShoppingItems.size - 1,
+                    onClicked = onItemClicked,
+                    onDeleted = onItemDeleted,
+                    onOrderChanged = { onItemsReordered(snapshotListOfShoppingItems) }
+                )
+            }
         }
     }
 }
@@ -77,8 +101,9 @@ private fun NonEmptyListDetailsScreenContentPreview() {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             listOfShoppingItems = listOfShoppingItems,
-            onItemClick = { },
-            onItemDelete = { }
+            onItemClicked = { },
+            onItemDeleted = { },
+            onItemsReordered = { }
         )
     }
 }

@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -52,6 +53,7 @@ class ListDetailsViewModel internal constructor(
         when (event) {
             is UiEvent.ShoppingItemClicked -> onShoppingItemClicked(event.shoppingItem)
             is UiEvent.ShoppingItemDeleted -> onShoppingItemDeleted(event.shoppingItem)
+            is UiEvent.ShoppingItemsReordered -> onShoppingItemsReordered(event.shoppingItems)
         }
     }
 
@@ -64,6 +66,13 @@ class ListDetailsViewModel internal constructor(
     private fun onShoppingItemDeleted(shoppingItem: ShoppingItem) {
         viewModelScope.launch {
             shoppingItemRepository.delete(shoppingItem)
+        }
+    }
+
+    private fun onShoppingItemsReordered(shoppingItems: List<ShoppingItem>) {
+        viewModelScope.launch {
+            delay(500L)
+            shoppingItemRepository.reorder(shoppingItems)
         }
     }
 

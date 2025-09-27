@@ -170,6 +170,33 @@ internal class ListDetailsViewModelTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem)
     }
 
+    @Test
+    @DisplayName(
+        """
+        When handling a `ShoppingItemsReordered` UI event on a list of shopping items
+        Then expect shopping items to be reordered
+    """
+    )
+    fun onShoppingItemsReordered() = runTest {
+        val shoppingListId = 43L
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
+
+        val shoppingItem1 = createShoppingItem { name = "A" }
+        val shoppingItem2 = createShoppingItem { name = "B" }
+        val shoppingItem3 = createShoppingItem { name = "C" }
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem1, shoppingItem2, shoppingItem3))
+
+        val listSlot = slot<List<ShoppingItem>>()
+        coEvery { mockShoppingItemRepository.reorder(capture(listSlot)) } returns Unit
+
+        val viewModel = createViewModel(mapOf(ARG_KEY_SHOPPING_LIST_ID to shoppingListId))
+
+        viewModel.onUiEvent(UiEvent.ShoppingItemsReordered(listOf(shoppingItem2, shoppingItem3, shoppingItem1)))
+        advanceUntilIdle()
+
+        assertThat(listSlot.captured).isEqualTo(listOf(shoppingItem2, shoppingItem3, shoppingItem1))
+    }
+
     private fun TestScope.createViewModel(initialState: Map<String, Any?> = emptyMap()) =
         ListDetailsViewModel(
             savedStateHandle = SavedStateHandle(initialState),

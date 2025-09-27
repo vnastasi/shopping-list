@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.domain.repository
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
 import io.mockk.coEvery
@@ -15,6 +16,7 @@ import md.vnastasi.shoppinglist.db.TestData.createShoppingListEntity
 import md.vnastasi.shoppinglist.db.dao.ShoppingItemDao
 import md.vnastasi.shoppinglist.db.dao.ShoppingListDao
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
+import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import md.vnastasi.shoppinglist.db.model.ShoppingItem as ShoppingItemEntity
@@ -171,5 +173,59 @@ internal class LocalShoppingItemRepositoryTest {
         shoppingItemRepository.delete(shoppingItem)
 
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(expectedShoppingItemEntity)
+    }
+
+    @Test
+    @DisplayName("When reordering shopping items The expect new order to be applied")
+    fun reorder() = runTest {
+        val list = createShoppingList()
+
+        val shoppingItemA = createShoppingItem {
+            id = 1L
+            name = "A"
+            shoppingList = {
+                id = list.id
+                name = list.name
+            }
+        }
+        val shoppingItemB = createShoppingItem {
+            id = 2L
+            name = "B"
+            shoppingList = {
+                id = list.id
+                name = list.name
+            }
+        }
+        val shoppingItemC = createShoppingItem {
+            id = 3L
+            name = "C"
+            shoppingList = {
+                id = list.id
+                name = list.name
+            }
+        }
+
+        val listSlot = slot<List<ShoppingItemEntity>>()
+        coEvery { mockShoppingItemDao.reorder(capture(listSlot)) } returns Unit
+
+        shoppingItemRepository.reorder(listOf(shoppingItemB, shoppingItemA, shoppingItemC))
+
+        val expectedEntityA = createShoppingItemEntity {
+            id = 0L
+            name = "A"
+            listId = list.id
+        }
+        val expectedEntityB = createShoppingItemEntity {
+            id = 0L
+            name = "B"
+            listId = list.id
+        }
+        val expectedEntityC = createShoppingItemEntity {
+            id = 0L
+            name = "C"
+            listId = list.id
+        }
+
+        assertThat(listSlot.captured).containsExactly(expectedEntityC, expectedEntityA, expectedEntityB)
     }
 }
