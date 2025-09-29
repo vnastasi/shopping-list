@@ -39,7 +39,7 @@ uiautomator = "2.3.0"
 uitest-core = "1.7.0"
 uitest-junit = "1.3.0"
 uitest-monitor = "1.8.0"
-window = "1.4.0"
+window = "1.5.0"
 
 
 [libraries]
