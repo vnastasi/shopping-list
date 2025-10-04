@@ -39,8 +39,8 @@ dependencyAnalysis {
            }
 
            onUsedTransitiveDependencies {
-               // Let Paparazzi configure these
                exclude(
+                   "androidx.fragment:fragment",
                    "com.android.tools.layoutlib:layoutlib-api",
                    "com.android.tools.layoutlib:layoutlib",
                    "junit:junit"

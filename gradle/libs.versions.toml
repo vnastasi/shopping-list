@@ -67,6 +67,7 @@ compose-material-adaptive = { module = "androidx.compose.material3.adaptive:adap
 compose-material-icons = { module = "androidx.compose.material:material-icons-core", version.ref = "material-icons" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
+compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation" }
 compose-runtime-saveable = { module = "androidx.compose.runtime:runtime-saveable" }
 compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -80,10 +81,15 @@ coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", vers
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 
-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt" }
 hilt-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
+
+javax-inject = { module = "javax.inject:javax.inject", version.require = "1" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

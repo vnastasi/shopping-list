@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("compose-library.conventions")
-    alias(libs.plugins.hilt)
+//    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
@@ -11,28 +11,30 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
-    implementation(platform(libs.kotlin.bom))
+    compileOnly(projects.support.annotation)
 
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
+    api(libs.dagger)
 
     implementation(projects.resources)
-    implementation(projects.support.annotation)
     implementation(projects.support.theme)
-
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core)
     implementation(libs.collections.immutable)
+    implementation(libs.compose.foudation)
     implementation(libs.compose.material)
     implementation(libs.compose.material.adaptive)
     implementation(libs.compose.preview)
+    implementation(libs.compose.runtime.annotation)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
-    implementation(libs.hilt)
+    implementation(libs.hilt.core)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
