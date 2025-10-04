@@ -21,8 +21,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideDatabase(@ApplicationContext context: Context): ShoppingListDatabase =
         Room.databaseBuilder(context, ShoppingListDatabase::class.java, ShoppingListDatabase.DB_NAME)
             .addMigrations(MigrationFrom1To2(), MigrationFrom2To3(), MigrationFrom3To4(), MigrationFrom4To5())
@@ -31,14 +31,17 @@ class DatabaseModule {
             .build()
 
     @Provides
+    @Singleton
     fun provideShoppingListDao(database: ShoppingListDatabase): ShoppingListDao =
         database.shoppingListDao()
 
     @Provides
+    @Singleton
     fun provideShoppingItemDao(database: ShoppingListDatabase): ShoppingItemDao =
         database.shoppingItemDao()
 
     @Provides
+    @Singleton
     fun provideNameSuggestionDao(database: ShoppingListDatabase): NameSuggestionDao =
         database.shoppingItemNameSuggestionDao()
 }
