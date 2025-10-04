@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.hilt.core)
+    implementation(libs.hilt.android)
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
     implementation(libs.window.core)
