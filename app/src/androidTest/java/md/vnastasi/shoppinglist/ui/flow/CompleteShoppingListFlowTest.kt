@@ -1,12 +1,14 @@
 package md.vnastasi.shoppinglist.ui.flow
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
-import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
+import md.vnastasi.shoppinglist.ui.rule.databaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
 import org.junit.Rule
@@ -14,29 +16,36 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 
+@HiltAndroidTest
 class CompleteShoppingListFlowTest {
+
+    private val hiltAndroidRule = HiltAndroidRule(this)
 
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val databaseRule = createDatabaseRule(
-        setUp = {
-            shoppingListDao().create(ShoppingList(1L, "Groceries"))
-            shoppingListDao().create(ShoppingList(2L, "Gardening"))
-            shoppingItemDao().create(ShoppingItem(1L, "Bread", false, 1L))
-            shoppingItemDao().create(ShoppingItem(2L, "Milk", false, 1L))
-            shoppingItemDao().create(ShoppingItem(3L, "Butter", false, 1L))
-            shoppingItemDao().create(ShoppingItem(4L, "Apple juice", false, 1L))
-            shoppingItemDao().create(ShoppingItem(5L, "Goat cheese", false, 1L))
-            shoppingItemDao().create(ShoppingItem(6L, "Rake", false, 2L))
-            shoppingItemDao().create(ShoppingItem(7L, "Soil", false, 2L))
+    private val databaseRule = databaseRule(
+        onSetUp = {
+            val shoppingListDao = shoppingListDao()
+            val shoppingItemDao = shoppingItemDao()
+
+            shoppingListDao.create(ShoppingList(1L, "Groceries"))
+            shoppingListDao.create(ShoppingList(2L, "Gardening"))
+            shoppingItemDao.create(ShoppingItem(1L, "Bread", false, 1L))
+            shoppingItemDao.create(ShoppingItem(2L, "Milk", false, 1L))
+            shoppingItemDao.create(ShoppingItem(3L, "Butter", false, 1L))
+            shoppingItemDao.create(ShoppingItem(4L, "Apple juice", false, 1L))
+            shoppingItemDao.create(ShoppingItem(5L, "Goat cheese", false, 1L))
+            shoppingItemDao.create(ShoppingItem(6L, "Rake", false, 2L))
+            shoppingItemDao.create(ShoppingItem(7L, "Soil", false, 2L))
         }
     )
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(composeRule)
-        .around(retryOnFailureRule(maxAttempts = 3))
+        .outerRule(hiltAndroidRule)
         .around(databaseRule)
+        .around(composeRule)
+        .around(retryOnFailureRule(maxAttempts = 3))
         .around(disableAnimationsRule())
 
     @Test

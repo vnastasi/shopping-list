@@ -1,13 +1,15 @@
 package md.vnastasi.shoppinglist.ui.flow
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.db.model.ShoppingItem
 import md.vnastasi.shoppinglist.db.model.ShoppingList
 import md.vnastasi.shoppinglist.ui.robot.addItemsScreen
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
-import md.vnastasi.shoppinglist.ui.rule.createDatabaseRule
+import md.vnastasi.shoppinglist.ui.rule.databaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
 import org.junit.Rule
@@ -15,12 +17,15 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 
+@HiltAndroidTest
 class ManageSuggestionsFlowTest {
+
+    private val hiltAndroidRule = HiltAndroidRule(this)
 
     private val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val databaseRule = createDatabaseRule(
-        setUp = {
+    private val databaseRule = databaseRule(
+        onSetUp = {
             val shoppingListDao = shoppingListDao()
             val shoppingItemDao = shoppingItemDao()
 
@@ -40,9 +45,10 @@ class ManageSuggestionsFlowTest {
 
     @get:Rule
     val ruleChain: TestRule = RuleChain
-        .outerRule(composeRule)
-        .around(retryOnFailureRule(maxAttempts = 3))
+        .outerRule(hiltAndroidRule)
         .around(databaseRule)
+        .around(composeRule)
+        .around(retryOnFailureRule(maxAttempts = 3))
         .around(disableAnimationsRule())
 
     @Test

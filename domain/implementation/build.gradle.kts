@@ -1,6 +1,7 @@
 plugins {
     id("simple-library.conventions")
     id("testable-library.conventions")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -8,20 +9,20 @@ android {
 }
 
 dependencies {
-    implementation(projects.database)
-    implementation(projects.domain.api)
+    api(projects.database)
+    api(projects.domain.api)
+    api(libs.dagger)
 
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
-
     implementation(libs.coroutines.core)
-    implementation(libs.koin.core)
+    implementation(libs.hilt.core)
+
+    ksp(libs.hilt.compiler)
 
     testImplementation(testFixtures(projects.database))
     testImplementation(testFixtures(projects.domain.api))
-
     testImplementation(platform(libs.coroutines.bom))
-
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)

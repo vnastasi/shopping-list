@@ -6,6 +6,7 @@ plugins {
     id("application.conventions")
     id("secrets")
     id("app-build-support")
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -30,7 +31,7 @@ android {
         versionCode = libs.versions.project.version.code.get().toInt()
         versionName = libs.versions.project.version.name.get()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "md.vnastasi.shoppinglist.runner.HiltAppRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -61,7 +62,7 @@ android {
 
 androidComponents {
     onVariants(selector().withBuildType("release")) { applicationVariant ->
-        project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.toString().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}ApkArtifact") {
+        project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}ApkArtifact") {
             artifactDirectory.set(applicationVariant.artifacts.get(SingleArtifact.APK))
             artifactLoader.set(applicationVariant.artifacts.getBuiltArtifactsLoader())
             targetDirectory.set(rootProject.layout.buildDirectory.dir("artifacts/apk"))
@@ -72,28 +73,27 @@ androidComponents {
 
 dependencies {
     implementation(projects.database)
+    implementation(projects.domain.api)
     implementation(projects.domain.implementation)
     implementation(projects.screen.addItems)
     implementation(projects.screen.listDetails)
     implementation(projects.screen.overview)
     implementation(projects.screen.shared)
     implementation(projects.support.theme)
-
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
-
     implementation(libs.activity)
     implementation(libs.activity.compose)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.core)
-    implementation(libs.collections.immutable)
+    implementation(libs.androidx.annotation)
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
-    implementation(libs.koin.android)
-    implementation(libs.koin.core)
+    implementation(libs.dagger)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.core)
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
@@ -102,18 +102,17 @@ dependencies {
     implementation(libs.navigation.runtime)
     implementation(libs.serialization.core)
 
+    ksp(libs.hilt.compiler)
+
     androidTestImplementation(projects.resources)
-
     androidTestImplementation(testFixtures(projects.database))
-
     androidTestImplementation(platform(libs.compose.bom))
-
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)
     androidTestImplementation(libs.compose.ui.test)
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
-    androidTestImplementation(libs.koin.core)
+    androidTestImplementation(libs.hilt.test)
     androidTestImplementation(libs.kotlin.reflect)
     androidTestImplementation(libs.room.runtime)
     androidTestImplementation(libs.room.test)
@@ -124,6 +123,9 @@ dependencies {
     androidTestImplementation(libs.uitest.core)
     androidTestImplementation(libs.uitest.junit)
     androidTestImplementation(libs.uitest.monitor)
+    androidTestImplementation(libs.uitest.runner)
+
+    kspAndroidTest(libs.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
