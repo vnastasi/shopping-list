@@ -34,7 +34,7 @@ develocity {
             value("Workflow", System.getenv("GITHUB_WORKFLOW"))
             value("Run ID", System.getenv("GITHUB_RUN_ID"))
             value("Run number", System.getenv("GITHUB_RUN_NUMBER"))
-            value("Branch", System.getenv("GITHUB_REF"))
+            value("Branch", System.getenv("GITHUB_HEAD_REF")?.takeUnless { it.isBlank() } ?: System.getenv("GITHUB_REF_NAME"))
             value("Commit ID", System.getenv("GITHUB_SHA"))
         } else {
             tag("Local")
