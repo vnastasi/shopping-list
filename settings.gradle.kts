@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.support.serviceOf
-import java.io.ByteArrayOutputStream
-
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -41,14 +38,6 @@ develocity {
             value("Commit ID", System.getenv("GITHUB_SHA"))
         } else {
             tag("Local")
-            background {
-                val stream = ByteArrayOutputStream()
-                serviceOf<ExecOperations>().exec {
-                    commandLine("git", "rev-parse", "--verify", "HEAD")
-                    standardOutput = stream
-                }
-                value("Commit ID", stream.toString())
-            }
         }
     }
 }
