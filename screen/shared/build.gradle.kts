@@ -11,15 +11,15 @@ android {
 }
 
 dependencies {
-    compileOnly(projects.support.annotation)
+    compileOnly(project(":support:annotation"))
 
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
 
-    implementation(projects.resources)
-    implementation(projects.support.theme)
+    implementation(project(":resources"))
+    implementation(project(":support:theme"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))

@@ -72,14 +72,14 @@ androidComponents {
 }
 
 dependencies {
-    implementation(projects.database)
-    implementation(projects.domain.api)
-    implementation(projects.domain.implementation)
-    implementation(projects.screen.addItems)
-    implementation(projects.screen.listDetails)
-    implementation(projects.screen.overview)
-    implementation(projects.screen.shared)
-    implementation(projects.support.theme)
+    implementation(project(":database"))
+    implementation(project(":domain:api"))
+    implementation(project(":domain:implementation"))
+    implementation(project(":screen:add-items"))
+    implementation(project(":screen:list-details"))
+    implementation(project(":screen:overview"))
+    implementation(project(":screen:shared"))
+    implementation(project(":support:theme"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
@@ -104,8 +104,8 @@ dependencies {
 
     ksp(libs.hilt.compiler)
 
-    androidTestImplementation(projects.resources)
-    androidTestImplementation(testFixtures(projects.database))
+    androidTestImplementation(project(":resources"))
+    androidTestImplementation(testFixtures(project(":database")))
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)

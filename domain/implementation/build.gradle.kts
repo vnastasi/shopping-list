@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    api(projects.database)
-    api(projects.domain.api)
+    api(project(":database"))
+    api(project(":domain:api"))
     api(libs.dagger)
 
     implementation(platform(libs.coroutines.bom))
@@ -20,8 +20,8 @@ dependencies {
 
     ksp(libs.hilt.compiler)
 
-    testImplementation(testFixtures(projects.database))
-    testImplementation(testFixtures(projects.domain.api))
+    testImplementation(testFixtures(project(":database")))
+    testImplementation(testFixtures(project(":domain:api")))
     testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
