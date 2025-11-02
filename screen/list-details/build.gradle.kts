@@ -12,17 +12,17 @@ android {
 }
 
 dependencies {
-    compileOnly(projects.support.annotation)
+    compileOnly(project(":support:annotation"))
 
-    api(projects.domain.api)
+    api(project(":domain:api"))
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
 
-    implementation(projects.resources)
-    implementation(projects.screen.shared)
-    implementation(projects.support.theme)
+    implementation(project(":resources"))
+    implementation(project(":screen:shared"))
+    implementation(project(":support:theme"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
@@ -53,8 +53,8 @@ dependencies {
 
     ksp(libs.hilt.compiler)
 
-    testImplementation(testFixtures(projects.domain.api))
-    testImplementation(testFixtures(projects.screen.shared))
+    testImplementation(testFixtures(project(":domain:api")))
+    testImplementation(testFixtures(project(":screen:shared")))
     testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)

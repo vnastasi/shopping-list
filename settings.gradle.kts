@@ -42,8 +42,6 @@ develocity {
     }
 }
 
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 rootProject.name = "shopping-list"
 
 include(
