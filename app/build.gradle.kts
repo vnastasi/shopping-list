@@ -97,8 +97,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
-    implementation(libs.navigation.common)
-    implementation(libs.navigation.compose)
     implementation(libs.navigation.runtime)
     implementation(libs.serialization.core)
 
