@@ -15,8 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,7 +30,7 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 
 @HiltViewModel(assistedFactory = AddItemsViewModel.Factory::class)
 class AddItemsViewModel @AssistedInject internal constructor(
-    @Assisted shoppingListId: Long,
+    @Assisted private val shoppingListId: Long,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
@@ -43,8 +41,6 @@ class AddItemsViewModel @AssistedInject internal constructor(
     override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
     override val searchTermState: MutableState<String> = mutableStateOf("")
-
-    private val shoppingList = flowOf(shoppingListId).flatMapConcat { shoppingListRepository.findById(it) }
 
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
@@ -69,7 +65,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
         val sanitisedName = name.trim()
         if (sanitisedName.isBlank()) return
         viewModelScope.launch {
-            shoppingList
+            shoppingListRepository.findById(shoppingListId)
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
@@ -113,10 +109,5 @@ class AddItemsViewModel @AssistedInject internal constructor(
     interface Factory {
 
         fun create(shoppingListId: Long): AddItemsViewModel
-    }
-
-    companion object {
-
-        const val ARG_KEY_SHOPPING_LIST_ID = "shoppingListId"
     }
 }

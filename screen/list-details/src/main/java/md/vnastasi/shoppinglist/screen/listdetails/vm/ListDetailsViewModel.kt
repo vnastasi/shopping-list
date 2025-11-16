@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -24,18 +22,16 @@ import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 
 @HiltViewModel(assistedFactory = ListDetailsViewModel.Factory::class)
 class ListDetailsViewModel @AssistedInject internal constructor(
-    @Assisted shoppingListId: Long,
-    private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
+    @Assisted shoppingListId: Long,
+    shoppingListRepository: ShoppingListRepository,
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), ListDetailsViewModelSpec {
 
-    private val shoppingList = flowOf(shoppingListId).flatMapLatest(shoppingListRepository::findById)
-
-    private val listOfShoppingItems = flowOf(shoppingListId).flatMapLatest(shoppingItemRepository::findAll)
-
     override val viewState: StateFlow<ViewState> = combine(
-        shoppingList, listOfShoppingItems, ::createViewState
+        shoppingListRepository.findById(shoppingListId),
+        shoppingItemRepository.findAll(shoppingListId),
+        ::createViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
@@ -85,8 +81,6 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     }
 
     companion object {
-
-        const val ARG_KEY_SHOPPING_LIST_ID = "shoppingListId"
 
         private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }
