@@ -30,12 +30,14 @@ class OverviewViewModel @Inject internal constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), OverviewViewModelSpec {
 
-    private val list = shoppingListRepository.findAll().map { it.toImmutableList() }
     private val navigationTarget = MutableStateFlow<NavigationTarget?>(null)
     private val toastMessage = MutableStateFlow<ToastMessage?>(null)
 
     override val viewState: StateFlow<ViewState> = combine(
-        list, navigationTarget, toastMessage, ::createViewState
+        shoppingListRepository.findAll().map { it.toImmutableList() },
+        navigationTarget,
+        toastMessage,
+        ::createViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),

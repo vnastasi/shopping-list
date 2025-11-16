@@ -1,28 +1,83 @@
 package md.vnastasi.shoppinglist.screen
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
+import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
+import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
+import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
+import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
+import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
+
 
 @Composable
 fun ApplicationScreenContainer() {
-    val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.Overview
-    ) {
+    val navBackStack = rememberNavBackStack(Routes.Overview)
 
-        overview(
-            navController = navController
-        )
+    NavDisplay(
+        backStack = navBackStack,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        ),
+        transitionSpec = {
+            slideInFromRight() togetherWith slideOutToLeft()
+        },
+        popTransitionSpec = {
+            slideInFromLeft() togetherWith slideOutToRight()
+        },
+        predictivePopTransitionSpec = {
+            slideInFromLeft() togetherWith slideOutToRight()
+        },
+        onBack = {
+            navBackStack.removeLastOrNull()
+        },
+        entryProvider = entryProvider {
+            entry<Routes.Overview> {
+                OverviewScreen(
+                    viewModel = hiltViewModel<OverviewViewModel>(),
+                    navigator = ScreenNavigators.overview(navBackStack)
+                )
+            }
 
-        listDetails(
-            navController = navController
-        )
+            entry<Routes.ListDetails> { key ->
+                ListDetailsScreen(
+                    viewModel = hiltViewModel<ListDetailsViewModel, ListDetailsViewModel.Factory>(
+                        creationCallback = { factory ->
+                            factory.create(key.shoppingListId)
+                        }
+                    ),
+                    navigator = ScreenNavigators.listDetails(navBackStack)
+                )
+            }
 
-        addItems(
-            navController = navController
-        )
-    }
+            entry<Routes.AddItems>(
+                metadata = NavDisplay.transitionSpec {
+                    slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished
+                } + NavDisplay.popTransitionSpec {
+                    EnterTransition.None togetherWith slideOutToDown()
+                } + NavDisplay.predictivePopTransitionSpec {
+                    EnterTransition.None togetherWith slideOutToDown()
+                }
+            ) { key ->
+                AddItemsScreen(
+                    viewModel = hiltViewModel<AddItemsViewModel, AddItemsViewModel.Factory>(
+                        creationCallback = { factory ->
+                            factory.create(key.shoppingListId)
+                        }
+                    ),
+                    navigator = ScreenNavigators.addItems(navBackStack)
+                )
+            }
+        }
+    )
 }

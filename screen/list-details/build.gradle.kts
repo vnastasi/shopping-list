@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)
-    implementation(libs.lifecycle.viewmodel.savedstate)
 
     debugImplementation(libs.compose.tooling)
 

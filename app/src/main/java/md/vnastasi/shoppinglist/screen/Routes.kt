@@ -1,8 +1,9 @@
 package md.vnastasi.shoppinglist.screen
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-sealed class Routes {
+sealed class Routes: NavKey {
 
     @Serializable
     data object Overview : Routes()
