@@ -30,7 +30,7 @@ jobs:
           ./gradlew copyReleaseApkArtifact
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: "apk"
           path: build/artifacts/apk/shopping-list-${{ github.ref_name }}.apk
@@ -46,7 +46,7 @@ jobs:
     steps:
       - id: download-artifact
         name: "Download APK from build"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6.0.0
         with:
           name: "apk"
 
