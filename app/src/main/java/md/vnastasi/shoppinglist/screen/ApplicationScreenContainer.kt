@@ -32,7 +32,7 @@ fun ApplicationScreenContainer() {
             entry<Routes.Overview> {
                 OverviewScreen(
                     viewModel = hiltViewModel<OverviewViewModel>(),
-                    navigator = TODO()
+                    navigator = ScreenNavigators.overview(navBackStack)
                 )
             }
 
@@ -43,7 +43,7 @@ fun ApplicationScreenContainer() {
                             factory.create(key.shoppingListId)
                         }
                     ),
-                    navigator = TODO()
+                    navigator = ScreenNavigators.listDetails(navBackStack)
                 )
             }
 
@@ -54,7 +54,7 @@ fun ApplicationScreenContainer() {
                             factory.create(key.shoppingListId)
                         }
                     ),
-                    navigator = TODO()
+                    navigator = ScreenNavigators.addItems(navBackStack)
                 )
             }
         }

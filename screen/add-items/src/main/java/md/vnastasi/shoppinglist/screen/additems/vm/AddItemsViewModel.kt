@@ -4,7 +4,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -27,11 +29,10 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = AddItemsViewModel.Factory::class)
-class AddItemsViewModel @Inject internal constructor(
-    shoppingListId: Long,
+class AddItemsViewModel @AssistedInject internal constructor(
+    @Assisted shoppingListId: Long,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
@@ -111,7 +112,7 @@ class AddItemsViewModel @Inject internal constructor(
     @AssistedFactory
     interface Factory {
 
-        fun create(listId: Long): AddItemsViewModel
+        fun create(shoppingListId: Long): AddItemsViewModel
     }
 
     companion object {

@@ -2,7 +2,8 @@ package md.vnastasi.shoppinglist.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
 import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
@@ -10,42 +11,42 @@ import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
 object ScreenNavigators {
 
     @Composable
-    fun overview(navController: NavController) = remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navController) }
+    fun overview(navBackStack: NavBackStack<NavKey>) = remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navBackStack) }
 
     @Composable
-    fun listDetails(navController: NavController) = remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navController) }
+    fun listDetails(navBackStack: NavBackStack<NavKey>) = remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navBackStack) }
 
     @Composable
-    fun addItems(navController: NavController) = remember<AddItemsScreenNavigator> { AddItemsScreenNavigatorImpl(navController) }
+    fun addItems(navBackStack: NavBackStack<NavKey>) = remember<AddItemsScreenNavigator> { AddItemsScreenNavigatorImpl(navBackStack) }
 }
 
 private class OverviewScreenNavigatorImpl(
-    private val navController: NavController
+    private val navBackStack: NavBackStack<NavKey>
 ) : OverviewScreenNavigator {
 
     override fun toListDetails(shoppingListId: Long) {
-        navController.navigate(Routes.ListDetails(shoppingListId))
+        navBackStack.add(Routes.ListDetails(shoppingListId))
     }
 }
 
 private class ListDetailsScreenNavigatorImpl(
-    private val navController: NavController
+    private val navBackStack: NavBackStack<NavKey>
 ) : ListDetailsScreenNavigator {
 
     override fun backToOverview() {
-        navController.navigateUp()
+        navBackStack.removeLast()
     }
 
     override fun toAddItems(shoppingListId: Long) {
-        navController.navigate(Routes.AddItems(shoppingListId))
+        navBackStack.add(Routes.AddItems(shoppingListId))
     }
 }
 
 private class AddItemsScreenNavigatorImpl(
-    private val navController: NavController
+    private val navBackStack: NavBackStack<NavKey>
 ) : AddItemsScreenNavigator {
 
     override fun backToListDetails() {
-        navController.navigateUp()
+        navBackStack.removeLast()
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -20,19 +21,18 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = ListDetailsViewModel.Factory::class)
-class ListDetailsViewModel @Inject internal constructor(
-    @Assisted listId: Long,
+class ListDetailsViewModel @AssistedInject internal constructor(
+    @Assisted shoppingListId: Long,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), ListDetailsViewModelSpec {
 
-    private val shoppingList = flowOf(listId).flatMapLatest(shoppingListRepository::findById)
+    private val shoppingList = flowOf(shoppingListId).flatMapLatest(shoppingListRepository::findById)
 
-    private val listOfShoppingItems = flowOf(listId).flatMapLatest(shoppingItemRepository::findAll)
+    private val listOfShoppingItems = flowOf(shoppingListId).flatMapLatest(shoppingItemRepository::findAll)
 
     override val viewState: StateFlow<ViewState> = combine(
         shoppingList, listOfShoppingItems, ::createViewState
@@ -81,7 +81,7 @@ class ListDetailsViewModel @Inject internal constructor(
     @AssistedFactory
     interface Factory {
 
-        fun create(listId: Long): ListDetailsViewModel
+        fun create(shoppingListId: Long): ListDetailsViewModel
     }
 
     companion object {
