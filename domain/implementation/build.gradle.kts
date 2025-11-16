@@ -16,6 +16,7 @@ dependencies {
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(libs.coroutines.core)
+    implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
     ksp(libs.hilt.compiler)

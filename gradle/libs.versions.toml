@@ -85,8 +85,8 @@ dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt" }
 hilt-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
+hilt-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "hilt" }
 
 javax-inject = { module = "javax.inject:javax.inject", version.require = "1" }
 
