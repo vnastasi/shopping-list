@@ -10,7 +10,7 @@ runs:
         distribution: "temurin"
 
     - name: "Set up Gradle"
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5.0.0
       with:
         cache-read-only: false
         cache-encryption-key: ${{ env.GRADLE_ENCRYPTION_KEY }}
