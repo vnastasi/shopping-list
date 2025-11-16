@@ -96,8 +96,10 @@ dependencies {
     implementation(libs.hilt.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.viewmodel.navigation)
     implementation(libs.lifecycle.viewmodel.savedstate)
     implementation(libs.navigation.runtime)
+    implementation(libs.navigation.ui)
     implementation(libs.serialization.core)
 
     ksp(libs.hilt.compiler)
