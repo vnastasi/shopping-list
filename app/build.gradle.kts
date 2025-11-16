@@ -93,7 +93,7 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
-    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
