@@ -1,5 +1,8 @@
 package md.vnastasi.shoppinglist.screen
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -14,6 +17,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 
+
 @Composable
 fun ApplicationScreenContainer() {
 
@@ -25,6 +29,15 @@ fun ApplicationScreenContainer() {
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
+        transitionSpec = {
+            slideInFromRight() togetherWith slideOutToLeft()
+        },
+        popTransitionSpec = {
+            slideInFromLeft() togetherWith slideOutToRight()
+        },
+        predictivePopTransitionSpec = {
+            slideInFromLeft() togetherWith slideOutToRight()
+        },
         onBack = {
             navBackStack.removeLastOrNull()
         },
@@ -47,7 +60,15 @@ fun ApplicationScreenContainer() {
                 )
             }
 
-            entry<Routes.AddItems> { key ->
+            entry<Routes.AddItems>(
+                metadata = NavDisplay.transitionSpec {
+                    slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished
+                } + NavDisplay.popTransitionSpec {
+                    EnterTransition.None togetherWith slideOutToDown()
+                } + NavDisplay.predictivePopTransitionSpec {
+                    EnterTransition.None togetherWith slideOutToDown()
+                }
+            ) { key ->
                 AddItemsScreen(
                     viewModel = hiltViewModel<AddItemsViewModel, AddItemsViewModel.Factory>(
                         creationCallback = { factory ->
