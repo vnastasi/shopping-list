@@ -19,6 +19,9 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
@@ -86,6 +89,8 @@ private fun AddItemsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    val searchTermTextFieldState = rememberTextFieldState(initialText = "")
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -97,6 +102,7 @@ private fun AddItemsScreen(
             ) {
                 AddItemsTopAppBar(
                     scrollBehavior = scrollBehavior,
+                    searchTermTextFieldState = searchTermTextFieldState,
                     onSearchTermChanged = onSearchTermChanged,
                     onItemAddedToList = onItemAddedToList,
                     onNavigateUp = onNavigateUp
@@ -127,8 +133,13 @@ private fun AddItemsScreen(
                     suggestion = suggestion,
                     isLastItemInList = index == viewState.value.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
-                    onClick = { onItemAddedToList(suggestion.name) },
-                    onDelete = { onSuggestionDeleted(suggestion) }
+                    onClick = {
+                        onItemAddedToList(suggestion.name)
+                        searchTermTextFieldState.clearText()
+                    },
+                    onDelete = {
+                        onSuggestionDeleted(suggestion)
+                    }
                 )
             }
         }
@@ -144,6 +155,7 @@ private fun AddItemsScreen(
 private fun AddItemsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
+    searchTermTextFieldState: TextFieldState,
     onSearchTermChanged: (String) -> Unit,
     onItemAddedToList: (String) -> Unit,
     onNavigateUp: () -> Unit
@@ -173,6 +185,7 @@ private fun AddItemsTopAppBar(
                     .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start + WindowInsetsSides.End))
                     .padding(start = 56.dp)
                     .testTag(SEARCH_BAR),
+                valueTextFieldState = searchTermTextFieldState,
                 onValueChanged = onSearchTermChanged,
                 onValueAccepted = onItemAddedToList
             )

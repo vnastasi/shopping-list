@@ -3,8 +3,8 @@ package md.vnastasi.shoppinglist.screen.additems.ui
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -28,14 +28,14 @@ import md.vnastasi.shoppinglist.res.R
 @Composable
 internal fun SearchBar(
     modifier: Modifier = Modifier,
+    valueTextFieldState: TextFieldState,
     onValueChanged: (String) -> Unit,
     onValueAccepted: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    val searchTermTextFieldState = rememberTextFieldState(initialText = "")
 
-    LaunchedEffect(searchTermTextFieldState) {
-        snapshotFlow { searchTermTextFieldState.text.toString() }.collectLatest(onValueChanged)
+    LaunchedEffect(valueTextFieldState) {
+        snapshotFlow { valueTextFieldState.text.toString() }.collectLatest(onValueChanged)
     }
 
     LaunchedEffect(Unit) {
@@ -44,7 +44,7 @@ internal fun SearchBar(
 
     OutlinedTextField(
         modifier = modifier.focusRequester(focusRequester),
-        state = searchTermTextFieldState,
+        state = valueTextFieldState,
         placeholder = {
             Text(text = stringResource(R.string.add_items_search_title))
         },
@@ -58,7 +58,7 @@ internal fun SearchBar(
         ),
         trailingIcon = {
             IconButton(
-                onClick = { searchTermTextFieldState.clearText() }
+                onClick = { valueTextFieldState.clearText() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -68,6 +68,9 @@ internal fun SearchBar(
         },
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-        onKeyboardAction = KeyboardActionHandler { onValueAccepted.invoke(searchTermTextFieldState.text.toString()) }
+        onKeyboardAction = KeyboardActionHandler {
+            onValueAccepted.invoke(valueTextFieldState.text.toString())
+            valueTextFieldState.clearText()
+        }
     )
 }

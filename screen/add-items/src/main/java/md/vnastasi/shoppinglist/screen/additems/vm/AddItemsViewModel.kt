@@ -10,10 +10,13 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -35,8 +38,22 @@ class AddItemsViewModel @AssistedInject internal constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), AddItemsViewModelSpec {
 
-    private val _viewState = MutableStateFlow(ViewState.init())
-    override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
+    private val _triggerCounter = MutableStateFlow(0)
+
+    private val _searchTerm = MutableStateFlow("")
+
+    private val _toastMessage = MutableStateFlow<ToastMessage?>(null)
+
+    override val viewState: StateFlow<ViewState> = combine(
+        _triggerCounter,
+        _searchTerm.flatMapLatest { nameSuggestionRepository.findAllMatching(it) },
+        _toastMessage,
+        ::createViewState
+    ).stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ViewState.init()
+    )
 
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
@@ -47,14 +64,17 @@ class AddItemsViewModel @AssistedInject internal constructor(
         }
     }
 
+    private fun createViewState(
+        triggerCounter: Int,
+        suggestions: List<NameSuggestion>,
+        toastMessage: ToastMessage?
+    ): ViewState = ViewState(
+        suggestions = suggestions.toImmutableList(),
+        toastMessage = toastMessage
+    )
+
     private fun onSearchTermChanged(value: String) {
-        viewModelScope.launch {
-            _viewState.update { viewState ->
-                viewState.copy(
-                    suggestions = nameSuggestionRepository.findAllMatching(value.trim()).toImmutableList()
-                )
-            }
-        }
+        _searchTerm.update { value }
     }
 
     private fun onItemAddedToList(name: String) {
@@ -65,14 +85,12 @@ class AddItemsViewModel @AssistedInject internal constructor(
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
-                    _viewState.update { viewState ->
-                        val toastMessage = ToastMessage(
+                    _toastMessage.update {
+                        ToastMessage(
                             textResourceId = R.string.toast_item_added,
                             arguments = persistentListOf(sanitisedName)
                         )
-                        viewState.copy(toastMessage = toastMessage)
                     }
-                    //searchTermState.value = ""
                 }
         }
     }
@@ -80,25 +98,18 @@ class AddItemsViewModel @AssistedInject internal constructor(
     private fun onSuggestionDeleted(suggestion: NameSuggestion) {
         viewModelScope.launch {
             nameSuggestionRepository.delete(suggestion)
-            _viewState.update { viewState ->
-                val toastMessage = ToastMessage(
+            _toastMessage.update {
+                ToastMessage(
                     textResourceId = R.string.toast_suggestion_removed,
                     arguments = persistentListOf(suggestion.name)
                 )
-                viewState.copy(
-                    //suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value).toImmutableList(),
-                    toastMessage = toastMessage
-                )
             }
+            _triggerCounter.update { it + 1 }
         }
     }
 
     private fun onToastShown() {
-        viewModelScope.launch {
-            _viewState.update { viewState ->
-                viewState.copy(toastMessage = null)
-            }
-        }
+        _toastMessage.update { null }
     }
 
     @AssistedFactory
