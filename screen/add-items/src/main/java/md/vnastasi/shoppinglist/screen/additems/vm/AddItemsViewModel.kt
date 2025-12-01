@@ -2,9 +2,11 @@ package md.vnastasi.shoppinglist.screen.additems.vm
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,11 +27,10 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
-import javax.inject.Inject
 
-@HiltViewModel
-class AddItemsViewModel @Inject internal constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = AddItemsViewModel.Factory::class)
+class AddItemsViewModel @AssistedInject internal constructor(
+    @Assisted private val shoppingListId: Long,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val shoppingItemRepository: ShoppingItemRepository,
@@ -42,10 +41,6 @@ class AddItemsViewModel @Inject internal constructor(
     override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
     override val searchTermState: MutableState<String> = mutableStateOf("")
-
-    private val shoppingList = savedStateHandle.getStateFlow(ARG_KEY_SHOPPING_LIST_ID, Long.MIN_VALUE)
-        .filter { it != Long.MIN_VALUE }
-        .flatMapConcat { shoppingListRepository.findById(it) }
 
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
@@ -70,7 +65,7 @@ class AddItemsViewModel @Inject internal constructor(
         val sanitisedName = name.trim()
         if (sanitisedName.isBlank()) return
         viewModelScope.launch {
-            shoppingList
+            shoppingListRepository.findById(shoppingListId)
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
@@ -110,8 +105,9 @@ class AddItemsViewModel @Inject internal constructor(
         }
     }
 
-    companion object {
+    @AssistedFactory
+    interface Factory {
 
-        const val ARG_KEY_SHOPPING_LIST_ID = "shoppingListId"
+        fun create(shoppingListId: Long): AddItemsViewModel
     }
 }

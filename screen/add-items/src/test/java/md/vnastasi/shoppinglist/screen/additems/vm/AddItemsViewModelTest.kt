@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
-import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
@@ -182,7 +181,7 @@ internal class AddItemsViewModelTest {
 
     private fun TestScope.createViewModel(currentSearchTermValue: String = "") =
         AddItemsViewModel(
-            savedStateHandle = SavedStateHandle(mapOf(AddItemsViewModel.ARG_KEY_SHOPPING_LIST_ID to DEFAULT_SHOPPING_LIST_ID)),
+            shoppingListId = DEFAULT_SHOPPING_LIST_ID,
             nameSuggestionRepository = mockNameSuggestionRepository,
             shoppingItemRepository = mockShoppingItemRepository,
             shoppingListRepository = mockShoppingListRepository,
