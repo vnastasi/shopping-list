@@ -4,7 +4,7 @@ import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 
 sealed interface UiEvent {
 
-    data object SearchTermChanged : UiEvent
+    data class SearchTermChanged(val value: String) : UiEvent
 
     data class ItemAddedToList(val name: String): UiEvent
 

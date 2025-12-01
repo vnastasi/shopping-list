@@ -1,7 +1,5 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -40,22 +38,20 @@ class AddItemsViewModel @AssistedInject internal constructor(
     private val _viewState = MutableStateFlow(ViewState.init())
     override val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
-    override val searchTermState: MutableState<String> = mutableStateOf("")
-
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
-            is UiEvent.SearchTermChanged -> onSearchTermChanged()
+            is UiEvent.SearchTermChanged -> onSearchTermChanged(uiEvent.value)
             is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)
             is UiEvent.SuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
             is UiEvent.ToastShown -> onToastShown()
         }
     }
 
-    private fun onSearchTermChanged() {
+    private fun onSearchTermChanged(value: String) {
         viewModelScope.launch {
             _viewState.update { viewState ->
                 viewState.copy(
-                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value.trim()).toImmutableList()
+                    suggestions = nameSuggestionRepository.findAllMatching(value.trim()).toImmutableList()
                 )
             }
         }
@@ -76,7 +72,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
                         )
                         viewState.copy(toastMessage = toastMessage)
                     }
-                    searchTermState.value = ""
+                    //searchTermState.value = ""
                 }
         }
     }
@@ -90,7 +86,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
                     arguments = persistentListOf(suggestion.name)
                 )
                 viewState.copy(
-                    suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value).toImmutableList(),
+                    //suggestions = nameSuggestionRepository.findAllMatching(searchTermState.value).toImmutableList(),
                     toastMessage = toastMessage
                 )
             }

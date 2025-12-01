@@ -30,8 +30,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,10 +67,9 @@ fun AddItemsScreen(
 ) {
     AddItemsScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        searchTermState = remember { viewModel.searchTermState },
         onNavigateUp = navigator::backToListDetails,
-        onSearchTermChanged = { viewModel.onUiEvent(UiEvent.SearchTermChanged) },
-        onItemAddedToList = { viewModel.onUiEvent(UiEvent.ItemAddedToList(it)) },
+        onSearchTermChanged = { value -> viewModel.onUiEvent(UiEvent.SearchTermChanged(value)) },
+        onItemAddedToList = { name -> viewModel.onUiEvent(UiEvent.ItemAddedToList(name)) },
         onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
         onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
     )
@@ -81,10 +78,9 @@ fun AddItemsScreen(
 @Composable
 private fun AddItemsScreen(
     viewState: State<ViewState>,
-    searchTermState: MutableState<String>,
     onNavigateUp: () -> Unit,
+    onSearchTermChanged: (String) -> Unit,
     onItemAddedToList: (String) -> Unit,
-    onSearchTermChanged: () -> Unit,
     onSuggestionDeleted: (NameSuggestion) -> Unit,
     onToastShown: () -> Unit
 ) {
@@ -101,7 +97,7 @@ private fun AddItemsScreen(
             ) {
                 AddItemsTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    searchTermState = searchTermState,
+                    onSearchTermChanged = onSearchTermChanged,
                     onItemAddedToList = onItemAddedToList,
                     onNavigateUp = onNavigateUp
                 )
@@ -142,17 +138,13 @@ private fun AddItemsScreen(
         message = viewState.value.toastMessage,
         onToastShown = onToastShown
     )
-
-    LaunchedEffect(searchTermState.value) {
-        onSearchTermChanged()
-    }
 }
 
 @Composable
 private fun AddItemsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
-    searchTermState: MutableState<String>,
+    onSearchTermChanged: (String) -> Unit,
     onItemAddedToList: (String) -> Unit,
     onNavigateUp: () -> Unit
 ) {
@@ -181,8 +173,8 @@ private fun AddItemsTopAppBar(
                     .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start + WindowInsetsSides.End))
                     .padding(start = 56.dp)
                     .testTag(SEARCH_BAR),
-                searchTerm = searchTermState,
-                onValueAccepted = { onItemAddedToList(searchTermState.value) }
+                onValueChanged = onSearchTermChanged,
+                onValueAccepted = onItemAddedToList
             )
         },
         scrollBehavior = scrollBehavior,
@@ -222,10 +214,9 @@ private fun AddItemsScreenPreview() {
     AppTheme {
         AddItemsScreen(
             viewState = remember { mutableStateOf(viewState) },
-            searchTermState = remember { mutableStateOf("") },
             onNavigateUp = { },
-            onItemAddedToList = { },
             onSearchTermChanged = { },
+            onItemAddedToList = { },
             onSuggestionDeleted = { },
             onToastShown = { }
         )
