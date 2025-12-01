@@ -34,7 +34,7 @@ private class ListDetailsScreenNavigatorImpl(
 ) : ListDetailsScreenNavigator {
 
     override fun backToOverview() {
-        navBackStack.removeLast()
+        navBackStack.removeLastOrNull()
     }
 
     override fun toAddItems(shoppingListId: Long) {
@@ -47,6 +47,6 @@ private class AddItemsScreenNavigatorImpl(
 ) : AddItemsScreenNavigator {
 
     override fun backToListDetails() {
-        navBackStack.removeLast()
+        navBackStack.removeLastOrNull()
     }
 }
