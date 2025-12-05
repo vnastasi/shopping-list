@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -132,7 +131,6 @@ private fun AddItemsScreen(
                     isDeletable = suggestion.id != -1L,
                     onClick = {
                         onItemAddedToList(suggestion.name)
-                        searchTermTextFieldState.clearText()
                     },
                     onDelete = {
                         onSuggestionDeleted(suggestion)

@@ -1,6 +1,7 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -90,6 +91,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
                             arguments = persistentListOf(sanitisedName)
                         )
                     }
+                    searchTermTextFieldState.clearText()
                 }
         }
     }
