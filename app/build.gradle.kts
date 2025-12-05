@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
     implementation(project(":screen:add-items"))
+    implementation(project(":screen:manage-list"))
     implementation(project(":screen:list-details"))
     implementation(project(":screen:overview"))
     implementation(project(":screen:shared"))
