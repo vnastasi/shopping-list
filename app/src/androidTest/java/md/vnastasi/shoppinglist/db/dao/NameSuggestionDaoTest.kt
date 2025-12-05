@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.db.dao
 
+import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.extracting
@@ -18,9 +19,11 @@ class NameSuggestionDaoTest {
         db.createTestSuggestions()
 
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao()
-        assertThat(shoppingItemNameSuggestionDao.findAll(""))
-            .extracting { it.value }
-            .containsExactly("Toothbrush", "Toothpaste", "Butter", "Nutmeg", "Pasta", "Eggs", "Bread")
+        shoppingItemNameSuggestionDao.findAll("").test {
+            assertThat(expectMostRecentItem())
+                .extracting(NameSuggestion::value)
+                .containsExactly("Toothbrush", "Toothpaste", "Butter", "Nutmeg", "Pasta", "Eggs", "Bread")
+        }
     }
 
     @Test
@@ -28,9 +31,11 @@ class NameSuggestionDaoTest {
         db.createTestSuggestions()
 
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao()
-        assertThat(shoppingItemNameSuggestionDao.findAll("toOtH"))
-            .extracting { it.value }
-            .containsExactly("Toothbrush", "Toothpaste")
+        shoppingItemNameSuggestionDao.findAll("toOtH").test {
+            assertThat(expectMostRecentItem())
+                .extracting(NameSuggestion::value)
+                .containsExactly("Toothbrush", "Toothpaste")
+        }
     }
 
     @Test
@@ -38,8 +43,9 @@ class NameSuggestionDaoTest {
         db.createTestSuggestions()
 
         val shoppingItemNameSuggestionDao = db.shoppingItemNameSuggestionDao()
-        assertThat(shoppingItemNameSuggestionDao.findAll("qwerty"))
-            .isEmpty()
+        shoppingItemNameSuggestionDao.findAll("qwerty").test {
+            assertThat(expectMostRecentItem()).isEmpty()
+        }
     }
 
     @Test
@@ -51,9 +57,11 @@ class NameSuggestionDaoTest {
         shoppingItemNameSuggestionDao.delete(NameSuggestion(5L, "Butter"))
         shoppingItemNameSuggestionDao.delete(NameSuggestion(1L, "Bread"))
 
-        assertThat(shoppingItemNameSuggestionDao.findAll(""))
-            .extracting { it.value }
-            .containsExactly("Toothbrush", "Toothpaste", "Nutmeg", "Pasta", "Eggs")
+        shoppingItemNameSuggestionDao.findAll("").test {
+            assertThat(expectMostRecentItem())
+                .extracting(NameSuggestion::value)
+                .containsExactly("Toothbrush", "Toothpaste", "Nutmeg", "Pasta", "Eggs")
+        }
     }
 
     private suspend fun ShoppingListDatabase.createTestSuggestions() {
