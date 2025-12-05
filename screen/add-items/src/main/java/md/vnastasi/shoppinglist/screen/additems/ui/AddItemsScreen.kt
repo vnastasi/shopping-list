@@ -69,9 +69,9 @@ fun AddItemsScreen(
     navigator: AddItemsScreenNavigator
 ) {
     AddItemsScreen(
+        searchTermTextFieldState = viewModel.searchTermTextFieldState,
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         onNavigateUp = navigator::backToListDetails,
-        onSearchTermChanged = { value -> viewModel.onUiEvent(UiEvent.SearchTermChanged(value)) },
         onItemAddedToList = { name -> viewModel.onUiEvent(UiEvent.ItemAddedToList(name)) },
         onSuggestionDeleted = { suggestion -> viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion)) },
         onToastShown = { viewModel.onUiEvent(UiEvent.ToastShown) }
@@ -80,16 +80,14 @@ fun AddItemsScreen(
 
 @Composable
 private fun AddItemsScreen(
+    searchTermTextFieldState: TextFieldState,
     viewState: State<ViewState>,
     onNavigateUp: () -> Unit,
-    onSearchTermChanged: (String) -> Unit,
     onItemAddedToList: (String) -> Unit,
     onSuggestionDeleted: (NameSuggestion) -> Unit,
     onToastShown: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    val searchTermTextFieldState = rememberTextFieldState(initialText = "")
 
     Scaffold(
         modifier = Modifier
@@ -103,7 +101,6 @@ private fun AddItemsScreen(
                 AddItemsTopAppBar(
                     scrollBehavior = scrollBehavior,
                     searchTermTextFieldState = searchTermTextFieldState,
-                    onSearchTermChanged = onSearchTermChanged,
                     onItemAddedToList = onItemAddedToList,
                     onNavigateUp = onNavigateUp
                 )
@@ -156,7 +153,6 @@ private fun AddItemsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     searchTermTextFieldState: TextFieldState,
-    onSearchTermChanged: (String) -> Unit,
     onItemAddedToList: (String) -> Unit,
     onNavigateUp: () -> Unit
 ) {
@@ -186,7 +182,6 @@ private fun AddItemsTopAppBar(
                     .padding(start = 56.dp)
                     .testTag(SEARCH_BAR),
                 valueTextFieldState = searchTermTextFieldState,
-                onValueChanged = onSearchTermChanged,
                 onValueAccepted = onItemAddedToList
             )
         },
@@ -226,9 +221,9 @@ private fun AddItemsScreenPreview() {
 
     AppTheme {
         AddItemsScreen(
+            searchTermTextFieldState = rememberTextFieldState(),
             viewState = remember { mutableStateOf(viewState) },
             onNavigateUp = { },
-            onSearchTermChanged = { },
             onItemAddedToList = { },
             onSuggestionDeleted = { },
             onToastShown = { }

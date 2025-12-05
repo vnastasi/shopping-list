@@ -15,28 +15,21 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import kotlinx.coroutines.flow.collectLatest
 import md.vnastasi.shoppinglist.res.R
 
 @Composable
 internal fun SearchBar(
     modifier: Modifier = Modifier,
     valueTextFieldState: TextFieldState,
-    onValueChanged: (String) -> Unit,
     onValueAccepted: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(valueTextFieldState) {
-        snapshotFlow { valueTextFieldState.text.toString() }.collectLatest(onValueChanged)
-    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()

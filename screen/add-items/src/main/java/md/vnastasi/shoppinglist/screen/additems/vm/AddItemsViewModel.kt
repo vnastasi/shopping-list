@@ -1,5 +1,7 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -40,13 +42,15 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     private val _triggerCounter = MutableStateFlow(0)
 
-    private val _searchTerm = MutableStateFlow("")
+    private val _suggestions = snapshotFlow { searchTermTextFieldState.text.toString() }.flatMapLatest { nameSuggestionRepository.findAllMatching(it) }
 
     private val _toastMessage = MutableStateFlow<ToastMessage?>(null)
 
+    override val searchTermTextFieldState: TextFieldState = TextFieldState(initialText = "")
+
     override val viewState: StateFlow<ViewState> = combine(
         _triggerCounter,
-        _searchTerm.flatMapLatest { nameSuggestionRepository.findAllMatching(it) },
+        _suggestions,
         _toastMessage,
         ::createViewState
     ).stateIn(
@@ -57,7 +61,6 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
-            is UiEvent.SearchTermChanged -> onSearchTermChanged(uiEvent.value)
             is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)
             is UiEvent.SuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
             is UiEvent.ToastShown -> onToastShown()
@@ -72,10 +75,6 @@ class AddItemsViewModel @AssistedInject internal constructor(
         suggestions = suggestions.toImmutableList(),
         toastMessage = toastMessage
     )
-
-    private fun onSearchTermChanged(value: String) {
-        _searchTerm.update { value }
-    }
 
     private fun onItemAddedToList(name: String) {
         val sanitisedName = name.trim()
