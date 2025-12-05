@@ -34,10 +34,10 @@ class OverviewViewModel @Inject internal constructor(
     private val toastMessage = MutableStateFlow<ToastMessage?>(null)
 
     override val viewState: StateFlow<ViewState> = combine(
-        shoppingListRepository.findAll().map { it.toImmutableList() },
-        navigationTarget,
-        toastMessage,
-        ::createViewState
+        flow = shoppingListRepository.findAll().map { it.toImmutableList() },
+        flow2 = navigationTarget,
+        flow3 = toastMessage,
+        transform = ::createViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),

@@ -29,9 +29,9 @@ class ListDetailsViewModel @AssistedInject internal constructor(
 ) : ViewModel(coroutineScope), ListDetailsViewModelSpec {
 
     override val viewState: StateFlow<ViewState> = combine(
-        shoppingListRepository.findById(shoppingListId),
-        shoppingItemRepository.findAll(shoppingListId),
-        ::createViewState
+        flow = shoppingListRepository.findById(shoppingListId),
+        flow2 = shoppingItemRepository.findAll(shoppingListId),
+        transform = ::createViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),

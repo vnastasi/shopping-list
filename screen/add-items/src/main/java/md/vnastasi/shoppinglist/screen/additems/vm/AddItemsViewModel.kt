@@ -50,13 +50,13 @@ class AddItemsViewModel @AssistedInject internal constructor(
     override val searchTermTextFieldState: TextFieldState = TextFieldState(initialText = "")
 
     override val viewState: StateFlow<ViewState> = combine(
-        _triggerCounter,
-        _suggestions,
-        _toastMessage,
-        ::createViewState
+        flow = _triggerCounter,
+        flow2 = _suggestions,
+        flow3 = _toastMessage,
+        transform = { _, suggestions, toastMessage -> createViewState(suggestions, toastMessage) }
     ).stateIn(
         scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.init()
     )
 
@@ -69,7 +69,6 @@ class AddItemsViewModel @AssistedInject internal constructor(
     }
 
     private fun createViewState(
-        triggerCounter: Int,
         suggestions: List<NameSuggestion>,
         toastMessage: ToastMessage?
     ): ViewState = ViewState(
@@ -117,5 +116,10 @@ class AddItemsViewModel @AssistedInject internal constructor(
     interface Factory {
 
         fun create(shoppingListId: Long): AddItemsViewModel
+    }
+
+    companion object {
+
+        private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }
 }
