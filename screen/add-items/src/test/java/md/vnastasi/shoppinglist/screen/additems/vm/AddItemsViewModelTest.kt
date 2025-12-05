@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
@@ -38,10 +39,11 @@ internal class AddItemsViewModelTest {
     private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
     private val mockShoppingItemRepository = mockk<ShoppingItemRepository>(relaxUnitFun = true)
 
+
     @Test
     @DisplayName(
         """
-        When handling a `SearchTermChanged` UI event
+        When handling search term value changes
         Then expect suggestion list to update
     """
     )
@@ -50,20 +52,17 @@ internal class AddItemsViewModelTest {
         val suggestion = NameSuggestion(1L, "Milk")
 
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
-        coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns listOf(suggestion)
+        coEvery { mockNameSuggestionRepository.findAllMatching(searchTerm) } returns flowOf(listOf(suggestion))
 
-        val viewModel = createViewModel(currentSearchTermValue = searchTerm)
+        val viewModel = createViewModel()
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.SearchTermChanged)
+            viewModel.searchTermTextFieldState.setTextAndPlaceCursorAtEnd(searchTerm)
             assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(suggestion), toastMessage = null))
 
             cancelAndConsumeRemainingEvents()
         }
-
-        coVerify { mockNameSuggestionRepository.findAllMatching(searchTerm) }
-        confirmVerified(mockNameSuggestionRepository)
     }
 
     @Test
@@ -78,6 +77,7 @@ internal class AddItemsViewModelTest {
 
         val shoppingList = createShoppingList()
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
 
         val viewModel = createViewModel(currentSearchTermValue = "Search term")
         viewModel.viewState.test {
@@ -92,9 +92,9 @@ internal class AddItemsViewModelTest {
         }
 
         coVerify { mockShoppingItemRepository.create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList))) }
-        confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
+        confirmVerified(mockShoppingItemRepository)
 
-        assertThat(viewModel.searchTermState.value).isEmpty()
+        assertThat(viewModel.searchTermTextFieldState.text).isEmpty()
     }
 
     @Test
@@ -119,7 +119,7 @@ internal class AddItemsViewModelTest {
         coVerify(exactly = 0) { mockShoppingItemRepository.create(any()) }
         confirmVerified(mockShoppingItemRepository, mockNameSuggestionRepository)
 
-        assertThat(viewModel.searchTermState.value).isEqualTo("Search term")
+        assertThat(viewModel.searchTermTextFieldState.text).isEqualTo("Search term")
     }
 
     @Test
@@ -131,7 +131,7 @@ internal class AddItemsViewModelTest {
     )
     fun onSuggestionDeleted() = runTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
-        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns emptyList()
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
 
         val suggestion = NameSuggestion(name = "Milk")
 
@@ -161,7 +161,7 @@ internal class AddItemsViewModelTest {
     )
     fun onToastShown() = runTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
-        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns emptyList()
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
 
         val suggestion = NameSuggestion(name = "Milk")
 
@@ -186,5 +186,7 @@ internal class AddItemsViewModelTest {
             shoppingItemRepository = mockShoppingItemRepository,
             shoppingListRepository = mockShoppingListRepository,
             coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
-        ).apply { searchTermState.value = currentSearchTermValue }
+        ).apply {
+            searchTermTextFieldState.setTextAndPlaceCursorAtEnd(currentSearchTermValue)
+        }
 }

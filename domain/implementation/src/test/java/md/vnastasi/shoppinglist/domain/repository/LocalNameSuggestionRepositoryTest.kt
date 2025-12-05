@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.domain.repository
 
+import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
@@ -7,6 +8,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.dao.NameSuggestionDao
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -23,7 +25,11 @@ internal class LocalNameSuggestionRepositoryTest {
     @Test
     @DisplayName("Given empty search term Then expect no suggestions")
     fun emptySearchTermReturnsNoSuggestions() = runTest {
-        assertThat(repository.findAllMatching("")).isEmpty()
+        repository.findAllMatching("").test {
+            assertThat(awaitItem()).isEmpty()
+            cancelAndConsumeRemainingEvents()
+        }
+
         coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
     }
 
@@ -32,8 +38,10 @@ internal class LocalNameSuggestionRepositoryTest {
     fun searchTermLength1ReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "a"
 
-        assertThat(repository.findAllMatching(searchTerm))
-            .containsExactly(NameSuggestion(-1L, searchTerm))
+        repository.findAllMatching(searchTerm).test {
+            assertThat(awaitItem()).containsExactly(NameSuggestion(-1L, searchTerm))
+            cancelAndConsumeRemainingEvents()
+        }
 
         coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
         confirmVerified(mockNameSuggestionDao)
@@ -44,8 +52,10 @@ internal class LocalNameSuggestionRepositoryTest {
     fun searchTermLength2ReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "ab"
 
-        assertThat(repository.findAllMatching(searchTerm))
-            .containsExactly(NameSuggestion(-1L, searchTerm))
+        repository.findAllMatching(searchTerm).test {
+            assertThat(awaitItem()).containsExactly(NameSuggestion(-1L, searchTerm))
+            cancelAndConsumeRemainingEvents()
+        }
 
         coVerify(exactly = 0) { mockNameSuggestionDao.findAll(any()) }
         confirmVerified(mockNameSuggestionDao)
@@ -55,10 +65,12 @@ internal class LocalNameSuggestionRepositoryTest {
     @DisplayName("Given search term of length 3 and no values from database Then expect suggestions of search item")
     fun searchTermLength3AndNoDatabaseValuesReturnsSuggestionWithSearchTerm() = runTest {
         val searchTerm = "abc"
-        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns emptyList()
+        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns flowOf(emptyList())
 
-        assertThat(repository.findAllMatching(searchTerm))
-            .containsExactly(NameSuggestion(-1L, searchTerm))
+        repository.findAllMatching(searchTerm).test {
+            assertThat(awaitItem()).containsExactly(NameSuggestion(-1L, searchTerm))
+            cancelAndConsumeRemainingEvents()
+        }
 
         coVerify { mockNameSuggestionDao.findAll(searchTerm) }
         confirmVerified(mockNameSuggestionDao)
@@ -68,10 +80,21 @@ internal class LocalNameSuggestionRepositoryTest {
     @DisplayName("Given search term of length 3 and existing values from database Then expect suggestions of search item plus values from database")
     fun searchTermLength3AndExistingDatabaseValuesReturnsSuggestionWithSearchTermAndDatabaseValues() = runTest {
         val searchTerm = "abc"
-        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns listOf(NameSuggestionEntity(1L, "def"), NameSuggestionEntity(2L, "ghi"))
+        coEvery { mockNameSuggestionDao.findAll(searchTerm) } returns flowOf(
+            listOf(
+                NameSuggestionEntity(1L, "def"),
+                NameSuggestionEntity(2L, "ghi")
+            )
+        )
 
-        assertThat(repository.findAllMatching(searchTerm))
-            .containsExactly(NameSuggestion(-1L, searchTerm), NameSuggestion(1L, "def"), NameSuggestion(2L, "ghi"))
+        repository.findAllMatching(searchTerm).test {
+            assertThat(awaitItem()).containsExactly(
+                NameSuggestion(-1L, searchTerm),
+                NameSuggestion(1L, "def"),
+                NameSuggestion(2L, "ghi")
+            )
+            cancelAndConsumeRemainingEvents()
+        }
 
         coVerify { mockNameSuggestionDao.findAll(searchTerm) }
         confirmVerified(mockNameSuggestionDao)

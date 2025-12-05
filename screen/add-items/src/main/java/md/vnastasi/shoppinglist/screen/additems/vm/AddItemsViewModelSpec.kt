@@ -1,15 +1,15 @@
 package md.vnastasi.shoppinglist.screen.additems.vm
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.text.input.TextFieldState
 import kotlinx.coroutines.flow.StateFlow
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 
 interface AddItemsViewModelSpec {
 
-    val viewState: StateFlow<ViewState>
+    val searchTermTextFieldState: TextFieldState
 
-    val searchTermState: MutableState<String>
+    val viewState: StateFlow<ViewState>
 
     fun onUiEvent(uiEvent: UiEvent)
 }

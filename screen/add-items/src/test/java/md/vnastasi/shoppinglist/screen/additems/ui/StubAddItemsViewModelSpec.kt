@@ -1,7 +1,6 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.text.input.TextFieldState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
@@ -13,9 +12,9 @@ class StubAddItemsViewModelSpec(
     searchTermValue: String
 ) : AddItemsViewModelSpec {
 
-    override val viewState: StateFlow<ViewState> = MutableStateFlow(viewState)
+    override val searchTermTextFieldState: TextFieldState = TextFieldState(searchTermValue)
 
-    override val searchTermState: MutableState<String> = mutableStateOf(searchTermValue)
+    override val viewState: StateFlow<ViewState> = MutableStateFlow(viewState)
 
     override fun onUiEvent(uiEvent: UiEvent) = Unit
 }
