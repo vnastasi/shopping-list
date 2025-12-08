@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
+    implementation(libs.compose.material)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(libs.dagger)
