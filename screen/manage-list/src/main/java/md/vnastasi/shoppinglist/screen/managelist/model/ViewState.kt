@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview.model
+package md.vnastasi.shoppinglist.screen.managelist.model
 
 data class ViewState(
     val textValidationError: TextValidationError,

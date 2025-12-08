@@ -6,12 +6,16 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
+import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
 import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
 
 object ScreenNavigators {
 
     @Composable
     fun overview(navBackStack: NavBackStack<NavKey>) = remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navBackStack) }
+
+    @Composable
+    fun manageList(navBackStack: NavBackStack<NavKey>) = remember<ManageListNavigator> { ManageListNavigatorImpl(navBackStack) }
 
     @Composable
     fun listDetails(navBackStack: NavBackStack<NavKey>) = remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navBackStack) }
@@ -26,6 +30,19 @@ private class OverviewScreenNavigatorImpl(
 
     override fun toListDetails(shoppingListId: Long) {
         navBackStack.add(Routes.ListDetails(shoppingListId))
+    }
+
+    override fun openManageListSheet(shoppingListId: Long?) {
+        navBackStack.add(Routes.ManageList(shoppingListId))
+    }
+}
+
+private class ManageListNavigatorImpl(
+    private val navBackStack: NavBackStack<NavKey>
+) : ManageListNavigator {
+
+    override fun close() {
+        navBackStack.removeLastOrNull()
     }
 }
 

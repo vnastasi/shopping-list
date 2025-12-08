@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview.vm
+package md.vnastasi.shoppinglist.screen.managelist.vm
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
-import md.vnastasi.shoppinglist.screen.overview.model.TextValidationError
-import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
-import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
+import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
+import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 
 @HiltViewModel(assistedFactory = ManageListViewModel.Factory::class)
 class ManageListViewModel @AssistedInject constructor(

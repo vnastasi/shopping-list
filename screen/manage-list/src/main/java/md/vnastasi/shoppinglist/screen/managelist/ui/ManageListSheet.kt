@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview.ui
+package md.vnastasi.shoppinglist.screen.managelist.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,21 +20,26 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.overview.model.TextValidationError
-import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
-import md.vnastasi.shoppinglist.screen.overview.model.ViewState
-import md.vnastasi.shoppinglist.screen.overview.vm.ManageListViewModelSpec
+import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
+import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
+import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
+import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
+import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 
 @Composable
 fun ManageListSheet(
-    viewModel: ManageListViewModelSpec
+    viewModel: ManageListViewModelSpec,
+    navigator: ManageListNavigator
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ManageListSheet(
         viewState = viewState,
         textFieldState = viewModel.listNameTextFieldState,
-        onSave = { viewModel.dispatch(UiEvent.Saved) }
+        onSave = {
+            viewModel.dispatch(UiEvent.Saved)
+            navigator.close()
+        }
     )
 }
 

@@ -17,9 +17,9 @@ import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
-import md.vnastasi.shoppinglist.screen.overview.ui.ManageListSheet
+import md.vnastasi.shoppinglist.screen.managelist.ui.ManageListSheet
+import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModel
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
-import md.vnastasi.shoppinglist.screen.overview.vm.ManageListViewModel
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 
 
@@ -65,7 +65,8 @@ fun ApplicationScreenContainer() {
                         creationCallback = { factory ->
                             factory.create(key.shoppingListId)
                         }
-                    )
+                    ),
+                    navigator = ScreenNavigators.manageList(navBackStack)
                 )
             }
 

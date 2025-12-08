@@ -3,6 +3,7 @@ package md.vnastasi.shoppinglist.screen
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
@@ -25,6 +26,7 @@ internal class BottomSheetScene<T : Any>(
     override val content: @Composable (() -> Unit) = {
         ModalBottomSheet(
             onDismissRequest = onBack,
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             properties = modalBottomSheetProperties,
         ) {
             entry.Content()

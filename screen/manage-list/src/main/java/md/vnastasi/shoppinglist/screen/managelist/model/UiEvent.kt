@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen.overview.model
+package md.vnastasi.shoppinglist.screen.managelist.model
 
 sealed interface UiEvent {
 
