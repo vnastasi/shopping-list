@@ -22,6 +22,7 @@ dependencies {
     api(libs.javax.inject)
 
     implementation(project(":resources"))
+    implementation(project(":screen:shared"))
     implementation(project(":support:theme"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))

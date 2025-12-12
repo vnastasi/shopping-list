@@ -14,6 +14,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,10 +42,5 @@ class OverviewViewModel @Inject internal constructor(
         viewModelScope.launch {
             shoppingListRepository.delete(shoppingListDetails.toShoppingList())
         }
-    }
-
-    companion object {
-
-        private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }
 }

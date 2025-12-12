@@ -20,6 +20,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
 
 @HiltViewModel(assistedFactory = ManageListViewModel.Factory::class)
 class ManageListViewModel @AssistedInject constructor(
@@ -47,7 +48,7 @@ class ManageListViewModel @AssistedInject constructor(
         transform = ::ViewState
     ).stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.INIT
     )
 
