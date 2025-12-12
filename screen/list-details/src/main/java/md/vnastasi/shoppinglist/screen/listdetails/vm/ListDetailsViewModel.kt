@@ -19,6 +19,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
 
 @HiltViewModel(assistedFactory = ListDetailsViewModel.Factory::class)
 class ListDetailsViewModel @AssistedInject internal constructor(
@@ -78,10 +79,5 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     interface Factory {
 
         fun create(shoppingListId: Long): ListDetailsViewModel
-    }
-
-    companion object {
-
-        private const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L
     }
 }

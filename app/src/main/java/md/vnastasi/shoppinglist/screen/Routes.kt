@@ -9,6 +9,9 @@ sealed class Routes: NavKey {
     data object Overview : Routes()
 
     @Serializable
+    data class ManageList(val shoppingListId: Long?) : Routes()
+
+    @Serializable
     data class ListDetails(val shoppingListId: Long) : Routes()
 
     @Serializable

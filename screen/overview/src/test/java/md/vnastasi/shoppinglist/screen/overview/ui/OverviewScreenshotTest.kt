@@ -7,7 +7,6 @@ import com.android.resources.NightMode
 import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
-import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.collection.crossJoin
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -117,7 +116,6 @@ class OverviewScreenshotTest(
             ),
             ViewState.Ready(
                 shoppingLists = persistentListOf(),
-                navigationTarget = NavigationTarget.ShoppingListForm
             ),
             ViewState.Loading
         )

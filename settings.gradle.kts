@@ -53,6 +53,7 @@ include(
     ":resources",
     ":screen:shared",
     ":screen:overview",
+    ":screen:manage-list",
     ":screen:list-details",
     ":screen:add-items",
     ":app"
