@@ -15,13 +15,13 @@ dependencies {
     compileOnly(project(":support:annotation"))
 
     api(project(":domain:api"))
-    api(project(":screen:shared"))
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
 
     implementation(project(":resources"))
+    implementation(project(":screen:shared"))
     implementation(project(":support:theme"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
@@ -33,7 +33,6 @@ dependencies {
     implementation(libs.compose.material.icons)
     implementation(libs.compose.preview)
     implementation(libs.compose.runtime.annotation)
-    implementation(libs.compose.runtime.saveable)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)

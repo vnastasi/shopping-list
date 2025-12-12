@@ -21,6 +21,7 @@ dependencies {
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
+    api(libs.javax.inject)
 
     implementation(project(":resources"))
     implementation(project(":support:theme"))
@@ -40,7 +41,6 @@ dependencies {
     implementation(libs.compose.ui.unit)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
-    implementation(libs.javax.inject)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)
