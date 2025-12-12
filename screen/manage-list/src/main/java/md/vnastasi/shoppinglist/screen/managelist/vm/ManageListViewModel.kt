@@ -1,8 +1,5 @@
 package md.vnastasi.shoppinglist.screen.managelist.vm
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -10,11 +7,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
@@ -29,53 +28,58 @@ class ManageListViewModel @AssistedInject constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), ManageListViewModelSpec {
 
+    private val _shoppingListName = MutableStateFlow("")
+    private val _validationError = MutableStateFlow(TextValidationError.NONE)
+    private val _isSaveEnabled = MutableStateFlow(false)
+
     init {
         if (shoppingListId != null) {
             viewModelScope.launch {
-                repository.findById(shoppingListId).collect { listNameTextFieldState.setTextAndPlaceCursorAtEnd(it.name) }
+                repository.findById(shoppingListId).collect { shoppingList -> _shoppingListName.update { shoppingList.name } }
             }
         }
     }
 
-    override val listNameTextFieldState: TextFieldState = TextFieldState()
-
-    override val viewState: StateFlow<ViewState> = snapshotFlow { listNameTextFieldState.text.toString() }
-        .map { createViewState() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ViewState(textValidationError = TextValidationError.NONE, isSaveEnabled = false)
-        )
+    override val viewState: StateFlow<ViewState> = combine(
+        flow = _shoppingListName,
+        flow2 = _validationError,
+        flow3 = _isSaveEnabled,
+        transform = ::ViewState
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ViewState.INIT
+    )
 
     override fun dispatch(event: UiEvent) {
         when (event) {
-            is UiEvent.Saved -> saveList()
+            is UiEvent.OnNameChange -> handleNameChange(event.name)
+            is UiEvent.OnSaveList -> handleListSave(event.name)
         }
     }
 
-    private fun saveList() {
-        viewModelScope.launch {
-            val newListName = listNameTextFieldState.text.toString()
-            if (shoppingListId != null) {
-                val shoppingList = repository.findById(shoppingListId).first()
-                repository.update(shoppingList.copy(name = newListName))
-            } else {
-                repository.create(ShoppingList(name = newListName))
-            }
-        }
-    }
+    private fun handleNameChange(name: String) {
+        _shoppingListName.update { name }
 
-    private fun createViewState(): ViewState {
-        val name = listNameTextFieldState.text.toString()
         val textValidationError = when {
             name.isEmpty() -> TextValidationError.EMPTY
             name.isBlank() -> TextValidationError.BLANK
             else -> TextValidationError.NONE
         }
-        return ViewState(
-            textValidationError = textValidationError,
-            isSaveEnabled = textValidationError == TextValidationError.NONE
-        )
+        _validationError.update { textValidationError }
+
+        _isSaveEnabled.update { textValidationError == TextValidationError.NONE }
+    }
+
+    private fun handleListSave(name: String) {
+        viewModelScope.launch {
+            if (shoppingListId != null) {
+                val shoppingList = repository.findById(shoppingListId).first()
+                repository.update(shoppingList.copy(name = name))
+            } else {
+                repository.create(ShoppingList(name = name))
+            }
+        }
     }
 
     @AssistedFactory

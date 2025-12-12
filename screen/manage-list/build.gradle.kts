@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("compose-screen-library.conventions")
     id("screenshot-testable-library.conventions")
@@ -62,4 +64,13 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.vintage.engine)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
+    }
 }
