@@ -9,7 +9,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.PreviewDynamicColors
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
@@ -29,7 +36,9 @@ import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
+import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
 fun ManageListSheet(
@@ -109,6 +118,66 @@ private fun ManageListSheet(
         ) {
             Text(
                 text = stringResource(R.string.list_form_btn_save)
+            )
+        }
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
+@PreviewLightDark
+@PreviewDynamicColors
+@PreviewScreenSizes
+@PreviewFontScale
+@Composable
+private fun ManageListSheetPreview() {
+    AppTheme {
+        val sheetState = SheetState(
+            skipPartiallyExpanded = true,
+            skipHiddenState = true,
+            initialValue = SheetValue.Expanded,
+            confirmValueChange = { true },
+            positionalThreshold = { 1.0f },
+            velocityThreshold = { 1.0f }
+        )
+
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { }
+        ) {
+            ManageListSheet(
+                viewState = ViewState(name = "List", validationError = TextValidationError.NONE, isSaveEnabled = true),
+                onTextChanged = { },
+                onSave = { }
+            )
+        }
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
+@PreviewLightDark
+@PreviewDynamicColors
+@PreviewScreenSizes
+@PreviewFontScale
+@Composable
+private fun ManageListSheetWithErrorsPreview() {
+    AppTheme {
+        val sheetState = SheetState(
+            skipPartiallyExpanded = true,
+            skipHiddenState = true,
+            initialValue = SheetValue.Expanded,
+            confirmValueChange = { true },
+            positionalThreshold = { 1.0f },
+            velocityThreshold = { 1.0f }
+        )
+
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { }
+        ) {
+            ManageListSheet(
+                viewState = ViewState(name = " ", validationError = TextValidationError.BLANK, isSaveEnabled = true),
+                onTextChanged = { },
+                onSave = { }
             )
         }
     }
