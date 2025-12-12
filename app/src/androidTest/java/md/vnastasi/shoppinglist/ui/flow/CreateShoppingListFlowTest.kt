@@ -6,8 +6,8 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.ui.robot.addItemsScreen
 import md.vnastasi.shoppinglist.ui.robot.listDetailsScreen
+import md.vnastasi.shoppinglist.ui.robot.manageShoppingListSheet
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
-import md.vnastasi.shoppinglist.ui.robot.shoppingListForm
 import md.vnastasi.shoppinglist.ui.rule.databaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
 import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
@@ -38,7 +38,7 @@ class CreateShoppingListFlowTest {
             clickOnNewShoppingListFab()
         }
 
-        shoppingListForm(composeRule) {
+        manageShoppingListSheet(composeRule) {
             typeShoppingListName("Test new shopping list")
             clickOnSaveButton()
         }
