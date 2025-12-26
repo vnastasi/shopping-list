@@ -1,3 +1,5 @@
+import md.vnastasi.plugin.support.libs
+
 plugins {
     id("simple-library.conventions")
     id("testable-library.conventions")
@@ -19,7 +21,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
-    ksp(libs.hilt.compiler)
+    ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))

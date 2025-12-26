@@ -1,3 +1,4 @@
+import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -50,7 +51,7 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    ksp(libs.hilt.compiler)
+    ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(testFixtures(project(":screen:shared")))

@@ -1,5 +1,6 @@
 import com.android.build.api.artifact.SingleArtifact
 import md.vnastasi.plugin.abs.task.CopyAndroidArtifact
+import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -107,7 +108,7 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.serialization.core)
 
-    ksp(libs.hilt.compiler)
+    ksp(libs.bundles.hilt.compiler)
 
     androidTestImplementation(project(":resources"))
     androidTestImplementation(testFixtures(project(":database")))
@@ -131,7 +132,7 @@ dependencies {
     androidTestImplementation(libs.uitest.monitor)
     androidTestImplementation(libs.uitest.runner)
 
-    kspAndroidTest(libs.hilt.compiler)
+    kspAndroidTest(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
