@@ -108,8 +108,7 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.serialization.core)
 
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
+    ksp(libs.bundles.hilt.compiler)
 
     androidTestImplementation(project(":resources"))
     androidTestImplementation(testFixtures(project(":database")))
@@ -133,8 +132,7 @@ dependencies {
     androidTestImplementation(libs.uitest.monitor)
     androidTestImplementation(libs.uitest.runner)
 
-    kspAndroidTest(libs.hilt.compiler)
-    kspAndroidTest(libs.kotlin.metadata)
+    kspAndroidTest(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

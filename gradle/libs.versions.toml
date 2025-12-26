@@ -161,3 +161,5 @@ paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
 
 
 [bundles]
+
+hilt-compiler = [ "hilt-compiler", "kotlin-metadata" ]

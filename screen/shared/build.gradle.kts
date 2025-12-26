@@ -39,8 +39,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.window.core)
 
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
+    ksp(libs.bundles.hilt.compiler)
 
     debugImplementation(libs.compose.tooling)
 

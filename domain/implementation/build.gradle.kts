@@ -21,8 +21,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
+    ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))

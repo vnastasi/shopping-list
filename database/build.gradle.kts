@@ -27,7 +27,6 @@ dependencies {
     implementation(libs.room.common)
     implementation(libs.room.runtime)
 
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
+    ksp(libs.bundles.hilt.compiler)
     ksp(libs.room.compiler)
 }
