@@ -9,6 +9,8 @@ jobs:
   update-gradle-wrapper:
     name: "Update Gradle wrapper"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
