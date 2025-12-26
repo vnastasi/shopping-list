@@ -1,3 +1,5 @@
+import md.vnastasi.plugin.support.libs
+
 plugins {
     id("simple-library.conventions")
     alias(libs.plugins.hilt)
@@ -26,5 +28,6 @@ dependencies {
     implementation(libs.room.runtime)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.kotlin.metadata)
     ksp(libs.room.compiler)
 }

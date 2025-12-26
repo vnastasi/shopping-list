@@ -1,3 +1,4 @@
+import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -39,6 +40,7 @@ dependencies {
     implementation(libs.window.core)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.kotlin.metadata)
 
     debugImplementation(libs.compose.tooling)
 

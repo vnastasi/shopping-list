@@ -50,6 +50,7 @@ dependencies {
     debugRuntimeOnly(libs.compose.test.manifest)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.kotlin.metadata)
 
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(testFixtures(project(":screen:shared")))
