@@ -20,6 +20,7 @@ import androidx.window.core.layout.WindowSizeClass
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 
 private const val MIN_WIDTH_BREAKPOINT = 720
+private const val MIN_HEIGHT_BREAKPOINT = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
 
 @Composable
 internal fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
@@ -32,7 +33,7 @@ internal class ListDetailSceneStrategy<T : Any>(
 ) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-        if (!windowSizeClass.isWidthAtLeastBreakpoint(MIN_WIDTH_BREAKPOINT)) {
+        if (!windowSizeClass.isAtLeastBreakpoint(widthDpBreakpoint = MIN_WIDTH_BREAKPOINT, heightDpBreakpoint = MIN_HEIGHT_BREAKPOINT)) {
             return null
         }
 

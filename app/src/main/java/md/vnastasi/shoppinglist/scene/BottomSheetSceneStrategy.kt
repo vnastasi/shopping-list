@@ -41,7 +41,7 @@ internal class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
         fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()): Map<String, Any> =
             mapOf(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
 
-        private const val BOTTOM_SHEET_KEY = "bottomsheet"
+        private const val BOTTOM_SHEET_KEY = "BottomSheetScene-BottomSheetProperties"
     }
 }
 
