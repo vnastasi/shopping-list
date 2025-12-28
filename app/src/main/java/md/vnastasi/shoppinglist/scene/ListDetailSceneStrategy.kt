@@ -17,7 +17,9 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
+import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
+
+private const val MIN_WIDTH_BREAKPOINT = 720
 
 @Composable
 internal fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
@@ -30,17 +32,15 @@ internal class ListDetailSceneStrategy<T : Any>(
 ) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-        if (!windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        if (!windowSizeClass.isWidthAtLeastBreakpoint(MIN_WIDTH_BREAKPOINT)) {
             return null
         }
 
         val detailEntry = entries.lastOrNull()?.takeIf { it.metadata.containsKey(DETAIL_KEY) } ?: return null
         val listEntry = entries.findLast { it.metadata.containsKey(LIST_KEY) } ?: return null
 
-        val sceneKey = listEntry.contentKey
-
         return ListDetailScene(
-            key = sceneKey,
+            key = listEntry.contentKey,
             previousEntries = entries.dropLast(1),
             listEntry = listEntry,
             detailEntry = detailEntry
@@ -62,8 +62,8 @@ internal class ListDetailSceneStrategy<T : Any>(
 private class ListDetailScene<T : Any>(
     override val key: Any,
     override val previousEntries: List<NavEntry<T>>,
-    val listEntry: NavEntry<T>,
-    val detailEntry: NavEntry<T>,
+    private val listEntry: NavEntry<T>,
+    private val detailEntry: NavEntry<T>,
 ) : Scene<T> {
 
     override val entries: List<NavEntry<T>> = listOf(listEntry, detailEntry)
@@ -84,7 +84,7 @@ private class ListDetailScene<T : Any>(
                 ) {
                     AnimatedContent(
                         targetState = detailEntry,
-                        contentKey = { entry -> entry.contentKey },
+                        contentKey = { it.contentKey },
                         transitionSpec = {
                             slideInHorizontally(initialOffsetX = { it }) togetherWith slideOutHorizontally(targetOffsetX = { -it })
                         }

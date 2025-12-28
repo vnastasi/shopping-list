@@ -48,10 +48,9 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
         createViewModel(shoppingListId).viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Loading(shouldShowBackButton = true))
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Empty(
-                    shouldShowBackButton = true,
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
                 )
@@ -78,10 +77,9 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem))
 
         createViewModel(shoppingListId).viewState.test {
-            assertThat(awaitItem()).isEqualTo(ViewState.Loading(shouldShowBackButton = true))
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Ready(
-                    shouldShowBackButton = true,
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
                     listOfShoppingItems = persistentListOf(shoppingItem)
@@ -172,7 +170,6 @@ internal class ListDetailsViewModelTest {
 
     private fun TestScope.createViewModel(shoppingListId: Long) =
         ListDetailsViewModel(
-            shouldShowBackButton = true,
             shoppingListId = shoppingListId,
             shoppingListRepository = mockShoppingListRepository,
             shoppingItemRepository = mockShoppingItemRepository,

@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.scene
+package md.vnastasi.shoppinglist.screen.shared.content
 
 import androidx.compose.runtime.compositionLocalOf
 

@@ -7,20 +7,14 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 @Stable
 sealed class ViewState {
 
-    abstract val shouldShowBackButton: Boolean
-
-    data class Loading(
-        override val shouldShowBackButton: Boolean
-    ) : ViewState()
+    data object Loading : ViewState()
 
     data class Empty(
-        override val shouldShowBackButton: Boolean,
         val shoppingListId: Long,
         val shoppingListName: String
     ) : ViewState()
 
     data class Ready(
-        override val shouldShowBackButton: Boolean,
         val shoppingListId: Long,
         val shoppingListName: String,
         val listOfShoppingItems: ImmutableList<ShoppingItem>

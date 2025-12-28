@@ -23,7 +23,6 @@ import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOU
 
 @HiltViewModel(assistedFactory = ListDetailsViewModel.Factory::class)
 class ListDetailsViewModel @AssistedInject internal constructor(
-    @Assisted val shouldShowBackButton: Boolean,
     private val shoppingItemRepository: ShoppingItemRepository,
     @Assisted shoppingListId: Long,
     shoppingListRepository: ShoppingListRepository,
@@ -37,7 +36,7 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.Loading(shouldShowBackButton)
+        initialValue = ViewState.Loading
     )
 
     override fun onUiEvent(event: UiEvent) {
@@ -65,13 +64,11 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     ): ViewState =
         if (listOfShoppingItems.isEmpty()) {
             ViewState.Empty(
-                shouldShowBackButton = shouldShowBackButton,
                 shoppingListId = shoppingList.id,
                 shoppingListName = shoppingList.name
             )
         } else {
             ViewState.Ready(
-                shouldShowBackButton = shouldShowBackButton,
                 shoppingListId = shoppingList.id,
                 shoppingListName = shoppingList.name,
                 listOfShoppingItems = listOfShoppingItems.toImmutableList()
@@ -81,9 +78,6 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     @AssistedFactory
     interface Factory {
 
-        fun create(
-            shouldShowBackButton: Boolean,
-            shoppingListId: Long
-        ): ListDetailsViewModel
+        fun create(shoppingListId: Long): ListDetailsViewModel
     }
 }
