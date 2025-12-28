@@ -131,8 +131,9 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          gh cache delete "$UT_EXEC_DATA_CACHE_KEY"
-          gh cache delete "$IT_EXEC_DATA_CACHE_KEY"
+          gh cache delete "${{ env.UT_EXEC_DATA_CACHE_KEY }}"
+          gh cache delete "${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}"
+          gh cache delete "${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}"
 
   dependencies-update-auto-merge:
     name: "Auto merge on dependencies update"
