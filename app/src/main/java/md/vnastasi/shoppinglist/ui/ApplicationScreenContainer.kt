@@ -5,7 +5,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
@@ -16,6 +15,9 @@ import androidx.navigation3.ui.NavDisplay
 import md.vnastasi.shoppinglist.nav.Route
 import md.vnastasi.shoppinglist.nav.ScreenNavigators
 import md.vnastasi.shoppinglist.scene.BottomSheetSceneStrategy
+import md.vnastasi.shoppinglist.scene.ListDetailSceneStrategy
+import md.vnastasi.shoppinglist.scene.rememberBottomSheetSceneStrategy
+import md.vnastasi.shoppinglist.scene.rememberListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
@@ -31,11 +33,10 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 internal fun ApplicationScreenContainer() {
 
     val navBackStack = rememberNavBackStack(Route.Overview)
-    val bottomSheetSceneStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
 
     NavDisplay(
         backStack = navBackStack,
-        sceneStrategy = bottomSheetSceneStrategy,
+        sceneStrategy = rememberListDetailSceneStrategy<NavKey>().then(rememberBottomSheetSceneStrategy()),
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
@@ -53,7 +54,9 @@ internal fun ApplicationScreenContainer() {
             navBackStack.removeLastOrNull()
         },
         entryProvider = entryProvider {
-            entry<Route.Overview> {
+            entry<Route.Overview>(
+                metadata = ListDetailSceneStrategy.listPane()
+            ) {
                 OverviewScreen(
                     viewModel = hiltViewModel<OverviewViewModel>(),
                     navigator = ScreenNavigators.overview(navBackStack)
@@ -73,11 +76,15 @@ internal fun ApplicationScreenContainer() {
                 )
             }
 
-            entry<Route.ListDetails> { key ->
+            entry<Route.ListDetails>(
+                metadata = ListDetailSceneStrategy.detailPane()
+            ) { key ->
                 ListDetailsScreen(
                     viewModel = hiltViewModel<ListDetailsViewModel, ListDetailsViewModel.Factory>(
                         creationCallback = { factory ->
-                            factory.create(key.shoppingListId)
+                            factory.create(
+                                shoppingListId = key.shoppingListId
+                            )
                         }
                     ),
                     navigator = ScreenNavigators.listDetails(navBackStack)

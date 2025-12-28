@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
@@ -20,12 +20,12 @@ import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
 @Composable
-internal fun <T : NavKey> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
+internal fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     return remember(windowSizeClass) { ListDetailSceneStrategy(windowSizeClass) }
 }
 
-internal class ListDetailSceneStrategy<T : NavKey>(
+internal class ListDetailSceneStrategy<T : Any>(
     private val windowSizeClass: WindowSizeClass
 ) : SceneStrategy<T> {
 
@@ -59,7 +59,7 @@ internal class ListDetailSceneStrategy<T : NavKey>(
     }
 }
 
-private class ListDetailScene<T : NavKey>(
+private class ListDetailScene<T : Any>(
     override val key: Any,
     override val previousEntries: List<NavEntry<T>>,
     val listEntry: NavEntry<T>,
@@ -78,17 +78,19 @@ private class ListDetailScene<T : NavKey>(
                 listEntry.Content()
             }
 
-            Column(
-                modifier = Modifier.weight(0.6f)
-            ) {
-                AnimatedContent(
-                    targetState = detailEntry,
-                    contentKey = { entry -> entry.contentKey },
-                    transitionSpec = {
-                        slideInHorizontally(initialOffsetX = { it }) togetherWith slideOutHorizontally(targetOffsetX = { -it })
+            CompositionLocalProvider(LocalBackButtonVisibility provides false) {
+                Column(
+                    modifier = Modifier.weight(0.6f)
+                ) {
+                    AnimatedContent(
+                        targetState = detailEntry,
+                        contentKey = { entry -> entry.contentKey },
+                        transitionSpec = {
+                            slideInHorizontally(initialOffsetX = { it }) togetherWith slideOutHorizontally(targetOffsetX = { -it })
+                        }
+                    ) { entry ->
+                        entry.Content()
                     }
-                ) { entry ->
-                    entry.Content()
                 }
             }
         }

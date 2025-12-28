@@ -33,6 +33,7 @@ private class OverviewScreenNavigatorImpl(
 ) : OverviewScreenNavigator {
 
     override fun toListDetails(shoppingListId: Long) {
+        navBackStack.removeIf { it is Route.ListDetails }
         navBackStack.add(Route.ListDetails(shoppingListId))
     }
 

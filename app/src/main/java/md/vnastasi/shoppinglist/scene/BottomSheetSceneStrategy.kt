@@ -7,18 +7,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 
 @Composable
-internal fun <T : NavKey> rememberBottomSheetSceneStrategy(): BottomSheetSceneStrategy<T> =
+internal fun <T : Any> rememberBottomSheetSceneStrategy(): BottomSheetSceneStrategy<T> =
     remember { BottomSheetSceneStrategy() }
 
 @OptIn(ExperimentalMaterial3Api::class)
-internal class BottomSheetSceneStrategy<T : NavKey> : SceneStrategy<T> {
+internal class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull()
@@ -47,7 +46,7 @@ internal class BottomSheetSceneStrategy<T : NavKey> : SceneStrategy<T> {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private class BottomSheetScene<T : NavKey>(
+private class BottomSheetScene<T : Any>(
     override val key: T,
     override val previousEntries: List<NavEntry<T>>,
     override val overlaidEntries: List<NavEntry<T>>,
