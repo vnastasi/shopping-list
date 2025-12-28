@@ -110,12 +110,18 @@ jobs:
           key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
-      - name: "Restore instrumented test execution data"
+      - name: "Restore instrumented test execution data (phone profile)"
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
-          restore-keys: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-pixel_7
+          fail-on-cache-miss: true
+
+      - name: "Restore instrumented test execution data (tablet profile)"
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-pixel_tablet
           fail-on-cache-miss: true
 
       - name: "Code coverage"
