@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen
+package md.vnastasi.shoppinglist.ui
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -13,6 +13,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import md.vnastasi.shoppinglist.nav.Route
+import md.vnastasi.shoppinglist.nav.ScreenNavigators
+import md.vnastasi.shoppinglist.scene.BottomSheetSceneStrategy
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
@@ -25,9 +28,9 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApplicationScreenContainer() {
+internal fun ApplicationScreenContainer() {
 
-    val navBackStack = rememberNavBackStack(Routes.Overview)
+    val navBackStack = rememberNavBackStack(Route.Overview)
     val bottomSheetSceneStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
 
     NavDisplay(
@@ -50,14 +53,14 @@ fun ApplicationScreenContainer() {
             navBackStack.removeLastOrNull()
         },
         entryProvider = entryProvider {
-            entry<Routes.Overview> {
+            entry<Route.Overview> {
                 OverviewScreen(
                     viewModel = hiltViewModel<OverviewViewModel>(),
                     navigator = ScreenNavigators.overview(navBackStack)
                 )
             }
 
-            entry<Routes.ManageList>(
+            entry<Route.ManageList>(
                 metadata = BottomSheetSceneStrategy.bottomSheet()
             ) { key ->
                 ManageListSheet(
@@ -70,7 +73,7 @@ fun ApplicationScreenContainer() {
                 )
             }
 
-            entry<Routes.ListDetails> { key ->
+            entry<Route.ListDetails> { key ->
                 ListDetailsScreen(
                     viewModel = hiltViewModel<ListDetailsViewModel, ListDetailsViewModel.Factory>(
                         creationCallback = { factory ->
@@ -81,7 +84,7 @@ fun ApplicationScreenContainer() {
                 )
             }
 
-            entry<Routes.AddItems>(
+            entry<Route.AddItems>(
                 metadata = NavDisplay.transitionSpec {
                     slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished
                 } + NavDisplay.popTransitionSpec {
