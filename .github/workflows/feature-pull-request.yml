@@ -64,8 +64,8 @@ jobs:
     strategy:
       matrix:
         profile:
-          - pixel_7
-          - pixel_tablet
+          - ${{ vars.AVD_PHONE_PROFILE }}
+          - ${{ vars.AVD_TABLET_PROFILE }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
@@ -77,8 +77,8 @@ jobs:
         uses: ./.github/actions/run-instrumented-tests-action
         with:
           avd-profile: ${{ matrix.profile }}
-          avd-api-level: 35
-          avd-target: default
+          avd-api-level: ${{ vars.AVD_API_LEVEL }}
+          avd-target: ${{ vars.AVD_TARGET }}
           exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ matrix.profile }}
 
   code-quality:
@@ -114,14 +114,14 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-pixel_7
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (tablet profile)"
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests
-          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-pixel_tablet
+          key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}
           fail-on-cache-miss: true
 
       - name: "Code coverage"
