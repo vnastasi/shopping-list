@@ -61,6 +61,11 @@ jobs:
     permissions: write-all
     needs:
       - build
+    strategy:
+      matrix:
+        profile:
+          - pixel_9
+          - pixel_tablet
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
@@ -71,9 +76,10 @@ jobs:
       - name: "Run instrumented tests"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
+          profile: ${{ matrix.profile }}
           avd-api-level: 35
           avd-target: default
-          exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
+          exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ matrix.profile }}
 
   code-quality:
     name: "Verify code quality"
@@ -109,6 +115,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}
+          restore-keys: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-
           fail-on-cache-miss: true
 
       - name: "Code coverage"

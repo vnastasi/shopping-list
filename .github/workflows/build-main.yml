@@ -39,9 +39,17 @@ jobs:
       - name: "Run unit tests"
         uses: ./.github/actions/run-unit-tests-action
 
-      - name: "Run instrumented tests"
+      - name: "Run instrumented tests (phone profile)"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
+          profile: pixel_9
+          avd-api-level: 35
+          avd-target: default
+
+      - name: "Run instrumented tests (tablet profile)"
+        uses: ./.github/actions/run-instrumented-tests-action
+        with:
+          profile: pixel_tablet
           avd-api-level: 35
           avd-target: default
 
