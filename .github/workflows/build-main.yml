@@ -26,7 +26,7 @@ jobs:
       - name: "Create Android emulator (phone profile) snapshot"
         uses: ./.github/actions/create-emulator-snapshot-action
         with:
-          avd-profile: pixel_9
+          avd-profile: pixel_7
           avd-api-level: 35
           avd-target: default
 
@@ -50,7 +50,7 @@ jobs:
       - name: "Run instrumented tests (phone profile)"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
-          avd-profile: pixel_9
+          avd-profile: pixel_7
           avd-api-level: 35
           avd-target: default
 

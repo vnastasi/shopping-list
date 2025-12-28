@@ -64,7 +64,7 @@ jobs:
     strategy:
       matrix:
         profile:
-          - pixel_9
+          - pixel_7
           - pixel_tablet
     steps:
       - name: "Check out repository"
