@@ -76,7 +76,7 @@ jobs:
       - name: "Run instrumented tests"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
-          profile: ${{ matrix.profile }}
+          avd-profile: ${{ matrix.profile }}
           avd-api-level: 35
           avd-target: default
           exec-data-cache-key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ matrix.profile }}

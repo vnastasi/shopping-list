@@ -23,9 +23,17 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Create Android emulator snapshot"
+      - name: "Create Android emulator (phone profile) snapshot"
         uses: ./.github/actions/create-emulator-snapshot-action
         with:
+          avd-profile: pixel_9
+          avd-api-level: 35
+          avd-target: default
+
+      - name: "Create Android emulator (tablet profile) snapshot"
+        uses: ./.github/actions/create-emulator-snapshot-action
+        with:
+          avd-profile: pixel_tablet
           avd-api-level: 35
           avd-target: default
 
@@ -42,14 +50,14 @@ jobs:
       - name: "Run instrumented tests (phone profile)"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
-          profile: pixel_9
+          avd-profile: pixel_9
           avd-api-level: 35
           avd-target: default
 
       - name: "Run instrumented tests (tablet profile)"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
-          profile: pixel_tablet
+          avd-profile: pixel_tablet
           avd-api-level: 35
           avd-target: default
 

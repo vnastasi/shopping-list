@@ -1,6 +1,9 @@
 name: "Create Android emulator snapshot"
 
 inputs:
+  avd-profile:
+    description: "Android emulator hardware profile"
+    required: true
   avd-api-level:
     description: "Android emulator image API level"
     required: true
@@ -25,12 +28,13 @@ runs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
+        key: avd-${{ inputs.avd-profile }}-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
 
     - name: "Create emulator snapshot"
       if: steps.avd-cache.outputs.cache-hit != 'true'
       uses: reactivecircus/android-emulator-runner@v2
       with:
+        profile: ${{ inputs.avd-profile }}
         api-level: ${{ inputs.avd-api-level }}
         target: ${{ inputs.avd-target }}
         arch: x86_64
