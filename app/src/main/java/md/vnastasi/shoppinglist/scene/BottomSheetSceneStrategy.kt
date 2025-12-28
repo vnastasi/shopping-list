@@ -5,12 +5,17 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
+
+@Composable
+internal fun <T : NavKey> rememberBottomSheetSceneStrategy(): BottomSheetSceneStrategy<T> =
+    remember { BottomSheetSceneStrategy() }
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal class BottomSheetSceneStrategy<T : NavKey> : SceneStrategy<T> {
@@ -32,17 +37,10 @@ internal class BottomSheetSceneStrategy<T : NavKey> : SceneStrategy<T> {
     }
 
     companion object {
-        /**
-         * Function to be called on the [NavEntry.metadata] to mark this entry as something that
-         * should be displayed within a [ModalBottomSheet].
-         *
-         * @param modalBottomSheetProperties properties that should be passed to the containing
-         * [ModalBottomSheet].
-         */
+
         @OptIn(ExperimentalMaterial3Api::class)
-        fun bottomSheet(
-            modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()
-        ): Map<String, Any> = mapOf(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
+        fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()): Map<String, Any> =
+            mapOf(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
 
         private const val BOTTOM_SHEET_KEY = "bottomsheet"
     }
@@ -59,6 +57,7 @@ private class BottomSheetScene<T : NavKey>(
 ) : OverlayScene<T> {
 
     override val entries: List<NavEntry<T>> = listOf(entry)
+
     override val content: @Composable (() -> Unit) = {
         ModalBottomSheet(
             onDismissRequest = onBack,

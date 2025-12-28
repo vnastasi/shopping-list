@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.compose.foudation.layout)
     implementation(libs.compose.graphics)
     implementation(libs.compose.material)
+    implementation(libs.compose.material.adaptive)
     implementation(libs.compose.runtime)
     implementation(libs.compose.runtime.saveable)
     implementation(libs.compose.ui)
