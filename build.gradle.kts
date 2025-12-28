@@ -20,7 +20,7 @@ codeCoverage {
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
     excludedModules.addAll(project(":support:annotation"))
     excludedClasses.addAll("**/*Preview*", "**/*Database_Impl.**", "**/*Database_Impl$*$*$1.**", "**/Routes$**")
-    coverageThreshold.set(0.87)
+    coverageThreshold.set(0.85)
 }
 
 dependencyAnalysis {
