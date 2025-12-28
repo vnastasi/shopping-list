@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen
+package md.vnastasi.shoppinglist.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween

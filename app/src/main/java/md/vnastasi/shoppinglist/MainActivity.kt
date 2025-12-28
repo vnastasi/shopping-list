@@ -7,8 +7,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
-import md.vnastasi.shoppinglist.screen.ApplicationScreenContainer
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import md.vnastasi.shoppinglist.ui.ApplicationScreenContainer
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

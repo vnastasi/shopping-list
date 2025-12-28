@@ -1,4 +1,4 @@
-package md.vnastasi.shoppinglist.screen
+package md.vnastasi.shoppinglist.nav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,19 +9,23 @@ import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigato
 import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
 import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
 
-object ScreenNavigators {
+internal object ScreenNavigators {
 
     @Composable
-    fun overview(navBackStack: NavBackStack<NavKey>) = remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navBackStack) }
+    fun overview(navBackStack: NavBackStack<NavKey>) =
+        remember<OverviewScreenNavigator> { OverviewScreenNavigatorImpl(navBackStack) }
 
     @Composable
-    fun manageList(navBackStack: NavBackStack<NavKey>) = remember<ManageListNavigator> { ManageListNavigatorImpl(navBackStack) }
+    fun manageList(navBackStack: NavBackStack<NavKey>) =
+        remember<ManageListNavigator> { ManageListNavigatorImpl(navBackStack) }
 
     @Composable
-    fun listDetails(navBackStack: NavBackStack<NavKey>) = remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navBackStack) }
+    fun listDetails(navBackStack: NavBackStack<NavKey>) =
+        remember<ListDetailsScreenNavigator> { ListDetailsScreenNavigatorImpl(navBackStack) }
 
     @Composable
-    fun addItems(navBackStack: NavBackStack<NavKey>) = remember<AddItemsScreenNavigator> { AddItemsScreenNavigatorImpl(navBackStack) }
+    fun addItems(navBackStack: NavBackStack<NavKey>) =
+        remember<AddItemsScreenNavigator> { AddItemsScreenNavigatorImpl(navBackStack) }
 }
 
 private class OverviewScreenNavigatorImpl(
@@ -29,11 +33,12 @@ private class OverviewScreenNavigatorImpl(
 ) : OverviewScreenNavigator {
 
     override fun toListDetails(shoppingListId: Long) {
-        navBackStack.add(Routes.ListDetails(shoppingListId))
+        navBackStack.removeIf { it is Route.ListDetails }
+        navBackStack.add(Route.ListDetails(shoppingListId))
     }
 
     override fun openManageListSheet(shoppingListId: Long?) {
-        navBackStack.add(Routes.ManageList(shoppingListId))
+        navBackStack.add(Route.ManageList(shoppingListId))
     }
 }
 
@@ -55,7 +60,7 @@ private class ListDetailsScreenNavigatorImpl(
     }
 
     override fun toAddItems(shoppingListId: Long) {
-        navBackStack.add(Routes.AddItems(shoppingListId))
+        navBackStack.add(Route.AddItems(shoppingListId))
     }
 }
 

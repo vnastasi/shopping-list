@@ -51,6 +51,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_SHOPPING_LIST
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
+import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -100,8 +101,7 @@ private fun ListDetailsScreen(
             }
         }
     ) { contentPaddings ->
-        val localViewState = viewState.value
-        when (localViewState) {
+        when (val localViewState = viewState.value) {
             is ViewState.Loading -> {
                 AnimatedMessageContent(
                     contentPaddings = contentPaddings,
@@ -152,15 +152,17 @@ private fun ListDetailsTopAppBar(
             }
         },
         navigationIcon = {
-            IconButton(
-                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start)),
-                onClick = onNavigateUp
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.list_details_btn_back_acc),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+            if (LocalBackButtonVisibility.current) {
+                IconButton(
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start)),
+                    onClick = onNavigateUp
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.list_details_btn_back_acc),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         },
         scrollBehavior = scrollBehavior
