@@ -96,11 +96,13 @@ class ListDetailsScreenshotTest(
 
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState.Ready(
+                shouldShowBackButton = true,
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
                 listOfShoppingItems = persistentListOf()
             ),
             ViewState.Ready(
+                shouldShowBackButton = true,
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
                 listOfShoppingItems = persistentListOf(
@@ -116,7 +118,31 @@ class ListDetailsScreenshotTest(
                     }
                 )
             ),
-            ViewState.Loading
+            ViewState.Loading(shouldShowBackButton = true),
+            ViewState.Ready(
+                shouldShowBackButton = false,
+                shoppingListId = 1L,
+                shoppingListName = "Test list",
+                listOfShoppingItems = persistentListOf()
+            ),
+            ViewState.Ready(
+                shouldShowBackButton = false,
+                shoppingListId = 1L,
+                shoppingListName = "Test list",
+                listOfShoppingItems = persistentListOf(
+                    createShoppingItem {
+                        id = 1L
+                        name = "Item 1"
+                        isChecked = false
+                    },
+                    createShoppingItem {
+                        id = 2L
+                        name = "Item 2"
+                        isChecked = true
+                    }
+                )
+            ),
+            ViewState.Loading(shouldShowBackButton = false)
         )
     }
 }

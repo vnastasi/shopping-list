@@ -16,6 +16,7 @@ import md.vnastasi.shoppinglist.nav.Route
 import md.vnastasi.shoppinglist.nav.ScreenNavigators
 import md.vnastasi.shoppinglist.scene.BottomSheetSceneStrategy
 import md.vnastasi.shoppinglist.scene.ListDetailSceneStrategy
+import md.vnastasi.shoppinglist.scene.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.scene.rememberBottomSheetSceneStrategy
 import md.vnastasi.shoppinglist.scene.rememberListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
@@ -79,10 +80,12 @@ internal fun ApplicationScreenContainer() {
             entry<Route.ListDetails>(
                 metadata = ListDetailSceneStrategy.detailPane()
             ) { key ->
+                val shouldShowBackButton = LocalBackButtonVisibility.current
                 ListDetailsScreen(
                     viewModel = hiltViewModel<ListDetailsViewModel, ListDetailsViewModel.Factory>(
                         creationCallback = { factory ->
                             factory.create(
+                                shouldShowBackButton = shouldShowBackButton,
                                 shoppingListId = key.shoppingListId
                             )
                         }

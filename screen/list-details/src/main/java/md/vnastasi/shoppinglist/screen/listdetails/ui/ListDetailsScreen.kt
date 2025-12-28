@@ -28,9 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -60,9 +58,10 @@ fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
     navigator: ListDetailsScreenNavigator
 ) {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ListDetailsScreen(
-        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        onNavigateUp = navigator::backToOverview,
+        viewState = viewState,
+        onNavigateUp = if (viewState.shouldShowBackButton) navigator::backToOverview else null,
         onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
         onItemDeleted = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemDeleted(shoppingItem)) },
         onAddNewItems = navigator::toAddItems
@@ -71,8 +70,8 @@ fun ListDetailsScreen(
 
 @Composable
 private fun ListDetailsScreen(
-    viewState: State<ViewState>,
-    onNavigateUp: () -> Unit,
+    viewState: ViewState,
+    onNavigateUp: (() -> Unit)?,
     onItemClicked: (ShoppingItem) -> Unit,
     onItemDeleted: (ShoppingItem) -> Unit,
     onAddNewItems: (Long) -> Unit
@@ -87,12 +86,12 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = viewState.value.getShoppingListNameOrNull(),
+                title = viewState.getShoppingListNameOrNull(),
                 onNavigateUp = onNavigateUp
             )
         },
         floatingActionButton = {
-            val shoppingListId = viewState.value.getShoppingListIdOrNull()
+            val shoppingListId = viewState.getShoppingListIdOrNull()
             if (shoppingListId != null) {
                 AddItemsFloatingActionButton(
                     onClick = { onAddNewItems(shoppingListId) }
@@ -100,8 +99,7 @@ private fun ListDetailsScreen(
             }
         }
     ) { contentPaddings ->
-        val localViewState = viewState.value
-        when (localViewState) {
+        when (viewState) {
             is ViewState.Loading -> {
                 AnimatedMessageContent(
                     contentPaddings = contentPaddings,
@@ -121,7 +119,7 @@ private fun ListDetailsScreen(
             is ViewState.Ready -> {
                 ListDetailsContent(
                     contentPaddings = contentPaddings,
-                    listOfShoppingItems = localViewState.listOfShoppingItems,
+                    listOfShoppingItems = viewState.listOfShoppingItems,
                     onItemClick = onItemClicked,
                     onItemDelete = onItemDeleted
                 )
@@ -135,7 +133,7 @@ private fun ListDetailsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     title: String?,
-    onNavigateUp: () -> Unit,
+    onNavigateUp: (() -> Unit)?,
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier
@@ -152,15 +150,17 @@ private fun ListDetailsTopAppBar(
             }
         },
         navigationIcon = {
-            IconButton(
-                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start)),
-                onClick = onNavigateUp
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.list_details_btn_back_acc),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+            if (onNavigateUp != null) {
+                IconButton(
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Start)),
+                    onClick = onNavigateUp
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.list_details_btn_back_acc),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         },
         scrollBehavior = scrollBehavior
@@ -215,6 +215,7 @@ private fun ListDetailsScreenPreview() {
         ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
     )
     val viewState = ViewState.Ready(
+        shouldShowBackButton = true,
         shoppingListId = 1L,
         shoppingListName = "My list",
         listOfShoppingItems = listOfShoppingItems
@@ -222,7 +223,7 @@ private fun ListDetailsScreenPreview() {
 
     AppTheme {
         ListDetailsScreen(
-            viewState = remember { mutableStateOf(viewState) },
+            viewState = viewState,
             onNavigateUp = { },
             onItemClicked = { },
             onItemDeleted = { },
