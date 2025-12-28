@@ -22,6 +22,9 @@ import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 private const val MIN_WIDTH_BREAKPOINT = 720
 private const val MIN_HEIGHT_BREAKPOINT = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
 
+private const val LIST_PANE_WEIGHT = 0.4f
+private const val DETAIL_PANE_WEIGHT = 0.6f
+
 @Composable
 internal fun <T : Any> rememberListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -33,20 +36,23 @@ internal class ListDetailSceneStrategy<T : Any>(
 ) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-        if (!windowSizeClass.isAtLeastBreakpoint(widthDpBreakpoint = MIN_WIDTH_BREAKPOINT, heightDpBreakpoint = MIN_HEIGHT_BREAKPOINT)) {
-            return null
+        val detailEntry = entries.lastOrNull()?.takeIf { it.metadata.containsKey(DETAIL_KEY) }
+        val listEntry = entries.findLast { it.metadata.containsKey(LIST_KEY) }
+
+        return if (isScreenWideEnough() && detailEntry != null && listEntry != null) {
+            ListDetailScene(
+                key = listEntry.contentKey,
+                previousEntries = entries.dropLast(1),
+                listEntry = listEntry,
+                detailEntry = detailEntry
+            )
+        } else {
+            null
         }
-
-        val detailEntry = entries.lastOrNull()?.takeIf { it.metadata.containsKey(DETAIL_KEY) } ?: return null
-        val listEntry = entries.findLast { it.metadata.containsKey(LIST_KEY) } ?: return null
-
-        return ListDetailScene(
-            key = listEntry.contentKey,
-            previousEntries = entries.dropLast(1),
-            listEntry = listEntry,
-            detailEntry = detailEntry
-        )
     }
+
+    private fun isScreenWideEnough() =
+        windowSizeClass.isAtLeastBreakpoint(widthDpBreakpoint = MIN_WIDTH_BREAKPOINT, heightDpBreakpoint = MIN_HEIGHT_BREAKPOINT)
 
     companion object {
 
@@ -74,14 +80,14 @@ private class ListDetailScene<T : Any>(
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
-                modifier = Modifier.weight(0.4f)
+                modifier = Modifier.weight(LIST_PANE_WEIGHT)
             ) {
                 listEntry.Content()
             }
 
             CompositionLocalProvider(LocalBackButtonVisibility provides false) {
                 Column(
-                    modifier = Modifier.weight(0.6f)
+                    modifier = Modifier.weight(DETAIL_PANE_WEIGHT)
                 ) {
                     AnimatedContent(
                         targetState = detailEntry,
