@@ -26,6 +26,8 @@ private const val COVERAGE_VERIFICATION_TASK_NAME = "verifyCodeCoverage"
 private const val COPY_UNIT_TEST_EXEC_DATA = "copyUnitTestExecData"
 private const val COPY_INSTRUMENTED_TEST_EXEC_DATA = "copyInstrumentedTestExecData"
 
+private const val PROPERTY_AVD_PROFILE = "AVD_PROFILE"
+
 @Suppress("unused")
 class CodeCoveragePlugin @Inject constructor(
     private val providers: ProviderFactory
@@ -69,6 +71,8 @@ class CodeCoveragePlugin @Inject constructor(
                 tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {
                     group = TASK_GROUP
                     description = "Copy execution data for Android instrumented tests"
+
+                    profile.set(providers.environmentVariable(PROPERTY_AVD_PROFILE))
 
                     execDataLocation.setFrom(project(":app").layout.buildDirectory.dir("outputs/code_coverage"))
 

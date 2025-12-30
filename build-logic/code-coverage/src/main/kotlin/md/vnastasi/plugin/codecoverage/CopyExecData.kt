@@ -5,7 +5,10 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RelativePath
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.util.UUID
@@ -15,6 +18,10 @@ abstract class CopyExecData @Inject constructor(
     private val fileSystemOperations: FileSystemOperations
 ) : DefaultTask() {
 
+    @get:Optional
+    @get:Input
+    abstract val profile: Property<String>
+
     @get:InputFiles
     abstract val execDataLocation: ConfigurableFileCollection
 
@@ -23,22 +30,26 @@ abstract class CopyExecData @Inject constructor(
 
     @TaskAction
     fun copyExecData() {
-        fileSystemOperations.delete {
-            delete(outputDirectory)
+        val localOutputDirectory = if (profile.isPresent) {
+            outputDirectory.dir(profile.get())
+        } else {
+            outputDirectory
         }
 
         execDataLocation.forEach { directory ->
             fileSystemOperations.copy {
                 from(directory)
-                into(outputDirectory)
+                into(localOutputDirectory)
                 eachFile {
                     relativePath = RelativePath(true, name)
                 }
                 rename { fileName ->
-                    UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."))
+                    randomUuid() + fileName.substring(fileName.lastIndexOf("."))
                 }
                 includeEmptyDirs = false
             }
         }
     }
+
+    private fun randomUuid() = UUID.randomUUID().toString()
 }

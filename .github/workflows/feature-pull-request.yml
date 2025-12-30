@@ -113,14 +113,14 @@ jobs:
       - name: "Restore instrumented test execution data (phone profile)"
         uses: actions/cache/restore@v4
         with:
-          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+          path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_PHONE_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (tablet profile)"
         uses: actions/cache/restore@v4
         with:
-          path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+          path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_TABLET_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}
           fail-on-cache-miss: true
 
