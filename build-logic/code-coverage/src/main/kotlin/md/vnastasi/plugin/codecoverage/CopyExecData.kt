@@ -23,10 +23,6 @@ abstract class CopyExecData @Inject constructor(
 
     @TaskAction
     fun copyExecData() {
-        fileSystemOperations.delete {
-            delete(outputDirectory)
-        }
-
         execDataLocation.forEach { directory ->
             fileSystemOperations.copy {
                 from(directory)
