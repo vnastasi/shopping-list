@@ -50,3 +50,7 @@ dependencyAnalysis {
        }
     }
 }
+
+tasks.register<Delete>("clean").configure {
+    delete.add(project.layout.buildDirectory)
+}
