@@ -6,7 +6,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
@@ -16,7 +15,6 @@ import java.util.UUID
 import javax.inject.Inject
 
 abstract class CopyExecData @Inject constructor(
-    private val providers: ProviderFactory,
     private val fileSystemOperations: FileSystemOperations
 ) : DefaultTask() {
 
