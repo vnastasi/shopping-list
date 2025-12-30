@@ -38,6 +38,8 @@ runs:
 
     - name: "Run instrumented tests"
       uses: reactivecircus/android-emulator-runner@v2
+      env:
+        AVD_PROFILE: ${{ inputs.avd-profile }}
       with:
         profile: ${{ inputs.avd-profile }}
         api-level: ${{ inputs.avd-api-level }}
@@ -60,5 +62,5 @@ runs:
       if: ${{ inputs.exec-data-cache-key != '' }}
       uses: actions/cache/save@v4
       with:
-        path: ${{ github.workspace }}/build/exec-data/instrumented-tests
+        path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ inputs.avd-profile }}
         key: ${{ inputs.exec-data-cache-key }}

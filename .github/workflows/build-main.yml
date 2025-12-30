@@ -49,6 +49,8 @@ jobs:
 
       - name: "Run instrumented tests (phone profile)"
         uses: ./.github/actions/run-instrumented-tests-action
+        env:
+          AVD_PROFILE: ${{ vars.AVD_PHONE_PROFILE }}
         with:
           avd-profile: ${{ vars.AVD_PHONE_PROFILE }}
           avd-api-level: ${{ vars.AVD_API_LEVEL }}
@@ -56,6 +58,8 @@ jobs:
 
       - name: "Run instrumented tests (tablet profile)"
         uses: ./.github/actions/run-instrumented-tests-action
+        env:
+          AVD_PROFILE: ${{ vars.AVD_TABLET_PROFILE }}
         with:
           avd-profile: ${{ vars.AVD_TABLET_PROFILE }}
           avd-api-level: ${{ vars.AVD_API_LEVEL }}
