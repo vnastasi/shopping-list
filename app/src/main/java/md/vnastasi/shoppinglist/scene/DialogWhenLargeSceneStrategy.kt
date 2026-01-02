@@ -57,7 +57,7 @@ internal class DialogWhenLargeSceneStrategy<T : Any>(
     }
 }
 
-internal class DialogWhenLargeScene<T : Any>(
+private class DialogWhenLargeScene<T : Any>(
     override val key: Any,
     private val entry: NavEntry<T>,
     override val previousEntries: List<NavEntry<T>>,
