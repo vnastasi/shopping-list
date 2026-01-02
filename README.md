@@ -10,14 +10,21 @@ A modern Android application for managing shopping lists.
 
 <table>
   <tr>
-    <td><img src="docs/images/Screenshot_20250817_174114.png" alt="Screenshot_20250817_174114.png" width="320" /></td>
-    <td><img src="docs/images/Screenshot_20250817_174204.png" alt="Screenshot_20250817_174204.png" width="320" /></td>
-    <td><img src="docs/images/Screenshot_20250817_174619.png" alt="Screenshot_20250817_174619.png" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260102_182602.png" alt="" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260102_182740.png" alt="" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260102_182744.png" alt="" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260102_182806.png" alt="" width="320" /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="docs/images/Screenshot_20260102_182230.png" alt="" width="1280" /></td>
   </tr>
   <tr>
-    <td><img src="docs/images/Screenshot_20250817_182923.png" alt="Screenshot_20250817_182923.png" width="320" /></td>
-    <td><img src="docs/images/Screenshot_20250817_174632.png" alt="Screenshot_20250817_174632.png" width="320" /></td>
-    <td><img src="docs/images/Screenshot_20250817_174653.png" alt="Screenshot_20250817_174653.png" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260102_182453.png" alt="" width="1280" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/Screenshot_20260102_182505.png" alt="" width="1280" /></td>
   </tr>
 </table>
 
@@ -48,11 +55,10 @@ This project utilizes a modern Android development tech stack:
 
 - <img src="https://cdn.simpleicons.org/kotlin" width="20" height="20" alt="Kotlin logo" /> **Kotlin**: Primary programming language.
 - <img src="https://cdn.simpleicons.org/jetpackcompose" width="20" height="20" alt="Jetpack Compose logo" /> **Jetpack Compose**: For building the UI.
-- <img src="https://insert-koin.io/img/koin_new_logo.png" width="20" height="20" alt="Koin logo" /> **Koin**: For dependency injection.
-- <img src="https://cdn.simpleicons.org/android" width="20" height="20" alt="Android logo (for Room)" /> **Room**: For local data persistence (likely, based on typical Android architecture).
+- <img src="https://cdn.simpleicons.org/google" width="20" height="20" alt="Koin logo" /> **Dagger / Hilt**: For dependency injection.
+- <img src="https://cdn.simpleicons.org/android" width="20" height="20" alt="Android logo (for Room)" /> **Room**: For local data persistence.
 - <img src="https://cdn.simpleicons.org/gradle" width="20" height="20" alt="Gradle logo" /> **Gradle Kotlin DSL**: For build scripts.
 - <img src="https://cdn.simpleicons.org/materialdesign" width="20" height="20" alt="Material Design logo" /> **Material 3**: For UI components and theming.
-<!-- TODO: Add or remove technologies as per the project's actual stack. -->
 
 ## Project Structure
 
@@ -63,8 +69,9 @@ The project follows a multi-module architecture to promote separation of concern
 - `domain/api`: Defines contracts for the domain layer.
 - `domain/implementation`: Contains the business logic and use cases.
 - `screen/overview`: UI and ViewModel for the overview screen.
+- `screen/manage-list`: UI and ViewModel for adding new list and editing existing list.
 - `screen/list-details`: UI and ViewModel for the list details screen.
-- `screen/add-items`: UI and ViewModel for adding items.
+- `screen/add-items`: UI and ViewModel for adding items screen.
 - `build-logic`: Contains custom Gradle plugins and build conventions.
 
 ## Getting Started
@@ -116,7 +123,7 @@ Instrumented tests require a connected Android device or emulator.
 1.  Ensure you have an emulator running or a device connected.
 2.  To run all instrumented tests for the debug build type:
     ```bash
-    ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
+    ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=md.vnastasi.shoppinglist.suite.AllSuite
     ```
 
 ## CI/CD
@@ -126,7 +133,7 @@ This project uses GitHub Actions for Continuous Integration. The workflow is def
 The CI pipeline includes steps for:
 - Building the application (`./gradlew assemble`)
 - Running unit tests (`./gradlew testDebugUnitTest`, `./gradlew copyUnitTestExecData`)
-- Running instrumented tests (`./gradlew connectedDebugAndroidTest`, `./gradlew copyInstrumentedTestExecData`)
+- Running instrumented tests (`./gradlew :app:connectedDebugAndroidTest`, `./gradlew copyInstrumentedTestExecData`)
 - Code quality checks (`./gradlew projectHealth`, `./gradlew verifyCodeCoverage`, `./gradlew detekt`)
 - Auto-merging dependency updates for Dependabot/Wrapperbot PRs.
 
