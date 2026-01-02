@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
+import androidx.compose.runtime.CompositionLocalProvider
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
@@ -8,6 +9,8 @@ import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.content.LocalPresentationMode
+import md.vnastasi.shoppinglist.screen.shared.content.PresentationMode
 import md.vnastasi.shoppinglist.support.collection.crossJoin
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import org.junit.Rule
@@ -33,13 +36,29 @@ class AddItemsScreenshotTest(
     )
 
     @Test
-    fun screenshot() {
+    fun fullScreen() {
         paparazzi.snapshot {
             AppTheme {
-                AddItemsScreen(
-                    viewModel = StubAddItemsViewModelSpec(viewState = viewState, searchTermValue = searchTermValue),
-                    navigator = StubAddItemsScreenNavigator()
-                )
+                CompositionLocalProvider(LocalPresentationMode provides PresentationMode.FullScreen) {
+                    AddItemsScreen(
+                        viewModel = StubAddItemsViewModelSpec(viewState = viewState, searchTermValue = searchTermValue),
+                        navigator = StubAddItemsScreenNavigator()
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun dialog() {
+        paparazzi.snapshot {
+            AppTheme {
+                CompositionLocalProvider(LocalPresentationMode provides PresentationMode.Dialog) {
+                    AddItemsScreen(
+                        viewModel = StubAddItemsViewModelSpec(viewState = viewState, searchTermValue = searchTermValue),
+                        navigator = StubAddItemsScreenNavigator()
+                    )
+                }
             }
         }
     }

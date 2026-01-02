@@ -15,8 +15,10 @@ import androidx.navigation3.ui.NavDisplay
 import md.vnastasi.shoppinglist.nav.Route
 import md.vnastasi.shoppinglist.nav.ScreenNavigators
 import md.vnastasi.shoppinglist.scene.BottomSheetSceneStrategy
+import md.vnastasi.shoppinglist.scene.DialogWhenLargeSceneStrategy
 import md.vnastasi.shoppinglist.scene.ListDetailSceneStrategy
 import md.vnastasi.shoppinglist.scene.rememberBottomSheetSceneStrategy
+import md.vnastasi.shoppinglist.scene.rememberDialogWhenLargeSceneStrategy
 import md.vnastasi.shoppinglist.scene.rememberListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
@@ -36,7 +38,9 @@ internal fun ApplicationScreenContainer() {
 
     NavDisplay(
         backStack = navBackStack,
-        sceneStrategy = rememberListDetailSceneStrategy<NavKey>().then(rememberBottomSheetSceneStrategy()),
+        sceneStrategy = rememberListDetailSceneStrategy<NavKey>()
+            .then(rememberBottomSheetSceneStrategy())
+            .then(rememberDialogWhenLargeSceneStrategy()),
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
@@ -90,13 +94,10 @@ internal fun ApplicationScreenContainer() {
             }
 
             entry<Route.AddItems>(
-                metadata = NavDisplay.transitionSpec {
-                    slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished
-                } + NavDisplay.popTransitionSpec {
-                    EnterTransition.None togetherWith slideOutToDown()
-                } + NavDisplay.predictivePopTransitionSpec {
-                    EnterTransition.None togetherWith slideOutToDown()
-                }
+                metadata = DialogWhenLargeSceneStrategy.dialogWhenLarge() +
+                        NavDisplay.transitionSpec { slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished } +
+                        NavDisplay.popTransitionSpec { EnterTransition.None togetherWith slideOutToDown() } +
+                        NavDisplay.predictivePopTransitionSpec { EnterTransition.None togetherWith slideOutToDown() }
             ) { key ->
                 AddItemsScreen(
                     viewModel = hiltViewModel<AddItemsViewModel, AddItemsViewModel.Factory>(
