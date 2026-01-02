@@ -12,9 +12,6 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
 
-private const val MIN_WIDTH_BREAKPOINT = 720
-private const val MIN_HEIGHT_BREAKPOINT = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
-
 @Composable
 internal fun <T : Any> rememberDialogWhenLargeSceneStrategy(): DialogWhenLargeSceneStrategy<T> {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -59,8 +56,10 @@ internal class DialogWhenLargeSceneStrategy<T : Any>(
         }
     }
 
-    private fun isScreenWideEnough() =
-        windowSizeClass.isAtLeastBreakpoint(widthDpBreakpoint = MIN_WIDTH_BREAKPOINT, heightDpBreakpoint = MIN_HEIGHT_BREAKPOINT)
+    private fun isScreenWideEnough() = windowSizeClass.isAtLeastBreakpoint(
+        widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
+    )
 
     companion object {
 
