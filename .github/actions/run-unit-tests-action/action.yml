@@ -30,3 +30,19 @@ runs:
       with:
         path: ${{ github.workspace }}/build/exec-data/unit-tests
         key: ${{ inputs.exec-data-cache-key }}
+
+    - id: archive-test-execution-data
+      name: "Archive test execution data"
+      uses: actions/upload-artifact@v4
+      with:
+        name: "unit-tests-exec-data-${{ github.event.pull_request.number }}"
+        path: ${{ github.workspace }}/build/exec-data/unit-tests"
+        if-no-files-found: error
+        retention-days: 14
+        overwrite: true
+
+    - name: "Add summary"
+      shell: bash
+      run: |
+        echo '### Test execution data' >> $GITHUB_STEP_SUMMARY
+        echo '${{ steps.archive-test-execution-data.outputs.artifact-url }}' >> $GITHUB_STEP_SUMMARY
