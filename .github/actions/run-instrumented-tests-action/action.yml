@@ -32,7 +32,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: |
-          ~/.android/avd/*
+          ~/.android/avd/${{ inputs.avd-profile }}*
           ~/.android/adb*
         key: avd-${{ inputs.avd-profile }}-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
 
@@ -45,6 +45,7 @@ runs:
         api-level: ${{ inputs.avd-api-level }}
         target: ${{ inputs.avd-target }}
         arch: x86_64
+        avd-name: ${{ inputs.avd-profile }}
         force-avd-creation: false
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: false
