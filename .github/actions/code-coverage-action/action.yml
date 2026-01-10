@@ -30,8 +30,8 @@ runs:
         token: ${{ env.GH_TOKEN }}
         paths: ${{ github.workspace }}/build/reports/code-coverage/jacoco.xml
         update-comment: true
-        min-coverage-overall: 80
-        min-coverage-changed-files: 80
+        min-coverage-overall: ${{ env.CODE_COVERAGE_THRESHOLD }}
+        min-coverage-changed-files: ${{ env.CODE_COVERAGE_THRESHOLD }}
         title: "🔍 Code coverage report"
         pass-emoji: 🟢
         fail-emoji: 🔴

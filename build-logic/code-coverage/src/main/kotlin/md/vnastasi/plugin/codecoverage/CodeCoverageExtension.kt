@@ -15,7 +15,7 @@ abstract class CodeCoverageExtension @Inject constructor(objectFactory: ObjectFa
 
     val reportDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
-    val coverageThreshold: Property<Double> = objectFactory.property()
+    val coverageThreshold: Property<Int> = objectFactory.property()
 
     val excludedModules: ListProperty<Project> = objectFactory.listProperty()
 

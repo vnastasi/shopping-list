@@ -113,7 +113,7 @@ class CodeCoveragePlugin @Inject constructor(
                     violationRules {
                         rule {
                             limit {
-                                minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal() }.get()
+                                minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal().divide(100.toBigDecimal()) }.get()
                             }
                         }
                     }
