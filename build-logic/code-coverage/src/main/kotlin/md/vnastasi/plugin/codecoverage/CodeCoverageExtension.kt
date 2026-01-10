@@ -7,6 +7,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
+import java.math.BigDecimal
 import javax.inject.Inject
 
 abstract class CodeCoverageExtension @Inject constructor(objectFactory: ObjectFactory) {
@@ -15,7 +16,7 @@ abstract class CodeCoverageExtension @Inject constructor(objectFactory: ObjectFa
 
     val reportDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
-    val coverageThreshold: Property<Int> = objectFactory.property()
+    val coverageThreshold: Property<BigDecimal> = objectFactory.property()
 
     val excludedModules: ListProperty<Project> = objectFactory.listProperty()
 
