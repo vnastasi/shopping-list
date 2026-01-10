@@ -18,6 +18,16 @@ runs:
       shell: bash
       run: ./gradlew verifyCodeCoverage
 
+    - name: "Archive coverage report"
+      if: ${{ inputs.update-badge == 'false' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: "code-coverage-report-${{ github.event.pull_request.number }}"
+        path: ${{ github.workspace }}/build/reports/code-coverage
+        if-no-files-found: error
+        retention-days: 14
+        overwrite: true
+
     - name: "Update code coverage badge"
       if: ${{ inputs.update-badge == 'true' }}
       uses: cicirello/jacoco-badge-generator@v2.12.0

@@ -65,12 +65,11 @@ runs:
         path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ inputs.avd-profile }}
         key: ${{ inputs.exec-data-cache-key }}
 
-    - id: archive-test-execution-data
-      name: "Archive test execution data"
+    - name: "Archive test execution data"
       uses: actions/upload-artifact@v4
       with:
         name: "instrumented-tests-exec-data-${{ inputs.avd-profile }}-${{ github.event.pull_request.number }}"
-        path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ inputs.avd-profile }}/*
+        path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ inputs.avd-profile }}
         if-no-files-found: error
         retention-days: 14
         overwrite: true
