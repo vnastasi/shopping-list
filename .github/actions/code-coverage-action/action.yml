@@ -13,11 +13,6 @@ runs:
       shell: bash
       run: ./gradlew createCodeCoverageReport
 
-    - name: "Verify code coverage"
-      if: ${{ inputs.silent == 'false' }}
-      shell: bash
-      run: ./gradlew verifyCodeCoverage
-
     - name: "Archive coverage report"
       if: ${{ inputs.silent == 'false' }}
       uses: actions/upload-artifact@v4
@@ -32,7 +27,7 @@ runs:
       if: ${{ inputs.silent == 'false' }}
       uses: madrapps/jacoco-report@v1.7.2
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ env.GH_TOKEN }}
         paths: ${{ github.workspace }}/build/reports/code-coverage/jacoco.xml
         update-comment: true
         min-coverage-overall: 80
@@ -40,6 +35,11 @@ runs:
         title: "🔍 Code coverage report"
         pass-emoji: 🟢
         fail-emoji: 🔴
+
+    - name: "Fail on low code coverage"
+      if: ${{ inputs.silent == 'false' }}
+      shell: bash
+      run: ./gradlew verifyCodeCoverage
 
     - name: "Update code coverage badge"
       if: ${{ inputs.silent == 'true' }}
