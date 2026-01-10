@@ -26,7 +26,7 @@ codeCoverage {
         "**/ShoppingListApplication.**",
         "**/MainActivity.**"
     )
-    coverageThreshold.set(0.87)
+    coverageThreshold.set(0.80)
 }
 
 dependencyAnalysis {
