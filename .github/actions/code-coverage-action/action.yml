@@ -1,8 +1,8 @@
 name: "Code coverage"
 
 inputs:
-  update-badge:
-    description: "Flag indicating whether this action should update the code coverage badge or not."
+  silent:
+    description: "Flag indicating whether code coverage report should be created silently. If set to false, it will not be published and will not fail the workflow run."
     required: true
     default: "false"
 
@@ -14,12 +14,12 @@ runs:
       run: ./gradlew createCodeCoverageReport
 
     - name: "Verify code coverage"
-      if: ${{ inputs.update-badge == 'false' }}
+      if: ${{ inputs.silent == 'false' }}
       shell: bash
       run: ./gradlew verifyCodeCoverage
 
     - name: "Archive coverage report"
-      if: ${{ inputs.update-badge == 'false' }}
+      if: ${{ inputs.silent == 'false' }}
       uses: actions/upload-artifact@v4
       with:
         name: "code-coverage-report-${{ github.event.pull_request.number }}"
@@ -28,8 +28,21 @@ runs:
         retention-days: 14
         overwrite: true
 
+    - name: "Publish code coverage report"
+      if: ${{ inputs.silent == 'false' }}
+      uses: madrapps/jacoco-report@v1.7.2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        paths: ${{ github.workspace }}/build/reports/code-coverage/jacoco.xml
+        update-comment: true
+        min-coverage-overall: 80
+        min-coverage-changed-files: 80
+        title: "🔍 Code coverage report"
+        pass-emoji: 🟢
+        fail-emoji: 🔴
+
     - name: "Update code coverage badge"
-      if: ${{ inputs.update-badge == 'true' }}
+      if: ${{ inputs.silent == 'true' }}
       uses: cicirello/jacoco-badge-generator@v2.12.0
       with:
         jacoco-csv-file: build/reports/code-coverage/jacoco.csv
@@ -38,7 +51,7 @@ runs:
         workflow-summary-heading: "Code coverage summary"
 
     - name: "Commit changes"
-      if: ${{ inputs.update-badge == 'true' }}
+      if: ${{ inputs.silent == 'true' }}
       shell: bash
       run: |
         if [[ `git status --porcelain` ]]; then

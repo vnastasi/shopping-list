@@ -92,7 +92,8 @@ class CodeCoveragePlugin @Inject constructor(
                             outputLocation.set(codeCoverageExtension.reportDirectory)
                         }
                         xml.apply {
-                            required.set(false)
+                            required.set(true)
+                            outputLocation.set(codeCoverageExtension.reportDirectory.file("jacoco.xml"))
                         }
                         csv.apply {
                             required.set(true)

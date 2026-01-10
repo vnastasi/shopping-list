@@ -64,4 +64,4 @@ jobs:
       - name: "Code coverage"
         uses: ./.github/actions/code-coverage-action
         with:
-          update-badge: true
+          silent: true
