@@ -92,7 +92,8 @@ class CodeCoveragePlugin @Inject constructor(
                             outputLocation.set(codeCoverageExtension.reportDirectory)
                         }
                         xml.apply {
-                            required.set(false)
+                            required.set(true)
+                            outputLocation.set(codeCoverageExtension.reportDirectory.file("jacoco.xml"))
                         }
                         csv.apply {
                             required.set(true)
@@ -112,7 +113,7 @@ class CodeCoveragePlugin @Inject constructor(
                     violationRules {
                         rule {
                             limit {
-                                minimum = codeCoverageExtension.coverageThreshold.map { it.toBigDecimal() }.get()
+                                minimum = codeCoverageExtension.coverageThreshold.map { it.divide(100.toBigDecimal()) }.get()
                             }
                         }
                     }
