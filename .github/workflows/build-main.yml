@@ -24,20 +24,6 @@ jobs:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
 
-      - name: "Create Android emulator (phone profile) snapshot"
-        uses: ./.github/actions/create-emulator-snapshot-action
-        with:
-          avd-profile: ${{ vars.AVD_PHONE_PROFILE }}
-          avd-api-level: ${{ vars.AVD_API_LEVEL }}
-          avd-target: ${{ vars.AVD_TARGET }}
-
-      - name: "Create Android emulator (tablet profile) snapshot"
-        uses: ./.github/actions/create-emulator-snapshot-action
-        with:
-          avd-profile: ${{ vars.AVD_TABLET_PROFILE }}
-          avd-api-level: ${{ vars.AVD_API_LEVEL }}
-          avd-target: ${{ vars.AVD_TARGET }}
-
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
 
@@ -48,10 +34,24 @@ jobs:
       - name: "Run unit tests"
         uses: ./.github/actions/run-unit-tests-action
 
+      - name: "Create Android emulator (phone profile) snapshot"
+        uses: ./.github/actions/create-emulator-snapshot-action
+        with:
+          avd-profile: ${{ vars.AVD_PHONE_PROFILE }}
+          avd-api-level: ${{ vars.AVD_API_LEVEL }}
+          avd-target: ${{ vars.AVD_TARGET }}
+
       - name: "Run instrumented tests (phone profile)"
         uses: ./.github/actions/run-instrumented-tests-action
         with:
           avd-profile: ${{ vars.AVD_PHONE_PROFILE }}
+          avd-api-level: ${{ vars.AVD_API_LEVEL }}
+          avd-target: ${{ vars.AVD_TARGET }}
+
+      - name: "Create Android emulator (tablet profile) snapshot"
+        uses: ./.github/actions/create-emulator-snapshot-action
+        with:
+          avd-profile: ${{ vars.AVD_TABLET_PROFILE }}
           avd-api-level: ${{ vars.AVD_API_LEVEL }}
           avd-target: ${{ vars.AVD_TARGET }}
 
