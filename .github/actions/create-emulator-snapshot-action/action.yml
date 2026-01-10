@@ -26,19 +26,20 @@ runs:
       id: avd-cache
       with:
         path: |
-          ~/.android/avd/*
+          ~/.android/avd/${{ inputs.avd-profile }}*
           ~/.android/adb*
         key: avd-${{ inputs.avd-profile }}-${{ inputs.avd-api-level }}-${{ inputs.avd-target }}
 
     - name: "Create emulator snapshot"
       if: steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
+      uses: reactivecircus/android-emulator-runner@v2.35.0
       with:
         profile: ${{ inputs.avd-profile }}
         api-level: ${{ inputs.avd-api-level }}
         target: ${{ inputs.avd-target }}
         arch: x86_64
-        force-avd-creation: false
+        avd-name: ${{ inputs.avd-profile }}
+        force-avd-creation: true
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: false
         script: echo "Generated emulator snapshot."
