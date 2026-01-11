@@ -26,6 +26,7 @@ import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -61,13 +62,14 @@ internal fun ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
     onClickItem: (ShoppingListDetails) -> Unit = { },
+    onEditItem: (ShoppingListDetails) -> Unit = { },
     onDeleteItem: (ShoppingListDetails) -> Unit = { }
 ) {
     val density = LocalDensity.current
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
 
     val dragState = remember {
-        val actionOffset = with(density) { 100.dp.toPx() }
+        val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
             initialValue = SwipeToRevealState.Resting,
             anchors = DraggableAnchors {
@@ -75,7 +77,7 @@ internal fun ShoppingListCard(
                 SwipeToRevealState.Actions at -actionOffset
             },
             positionalThreshold = { it },
-            velocityThreshold = { with(density) { 100.dp.toPx() } },
+            velocityThreshold = { with(density) { 120.dp.toPx() } },
             snapAnimationSpec = tween(),
             decayAnimationSpec = decayAnimationSpec
         )
@@ -92,7 +94,7 @@ internal fun ShoppingListCard(
                 .anchoredDraggable(
                     state = dragState,
                     orientation = Orientation.Horizontal,
-                    overscrollEffect = overScrollEffect,
+                    overscrollEffect = overScrollEffect
                 )
                 .overscroll(overScrollEffect)
                 .offset {
@@ -179,13 +181,31 @@ internal fun ShoppingListCard(
             ) {
                 IconButton(
                     shape = MaterialTheme.shapes.medium,
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                    onClick = { onEditItem.invoke(item) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        contentDescription = stringResource(R.string.overview_btn_edit_list_acc)
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = dragState.currentValue == SwipeToRevealState.Actions,
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            ) {
+                IconButton(
+                    shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                     onClick = { onDeleteItem.invoke(item) }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         tint = MaterialTheme.colorScheme.error,
-                        contentDescription = stringResource(R.string.add_items_btn_delete_suggestion_acc)
+                        contentDescription = stringResource(R.string.overview_btn_delete_list_acc)
                     )
                 }
             }
