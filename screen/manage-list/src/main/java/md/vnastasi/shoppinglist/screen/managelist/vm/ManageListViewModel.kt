@@ -1,5 +1,7 @@
 package md.vnastasi.shoppinglist.screen.managelist.vm
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -33,24 +35,27 @@ class ManageListViewModel @AssistedInject constructor(
     private val _validationError = MutableStateFlow(TextValidationError.NONE)
     private val _isSaveEnabled = MutableStateFlow(false)
 
-    init {
-        if (shoppingListId != null) {
-            viewModelScope.launch {
-                repository.findById(shoppingListId).collect { shoppingList -> _shoppingListName.update { shoppingList.name } }
-            }
-        }
-    }
+
+
+    override val listNameTextFieldState: TextFieldState = TextFieldState()
 
     override val viewState: StateFlow<ViewState> = combine(
-        flow = _shoppingListName,
-        flow2 = _validationError,
-        flow3 = _isSaveEnabled,
+        flow = _validationError,
+        flow2 = _isSaveEnabled,
         transform = ::ViewState
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.INIT
     )
+
+    init {
+        if (shoppingListId != null) {
+            viewModelScope.launch {
+                repository.findById(shoppingListId).collect { shoppingList -> listNameTextFieldState.setTextAndPlaceCursorAtEnd(shoppingList.name) }
+            }
+        }
+    }
 
     override fun dispatch(event: UiEvent) {
         when (event) {

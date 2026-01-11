@@ -21,7 +21,7 @@ import org.junit.runners.Parameterized.Parameters
 @RunWith(Parameterized::class)
 class ManageListSheetScreenshotTest(
     config: DeviceConfig,
-    private val viewState: ViewState
+    private val viewState: Pair<String, ViewState>
 ) {
 
     @get:Rule
@@ -51,7 +51,7 @@ class ManageListSheetScreenshotTest(
                     onDismissRequest = { }
                 ) {
                     ManageListSheet(
-                        viewModel = StubManageListViewModel(viewState),
+                        viewModel = StubManageListViewModel(expectedListName = viewState.first, expectedViewState = viewState.second),
                         navigator = StubManageListNavigator()
                     )
                 }
@@ -110,11 +110,11 @@ class ManageListSheetScreenshotTest(
             )
         )
 
-        private fun viewStates(): Sequence<ViewState> = sequenceOf(
-            ViewState.INIT,
-            ViewState(name = "", validationError = TextValidationError.EMPTY, isSaveEnabled = false),
-            ViewState(name = " ", validationError = TextValidationError.BLANK, isSaveEnabled = false),
-            ViewState(name = "New list name", validationError = TextValidationError.NONE, isSaveEnabled = true),
+        private fun viewStates(): Sequence<Pair<String, ViewState>> = sequenceOf(
+            "" to ViewState.INIT,
+            "" to ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false),
+            " " to ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false),
+            "New list name" to ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
         )
     }
 }

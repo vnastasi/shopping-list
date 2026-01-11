@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ModalBottomSheet
@@ -49,6 +50,7 @@ fun ManageListSheet(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     ManageListSheet(
+        listNameTextFieldState = viewModel.listNameTextFieldState,
         viewState = viewState,
         onTextChanged = { viewModel.dispatch(UiEvent.OnNameChange(it)) },
         onSave = {
@@ -60,14 +62,14 @@ fun ManageListSheet(
 
 @Composable
 private fun ManageListSheet(
+    listNameTextFieldState: TextFieldState,
     viewState: ViewState,
     onTextChanged: (String) -> Unit,
     onSave: (String) -> Unit
 ) {
-    val textFieldState = rememberTextFieldState(initialText = viewState.name)
 
-    LaunchedEffect(textFieldState) {
-        snapshotFlow { textFieldState.text.toString() }
+    LaunchedEffect(listNameTextFieldState) {
+        snapshotFlow { listNameTextFieldState.text.toString() }
             .drop(1)
             .collectLatest { onTextChanged(it) }
     }
@@ -86,7 +88,7 @@ private fun ManageListSheet(
                 )
                 .align(Alignment.CenterHorizontally)
                 .testTag(MANAGE_LIST_TEXT_FIELD),
-            state = textFieldState,
+            state = listNameTextFieldState,
             label = {
                 Text(
                     text = stringResource(R.string.list_form_input_title)
@@ -105,7 +107,7 @@ private fun ManageListSheet(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            onKeyboardAction = { onSave(textFieldState.text.toString()) }
+            onKeyboardAction = { onSave(listNameTextFieldState.text.toString()) }
         )
 
         Button(
@@ -117,7 +119,7 @@ private fun ManageListSheet(
                 )
                 .align(Alignment.CenterHorizontally),
             enabled = viewState.isSaveEnabled,
-            onClick = { onSave(textFieldState.text.toString()) }
+            onClick = { onSave(listNameTextFieldState.text.toString()) }
         ) {
             Text(
                 text = stringResource(R.string.list_form_btn_save)
@@ -148,7 +150,8 @@ private fun ManageListSheetPreview() {
             onDismissRequest = { }
         ) {
             ManageListSheet(
-                viewState = ViewState(name = "List", validationError = TextValidationError.NONE, isSaveEnabled = true),
+                listNameTextFieldState = rememberTextFieldState("List"),
+                viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
                 onTextChanged = { },
                 onSave = { }
             )
@@ -178,7 +181,8 @@ private fun ManageListSheetWithErrorsPreview() {
             onDismissRequest = { }
         ) {
             ManageListSheet(
-                viewState = ViewState(name = " ", validationError = TextValidationError.BLANK, isSaveEnabled = true),
+                listNameTextFieldState = rememberTextFieldState(""),
+                viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true),
                 onTextChanged = { },
                 onSave = { }
             )
