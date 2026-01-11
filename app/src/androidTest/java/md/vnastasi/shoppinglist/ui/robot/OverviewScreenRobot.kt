@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.ui.robot
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -9,11 +10,15 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FAB
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 
 private const val DEFAULT_TIMEOUT = 5_000L
@@ -59,6 +64,13 @@ class OverviewScreenRobot(
             .assertIsDisplayed()
     }
 
+    fun hasNoShoppingListCard(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
+        val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilDoesNotExist(itemMatcher)
+    }
+
     fun clickOnShoppingListCard(name: String) {
         val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
         val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
@@ -66,5 +78,32 @@ class OverviewScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
+    }
+
+    fun swipeShoppingListCard(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
+        val itemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
+        composeTestRule.onNode(itemMatcher).performTouchInput {
+            down(center)
+            advanceEventTime(500L)
+            moveBy(Offset(x = -100.dp.toPx(), y = 0.0f))
+            advanceEventTime(500L)
+            up()
+        }
+    }
+
+    fun clickOnEditShoppingList() {
+        val matcher = hasTestTag(SHOPPING_LISTS_ITEM_EDIT)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(matcher).performClick()
+    }
+
+    fun clickOnDeleteShoppingList() {
+        val matcher = hasTestTag(SHOPPING_LISTS_ITEM_DELETE)
+        composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(matcher).performClick()
     }
 }

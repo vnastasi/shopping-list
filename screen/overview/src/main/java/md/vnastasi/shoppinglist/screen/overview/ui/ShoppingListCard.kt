@@ -40,12 +40,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
+import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -180,6 +183,7 @@ internal fun ShoppingListCard(
                 exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
             ) {
                 IconButton(
+                    modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_EDIT),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
                     onClick = { onEditItem.invoke(item) }
@@ -198,6 +202,7 @@ internal fun ShoppingListCard(
                 exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
             ) {
                 IconButton(
+                    modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_DELETE),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                     onClick = { onDeleteItem.invoke(item) }
