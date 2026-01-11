@@ -46,7 +46,7 @@ internal fun OverviewContent(
                 modifier = Modifier
                     .animateItem()
                     .testTag(SHOPPING_LISTS_ITEM),
-                list = shoppingList,
+                item = shoppingList,
                 onClickItem = onClick,
                 onDeleteItem = onDelete
             )
