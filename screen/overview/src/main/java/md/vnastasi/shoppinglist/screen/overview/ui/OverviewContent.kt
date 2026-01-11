@@ -24,6 +24,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingListDetails>,
+    onEdit: (ShoppingListDetails) -> Unit,
     onDelete: (ShoppingListDetails) -> Unit,
     onClick: (ShoppingListDetails) -> Unit
 ) {
@@ -46,7 +47,8 @@ internal fun OverviewContent(
                 modifier = Modifier
                     .animateItem()
                     .testTag(SHOPPING_LISTS_ITEM),
-                list = shoppingList,
+                item = shoppingList,
+                onEditItem = onEdit,
                 onClickItem = onClick,
                 onDeleteItem = onDelete
             )
@@ -80,6 +82,7 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         OverviewContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             list = list,
+            onEdit = { },
             onDelete = { },
             onClick = { }
         )

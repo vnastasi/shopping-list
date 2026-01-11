@@ -59,6 +59,7 @@ fun OverviewScreen(
     OverviewScreen(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(),
         onAddNewShoppingList = { navigator.openManageListSheet(null) },
+        onShoppingListEdited = { shoppingList -> navigator.openManageListSheet(shoppingList.id) },
         onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
         onShoppingListSelected = { shoppingList -> navigator.toListDetails(shoppingList.id) },
     )
@@ -68,6 +69,7 @@ fun OverviewScreen(
 private fun OverviewScreen(
     viewState: State<ViewState>,
     onAddNewShoppingList: () -> Unit,
+    onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
 ) {
@@ -114,6 +116,7 @@ private fun OverviewScreen(
                 ReadyOverviewContent(
                     contentPaddings = contentPaddings,
                     shoppingLists = localViewState.shoppingLists,
+                    onShoppingListEdited = onShoppingListEdited,
                     onShoppingListDeleted = onShoppingListDeleted,
                     onShoppingListSelected = onShoppingListSelected,
                 )
@@ -162,12 +165,14 @@ private fun ManageListFloatingActionButton(
 private fun ReadyOverviewContent(
     contentPaddings: PaddingValues,
     shoppingLists: ImmutableList<ShoppingListDetails>,
+    onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
 ) {
     OverviewContent(
         contentPaddings = contentPaddings,
         list = shoppingLists,
+        onEdit = onShoppingListEdited,
         onClick = onShoppingListSelected,
         onDelete = onShoppingListDeleted
     )
@@ -199,6 +204,7 @@ private fun ListOverviewScreenPreview() {
         OverviewScreen(
             viewState = remember { mutableStateOf<ViewState>(ViewState.Ready(list)) },
             onShoppingListSelected = { },
+            onShoppingListEdited = { },
             onShoppingListDeleted = { },
             onAddNewShoppingList = { },
         )

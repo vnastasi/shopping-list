@@ -7,6 +7,7 @@
     <string name="overview_loading">Loading shopping lists…</string>
     <string name="overview_empty_list">No shopping lists available</string>
     <string name="overview_btn_delete_list_acc">Delete shopping list</string>
+    <string name="overview_btn_edit_list_acc">Edit shopping list</string>
 
     <string name="list_form_input_title">Shopping list name</string>
     <string name="list_form_input_error_empty">Value cannot be empty</string>

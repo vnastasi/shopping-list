@@ -3,6 +3,7 @@ package md.vnastasi.shoppinglist.screen.managelist.vm
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
+import assertk.assertions.isEqualTo
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -30,7 +31,7 @@ class ManageListViewModelTest {
     @Test
     @DisplayName(
         """
-        Given no shopping list ID
+            Given no shopping list ID
             When bottom sheet is initialized
             Then expect text field to be empty, no validation errors and save to be disabled
         """
@@ -39,7 +40,6 @@ class ManageListViewModelTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
             val expectedViewState = ViewState(
-                name = "",
                 validationError = TextValidationError.NONE,
                 isSaveEnabled = false
             )
@@ -47,6 +47,8 @@ class ManageListViewModelTest {
 
             expectNoEvents()
         }
+
+        assertThat(viewModel.listNameTextFieldState.text).isEqualTo("")
     }
 
     @Test
@@ -63,7 +65,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChange(""))
 
-            val expectedViewState = ViewState(name = "", validationError = TextValidationError.EMPTY, isSaveEnabled = false)
+            val expectedViewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             expectNoEvents()
@@ -84,7 +86,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChange(" "))
 
-            val expectedViewState = ViewState(name = " ", validationError = TextValidationError.BLANK, isSaveEnabled = false)
+            val expectedViewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             expectNoEvents()
@@ -105,7 +107,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChange("a"))
 
-            val expectedViewState = ViewState(name = "a", validationError = TextValidationError.NONE, isSaveEnabled = true)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             expectNoEvents()
