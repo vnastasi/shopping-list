@@ -1,6 +1,6 @@
 package md.vnastasi.plugin.conventions
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import md.vnastasi.plugin.support.applyAndConfigure
 import md.vnastasi.plugin.support.libs
 import org.gradle.api.Plugin
@@ -9,7 +9,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.named
 
-@Suppress("UnstableApiUsage", "unused")
+@Suppress("unused")
 class ScreenshotTestableLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
