@@ -33,9 +33,9 @@ internal class LocalShoppingListRepository(
         shoppingListDao.delete(shoppingList.toEntity())
     }
 
-    private fun ShoppingList.toEntity() = ShoppingListEntity(id, name)
+    private fun ShoppingList.toEntity() = ShoppingListEntity(id, name, position)
 
-    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
+    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name, position)
 
-    private fun ShoppingListDetailsView.toDomainModel() = ShoppingListDetails(id, name, totalItems, checkedItems)
+    private fun ShoppingListDetailsView.toDomainModel() = ShoppingListDetails(id, name, position, totalItems, checkedItems)
 }

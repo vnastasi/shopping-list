@@ -242,7 +242,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
 @Preview
 @Composable
 private fun ShoppingListCardPreview() {
-    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L)
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
 
     AppTheme {
         LazyColumn {

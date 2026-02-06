@@ -19,20 +19,22 @@ object TestData {
 
     class ShoppingListEntityBuilder(
         var id: Long = DEFAULT_SHOPPING_LIST_ID,
-        var name: String = DEFAULT_SHOPPING_LIST_NAME
+        var name: String = DEFAULT_SHOPPING_LIST_NAME,
+        var position: Long = 0L,
     ) {
 
-        fun build() = ShoppingList(id, name)
+        fun build() = ShoppingList(id, name, position)
     }
 
     class ShoppingListDetailsViewBuilder(
         var id: Long = DEFAULT_SHOPPING_LIST_ID,
         var name: String = DEFAULT_SHOPPING_LIST_NAME,
+        var position: Long = 0L,
         var totalItems: Long = 0L,
         var checkedItems: Long = 0L,
     ) {
 
-        fun build() = ShoppingListDetails(id, name, totalItems, checkedItems)
+        fun build() = ShoppingListDetails(id, name, position, totalItems, checkedItems)
     }
 
     class ShoppingItemEntityBuilder(
