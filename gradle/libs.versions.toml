@@ -31,6 +31,7 @@ material-icons = "1.7.8"
 mockk = "1.14.7"
 navigation = "1.0.0"
 paparazzi = "2.0.0-alpha04"
+reorderable = "3.0.0"
 room = "2.8.4"
 serialization = "1.10.0"
 sqlite = "2.6.2"
@@ -115,6 +116,8 @@ mockk-dsl = { module = "io.mockk:mockk-dsl", version.ref = "mockk" }
 
 navigation-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation" }
 navigation-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation" }
+
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 room-common = { module = "androidx.room:room-common", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.reorderable)
 
     debugImplementation(libs.compose.tooling)
 

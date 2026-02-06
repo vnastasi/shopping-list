@@ -21,10 +21,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -51,8 +52,12 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
+import sh.calvin.reorderable.ReorderableCollectionItemScope
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
 private enum class SwipeToRevealState {
@@ -61,7 +66,7 @@ private enum class SwipeToRevealState {
 }
 
 @Composable
-internal fun ShoppingListCard(
+internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
     onClickItem: (ShoppingListDetails) -> Unit = { },
@@ -131,12 +136,15 @@ internal fun ShoppingListCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .padding(AppDimensions.paddingSmall),
-                        imageVector = Icons.AutoMirrored.Filled.List,
+                        imageVector = AppIcons.Document,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         contentDescription = null
                     )
+
                     Row(
                         modifier = Modifier
                             .wrapContentHeight()
+                            .weight(1.0f)
                             .align(Alignment.CenterVertically)
                     ) {
                         Text(
@@ -156,6 +164,18 @@ internal fun ShoppingListCard(
                                 ),
                             text = "${item.checkedItems} / ${item.totalItems}",
                             style = AppTypography.bodySmall
+                        )
+                    }
+
+                    IconButton(
+                        modifier = Modifier.draggableHandle(),
+                        onClick = { }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically),
+                            imageVector = AppIcons.DragHandle,
+                            contentDescription = null
                         )
                     }
                 }
@@ -225,6 +245,15 @@ private fun ShoppingListCardPreview() {
     val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L)
 
     AppTheme {
-        ShoppingListCard(item = shoppingList)
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingListCard(item = shoppingList)
+                }
+            }
+        }
     }
 }

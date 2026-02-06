@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -19,6 +22,8 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 internal fun OverviewContent(
@@ -28,10 +33,17 @@ internal fun OverviewContent(
     onDelete: (ShoppingListDetails) -> Unit,
     onClick: (ShoppingListDetails) -> Unit
 ) {
+    val reorderableList = retain { list.toMutableStateList() }
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        reorderableList.add(to.index, reorderableList.removeAt(from.index))
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(SHOPPING_LISTS_LIST),
+        state = lazyListState,
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -40,18 +52,23 @@ internal fun OverviewContent(
         )
     ) {
         items(
-            items = list,
+            items = reorderableList,
             key = { it.id }
         ) { shoppingList ->
-            ShoppingListCard(
-                modifier = Modifier
-                    .animateItem()
-                    .testTag(SHOPPING_LISTS_ITEM),
-                item = shoppingList,
-                onEditItem = onEdit,
-                onClickItem = onClick,
-                onDeleteItem = onDelete
-            )
+            ReorderableItem(
+                state = reorderableLazyListState,
+                key = shoppingList.id
+            ) {
+                ShoppingListCard(
+                    modifier = Modifier
+                        .animateItem()
+                        .testTag(SHOPPING_LISTS_ITEM),
+                    item = shoppingList,
+                    onEditItem = onEdit,
+                    onClickItem = onClick,
+                    onDeleteItem = onDelete
+                )
+            }
         }
     }
 }
