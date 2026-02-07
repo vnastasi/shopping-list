@@ -177,7 +177,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                             modifier = Modifier
                                 .align(Alignment.CenterVertically),
                             imageVector = AppIcons.DragHandle,
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
                         )
                     }
                 }

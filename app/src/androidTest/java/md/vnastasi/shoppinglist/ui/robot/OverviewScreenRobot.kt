@@ -4,7 +4,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -78,6 +80,38 @@ class OverviewScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(itemMatcher).performClick()
+    }
+
+    fun moveShoppingListCardUp(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
+        val listItemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
+        val dragHandleMatcher = hasContentDescription(resources.getString(R.string.overview_item_drag_handle_btn_acc)) and hasAnyAncestor(listItemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
+        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
+            down(center)
+            advanceEventTime(500L)
+            moveBy(Offset(x = 0.0f, y = -100.dp.toPx()))
+            advanceEventTime(2000L)
+            up()
+        }
+    }
+
+    fun moveShoppingListCardDown(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_LISTS_LIST)
+        val listItemMatcher = hasTestTag(SHOPPING_LISTS_ITEM) and hasAnyDescendant(hasText(name))
+        val dragHandleMatcher = hasContentDescription(resources.getString(R.string.overview_item_drag_handle_btn_acc)) and hasAnyAncestor(listItemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
+        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
+            down(center)
+            advanceEventTime(500L)
+            moveBy(Offset(x = 0.0f, y = 100.dp.toPx()))
+            advanceEventTime(2000L)
+            up()
+        }
     }
 
     fun swipeShoppingListCard(name: String) {

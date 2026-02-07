@@ -26,8 +26,9 @@ class EditAndDeleteShoppingListFlowTest {
         onSetUp = {
             val shoppingListDao = shoppingListDao()
 
-            shoppingListDao.create(ShoppingList(1L, "Groceries"))
-            shoppingListDao.create(ShoppingList(2L, "Gardening"))
+            shoppingListDao.create(ShoppingList(1L, "Groceries", 0L))
+            shoppingListDao.create(ShoppingList(2L, "Gardening", 1L))
+            shoppingListDao.create(ShoppingList(3L, "Pharmacy", 2L))
         }
     )
 
@@ -42,6 +43,8 @@ class EditAndDeleteShoppingListFlowTest {
     @Test
     fun editShoppingList() {
         overviewScreen(composeRule) {
+            moveShoppingListCardUp("Pharmacy")
+            moveShoppingListCardDown("Groceries")
             swipeShoppingListCard("Groceries")
             clickOnEditShoppingList()
         }

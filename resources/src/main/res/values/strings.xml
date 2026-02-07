@@ -6,6 +6,7 @@
     <string name="overview_btn_add_list_acc">Add new shopping list</string>
     <string name="overview_loading">Loading shopping lists…</string>
     <string name="overview_empty_list">No shopping lists available</string>
+    <string name="overview_item_drag_handle_btn_acc">Tap and hold to move up or down</string>
     <string name="overview_btn_delete_list_acc">Delete shopping list</string>
     <string name="overview_btn_edit_list_acc">Edit shopping list</string>
 
