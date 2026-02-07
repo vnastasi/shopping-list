@@ -38,7 +38,5 @@ internal class LocalShoppingItemRepository(
 
     private fun ShoppingItemEntity.toDomainModel(list: ShoppingList) = ShoppingItem(id, name, isChecked, list)
 
-    private fun ShoppingList.toEntity() = ShoppingListEntity(id, name)
-
     private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
 }

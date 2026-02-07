@@ -62,6 +62,7 @@ fun OverviewScreen(
         onShoppingListEdited = { shoppingList -> navigator.openManageListSheet(shoppingList.id) },
         onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
         onShoppingListSelected = { shoppingList -> navigator.toListDetails(shoppingList.id) },
+        onShoppingListsReordered = { reorderedList -> viewModel.onUiEvent(UiEvent.ShoppingListsReordered(reorderedList)) }
     )
 }
 
@@ -72,6 +73,7 @@ private fun OverviewScreen(
     onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -119,6 +121,7 @@ private fun OverviewScreen(
                     onShoppingListEdited = onShoppingListEdited,
                     onShoppingListDeleted = onShoppingListDeleted,
                     onShoppingListSelected = onShoppingListSelected,
+                    onShoppingListsReordered = onShoppingListsReordered
                 )
             }
         }
@@ -168,13 +171,15 @@ private fun ReadyOverviewContent(
     onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
 ) {
     OverviewContent(
         contentPaddings = contentPaddings,
         list = shoppingLists,
         onEdit = onShoppingListEdited,
         onClick = onShoppingListSelected,
-        onDelete = onShoppingListDeleted
+        onDelete = onShoppingListDeleted,
+        onReorder = onShoppingListsReordered
     )
 }
 
@@ -186,18 +191,18 @@ private fun ReadyOverviewContent(
 @Composable
 private fun ListOverviewScreenPreview() {
     val list = persistentListOf(
-        ShoppingListDetails(id = 1L, name = "Groceries", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 2L, name = "Pharmacy for mom", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 3L, name = "Gamma & Praxis", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 4L, name = "Birthday party shopping list", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 5L, name = "Christmas Eve party", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 7L, name = "Ibiza!", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 8L, name = "At the baker's", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 9L, name = "Big shopping at the mall", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 10L, name = "Trip to Iceland", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 11L, name = "Disney", totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 12L, name = "Trip to Paris", totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 2L, name = "Pharmacy for mom", position = 2L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 3L, name = "Gamma & Praxis", position = 3L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 4L, name = "Birthday party shopping list", position = 4L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 5L, name = "Christmas Eve party", position = 5L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", position = 6L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 7L, name = "Ibiza!", position = 7L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 8L, name = "At the baker's", position = 8L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 9L, name = "Big shopping at the mall", position = 9L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
+        ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
     )
 
     AppTheme {
@@ -207,6 +212,7 @@ private fun ListOverviewScreenPreview() {
             onShoppingListEdited = { },
             onShoppingListDeleted = { },
             onAddNewShoppingList = { },
+            onShoppingListsReordered = { }
         )
     }
 }

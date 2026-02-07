@@ -27,6 +27,8 @@ class DetektAggregatorPlugin : Plugin<Project> {
                     md.required.set(false)
                     txt.required.set(false)
                 }
+
+                exclude("**/support/icon/**")
             }
         }
     }

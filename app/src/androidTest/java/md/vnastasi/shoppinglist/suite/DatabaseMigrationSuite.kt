@@ -4,6 +4,7 @@ import md.vnastasi.shoppinglist.db.migration.MigrationFrom1To2Test
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom2To3Test
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom3To4Test
 import md.vnastasi.shoppinglist.db.migration.MigrationFrom4To5Test
+import md.vnastasi.shoppinglist.db.migration.MigrationFrom5To6Test
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -13,7 +14,8 @@ import org.junit.runners.Suite
         MigrationFrom1To2Test::class,
         MigrationFrom2To3Test::class,
         MigrationFrom3To4Test::class,
-        MigrationFrom4To5Test::class
+        MigrationFrom4To5Test::class,
+        MigrationFrom5To6Test::class
     ]
 )
 class DatabaseMigrationSuite

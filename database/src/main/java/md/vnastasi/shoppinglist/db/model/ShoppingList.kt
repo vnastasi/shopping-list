@@ -11,5 +11,8 @@ data class ShoppingList(
     val id: Long = 0L,
 
     @ColumnInfo(name = "name")
-    val name: String
+    val name: String,
+
+    @ColumnInfo(name = "position")
+    val position: Long = 0L
 )

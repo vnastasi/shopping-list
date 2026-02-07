@@ -29,13 +29,17 @@ internal class LocalShoppingListRepository(
         shoppingListDao.update(shoppingList.toEntity())
     }
 
+    override suspend fun update(shoppingLists: List<ShoppingList>) {
+        shoppingListDao.update(shoppingLists.map { it.toEntity() })
+    }
+
     override suspend fun delete(shoppingList: ShoppingList) {
         shoppingListDao.delete(shoppingList.toEntity())
     }
 
-    private fun ShoppingList.toEntity() = ShoppingListEntity(id, name)
+    private fun ShoppingList.toEntity() = ShoppingListEntity(id, name, position)
 
-    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
+    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name, position)
 
-    private fun ShoppingListDetailsView.toDomainModel() = ShoppingListDetails(id, name, totalItems, checkedItems)
+    private fun ShoppingListDetailsView.toDomainModel() = ShoppingListDetails(id, name, position, totalItems, checkedItems)
 }
