@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -48,7 +47,7 @@ class OverviewViewModel @Inject internal constructor(
     }
 
     private fun onShoppingListsReordered(reorderedList: List<ShoppingListDetails>) {
-        viewModelScope.launch(Dispatchers.IO.limitedParallelism(1)) {
+        viewModelScope.launch {
             val listToUpdate = reorderedList.mapIndexed { index, shoppingListDetails ->
                 ShoppingList(id = shoppingListDetails.id, name = shoppingListDetails.name, position = index.toLong())
             }
