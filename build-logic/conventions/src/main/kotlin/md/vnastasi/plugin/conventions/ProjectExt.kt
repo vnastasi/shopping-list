@@ -23,22 +23,23 @@ internal fun Project.configureKotlin() {
     }
 }
 
-internal fun CommonExtension<*, *, *, *, *, *>.configureAndroid(libs: LibrariesForLibs) {
+internal fun CommonExtension.configureAndroid(libs: LibrariesForLibs) {
     compileSdk = libs.versions.project.compileSdk.get().toInt()
 
-    defaultConfig {
-        minSdk = libs.versions.project.minSdk.get().toInt()
+    defaultConfig.apply {
+        minSdk {
+            version = release(libs.versions.project.minSdk.get().toInt())
+        }
     }
 
-    compileOptions {
-
+    compileOptions.apply {
         sourceCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
         targetCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
     }
 }
 
-internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
-    testOptions {
+internal fun CommonExtension.configureUnitTests() {
+    testOptions.apply {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
@@ -52,8 +53,8 @@ internal fun CommonExtension<*, *, *, *, *, *>.configureUnitTests() {
     }
 }
 
-internal fun CommonExtension<*, *, *, *, *, *>.configureCompose() {
-    buildFeatures {
+internal fun CommonExtension.configureCompose() {
+    buildFeatures.apply {
         compose = true
     }
 }
@@ -62,7 +63,6 @@ internal fun Project.configureSimpleLibrary() {
     pluginManager.apply(libs.plugins.gradle.dependencies)
     pluginManager.apply(libs.plugins.android.library)
     pluginManager.apply(libs.plugins.android.cacheFix)
-    pluginManager.apply(libs.plugins.kotlin.android)
 
     extensions.configure<LibraryExtension> {
         configureAndroid(libs)
@@ -98,7 +98,6 @@ internal fun Project.configureApplication() {
     pluginManager.apply(libs.plugins.gradle.dependencies)
     pluginManager.apply(libs.plugins.android.application)
     pluginManager.apply(libs.plugins.android.cacheFix)
-    pluginManager.apply(libs.plugins.kotlin.android)
     pluginManager.apply(libs.plugins.compose.compiler)
 
     extensions.configure<ApplicationExtension> {

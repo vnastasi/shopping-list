@@ -2,7 +2,7 @@ package md.vnastasi.plugin.codecoverage
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import md.vnastasi.plugin.support.libs
 import md.vnastasi.plugin.support.withPlugin
 import org.gradle.api.Plugin
@@ -154,15 +154,15 @@ class CodeCoveragePlugin @Inject constructor(
         }
 
     context(targetProject: Project, extension: CodeCoverageExtension)
-    private fun CommonExtension<*, *, *, *, *, *>.enableTestCoverageData() {
-        buildTypes {
+    private fun CommonExtension.enableTestCoverageData() {
+        buildTypes.apply {
             getByName(extension.targetBuildType.get()) {
                 enableUnitTestCoverage = true
                 enableAndroidTestCoverage = true
             }
         }
 
-        testCoverage {
+        testCoverage.apply {
             jacocoVersion = targetProject.libs.versions.jacoco.get()
         }
     }
