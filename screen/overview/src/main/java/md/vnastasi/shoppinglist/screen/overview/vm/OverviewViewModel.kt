@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
@@ -35,12 +37,22 @@ class OverviewViewModel @Inject internal constructor(
     override fun onUiEvent(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.ShoppingListDeleted -> onShoppingListDeleted(uiEvent.shoppingListDetails)
+            is UiEvent.ShoppingListsReordered -> onShoppingListsReordered(uiEvent.reorderedList)
         }
     }
 
     private fun onShoppingListDeleted(shoppingListDetails: ShoppingListDetails) {
         viewModelScope.launch {
             shoppingListRepository.delete(shoppingListDetails.toShoppingList())
+        }
+    }
+
+    private fun onShoppingListsReordered(reorderedList: List<ShoppingListDetails>) {
+        viewModelScope.launch(Dispatchers.IO.limitedParallelism(1)) {
+            val listToUpdate = reorderedList.mapIndexed { index, shoppingListDetails ->
+                ShoppingList(id = shoppingListDetails.id, name = shoppingListDetails.name, position = index.toLong())
+            }
+            shoppingListRepository.update(listToUpdate)
         }
     }
 }

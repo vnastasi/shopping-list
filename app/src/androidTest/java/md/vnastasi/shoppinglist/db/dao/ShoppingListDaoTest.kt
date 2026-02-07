@@ -1,11 +1,10 @@
 package md.vnastasi.shoppinglist.db.dao
 
 import app.cash.turbine.test
-import assertk.all
 import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.hasSize
+import assertk.assertions.containsExactly
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isFailure
@@ -28,7 +27,7 @@ class ShoppingListDaoTest {
 
             val shoppingList = createShoppingListEntity()
             shoppingListDao.create(shoppingList)
-            assertThat(awaitItem()).all { hasSize(1); contains(createShoppingListDetailsView()) }
+            assertThat(awaitItem()).containsExactly(createShoppingListDetailsView())
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -51,11 +50,49 @@ class ShoppingListDaoTest {
         shoppingListDao.create(shoppingList)
 
         shoppingListDao.findAll().test {
-            assertThat(awaitItem()).all { hasSize(1); contains(createShoppingListDetailsView()) }
+            assertThat(awaitItem()).containsExactly(createShoppingListDetailsView())
 
             val updatedShoppingList = shoppingList.copy(name = "Other")
             shoppingListDao.update(updatedShoppingList)
-            assertThat(awaitItem()).all { hasSize(1); contains(createShoppingListDetailsView { name = "Other" }) }
+            assertThat(awaitItem()).containsExactly(createShoppingListDetailsView { name = "Other" })
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun updateMultipleShoppingLists() = runDatabaseTest { db ->
+        val shoppingListDao = db.shoppingListDao()
+
+        val shoppingList1 = createShoppingListEntity {
+            id = 1L
+            name = "L1"
+            position = 0
+        }
+        val shoppingList2 = createShoppingListEntity {
+            id = 2L
+            name = "L2"
+            position = 1
+        }
+        shoppingListDao.create(shoppingList1)
+        shoppingListDao.create(shoppingList2)
+
+        val expectedShoppingListDetails1 = createShoppingListDetailsView {
+            id = 1L
+            name = "L1"
+            position = 0
+        }
+        val expectedShoppingListDetails2 = createShoppingListDetailsView {
+            id = 2L
+            name = "L2"
+            position = 1
+        }
+
+        shoppingListDao.findAll().test {
+            assertThat(awaitItem()).containsExactly(expectedShoppingListDetails1, expectedShoppingListDetails2)
+
+            shoppingListDao.update(listOf(shoppingList1.copy(position = 1), shoppingList2.copy(position = 0)))
+            assertThat(awaitItem()).containsExactly(expectedShoppingListDetails2.copy(position = 0), expectedShoppingListDetails1.copy(position = 1))
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -69,7 +106,7 @@ class ShoppingListDaoTest {
         shoppingListDao.create(shoppingList)
 
         shoppingListDao.findAll().test {
-            assertThat(awaitItem()).all { hasSize(1); contains(createShoppingListDetailsView()) }
+            assertThat(awaitItem()).containsExactly(createShoppingListDetailsView())
 
             shoppingListDao.delete(shoppingList)
             assertThat(awaitItem()).isEmpty()
@@ -90,7 +127,7 @@ class ShoppingListDaoTest {
         shoppingItemDao.create(shoppingItem)
 
         shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
-            assertThat(awaitItem()).all { hasSize(1); contains(shoppingItem) }
+            assertThat(awaitItem()).containsExactly(shoppingItem)
 
             shoppingListDao.delete(shoppingList)
             assertThat(awaitItem()).isEmpty()

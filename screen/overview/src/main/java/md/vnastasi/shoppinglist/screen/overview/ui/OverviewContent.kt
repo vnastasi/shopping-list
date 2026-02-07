@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -31,9 +31,10 @@ internal fun OverviewContent(
     list: ImmutableList<ShoppingListDetails>,
     onEdit: (ShoppingListDetails) -> Unit,
     onDelete: (ShoppingListDetails) -> Unit,
-    onClick: (ShoppingListDetails) -> Unit
+    onClick: (ShoppingListDetails) -> Unit,
+    onReorder: (List<ShoppingListDetails>) -> Unit
 ) {
-    val reorderableList = retain { list.toMutableStateList() }
+    val reorderableList = remember(list) { list.toMutableStateList() }
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         reorderableList.add(to.index, reorderableList.removeAt(from.index))
@@ -66,7 +67,8 @@ internal fun OverviewContent(
                     item = shoppingList,
                     onEditItem = onEdit,
                     onClickItem = onClick,
-                    onDeleteItem = onDelete
+                    onDeleteItem = onDelete,
+                    onItemDragCompleted = { onReorder(reorderableList) }
                 )
             }
         }
@@ -101,7 +103,8 @@ private fun NonEmptyListOverviewScreenContentPreview() {
             list = list,
             onEdit = { },
             onDelete = { },
-            onClick = { }
+            onClick = { },
+            onReorder = { }
         )
     }
 }

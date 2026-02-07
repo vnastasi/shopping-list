@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.domain.repository
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -114,6 +115,39 @@ internal class LocalShoppingListRepositoryTest {
         shoppingListRepository.update(shoppingList)
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(expectedShoppingListEntity)
+    }
+
+    @Test
+    @DisplayName("When updating multiple existing shopping lists The expect DAO call to update all entities")
+    fun updateMultiple() = runTest {
+        val shoppingList1 = createShoppingList {
+            id = 5678L
+            name = "New List"
+            position = 0L
+        }
+        val shoppingList2 = createShoppingList {
+            id = 89678L
+            name = "New List #2"
+            position = 1L
+        }
+
+        val expectedShoppingListEntity1 = createShoppingListEntity {
+            id = 5678L
+            name = "New List"
+            position = 0L
+        }
+        val expectedShoppingListEntity2 = createShoppingListEntity {
+            id = 89678L
+            name = "New List #2"
+            position = 1L
+        }
+
+        val shoppingListSlot = slot<List<ShoppingListEntity>>()
+        coEvery { mockShoppingListDao.update(capture(shoppingListSlot)) } returns Unit
+
+        shoppingListRepository.update(listOf(shoppingList1, shoppingList2))
+
+        assertThat(shoppingListSlot.captured).containsExactly(expectedShoppingListEntity1, expectedShoppingListEntity2)
     }
 
     @Test

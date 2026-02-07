@@ -71,7 +71,8 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     item: ShoppingListDetails,
     onClickItem: (ShoppingListDetails) -> Unit = { },
     onEditItem: (ShoppingListDetails) -> Unit = { },
-    onDeleteItem: (ShoppingListDetails) -> Unit = { }
+    onDeleteItem: (ShoppingListDetails) -> Unit = { },
+    onItemDragCompleted: () -> Unit = { }
 ) {
     val density = LocalDensity.current
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
@@ -111,7 +112,6 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                         y = 0
                     )
                 }
-
         ) {
             Card(
                 modifier = Modifier
@@ -168,7 +168,9 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                     }
 
                     IconButton(
-                        modifier = Modifier.draggableHandle(),
+                        modifier = Modifier.draggableHandle(
+                            onDragStopped = onItemDragCompleted,
+                        ),
                         onClick = { }
                     ) {
                         Icon(

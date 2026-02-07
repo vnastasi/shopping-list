@@ -62,6 +62,7 @@ fun OverviewScreen(
         onShoppingListEdited = { shoppingList -> navigator.openManageListSheet(shoppingList.id) },
         onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
         onShoppingListSelected = { shoppingList -> navigator.toListDetails(shoppingList.id) },
+        onShoppingListsReordered = { reorderedList -> viewModel.onUiEvent(UiEvent.ShoppingListsReordered(reorderedList)) }
     )
 }
 
@@ -72,6 +73,7 @@ private fun OverviewScreen(
     onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -119,6 +121,7 @@ private fun OverviewScreen(
                     onShoppingListEdited = onShoppingListEdited,
                     onShoppingListDeleted = onShoppingListDeleted,
                     onShoppingListSelected = onShoppingListSelected,
+                    onShoppingListsReordered = onShoppingListsReordered
                 )
             }
         }
@@ -168,13 +171,15 @@ private fun ReadyOverviewContent(
     onShoppingListEdited: (ShoppingListDetails) -> Unit,
     onShoppingListDeleted: (ShoppingListDetails) -> Unit,
     onShoppingListSelected: (ShoppingListDetails) -> Unit,
+    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
 ) {
     OverviewContent(
         contentPaddings = contentPaddings,
         list = shoppingLists,
         onEdit = onShoppingListEdited,
         onClick = onShoppingListSelected,
-        onDelete = onShoppingListDeleted
+        onDelete = onShoppingListDeleted,
+        onReorder = onShoppingListsReordered
     )
 }
 
@@ -207,6 +212,7 @@ private fun ListOverviewScreenPreview() {
             onShoppingListEdited = { },
             onShoppingListDeleted = { },
             onAddNewShoppingList = { },
+            onShoppingListsReordered = { }
         )
     }
 }
