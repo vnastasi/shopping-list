@@ -41,28 +41,28 @@ class EditAndDeleteShoppingListFlowTest {
         .around(disableAnimationsRule())
 
     @Test
-    fun editShoppingList() {
-        overviewScreen(composeRule) {
+    fun editShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
             moveShoppingListCardUp("Pharmacy")
             moveShoppingListCardDown("Groceries")
             swipeShoppingListCard("Groceries")
             clickOnEditShoppingList()
         }
 
-        manageShoppingListSheet(composeRule) {
+        manageShoppingListSheet {
             hasPrefilledShoppingListName("Groceries")
             typeShoppingListName("New name")
             clickOnSaveButton()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasShoppingListCard("New name", 0, 0)
         }
     }
 
     @Test
-    fun deleteShoppingList() {
-        overviewScreen(composeRule) {
+    fun deleteShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
             swipeShoppingListCard("Gardening")
             clickOnDeleteShoppingList()
             hasNoShoppingListCard("Gardening")

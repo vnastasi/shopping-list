@@ -140,8 +140,9 @@ internal class OverviewViewModelTest {
         )
     }
 
-    private fun TestScope.createViewModel() = OverviewViewModel(
+    context(scope: TestScope)
+    private fun createViewModel() = OverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
-        coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
     )
 }

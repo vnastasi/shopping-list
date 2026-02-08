@@ -168,11 +168,12 @@ internal class ListDetailsViewModelTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(shoppingItem)
     }
 
-    private fun TestScope.createViewModel(shoppingListId: Long) =
+    context(scope: TestScope)
+    private fun createViewModel(shoppingListId: Long) =
         ListDetailsViewModel(
             shoppingListId = shoppingListId,
             shoppingListRepository = mockShoppingListRepository,
             shoppingItemRepository = mockShoppingItemRepository,
-            coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+            coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
         )
 }

@@ -6,7 +6,8 @@ import org.gradle.api.Project
 @Suppress("unused")
 class ComposeScreenLibraryConventions : Plugin<Project> {
 
-    override fun apply(target: Project) {
-        target.configureComposeScreenLibrary()
+    override fun apply(target: Project) = with(target) {
+        configureComposeLibrary()
+        configureTestableLibrary()
     }
 }

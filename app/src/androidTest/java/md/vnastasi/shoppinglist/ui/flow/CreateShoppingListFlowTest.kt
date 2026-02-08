@@ -32,30 +32,30 @@ class CreateShoppingListFlowTest {
         .around(disableAnimationsRule())
 
     @Test
-    fun createNewShoppingList() {
-        overviewScreen(composeRule) {
+    fun createNewShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
             hasEmptyOverviewMessage()
             clickOnNewShoppingListFab()
         }
 
-        manageShoppingListSheet(composeRule) {
+        manageShoppingListSheet {
             typeShoppingListName("Test new shopping list")
             clickOnSaveButton()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasNoEmptyOverviewMessage()
             hasShoppingListCard("Test new shopping list", 0, 0)
             clickOnShoppingListCard("Test new shopping list")
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             hasToolbarName("Test new shopping list")
             hasEmptyShoppingListMessage()
             clickOnAddItemsFab()
         }
 
-        addItemsScreen(composeRule) {
+        addItemsScreen {
             hasEmptySearchbar()
             typeSearchQuery("Milk")
             clickOnSuggestionItem("Milk")
@@ -69,7 +69,7 @@ class CreateShoppingListFlowTest {
             navigateBack()
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             hasNoEmptyShoppingListMessage()
             hasUncheckedItem("Coconut oil")
             hasUncheckedItem("Bread")
@@ -80,7 +80,7 @@ class CreateShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasShoppingListCard("Test new shopping list", 3, 0)
         }
     }

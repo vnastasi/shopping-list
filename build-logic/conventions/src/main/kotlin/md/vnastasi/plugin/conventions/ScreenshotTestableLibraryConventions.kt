@@ -9,7 +9,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.named
 
-@Suppress("UnstableApiUsage", "unused")
+@Suppress("unused")
 class ScreenshotTestableLibraryConventions : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {

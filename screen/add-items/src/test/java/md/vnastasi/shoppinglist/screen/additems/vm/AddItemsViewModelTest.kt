@@ -179,13 +179,14 @@ internal class AddItemsViewModelTest {
         }
     }
 
-    private fun TestScope.createViewModel(currentSearchTermValue: String = "") =
+    context(scope: TestScope)
+    private fun createViewModel(currentSearchTermValue: String = "") =
         AddItemsViewModel(
             shoppingListId = DEFAULT_SHOPPING_LIST_ID,
             nameSuggestionRepository = mockNameSuggestionRepository,
             shoppingItemRepository = mockShoppingItemRepository,
             shoppingListRepository = mockShoppingListRepository,
-            coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+            coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
         ).apply {
             searchTermTextFieldState.setTextAndPlaceCursorAtEnd(currentSearchTermValue)
         }

@@ -26,10 +26,8 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 private const val DEFAULT_TIMEOUT = 5_000L
 
 @RobotDslMarker
-fun overviewScreen(
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
-    block: OverviewScreenRobot.() -> Unit = {}
-) = OverviewScreenRobot(composeTestRule).apply(block)
+context(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
+fun overviewScreen(block: OverviewScreenRobot.() -> Unit = { }) = OverviewScreenRobot(composeTestRule).apply(block)
 
 @OptIn(ExperimentalTestApi::class)
 class OverviewScreenRobot(
