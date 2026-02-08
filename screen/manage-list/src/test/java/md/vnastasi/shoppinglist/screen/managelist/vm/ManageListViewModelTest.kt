@@ -152,17 +152,16 @@ class ManageListViewModelTest {
         val shoppingListSlot = slot<ShoppingList>()
         coEvery { mockShoppingListRepository.update(capture(shoppingListSlot)) } returns Unit
 
-        createViewModel(shoppingListId = shoppingListId).dispatch(UiEvent.OnSaveList("updated"))
+        createViewModel(shoppingListId).dispatch(UiEvent.OnSaveList("updated"))
         advanceUntilIdle()
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = shoppingListId, name = "updated"))
     }
 
-    private fun TestScope.createViewModel(
-        shoppingListId: Long? = null
-    ) = ManageListViewModel(
+    context(scope: TestScope)
+    private fun createViewModel(shoppingListId: Long? = null) = ManageListViewModel(
         shoppingListId = shoppingListId,
         repository = mockShoppingListRepository,
-        coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
     )
 }
