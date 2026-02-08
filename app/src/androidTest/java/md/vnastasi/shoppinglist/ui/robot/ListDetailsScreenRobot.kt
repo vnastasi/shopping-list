@@ -29,10 +29,8 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LI
 private const val DEFAULT_TIMEOUT = 5_000L
 
 @RobotDslMarker
-fun listDetailsScreen(
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
-    block: ListDetailsScreenRobot.() -> Unit = {}
-) = ListDetailsScreenRobot(composeTestRule).apply(block)
+context(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
+fun listDetailsScreen(block: ListDetailsScreenRobot.() -> Unit = {}) = ListDetailsScreenRobot(composeTestRule).apply(block)
 
 @OptIn(ExperimentalTestApi::class)
 class ListDetailsScreenRobot(

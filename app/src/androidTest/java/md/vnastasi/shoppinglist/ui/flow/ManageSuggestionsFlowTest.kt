@@ -52,16 +52,16 @@ class ManageSuggestionsFlowTest {
         .around(disableAnimationsRule())
 
     @Test
-    fun manageNameSuggestions() {
-        overviewScreen(composeRule) {
+    fun manageNameSuggestions(): Unit = with(composeRule) {
+        overviewScreen {
             clickOnShoppingListCard("My list")
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             clickOnAddItemsFab()
         }
 
-        addItemsScreen(composeRule) {
+        addItemsScreen {
             hasEmptySearchbar()
             typeSearchQuery("egg")
             hasSuggestionItem("egg")
@@ -77,7 +77,7 @@ class ManageSuggestionsFlowTest {
             navigateBack()
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             hasUncheckedItem("Boiled eggs")
             navigateBack()
         }

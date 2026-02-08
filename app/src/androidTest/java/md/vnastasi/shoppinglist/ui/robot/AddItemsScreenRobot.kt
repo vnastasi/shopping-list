@@ -27,10 +27,8 @@ import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_LIST
 private const val DEFAULT_TIMEOUT = 5_000L
 
 @RobotDslMarker
-fun addItemsScreen(
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
-    block: AddItemsScreenRobot.() -> Unit = {}
-) = AddItemsScreenRobot(composeTestRule).apply(block)
+context(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
+fun addItemsScreen(block: AddItemsScreenRobot.() -> Unit = {}) = AddItemsScreenRobot(composeTestRule).apply(block)
 
 @OptIn(ExperimentalTestApi::class)
 class AddItemsScreenRobot(

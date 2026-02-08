@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.db.ShoppingListDatabase
+import md.vnastasi.shoppinglist.db.callback.CreateAutoPositionShoppingListTriggerCallback
 import md.vnastasi.shoppinglist.db.callback.CreateNameSuggestionTriggerCallback
 
 private val loggableSqlQueryCallback = RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
@@ -24,6 +25,7 @@ fun runDatabaseTest(block: suspend TestScope.(ShoppingListDatabase) -> Unit) = r
         .setTransactionExecutor(executor)
         .setQueryCallback(loggableSqlQueryCallback, executor)
         .addCallback(CreateNameSuggestionTriggerCallback())
+        .addCallback(CreateAutoPositionShoppingListTriggerCallback())
         .build()
 
     try {
