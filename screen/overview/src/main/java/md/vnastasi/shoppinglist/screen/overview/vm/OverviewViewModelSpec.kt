@@ -8,5 +8,5 @@ interface OverviewViewModelSpec {
 
     val viewState: StateFlow<ViewState>
 
-    fun onUiEvent(uiEvent: UiEvent)
+    fun dispatch(event: UiEvent)
 }

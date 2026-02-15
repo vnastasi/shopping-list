@@ -10,5 +10,5 @@ class StubOverviewViewModel(stubViewState: ViewState) : OverviewViewModelSpec {
 
     override val viewState: StateFlow<ViewState> = MutableStateFlow(stubViewState)
 
-    override fun onUiEvent(uiEvent: UiEvent) = Unit
+    override fun dispatch(event: UiEvent) = Unit
 }

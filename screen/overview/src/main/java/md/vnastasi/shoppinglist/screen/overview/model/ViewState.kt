@@ -7,11 +7,19 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 @Stable
 sealed class ViewState {
 
-    data object Loading : ViewState()
+    abstract val navigationTarget: NavigationTarget?
 
-    data object Empty : ViewState()
+    data object Loading : ViewState() {
+
+        override val navigationTarget: NavigationTarget? = null
+    }
+
+    data class Empty(
+        override val navigationTarget: NavigationTarget?
+    ) : ViewState()
 
     data class Ready(
-        val shoppingLists: ImmutableList<ShoppingListDetails>,
+        val data: ImmutableList<ShoppingListDetails>,
+        override val navigationTarget: NavigationTarget?
     ) : ViewState()
 }

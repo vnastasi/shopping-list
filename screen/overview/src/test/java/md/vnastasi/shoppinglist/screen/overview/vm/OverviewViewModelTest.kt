@@ -15,6 +15,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -22,6 +23,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import org.junit.jupiter.api.DisplayName
@@ -44,8 +46,7 @@ internal class OverviewViewModelTest {
 
         createViewModel().viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
-            assertThat(awaitItem()).isEqualTo(ViewState.Empty)
-            cancelAndConsumeRemainingEvents()
+            assertThat(awaitItem()).isEqualTo(ViewState.Empty(navigationTarget = null))
         }
     }
 
@@ -63,15 +64,14 @@ internal class OverviewViewModelTest {
 
         createViewModel().viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(persistentListOf(shoppingListDetails)))
-            cancelAndConsumeRemainingEvents()
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = null))
         }
     }
 
     @Test
     @DisplayName(
         """
-        When handling a `ShoppingListDeleted` UI event
+        When handling a `OnShoppingListDeleted` UI event
         Then expect repository to delete said shopping list
     """
     )
@@ -80,7 +80,7 @@ internal class OverviewViewModelTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         val viewModel = createViewModel()
-        viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingListDetails))
+        viewModel.dispatch(UiEvent.OnShoppingListDeleted(shoppingListDetails))
         advanceUntilIdle()
 
         coVerify { mockShoppingListRepository.delete(createShoppingList()) }
@@ -91,7 +91,7 @@ internal class OverviewViewModelTest {
     @Test
     @DisplayName(
         """
-        When handling a `ShoppingListsReordered` UI event
+        When handling a `OnShoppingListsReordered` UI event
         Then expect repository to reorder shopping lists
     """
     )
@@ -118,7 +118,7 @@ internal class OverviewViewModelTest {
         coEvery { mockShoppingListRepository.update(capture(reorderedListSlot)) } returns Unit
 
         val viewModel = createViewModel()
-        viewModel.onUiEvent(UiEvent.ShoppingListsReordered(listOf(shoppingListDetails3, shoppingListDetails1, shoppingListDetails2)))
+        viewModel.dispatch(UiEvent.OnShoppingListsReordered(listOf(shoppingListDetails3, shoppingListDetails1, shoppingListDetails2)))
         advanceUntilIdle()
 
         assertThat(reorderedListSlot.captured).containsExactly(
@@ -140,9 +140,102 @@ internal class OverviewViewModelTest {
         )
     }
 
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnAddNewShoppingList` UI event
+        Then expect navigation target to be set to `AddOrEditList` with no ID supplied
+    """
+    )
+    fun onAddNewShoppingList() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+
+        viewModel.viewState.test {
+            viewModel.dispatch(UiEvent.OnAddNewShoppingList)
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(null))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnShoppingListEdited` UI event
+        Then expect navigation target to be set to `AddOrEditList` with shopping list ID supplied
+    """
+    )
+    fun onShoppingListEdited() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+
+        viewModel.viewState.test {
+            viewModel.dispatch(UiEvent.OnShoppingListEdited(shoppingListDetails))
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(shoppingListDetails.id))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnShoppingListSelected` UI event
+        Then expect navigation target to be set to `ListDetails` with shopping list ID supplied
+    """
+    )
+    fun onShoppingListSelected() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            viewModel.dispatch(UiEvent.OnShoppingListSelected(shoppingListDetails))
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.ListDetails(shoppingListDetails.id))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnNavigationConsumed` UI event
+        Then expect navigation target to be set to `null`
+    """
+    )
+    fun onNavigationConsumed() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+
+        viewModel.viewState.test {
+            // First, trigger an event to set a navigation target
+            viewModel.dispatch(UiEvent.OnAddNewShoppingList)
+            advanceUntilIdle()
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(null)))
+
+            // Then, consume it
+            viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = null)
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+    }
+
     context(scope: TestScope)
     private fun createViewModel() = OverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
-        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
+        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob() + StandardTestDispatcher(scope.testScheduler))
     )
 }

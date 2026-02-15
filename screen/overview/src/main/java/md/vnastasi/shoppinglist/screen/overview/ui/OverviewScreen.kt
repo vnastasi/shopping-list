@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
@@ -23,10 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,10 +35,10 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
@@ -56,28 +54,38 @@ fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
     navigator: OverviewScreenNavigator
 ) {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewState.navigationTarget) {
+        when (val localNavigationTarget = viewState.navigationTarget) {
+            is NavigationTarget.AddOrEditList -> {
+                navigator.openManageListSheet(localNavigationTarget.shoppingListId)
+                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            }
+
+            is NavigationTarget.ListDetails -> {
+                navigator.toListDetails(localNavigationTarget.shoppingListId)
+                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            }
+
+            null -> Unit
+        }
+    }
+
     OverviewScreen(
-        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        onAddNewShoppingList = { navigator.openManageListSheet(null) },
-        onShoppingListEdited = { shoppingList -> navigator.openManageListSheet(shoppingList.id) },
-        onShoppingListDeleted = { shoppingList -> viewModel.onUiEvent(UiEvent.ShoppingListDeleted(shoppingList)) },
-        onShoppingListSelected = { shoppingList -> navigator.toListDetails(shoppingList.id) },
-        onShoppingListsReordered = { reorderedList -> viewModel.onUiEvent(UiEvent.ShoppingListsReordered(reorderedList)) }
+        viewState = viewState,
+        dispatchEvent = viewModel::dispatch
     )
 }
 
 @Composable
 private fun OverviewScreen(
-    viewState: State<ViewState>,
-    onAddNewShoppingList: () -> Unit,
-    onShoppingListEdited: (ShoppingListDetails) -> Unit,
-    onShoppingListDeleted: (ShoppingListDetails) -> Unit,
-    onShoppingListSelected: (ShoppingListDetails) -> Unit,
-    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
+    viewState: ViewState,
+    dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val showFloatingActionButton by remember { derivedStateOf { viewState.value != ViewState.Loading } }
+    val showFloatingActionButton by remember(viewState) { derivedStateOf { viewState != ViewState.Loading } }
 
     Scaffold(
         modifier = Modifier
@@ -92,12 +100,12 @@ private fun OverviewScreen(
         floatingActionButton = {
             if (showFloatingActionButton) {
                 ManageListFloatingActionButton(
-                    onClick = onAddNewShoppingList
+                    onClick = { dispatchEvent(UiEvent.OnAddNewShoppingList) }
                 )
             }
         }
     ) { contentPaddings ->
-        when (val localViewState = viewState.value) {
+        when (viewState) {
             is ViewState.Loading -> {
                 AnimatedMessageContent(
                     contentPaddings = contentPaddings,
@@ -115,13 +123,10 @@ private fun OverviewScreen(
             }
 
             is ViewState.Ready -> {
-                ReadyOverviewContent(
+                OverviewContent(
                     contentPaddings = contentPaddings,
-                    shoppingLists = localViewState.shoppingLists,
-                    onShoppingListEdited = onShoppingListEdited,
-                    onShoppingListDeleted = onShoppingListDeleted,
-                    onShoppingListSelected = onShoppingListSelected,
-                    onShoppingListsReordered = onShoppingListsReordered
+                    list = viewState.data,
+                    dispatchEvent = dispatchEvent
                 )
             }
         }
@@ -164,25 +169,6 @@ private fun ManageListFloatingActionButton(
     }
 }
 
-@Composable
-private fun ReadyOverviewContent(
-    contentPaddings: PaddingValues,
-    shoppingLists: ImmutableList<ShoppingListDetails>,
-    onShoppingListEdited: (ShoppingListDetails) -> Unit,
-    onShoppingListDeleted: (ShoppingListDetails) -> Unit,
-    onShoppingListSelected: (ShoppingListDetails) -> Unit,
-    onShoppingListsReordered: (List<ShoppingListDetails>) -> Unit
-) {
-    OverviewContent(
-        contentPaddings = contentPaddings,
-        list = shoppingLists,
-        onEdit = onShoppingListEdited,
-        onClick = onShoppingListSelected,
-        onDelete = onShoppingListDeleted,
-        onReorder = onShoppingListsReordered
-    )
-}
-
 @ExcludeFromJacocoGeneratedReport
 @PreviewLightDark
 @PreviewDynamicColors
@@ -207,12 +193,8 @@ private fun ListOverviewScreenPreview() {
 
     AppTheme {
         OverviewScreen(
-            viewState = remember { mutableStateOf<ViewState>(ViewState.Ready(list)) },
-            onShoppingListSelected = { },
-            onShoppingListEdited = { },
-            onShoppingListDeleted = { },
-            onAddNewShoppingList = { },
-            onShoppingListsReordered = { }
+            viewState = ViewState.Ready(data = list, navigationTarget = null),
+            dispatchEvent = { }
         )
     }
 }
