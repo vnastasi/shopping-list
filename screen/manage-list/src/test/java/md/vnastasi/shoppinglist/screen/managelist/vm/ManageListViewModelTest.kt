@@ -161,6 +161,31 @@ class ManageListViewModelTest {
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = shoppingListId, name = "updated"))
     }
 
+    @Test
+    @DisplayName(
+        """
+            When handling a `OnNavigationConsumed` UI event
+            Then expect navigation target to be set to `null`
+        """
+    )
+    fun onNavigationConsumed() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.viewState.test {
+            // Trigger an event to set a navigation target
+            viewModel.dispatch(UiEvent.OnNameSaved("test"))
+            advanceUntilIdle()
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet))
+
+            // Consume it
+            viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = null)
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+    }
+
     context(scope: TestScope)
     private fun createViewModel(shoppingListId: Long? = null) = ManageListViewModel(
         shoppingListId = shoppingListId,

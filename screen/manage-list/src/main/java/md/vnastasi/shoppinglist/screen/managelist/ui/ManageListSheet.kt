@@ -54,7 +54,7 @@ fun ManageListSheet(
     LaunchedEffect(viewState.navigationTarget) {
         when (viewState.navigationTarget) {
             is NavigationTarget.CloseSheet -> {
-                navigator.close()
+                navigator.closeSheet()
                 viewModel.dispatch(UiEvent.OnNavigationConsumed)
             }
 

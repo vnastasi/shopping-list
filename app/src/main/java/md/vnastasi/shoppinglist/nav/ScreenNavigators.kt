@@ -46,7 +46,7 @@ private class ManageListNavigatorImpl(
     private val navBackStack: NavBackStack<NavKey>
 ) : ManageListNavigator {
 
-    override fun close() {
+    override fun closeSheet() {
         navBackStack.removeLastOrNull()
     }
 }
