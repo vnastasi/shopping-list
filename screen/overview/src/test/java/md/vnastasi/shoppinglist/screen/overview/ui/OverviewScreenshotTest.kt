@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class OverviewScreenshotTest(
+internal class OverviewScreenshotTest(
     config: DeviceConfig,
     private val viewState: ViewState
 ) {
