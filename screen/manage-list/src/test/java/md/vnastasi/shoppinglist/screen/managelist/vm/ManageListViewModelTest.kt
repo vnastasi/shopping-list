@@ -12,12 +12,14 @@ import io.mockk.slot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
@@ -39,13 +41,8 @@ class ManageListViewModelTest {
     fun initialViewState() = runTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
-            val expectedViewState = ViewState(
-                validationError = TextValidationError.NONE,
-                isSaveEnabled = false
-            )
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
-
-            expectNoEvents()
         }
 
         assertThat(viewModel.listNameTextFieldState.text).isEqualTo("")
@@ -63,12 +60,10 @@ class ManageListViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.dispatch(UiEvent.OnNameChange(""))
+            viewModel.dispatch(UiEvent.OnNameChanged(""))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false)
+            val expectedViewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
-
-            expectNoEvents()
         }
     }
 
@@ -84,12 +79,10 @@ class ManageListViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.dispatch(UiEvent.OnNameChange(" "))
+            viewModel.dispatch(UiEvent.OnNameChanged(" "))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false)
+            val expectedViewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
-
-            expectNoEvents()
         }
     }
 
@@ -105,12 +98,10 @@ class ManageListViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.dispatch(UiEvent.OnNameChange("a"))
+            viewModel.dispatch(UiEvent.OnNameChanged("a"))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
-
-            expectNoEvents()
         }
     }
 
@@ -119,15 +110,21 @@ class ManageListViewModelTest {
         """
             Given no shopping list ID
             When saving
-            Then expect new shopping list to be created with supplied name
+            Then expect new shopping list to be created with supplied name and navigation target set to `CloseSheet`
         """
     )
     fun createNewList() = runTest {
         val shoppingListSlot = slot<ShoppingList>()
         coEvery { mockShoppingListRepository.create(capture(shoppingListSlot)) } returns Unit
 
-        createViewModel().dispatch(UiEvent.OnSaveList("list"))
-        advanceUntilIdle()
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            viewModel.dispatch(UiEvent.OnNameSaved("list"))
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet)
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = 0L, name = "list"))
 
@@ -139,7 +136,7 @@ class ManageListViewModelTest {
         """
             Given ID of existing shopping list
             When saving
-            Then expect name of existing shopping list to be updated
+            Then expect name of existing shopping list to be updated and navigation target set to `CloseSheet`
         """
     )
     fun updateExistingList() = runTest {
@@ -152,8 +149,14 @@ class ManageListViewModelTest {
         val shoppingListSlot = slot<ShoppingList>()
         coEvery { mockShoppingListRepository.update(capture(shoppingListSlot)) } returns Unit
 
-        createViewModel(shoppingListId).dispatch(UiEvent.OnSaveList("updated"))
-        advanceUntilIdle()
+        val viewModel = createViewModel(shoppingListId)
+        viewModel.viewState.test {
+            viewModel.dispatch(UiEvent.OnNameSaved("updated"))
+            advanceUntilIdle()
+
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet)
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = shoppingListId, name = "updated"))
     }
@@ -162,6 +165,6 @@ class ManageListViewModelTest {
     private fun createViewModel(shoppingListId: Long? = null) = ManageListViewModel(
         shoppingListId = shoppingListId,
         repository = mockShoppingListRepository,
-        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
+        coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob() + StandardTestDispatcher(scope.testScheduler))
     )
 }
