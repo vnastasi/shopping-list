@@ -32,6 +32,9 @@ dependencyAnalysis {
     issues {
        all {
            onUnusedDependencies {
+               exclude(
+                   "org.jetbrains.kotlin:kotlin-stdlib"
+               )
               severity("fail")
            }
 

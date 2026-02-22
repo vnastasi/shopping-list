@@ -1,3 +1,5 @@
+import md.vnastasi.plugin.support.libs
+
 plugins {
     id("compose-library.conventions")
 }
@@ -7,6 +9,7 @@ android {
 }
 
 dependencies {
+    api(platform(libs.compose.bom))
     api(libs.compose.runtime)
 
     implementation(platform(libs.compose.bom))

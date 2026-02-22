@@ -17,6 +17,8 @@ dependencies {
 
     api(project(":domain:api"))
     api(project(":screen:shared"))
+    api(platform(libs.compose.bom))
+    api(platform(libs.coroutines.bom))
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
