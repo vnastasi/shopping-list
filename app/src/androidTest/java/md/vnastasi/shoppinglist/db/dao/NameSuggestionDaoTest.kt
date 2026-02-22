@@ -68,7 +68,7 @@ class NameSuggestionDaoTest {
         val shoppingListDao = shoppingListDao()
         val shoppingItemDao = shoppingItemDao()
 
-        val shoppingListId = shoppingListDao.create(ShoppingList(name = "Test"))
+        val shoppingListId = shoppingListDao.create(ShoppingList(name = "Test", position = 0))
 
         sequenceOf(
             ShoppingItem(name = "Bread", isChecked = false, listId = shoppingListId),

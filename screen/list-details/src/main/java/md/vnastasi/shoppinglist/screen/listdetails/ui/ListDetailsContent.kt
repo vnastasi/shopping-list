@@ -16,6 +16,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
+import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LIST
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -26,8 +27,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 internal fun ListDetailsContent(
     contentPaddings: PaddingValues,
     listOfShoppingItems: ImmutableList<ShoppingItem>,
-    onItemClick: (ShoppingItem) -> Unit,
-    onItemDelete: (ShoppingItem) -> Unit
+    dispatchEvent: (UiEvent) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -51,8 +51,8 @@ internal fun ListDetailsContent(
                     .testTag(SHOPPING_ITEMS_ITEM),
                 shoppingItem = shoppingItem,
                 isLastItemInList = index == listOfShoppingItems.size - 1,
-                onClick = onItemClick,
-                onDelete = onItemDelete
+                onClick = { dispatchEvent(UiEvent.OnItemClicked(it)) },
+                onDelete = { dispatchEvent(UiEvent.OnItemDeleted(it)) }
             )
         }
     }
@@ -77,8 +77,7 @@ private fun NonEmptyListDetailsScreenContentPreview() {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             listOfShoppingItems = listOfShoppingItems,
-            onItemClick = { },
-            onItemDelete = { }
+            dispatchEvent = { },
         )
     }
 }

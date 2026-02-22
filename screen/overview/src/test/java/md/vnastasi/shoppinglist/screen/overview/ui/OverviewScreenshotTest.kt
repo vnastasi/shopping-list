@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class OverviewScreenshotTest(
+internal class OverviewScreenshotTest(
     config: DeviceConfig,
     private val viewState: ViewState
 ) {
@@ -96,10 +96,11 @@ class OverviewScreenshotTest(
 
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState.Ready(
-                shoppingLists = persistentListOf()
+                data = persistentListOf(),
+                navigationTarget = null
             ),
             ViewState.Ready(
-                shoppingLists = persistentListOf(
+                data = persistentListOf(
                     createShoppingListDetails {
                         id = 1L
                         name = "Test list 1"
@@ -112,10 +113,12 @@ class OverviewScreenshotTest(
                         totalItems = 1L
                         checkedItems = 0L
                     }
-                )
+                ),
+                navigationTarget = null
             ),
             ViewState.Ready(
-                shoppingLists = persistentListOf(),
+                data = persistentListOf(),
+                navigationTarget = null
             ),
             ViewState.Loading
         )

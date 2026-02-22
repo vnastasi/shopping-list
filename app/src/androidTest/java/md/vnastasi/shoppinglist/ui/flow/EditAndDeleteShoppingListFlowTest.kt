@@ -26,8 +26,9 @@ class EditAndDeleteShoppingListFlowTest {
         onSetUp = {
             val shoppingListDao = shoppingListDao()
 
-            shoppingListDao.create(ShoppingList(1L, "Groceries"))
-            shoppingListDao.create(ShoppingList(2L, "Gardening"))
+            shoppingListDao.create(ShoppingList(1L, "Groceries", 0L))
+            shoppingListDao.create(ShoppingList(2L, "Gardening", 1L))
+            shoppingListDao.create(ShoppingList(3L, "Pharmacy", 2L))
         }
     )
 
@@ -40,26 +41,28 @@ class EditAndDeleteShoppingListFlowTest {
         .around(disableAnimationsRule())
 
     @Test
-    fun editShoppingList() {
-        overviewScreen(composeRule) {
+    fun editShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
+            moveShoppingListCardUp("Pharmacy")
+            moveShoppingListCardDown("Groceries")
             swipeShoppingListCard("Groceries")
             clickOnEditShoppingList()
         }
 
-        manageShoppingListSheet(composeRule) {
+        manageShoppingListSheet {
             hasPrefilledShoppingListName("Groceries")
             typeShoppingListName("New name")
             clickOnSaveButton()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasShoppingListCard("New name", 0, 0)
         }
     }
 
     @Test
-    fun deleteShoppingList() {
-        overviewScreen(composeRule) {
+    fun deleteShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
             swipeShoppingListCard("Gardening")
             clickOnDeleteShoppingList()
             hasNoShoppingListCard("Gardening")

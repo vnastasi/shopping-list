@@ -21,10 +21,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -51,8 +52,12 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
+import sh.calvin.reorderable.ReorderableCollectionItemScope
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
 private enum class SwipeToRevealState {
@@ -61,12 +66,13 @@ private enum class SwipeToRevealState {
 }
 
 @Composable
-internal fun ShoppingListCard(
+internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
-    onClickItem: (ShoppingListDetails) -> Unit = { },
-    onEditItem: (ShoppingListDetails) -> Unit = { },
-    onDeleteItem: (ShoppingListDetails) -> Unit = { }
+    onClickItem: () -> Unit = { },
+    onEditItem: () -> Unit = { },
+    onDeleteItem: () -> Unit = { },
+    onReorderItem: () -> Unit = { }
 ) {
     val density = LocalDensity.current
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
@@ -106,7 +112,6 @@ internal fun ShoppingListCard(
                         y = 0
                     )
                 }
-
         ) {
             Card(
                 modifier = Modifier
@@ -123,7 +128,7 @@ internal fun ShoppingListCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .clickable { onClickItem.invoke(item) }
+                        .clickable { onClickItem() }
                         .padding(AppDimensions.paddingSmall),
                     horizontalArrangement = Arrangement.Start
                 ) {
@@ -131,12 +136,15 @@ internal fun ShoppingListCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .padding(AppDimensions.paddingSmall),
-                        imageVector = Icons.AutoMirrored.Filled.List,
+                        imageVector = AppIcons.Document,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         contentDescription = null
                     )
+
                     Row(
                         modifier = Modifier
                             .wrapContentHeight()
+                            .weight(1.0f)
                             .align(Alignment.CenterVertically)
                     ) {
                         Text(
@@ -156,6 +164,20 @@ internal fun ShoppingListCard(
                                 ),
                             text = "${item.checkedItems} / ${item.totalItems}",
                             style = AppTypography.bodySmall
+                        )
+                    }
+
+                    IconButton(
+                        modifier = Modifier.draggableHandle(
+                            onDragStopped = onReorderItem,
+                        ),
+                        onClick = { }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically),
+                            imageVector = AppIcons.DragHandle,
+                            contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
                         )
                     }
                 }
@@ -186,7 +208,7 @@ internal fun ShoppingListCard(
                     modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_EDIT),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-                    onClick = { onEditItem.invoke(item) }
+                    onClick = { onEditItem() }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
@@ -205,7 +227,7 @@ internal fun ShoppingListCard(
                     modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_DELETE),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    onClick = { onDeleteItem.invoke(item) }
+                    onClick = { onDeleteItem() }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
@@ -222,9 +244,18 @@ internal fun ShoppingListCard(
 @Preview
 @Composable
 private fun ShoppingListCardPreview() {
-    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L)
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
 
     AppTheme {
-        ShoppingListCard(item = shoppingList)
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingListCard(item = shoppingList)
+                }
+            }
+        }
     }
 }

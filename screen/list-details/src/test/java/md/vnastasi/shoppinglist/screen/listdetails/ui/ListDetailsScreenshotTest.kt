@@ -98,7 +98,8 @@ class ListDetailsScreenshotTest(
             ViewState.Ready(
                 shoppingListId = 1L,
                 shoppingListName = "Test list",
-                listOfShoppingItems = persistentListOf()
+                listOfShoppingItems = persistentListOf(),
+                navigationTarget = null
             ),
             ViewState.Ready(
                 shoppingListId = 1L,
@@ -114,7 +115,8 @@ class ListDetailsScreenshotTest(
                         name = "Item 2"
                         isChecked = true
                     }
-                )
+                ),
+                navigationTarget = null
             ),
             ViewState.Loading
         )

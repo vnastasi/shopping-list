@@ -112,9 +112,9 @@ class ManageListSheetScreenshotTest(
 
         private fun viewStates(): Sequence<Pair<String, ViewState>> = sequenceOf(
             "" to ViewState.INIT,
-            "" to ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false),
-            " " to ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false),
-            "New list name" to ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
+            "" to ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false, navigationTarget = null),
+            " " to ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false, navigationTarget = null),
+            "New list name" to ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null),
         )
     }
 }

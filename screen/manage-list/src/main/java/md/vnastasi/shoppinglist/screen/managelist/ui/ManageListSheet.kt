@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
@@ -49,14 +50,22 @@ fun ManageListSheet(
     navigator: ManageListNavigator
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewState.navigationTarget) {
+        when (viewState.navigationTarget) {
+            is NavigationTarget.CloseSheet -> {
+                navigator.closeSheet()
+                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            }
+
+            null -> Unit
+        }
+    }
+
     ManageListSheet(
         listNameTextFieldState = viewModel.listNameTextFieldState,
         viewState = viewState,
-        onTextChanged = { viewModel.dispatch(UiEvent.OnNameChange(it)) },
-        onSave = {
-            viewModel.dispatch(UiEvent.OnSaveList(it))
-            navigator.close()
-        }
+        dispatchEvent = viewModel::dispatch,
     )
 }
 
@@ -64,14 +73,13 @@ fun ManageListSheet(
 private fun ManageListSheet(
     listNameTextFieldState: TextFieldState,
     viewState: ViewState,
-    onTextChanged: (String) -> Unit,
-    onSave: (String) -> Unit
+    dispatchEvent: (UiEvent) -> Unit,
 ) {
 
     LaunchedEffect(listNameTextFieldState) {
         snapshotFlow { listNameTextFieldState.text.toString() }
             .drop(1)
-            .collectLatest { onTextChanged(it) }
+            .collectLatest { dispatchEvent(UiEvent.OnNameChanged(it)) }
     }
 
     Column(
@@ -107,7 +115,7 @@ private fun ManageListSheet(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            onKeyboardAction = { onSave(listNameTextFieldState.text.toString()) }
+            onKeyboardAction = { dispatchEvent(UiEvent.OnNameSaved(listNameTextFieldState.text.toString())) }
         )
 
         Button(
@@ -119,7 +127,7 @@ private fun ManageListSheet(
                 )
                 .align(Alignment.CenterHorizontally),
             enabled = viewState.isSaveEnabled,
-            onClick = { onSave(listNameTextFieldState.text.toString()) }
+            onClick = { dispatchEvent(UiEvent.OnNameSaved(listNameTextFieldState.text.toString())) }
         ) {
             Text(
                 text = stringResource(R.string.list_form_btn_save)
@@ -151,9 +159,8 @@ private fun ManageListSheetPreview() {
         ) {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState("List"),
-                viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
-                onTextChanged = { },
-                onSave = { }
+                viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null),
+                dispatchEvent = { }
             )
         }
     }
@@ -182,9 +189,8 @@ private fun ManageListSheetWithErrorsPreview() {
         ) {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState(""),
-                viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true),
-                onTextChanged = { },
-                onSave = { }
+                viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true, navigationTarget = null),
+                dispatchEvent = { }
             )
         }
     }

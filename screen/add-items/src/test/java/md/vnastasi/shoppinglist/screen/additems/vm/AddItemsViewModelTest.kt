@@ -7,6 +7,7 @@ import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import assertk.assertions.prop
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,6 +28,7 @@ import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
@@ -38,7 +40,6 @@ internal class AddItemsViewModelTest {
     private val mockNameSuggestionRepository = mockk<NameSuggestionRepository>(relaxUnitFun = true)
     private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
     private val mockShoppingItemRepository = mockk<ShoppingItemRepository>(relaxUnitFun = true)
-
 
     @Test
     @DisplayName(
@@ -59,7 +60,9 @@ internal class AddItemsViewModelTest {
             skipItems(1)
 
             viewModel.searchTermTextFieldState.setTextAndPlaceCursorAtEnd(searchTerm)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(suggestion), toastMessage = null))
+
+            val expectedViewState = ViewState(suggestions = persistentListOf(suggestion), toastMessage = null, navigationTarget = null)
+            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
         }
@@ -83,9 +86,9 @@ internal class AddItemsViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList(name))
+            viewModel.dispatch(UiEvent.OnItemAddedToList(name))
             val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
-            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
@@ -112,7 +115,7 @@ internal class AddItemsViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.ItemAddedToList(""))
+            viewModel.dispatch(UiEvent.OnItemAddedToList(""))
             expectNoEvents()
         }
 
@@ -139,9 +142,9 @@ internal class AddItemsViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
+            viewModel.dispatch(UiEvent.OnSuggestionDeleted(suggestion))
             val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf("Milk"))
-            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage)
+            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage, navigationTarget = null)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
@@ -169,23 +172,71 @@ internal class AddItemsViewModelTest {
         viewModel.viewState.test {
             skipItems(1)
 
-            viewModel.onUiEvent(UiEvent.SuggestionDeleted(suggestion))
+            viewModel.dispatch(UiEvent.OnSuggestionDeleted(suggestion))
             assertThat(awaitItem()).prop(ViewState::toastMessage).isNotNull()
 
-            viewModel.onUiEvent(UiEvent.ToastShown)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(), toastMessage = null))
+            viewModel.dispatch(UiEvent.OnToastShown)
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(), toastMessage = null, navigationTarget = null))
 
             cancelAndConsumeRemainingEvents()
         }
     }
 
-    private fun TestScope.createViewModel(currentSearchTermValue: String = "") =
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnBackClicked` UI event
+        Then expect navigation target to be set to `BackToListDetails`
+    """
+    )
+    fun onBackClicked() = runTest {
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
+
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            skipItems(1)
+
+            viewModel.dispatch(UiEvent.OnBackClicked)
+            assertThat(awaitItem().navigationTarget).isEqualTo(NavigationTarget.BackToListDetails)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling an `OnNavigationConsumed` UI event
+        Then expect navigation target to be set to `null`
+    """
+    )
+    fun onNavigationConsumed() = runTest {
+        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
+        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
+
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            skipItems(1)
+
+            viewModel.dispatch(UiEvent.OnBackClicked)
+            assertThat(awaitItem().navigationTarget).isEqualTo(NavigationTarget.BackToListDetails)
+
+            viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            assertThat(awaitItem().navigationTarget).isNull()
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    context(scope: TestScope)
+    private fun createViewModel(currentSearchTermValue: String = "") =
         AddItemsViewModel(
             shoppingListId = DEFAULT_SHOPPING_LIST_ID,
             nameSuggestionRepository = mockNameSuggestionRepository,
             shoppingItemRepository = mockShoppingItemRepository,
             shoppingListRepository = mockShoppingListRepository,
-            coroutineScope = CoroutineScope(coroutineContext + SupervisorJob())
+            coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob())
         ).apply {
             searchTermTextFieldState.setTextAndPlaceCursorAtEnd(currentSearchTermValue)
         }

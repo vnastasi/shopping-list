@@ -49,15 +49,15 @@ class CompleteShoppingListFlowTest {
         .around(disableAnimationsRule())
 
     @Test
-    fun completeShoppingList() {
-        overviewScreen(composeRule) {
+    fun completeShoppingList(): Unit = with(composeRule) {
+        overviewScreen {
             hasNoEmptyOverviewMessage()
             hasShoppingListCard("Groceries", 5, 0)
             hasShoppingListCard("Gardening", 2, 0)
             clickOnShoppingListCard("Groceries")
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             hasToolbarName("Groceries")
             hasUncheckedItem("Bread")
             hasUncheckedItem("Milk")
@@ -77,13 +77,13 @@ class CompleteShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasShoppingListCard("Groceries", 5, 5)
             hasShoppingListCard("Gardening", 2, 0)
             clickOnShoppingListCard("Gardening")
         }
 
-        listDetailsScreen(composeRule) {
+        listDetailsScreen {
             hasToolbarName("Gardening")
             hasUncheckedItem("Rake")
             hasUncheckedItem("Soil")
@@ -92,7 +92,7 @@ class CompleteShoppingListFlowTest {
             navigateBack()
         }
 
-        overviewScreen(composeRule) {
+        overviewScreen {
             hasShoppingListCard("Groceries", 5, 5)
             hasShoppingListCard("Gardening", 2, 2)
         }

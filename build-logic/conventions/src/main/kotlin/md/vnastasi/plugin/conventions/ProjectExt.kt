@@ -1,6 +1,5 @@
 package md.vnastasi.plugin.conventions
 
-import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.TestedExtension
@@ -23,7 +22,8 @@ internal fun Project.configureKotlin() {
     }
 }
 
-internal fun CommonExtension.configureAndroid(libs: LibrariesForLibs) {
+context(libs: LibrariesForLibs)
+internal fun CommonExtension.configureAndroid() {
     compileSdk = libs.versions.project.compileSdk.get().toInt()
 
     defaultConfig.apply {
@@ -65,7 +65,7 @@ internal fun Project.configureSimpleLibrary() {
     pluginManager.apply(libs.plugins.android.cacheFix)
 
     extensions.configure<LibraryExtension> {
-        configureAndroid(libs)
+        with(libs) { configureAndroid() }
         enableTestFixtures()
     }
 
@@ -87,26 +87,6 @@ internal fun Project.configureComposeLibrary() {
     extensions.configure<LibraryExtension> {
         configureCompose()
     }
-}
-
-internal fun Project.configureComposeScreenLibrary() {
-    configureComposeLibrary()
-    configureTestableLibrary()
-}
-
-internal fun Project.configureApplication() {
-    pluginManager.apply(libs.plugins.gradle.dependencies)
-    pluginManager.apply(libs.plugins.android.application)
-    pluginManager.apply(libs.plugins.android.cacheFix)
-    pluginManager.apply(libs.plugins.compose.compiler)
-
-    extensions.configure<ApplicationExtension> {
-        configureAndroid(libs)
-        configureUnitTests()
-        configureCompose()
-    }
-
-    configureKotlin()
 }
 
 @Suppress("UnstableApiUsage")

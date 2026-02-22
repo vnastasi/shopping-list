@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
@@ -31,17 +32,16 @@ class ManageListViewModel @AssistedInject constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), ManageListViewModelSpec {
 
-    private val _shoppingListName = MutableStateFlow("")
     private val _validationError = MutableStateFlow(TextValidationError.NONE)
     private val _isSaveEnabled = MutableStateFlow(false)
-
-
+    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
 
     override val listNameTextFieldState: TextFieldState = TextFieldState()
 
     override val viewState: StateFlow<ViewState> = combine(
         flow = _validationError,
         flow2 = _isSaveEnabled,
+        flow3 = _navigationTarget,
         transform = ::ViewState
     ).stateIn(
         scope = viewModelScope,
@@ -59,14 +59,13 @@ class ManageListViewModel @AssistedInject constructor(
 
     override fun dispatch(event: UiEvent) {
         when (event) {
-            is UiEvent.OnNameChange -> handleNameChange(event.name)
-            is UiEvent.OnSaveList -> handleListSave(event.name)
+            is UiEvent.OnNameChanged -> onNameChanged(event.name)
+            is UiEvent.OnNameSaved -> onNameSaved(event.name)
+            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
-    private fun handleNameChange(name: String) {
-        _shoppingListName.update { name }
-
+    private fun onNameChanged(name: String) {
         val textValidationError = when {
             name.isEmpty() -> TextValidationError.EMPTY
             name.isBlank() -> TextValidationError.BLANK
@@ -77,7 +76,7 @@ class ManageListViewModel @AssistedInject constructor(
         _isSaveEnabled.update { textValidationError == TextValidationError.NONE }
     }
 
-    private fun handleListSave(name: String) {
+    private fun onNameSaved(name: String) {
         viewModelScope.launch {
             if (shoppingListId != null) {
                 val shoppingList = repository.findById(shoppingListId).first()
@@ -85,7 +84,13 @@ class ManageListViewModel @AssistedInject constructor(
             } else {
                 repository.create(ShoppingList(name = name))
             }
+
+            _navigationTarget.update { NavigationTarget.CloseSheet }
         }
+    }
+
+    private fun onNavigationConsumed() {
+        _navigationTarget.update { null }
     }
 
     @AssistedFactory

@@ -8,14 +8,13 @@ import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
 
 class StubManageListViewModel(
-    private val expectedViewState: ViewState,
+    expectedViewState: ViewState,
     expectedListName: String
 ) : ManageListViewModelSpec {
 
     override val listNameTextFieldState: TextFieldState = TextFieldState(expectedListName)
 
-    override val viewState: StateFlow<ViewState>
-        get() = MutableStateFlow(expectedViewState)
+    override val viewState: StateFlow<ViewState> = MutableStateFlow(expectedViewState)
 
     override fun dispatch(event: UiEvent) = Unit
 }

@@ -1,12 +1,23 @@
 package md.vnastasi.shoppinglist.screen.additems.model
 
+import androidx.compose.runtime.Immutable
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 
+@Immutable
 sealed interface UiEvent {
 
-    data class ItemAddedToList(val name: String) : UiEvent
+    @Immutable
+    data object OnBackClicked : UiEvent
 
-    data class SuggestionDeleted(val suggestion: NameSuggestion) : UiEvent
+    @Immutable
+    data class OnItemAddedToList(val name: String) : UiEvent
 
-    data object ToastShown : UiEvent
+    @Immutable
+    data class OnSuggestionDeleted(val suggestion: NameSuggestion) : UiEvent
+
+    @Immutable
+    data object OnToastShown : UiEvent
+
+    @Immutable
+    data object OnNavigationConsumed : UiEvent
 }
