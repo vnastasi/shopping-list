@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("compose-library.conventions")
-//    alias(libs.plugins.hilt)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
@@ -14,6 +14,8 @@ android {
 dependencies {
     compileOnly(project(":support:annotation"))
 
+    api(platform(libs.compose.bom))
+    api(platform(libs.coroutines.bom))
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)

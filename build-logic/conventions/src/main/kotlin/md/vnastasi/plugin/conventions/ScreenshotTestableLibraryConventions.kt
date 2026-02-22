@@ -1,6 +1,6 @@
 package md.vnastasi.plugin.conventions
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import md.vnastasi.plugin.support.applyAndConfigure
 import md.vnastasi.plugin.support.libs
 import org.gradle.api.Plugin
