@@ -10,5 +10,5 @@ class StubListDetailsViewModelSpec(stubViewState: ViewState) : ListDetailsViewMo
 
     override val viewState: StateFlow<ViewState> = MutableStateFlow(stubViewState)
 
-    override fun onUiEvent(event: UiEvent) = Unit
+    override fun dispatch(event: UiEvent) = Unit
 }

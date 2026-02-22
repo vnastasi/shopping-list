@@ -28,9 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -44,6 +43,7 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
@@ -61,22 +61,34 @@ fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
     navigator: ListDetailsScreenNavigator
 ) {
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewState.navigationTarget) {
+        when (val localNavigationTarget = viewState.navigationTarget) {
+            is NavigationTarget.AddItems -> {
+                navigator.toAddItems(localNavigationTarget.shoppingListId)
+                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            }
+
+            is NavigationTarget.BackToOverview -> {
+                navigator.backToOverview()
+                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+            }
+
+            null -> Unit
+        }
+    }
+
     ListDetailsScreen(
-        viewState = viewModel.viewState.collectAsStateWithLifecycle(),
-        onNavigateUp = navigator::backToOverview,
-        onItemClicked = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemClicked(shoppingItem)) },
-        onItemDeleted = { shoppingItem -> viewModel.onUiEvent(UiEvent.ShoppingItemDeleted(shoppingItem)) },
-        onAddNewItems = navigator::toAddItems
+        viewState = viewState,
+        dispatchEvent = viewModel::dispatch,
     )
 }
 
 @Composable
 private fun ListDetailsScreen(
-    viewState: State<ViewState>,
-    onNavigateUp: () -> Unit,
-    onItemClicked: (ShoppingItem) -> Unit,
-    onItemDeleted: (ShoppingItem) -> Unit,
-    onAddNewItems: (Long) -> Unit
+    viewState: ViewState,
+    dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -88,20 +100,20 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = viewState.value.getShoppingListNameOrNull(),
-                onNavigateUp = onNavigateUp
+                title = viewState.getShoppingListNameOrNull(),
+                onNavigateUp = { dispatchEvent(UiEvent.OnBackClicked) }
             )
         },
         floatingActionButton = {
-            val shoppingListId = viewState.value.getShoppingListIdOrNull()
+            val shoppingListId = viewState.getShoppingListIdOrNull()
             if (shoppingListId != null) {
                 AddItemsFloatingActionButton(
-                    onClick = { onAddNewItems(shoppingListId) }
+                    onClick = { dispatchEvent(UiEvent.OnAddItemsClicked) }
                 )
             }
         }
     ) { contentPaddings ->
-        when (val localViewState = viewState.value) {
+        when (viewState) {
             is ViewState.Loading -> {
                 AnimatedMessageContent(
                     contentPaddings = contentPaddings,
@@ -121,9 +133,8 @@ private fun ListDetailsScreen(
             is ViewState.Ready -> {
                 ListDetailsContent(
                     contentPaddings = contentPaddings,
-                    listOfShoppingItems = localViewState.listOfShoppingItems,
-                    onItemClick = onItemClicked,
-                    onItemDelete = onItemDeleted
+                    listOfShoppingItems = viewState.listOfShoppingItems,
+                    dispatchEvent = dispatchEvent
                 )
             }
         }
@@ -219,16 +230,14 @@ private fun ListDetailsScreenPreview() {
     val viewState = ViewState.Ready(
         shoppingListId = 1L,
         shoppingListName = "My list",
-        listOfShoppingItems = listOfShoppingItems
+        listOfShoppingItems = listOfShoppingItems,
+        navigationTarget = null
     )
 
     AppTheme {
         ListDetailsScreen(
-            viewState = remember { mutableStateOf(viewState) },
-            onNavigateUp = { },
-            onItemClicked = { },
-            onItemDeleted = { },
-            onAddNewItems = { }
+            viewState = viewState,
+            dispatchEvent = { }
         )
     }
 }

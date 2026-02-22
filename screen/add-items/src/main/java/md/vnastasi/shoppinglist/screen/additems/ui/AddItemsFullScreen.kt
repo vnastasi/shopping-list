@@ -41,8 +41,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -61,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.BACK_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
@@ -72,11 +71,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @Composable
 internal fun AddItemsFullScreen(
     searchTermTextFieldState: TextFieldState,
-    viewState: State<ViewState>,
-    onNavigateUp: () -> Unit,
-    onItemAddedToList: (String) -> Unit,
-    onSuggestionDeleted: (NameSuggestion) -> Unit,
-    onToastShown: () -> Unit
+    viewState: ViewState,
+    dispatchEvent: (UiEvent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -92,8 +88,8 @@ internal fun AddItemsFullScreen(
                 AddItemsTopAppBar(
                     scrollBehavior = scrollBehavior,
                     searchTermTextFieldState = searchTermTextFieldState,
-                    onItemAddedToList = onItemAddedToList,
-                    onNavigateUp = onNavigateUp
+                    onItemAddedToList = { dispatchEvent(UiEvent.OnItemAddedToList(it)) },
+                    onNavigateUp = { dispatchEvent(UiEvent.OnBackClicked) }
                 )
             }
         }
@@ -111,7 +107,7 @@ internal fun AddItemsFullScreen(
             )
         ) {
             itemsIndexed(
-                items = viewState.value.suggestions,
+                items = viewState.suggestions,
                 key = { _, suggestion -> suggestion.id }
             ) { index, suggestion ->
                 SuggestionRow(
@@ -119,22 +115,18 @@ internal fun AddItemsFullScreen(
                         .animateItem()
                         .testTag(TestTags.SUGGESTIONS_ITEM),
                     suggestion = suggestion,
-                    isLastItemInList = index == viewState.value.suggestions.size - 1,
+                    isLastItemInList = index == viewState.suggestions.size - 1,
                     isDeletable = suggestion.id != -1L,
-                    onClick = {
-                        onItemAddedToList(suggestion.name)
-                    },
-                    onDelete = {
-                        onSuggestionDeleted(suggestion)
-                    }
+                    onClick = { dispatchEvent(UiEvent.OnItemAddedToList(suggestion.name)) },
+                    onDelete = { dispatchEvent(UiEvent.OnSuggestionDeleted(suggestion)) }
                 )
             }
         }
     }
 
     Toast(
-        message = viewState.value.toastMessage,
-        onToastShown = onToastShown
+        message = viewState.toastMessage,
+        onToastShown = { dispatchEvent(UiEvent.OnToastShown) }
     )
 }
 
@@ -251,17 +243,15 @@ private fun AddItemsFullScreenPreview() {
             NameSuggestion(id = 6L, "Item 6"),
             NameSuggestion(id = 7L, "Item 7")
         ),
-        toastMessage = null
+        toastMessage = null,
+        navigationTarget = null
     )
 
     AppTheme {
         AddItemsFullScreen(
             searchTermTextFieldState = rememberTextFieldState(),
-            viewState = remember { mutableStateOf(viewState) },
-            onNavigateUp = { },
-            onItemAddedToList = { },
-            onSuggestionDeleted = { },
-            onToastShown = { }
+            viewState = viewState,
+            dispatchEvent = { }
         )
     }
 }

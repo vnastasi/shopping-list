@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -29,10 +30,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingListDetails>,
-    onEdit: (ShoppingListDetails) -> Unit,
-    onDelete: (ShoppingListDetails) -> Unit,
-    onClick: (ShoppingListDetails) -> Unit,
-    onReorder: (List<ShoppingListDetails>) -> Unit
+    dispatchEvent: (UiEvent) -> Unit
 ) {
     val reorderableList = remember(list) { list.toMutableStateList() }
     val lazyListState = rememberLazyListState()
@@ -65,10 +63,10 @@ internal fun OverviewContent(
                         .animateItem()
                         .testTag(SHOPPING_LISTS_ITEM),
                     item = shoppingList,
-                    onEditItem = onEdit,
-                    onClickItem = onClick,
-                    onDeleteItem = onDelete,
-                    onItemDragCompleted = { onReorder(reorderableList) }
+                    onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingList)) },
+                    onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingList)) },
+                    onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingList)) },
+                    onReorderItem = { dispatchEvent(UiEvent.OnShoppingListsReordered(reorderableList)) }
                 )
             }
         }
@@ -101,10 +99,7 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         OverviewContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
             list = list,
-            onEdit = { },
-            onDelete = { },
-            onClick = { },
-            onReorder = { }
+            dispatchEvent = { }
         )
     }
 }

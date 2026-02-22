@@ -8,5 +8,5 @@ interface ListDetailsViewModelSpec {
 
     val viewState: StateFlow<ViewState>
 
-    fun onUiEvent(event: UiEvent)
+    fun dispatch(event: UiEvent)
 }

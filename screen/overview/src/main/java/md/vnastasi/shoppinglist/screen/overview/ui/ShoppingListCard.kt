@@ -69,10 +69,10 @@ private enum class SwipeToRevealState {
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
-    onClickItem: (ShoppingListDetails) -> Unit = { },
-    onEditItem: (ShoppingListDetails) -> Unit = { },
-    onDeleteItem: (ShoppingListDetails) -> Unit = { },
-    onItemDragCompleted: () -> Unit = { }
+    onClickItem: () -> Unit = { },
+    onEditItem: () -> Unit = { },
+    onDeleteItem: () -> Unit = { },
+    onReorderItem: () -> Unit = { }
 ) {
     val density = LocalDensity.current
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
@@ -128,7 +128,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .clickable { onClickItem.invoke(item) }
+                        .clickable { onClickItem() }
                         .padding(AppDimensions.paddingSmall),
                     horizontalArrangement = Arrangement.Start
                 ) {
@@ -169,7 +169,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
 
                     IconButton(
                         modifier = Modifier.draggableHandle(
-                            onDragStopped = onItemDragCompleted,
+                            onDragStopped = onReorderItem,
                         ),
                         onClick = { }
                     ) {
@@ -208,7 +208,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                     modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_EDIT),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-                    onClick = { onEditItem.invoke(item) }
+                    onClick = { onEditItem() }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
@@ -227,7 +227,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                     modifier = Modifier.testTag(SHOPPING_LISTS_ITEM_DELETE),
                     shape = MaterialTheme.shapes.medium,
                     colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    onClick = { onDeleteItem.invoke(item) }
+                    onClick = { onDeleteItem() }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,

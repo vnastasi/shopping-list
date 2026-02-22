@@ -29,8 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.BACK_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
@@ -63,10 +62,8 @@ private const val MIN_HEIGHT = 640
 @Composable
 internal fun AddItemsDialog(
     searchTermTextFieldState: TextFieldState,
-    viewState: State<ViewState>,
-    onItemAddedToList: (String) -> Unit,
-    onSuggestionDeleted: (NameSuggestion) -> Unit,
-    onDone: () -> Unit,
+    viewState: ViewState,
+    dispatchEvent: (UiEvent) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -107,7 +104,7 @@ internal fun AddItemsDialog(
                 lineLimits = TextFieldLineLimits.SingleLine,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 onKeyboardAction = KeyboardActionHandler {
-                    onItemAddedToList.invoke(searchTermTextFieldState.text.toString())
+                    dispatchEvent(UiEvent.OnItemAddedToList(searchTermTextFieldState.text.toString()))
                     searchTermTextFieldState.clearText()
                 }
             )
@@ -121,7 +118,7 @@ internal fun AddItemsDialog(
                     .testTag(SUGGESTIONS_LIST)
             ) {
                 itemsIndexed(
-                    items = viewState.value.suggestions,
+                    items = viewState.suggestions,
                     key = { _, suggestion -> suggestion.id }
                 ) { index, suggestion ->
                     SuggestionRow(
@@ -129,10 +126,10 @@ internal fun AddItemsDialog(
                             .animateItem()
                             .testTag(SUGGESTIONS_ITEM),
                         suggestion = suggestion,
-                        isLastItemInList = index == viewState.value.suggestions.size - 1,
+                        isLastItemInList = index == viewState.suggestions.size - 1,
                         isDeletable = suggestion.id != -1L,
-                        onClick = { onItemAddedToList(suggestion.name) },
-                        onDelete = { onSuggestionDeleted(suggestion) }
+                        onClick = { dispatchEvent(UiEvent.OnItemAddedToList(suggestion.name)) },
+                        onDelete = { dispatchEvent(UiEvent.OnSuggestionDeleted(suggestion)) }
                     )
                 }
             }
@@ -147,7 +144,7 @@ internal fun AddItemsDialog(
                     modifier = Modifier
                         .padding(AppDimensions.paddingMedium)
                         .testTag(BACK_BUTTON),
-                    onClick = onDone
+                    onClick = { dispatchEvent(UiEvent.OnBackClicked) }
                 ) {
                     Text(
                         text = "Done"
@@ -191,7 +188,8 @@ private fun AddItemsDialogPreview() {
             NameSuggestion(id = 6L, "Item 6"),
             NameSuggestion(id = 7L, "Item 7")
         ),
-        toastMessage = null
+        toastMessage = null,
+        navigationTarget = null
     )
 
     AppTheme {
@@ -200,10 +198,8 @@ private fun AddItemsDialogPreview() {
         ) {
             AddItemsDialog(
                 searchTermTextFieldState = rememberTextFieldState(),
-                viewState = remember { mutableStateOf(viewState) },
-                onDone = { },
-                onItemAddedToList = { },
-                onSuggestionDeleted = { },
+                viewState = viewState,
+                dispatchEvent = { }
             )
         }
     }
