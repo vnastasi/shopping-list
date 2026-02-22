@@ -1,5 +1,6 @@
-package md.vnastasi.shoppinglist.screen.listdetails.ui
+package md.vnastasi.shoppinglist.screen.additems.ui
 
+import androidx.compose.runtime.CompositionLocalProvider
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
@@ -7,8 +8,10 @@ import com.android.resources.Density
 import com.android.resources.NightMode
 import com.android.resources.ScreenOrientation
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
-import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import md.vnastasi.shoppinglist.domain.model.NameSuggestion
+import md.vnastasi.shoppinglist.screen.additems.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.content.LocalPresentationMode
+import md.vnastasi.shoppinglist.screen.shared.content.PresentationMode
 import md.vnastasi.shoppinglist.support.collection.displayName
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import org.junit.Rule
@@ -18,7 +21,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class ListDetailsScreenshotTest(
+class AddItemsFullScreenScreenshotTest(
     private val config: DeviceConfig,
 ) {
 
@@ -31,50 +34,40 @@ class ListDetailsScreenshotTest(
     )
 
     @Test
-    fun loading() {
-        snapshotFor(ViewState.Loading)
-    }
-
-    @Test
     fun empty() {
-        val viewState = ViewState.Ready(
-            shoppingListId = 1L,
-            shoppingListName = "Test list",
-            listOfShoppingItems = persistentListOf(),
+        val viewState = ViewState(
+            suggestions = persistentListOf(),
+            toastMessage = null,
             navigationTarget = null
         )
-        snapshotFor(viewState)
+        val searchTermValue = ""
+        snapshotFor(viewState, searchTermValue)
     }
 
     @Test
-    fun nonEmpty() {
-        val viewState = ViewState.Ready(
-            shoppingListId = 1L,
-            shoppingListName = "Test list",
-            listOfShoppingItems = persistentListOf(
-                createShoppingItem {
-                    id = 1L
-                    name = "Item 1"
-                    isChecked = false
-                },
-                createShoppingItem {
-                    id = 2L
-                    name = "Item 2"
-                    isChecked = true
-                }
+    fun suggestionsAvailable() {
+        val viewState = ViewState(
+            suggestions = persistentListOf(
+                NameSuggestion(id = 1L, name = "Suggestion 1"),
+                NameSuggestion(id = 2L, name = "Suggestion 2"),
+                NameSuggestion(id = 3L, name = "Suggestion 3")
             ),
+            toastMessage = null,
             navigationTarget = null
         )
-        snapshotFor(viewState)
+        val searchTermValue = "Suggest"
+        snapshotFor(viewState, searchTermValue)
     }
 
-    fun snapshotFor(viewState: ViewState) {
+    fun snapshotFor(viewState: ViewState, searchTermValue: String) {
         paparazzi.snapshot(config.displayName) {
             AppTheme {
-                ListDetailsScreen(
-                    viewModel = StubListDetailsViewModelSpec(viewState),
-                    navigator = StubListDetailsScreenNavigator()
-                )
+                CompositionLocalProvider(LocalPresentationMode provides PresentationMode.FullScreen) {
+                    AddItemsScreen(
+                        viewModel = StubAddItemsViewModelSpec(viewState = viewState, searchTermValue = searchTermValue),
+                        navigator = StubAddItemsScreenNavigator()
+                    )
+                }
             }
         }
     }
@@ -109,33 +102,6 @@ class ListDetailsScreenshotTest(
                 density = Density.MEDIUM
             ),
             DeviceConfig.PIXEL_9.copy(
-                orientation = ScreenOrientation.LANDSCAPE,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NIGHT,
-                softButtons = false,
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-                fontScale = 2.0f
-            ),
-            DeviceConfig.PIXEL_C.copy(
-                orientation = ScreenOrientation.PORTRAIT,
-                nightMode = NightMode.NOTNIGHT,
-                softButtons = false,
-                density = Density.MEDIUM
-            ),
-            DeviceConfig.PIXEL_C.copy(
                 orientation = ScreenOrientation.LANDSCAPE,
                 nightMode = NightMode.NOTNIGHT,
                 softButtons = false,
