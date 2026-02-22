@@ -16,5 +16,5 @@ class StubAddItemsViewModelSpec(
 
     override val viewState: StateFlow<ViewState> = MutableStateFlow(viewState)
 
-    override fun onUiEvent(uiEvent: UiEvent) = Unit
+    override fun dispatch(uiEvent: UiEvent) = Unit
 }

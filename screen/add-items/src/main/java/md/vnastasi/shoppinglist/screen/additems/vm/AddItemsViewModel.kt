@@ -28,6 +28,7 @@ import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
@@ -48,33 +49,40 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     private val _toastMessage = MutableStateFlow<ToastMessage?>(null)
 
+    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
+
     override val searchTermTextFieldState: TextFieldState = TextFieldState(initialText = "")
 
     override val viewState: StateFlow<ViewState> = combine(
         flow = _triggerCounter,
         flow2 = _suggestions,
         flow3 = _toastMessage,
-        transform = { _, suggestions, toastMessage -> createViewState(suggestions, toastMessage) }
+        flow4 = _navigationTarget,
+        transform = { _, suggestions, toastMessage, navigationTarget -> createViewState(suggestions, toastMessage, navigationTarget) }
     ).stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
         initialValue = ViewState.init()
     )
 
-    override fun onUiEvent(uiEvent: UiEvent) {
+    override fun dispatch(uiEvent: UiEvent) {
         when (uiEvent) {
-            is UiEvent.ItemAddedToList -> onItemAddedToList(uiEvent.name)
-            is UiEvent.SuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
-            is UiEvent.ToastShown -> onToastShown()
+            is UiEvent.OnItemAddedToList -> onItemAddedToList(uiEvent.name)
+            is UiEvent.OnSuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
+            is UiEvent.OnToastShown -> onToastShown()
+            is UiEvent.OnBackClicked -> onBackClicked()
+            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
     private fun createViewState(
         suggestions: List<NameSuggestion>,
-        toastMessage: ToastMessage?
+        toastMessage: ToastMessage?,
+        navigationTarget: NavigationTarget?
     ): ViewState = ViewState(
         suggestions = suggestions.toImmutableList(),
-        toastMessage = toastMessage
+        toastMessage = toastMessage,
+        navigationTarget = navigationTarget
     )
 
     private fun onItemAddedToList(name: String) {
@@ -111,6 +119,14 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     private fun onToastShown() {
         _toastMessage.update { null }
+    }
+
+    private fun onBackClicked() {
+        _navigationTarget.update { NavigationTarget.BackToListDetails }
+    }
+
+    private fun onNavigationConsumed() {
+        _navigationTarget.update { null }
     }
 
     @AssistedFactory

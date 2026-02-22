@@ -11,5 +11,5 @@ interface AddItemsViewModelSpec {
 
     val viewState: StateFlow<ViewState>
 
-    fun onUiEvent(uiEvent: UiEvent)
+    fun dispatch(uiEvent: UiEvent)
 }

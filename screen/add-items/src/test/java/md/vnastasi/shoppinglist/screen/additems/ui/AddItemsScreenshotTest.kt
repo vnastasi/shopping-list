@@ -117,7 +117,8 @@ class AddItemsScreenshotTest(
         private fun viewStates(): Sequence<ViewState> = sequenceOf(
             ViewState(
                 suggestions = persistentListOf(),
-                toastMessage = null
+                toastMessage = null,
+                navigationTarget = null
             ),
             ViewState(
                 suggestions = persistentListOf(
@@ -125,7 +126,8 @@ class AddItemsScreenshotTest(
                     NameSuggestion(id = 2L, name = "Suggestion 2"),
                     NameSuggestion(id = 3L, name = "Suggestion 3")
                 ),
-                toastMessage = null
+                toastMessage = null,
+                navigationTarget = null
             )
         )
 
