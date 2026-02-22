@@ -14,7 +14,6 @@ class ApplicationConventions : Plugin<Project> {
         pluginManager.apply(libs.plugins.gradle.dependencies)
         pluginManager.apply(libs.plugins.android.application)
         pluginManager.apply(libs.plugins.android.cacheFix)
-        pluginManager.apply(libs.plugins.kotlin.android)
         pluginManager.apply(libs.plugins.compose.compiler)
 
         extensions.configure<ApplicationExtension> {
