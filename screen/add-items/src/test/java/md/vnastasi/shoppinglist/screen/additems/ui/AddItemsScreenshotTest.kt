@@ -32,7 +32,7 @@ class AddItemsScreenshotTest(
         showSystemUi = false,
         renderingMode = SessionParams.RenderingMode.NORMAL,
         validateAccessibility = true,
-        maxPercentDifference = 1.0
+        maxPercentDifference = 0.01
     )
 
     @Test

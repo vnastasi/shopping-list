@@ -30,7 +30,7 @@ class ManageListSheetScreenshotTest(
         showSystemUi = false,
         renderingMode = SessionParams.RenderingMode.NORMAL,
         validateAccessibility = false,
-        maxPercentDifference = 1.0
+        maxPercentDifference = 0.01
     )
 
     @Test
