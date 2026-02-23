@@ -8,7 +8,7 @@ project-targetSdk = "36"
 project-version-code = "23"
 project-version-name = "0.6.0"
 
-activity = "1.12.3"
+activity = "1.12.4"
 android-cache-fix = "3.0.3"
 android-tools = "9.0.1"
 androidx-annotation = "1.9.1"
