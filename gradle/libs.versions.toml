@@ -10,7 +10,7 @@ project-version-name = "0.6.0"
 
 activity = "1.12.3"
 android-cache-fix = "3.0.3"
-android-tools = "9.0.0"
+android-tools = "9.0.1"
 androidx-annotation = "1.9.1"
 assertk = "0.28.1"
 collections-immutable = "0.4.0"
