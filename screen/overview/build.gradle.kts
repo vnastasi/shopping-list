@@ -6,10 +6,12 @@ plugins {
     id("screenshot-testable-library.conventions")
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.screenshot)
 }
 
 android {
     namespace = "md.vnastasi.shoppinglist.screen.overview"
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -67,6 +69,9 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.vintage.engine)
+
+    screenshotTestImplementation(libs.compose.tooling)
+    screenshotTestImplementation(libs.compose.screenshot.validation)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

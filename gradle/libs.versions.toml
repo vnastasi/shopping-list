@@ -15,6 +15,7 @@ androidx-annotation = "1.9.1"
 assertk = "0.28.1"
 collections-immutable = "0.4.0"
 compose-bom = "2026.02.01"
+compose-screenshot = "0.0.1-alpha13"
 coroutines = "1.10.2"
 dagger = "2.59.2"
 detekt = "1.23.8"
@@ -68,6 +69,7 @@ compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation" }
 compose-runtime-saveable = { module = "androidx.compose.runtime:runtime-saveable" }
+compose-screenshot-validation = { module = "com.android.tools.screenshot:screenshot-validation-api", version.ref = "compose-screenshot" }
 compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -126,6 +128,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-test = { module = "androidx.room:room-testing", version.ref = "room" }
 
+
 serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization" }
 
 sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
@@ -154,6 +157,7 @@ android-application = { id = "com.android.application", version.ref = "android-t
 android-cacheFix = { id = "org.gradle.android.cache-fix", version.ref = "android-cache-fix" }
 android-library = { id = "com.android.library", version.ref = "android-tools" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-screenshot = { id = "com.android.compose.screenshot", version.ref = "compose-screenshot" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 gradle-dependencies = { id = "com.autonomousapps.dependency-analysis", version.ref = "gradle-dependencies" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
