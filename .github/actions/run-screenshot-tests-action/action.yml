@@ -10,7 +10,6 @@ runs:
   steps:
     - id: run-screenshot-tests
       name: "Run screenshot tests"
-      uses: ./.github/actions/run-screenshot-tests-action
       shell: bash
       run: |
         ./gradlew validateDebugScreenshotTest
