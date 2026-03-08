@@ -11,14 +11,6 @@ plugins {
 android {
     namespace = "md.vnastasi.shoppinglist.screen.additems"
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
-
-    testOptions {
-        unitTests {
-            all {
-                it.jvmArgs("-Xmx4096m")
-            }
-        }
-    }
 }
 
 screenshotTests {

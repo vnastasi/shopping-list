@@ -45,7 +45,7 @@ runs:
       if: ${{ inputs.exec-data-cache-key != '' }}
       uses: actions/upload-artifact@v4
       with:
-        name: "unit-tests-exec-data-${{ github.event.pull_request.number }}"
+        name: ${{ inputs.exec-data-cache-key }}
         path: ${{ github.workspace }}/build/exec-data/screenshot-tests
         if-no-files-found: error
         retention-days: 14
