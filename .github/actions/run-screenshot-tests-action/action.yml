@@ -36,3 +36,13 @@ runs:
         if-no-files-found: error
         retention-days: 14
         overwrite: true
+
+    - name: "Archive screenshot diff images"
+      if: ${{ inputs.exec-data-cache-key != '' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: "unit-tests-exec-data-${{ github.event.pull_request.number }}"
+        path: ${{ github.workspace }}/**/build/screenshotTest-results/preview/debug/diffs
+        if-no-files-found: ignore
+        retention-days: 14
+        overwrite: true
