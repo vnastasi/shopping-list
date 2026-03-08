@@ -21,9 +21,10 @@ runs:
       with:
         name: "screenshot-diff-images-${{ github.event.pull_request.number }}"
         path: |
+          ${{ github.workspace }}/**/src/screenshotTestDebug/reference
           ${{ github.workspace }}/**/build/outputs/screenshotTest-results/preview/debug/rendered
           ${{ github.workspace }}/**/build/outputs/screenshotTest-results/preview/debug/diffs
-        if-no-files-found: ignore
+        if-no-files-found: warn
         retention-days: 14
         overwrite: true
 
