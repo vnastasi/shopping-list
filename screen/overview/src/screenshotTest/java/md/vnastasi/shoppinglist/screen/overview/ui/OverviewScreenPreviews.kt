@@ -1,13 +1,26 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
-import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_TYPE_NORMAL
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.Wallpapers
 import com.android.tools.screenshot.PreviewTest
+import kotlinx.collections.immutable.persistentListOf
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun LoadingOverviewScreen() {
+    val viewState = ViewState.Loading
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
 
 @PreviewTest
 @ScreenshotPreviews
@@ -25,42 +38,26 @@ fun EmptyOverviewScreen() {
     }
 }
 
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
-@Preview(
-    name = "Phone",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=portrait"
-)
-@Preview(
-    name = "Phone - Landscape",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=landscape"
-)
-@Preview(
-    name = "Phone - Dark",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=portrait",
-    uiMode = UI_MODE_NIGHT_YES or UI_MODE_TYPE_NORMAL
-)
-@Preview(
-    name = "Phone - 200% font",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=portrait",
-    fontScale = 2.0f
-)
-@Preview(
-    name = "Phone - Green",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=portrait",
-    wallpaper = Wallpapers.GREEN_DOMINATED_EXAMPLE
-)
-@Preview(
-    name = "Phone - Red",
-    device = "spec:width=411dp,height=923dp,dpi=420,orientation=portrait",
-    wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE
-)
-@Preview(
-    name = "Small phone",
-    device = "spec:width=320dp,height=533dp,dpi=240,orientation=portrait",
-)
-@Preview(
-    name = "Tablet",
-    device = "spec:width=1280dp,height=900dp,dpi=420,orientation=landscape",
-)
-annotation class ScreenshotPreviews
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun ReadyOverviewScreen() {
+    val viewState = ViewState.Ready(
+        data = persistentListOf(
+            ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 10L, checkedItems = 2L),
+            ShoppingListDetails(id = 2L, name = "Pharmacy for mom", position = 2L, totalItems = 1L, checkedItems = 1L),
+            ShoppingListDetails(id = 3L, name = "Gamma & Praxis", position = 3L, totalItems = 4L, checkedItems = 0L),
+            ShoppingListDetails(id = 4L, name = "Birthday party shopping list", position = 4L, totalItems = 3L, checkedItems = 3L),
+            ShoppingListDetails(id = 5L, name = "Christmas Eve party", position = 5L, totalItems = 0L, checkedItems = 0L),
+            ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", position = 6L, totalItems = 23L, checkedItems = 5L),
+        ),
+        navigationTarget = null
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
