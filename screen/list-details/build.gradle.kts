@@ -3,13 +3,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("compose-screen-library.conventions")
-    id("screenshot-testable-library.conventions")
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.screenshot)
 }
 
 android {
     namespace = "md.vnastasi.shoppinglist.screen.listdetails"
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+}
+
+screenshotTests {
+    imageDifferenceThreshold = 0.005f
 }
 
 dependencies {
@@ -56,19 +61,22 @@ dependencies {
     ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":domain:api")))
-    testImplementation(testFixtures(project(":screen:shared")))
     testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.kotlin.reflect)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
-    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.kotlin.reflect)
+
+    screenshotTestImplementation(testFixtures(project(":domain:api")))
+    screenshotTestImplementation(testFixtures(project(":screen:shared")))
+    screenshotTestImplementation(libs.compose.screenshot.validation)
+    screenshotTestImplementation(libs.compose.tooling)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

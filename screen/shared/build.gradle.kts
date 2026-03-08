@@ -46,6 +46,8 @@ dependencies {
     debugImplementation(libs.compose.tooling)
 
     debugRuntimeOnly(libs.compose.test.manifest)
+
+    testFixturesCompileOnly(libs.compose.tooling)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

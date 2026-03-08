@@ -4,11 +4,11 @@ plugins {
     alias(libs.plugins.android.library).apply(false)
     alias(libs.plugins.android.application).apply(false)
     alias(libs.plugins.compose.compiler).apply(false)
+    alias(libs.plugins.compose.screenshot).apply(false)
     alias(libs.plugins.hilt).apply(false)
     alias(libs.plugins.kotlin.jvm).apply(false)
     alias(libs.plugins.kotlin.parcelize).apply(false)
     alias(libs.plugins.ksp).apply(false)
-    alias(libs.plugins.paparazzi).apply(false)
     alias(libs.plugins.gradle.dependencies)
     id("code-coverage")
     id("detekt-aggregator")
@@ -33,7 +33,8 @@ dependencyAnalysis {
        all {
            onUnusedDependencies {
                exclude(
-                   "org.jetbrains.kotlin:kotlin-stdlib"
+                   "org.jetbrains.kotlin:kotlin-stdlib",
+                   ":domain:api" // Plugin has issues with screenshotTest configuration and flags test fixtures as not used
                )
               severity("fail")
            }
