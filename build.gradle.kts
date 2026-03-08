@@ -33,7 +33,8 @@ dependencyAnalysis {
        all {
            onUnusedDependencies {
                exclude(
-                   "org.jetbrains.kotlin:kotlin-stdlib"
+                   "org.jetbrains.kotlin:kotlin-stdlib",
+                   ":domain:api" // Plugin has issues with screenshotTest configuration and flags test fixtures as not used
                )
               severity("fail")
            }

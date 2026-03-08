@@ -59,7 +59,6 @@ dependencies {
     ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":domain:api")))
-    testImplementation(testFixtures(project(":screen:shared")))
     testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)

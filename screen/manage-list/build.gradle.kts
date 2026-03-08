@@ -53,18 +53,17 @@ dependencies {
     ksp(libs.bundles.hilt.compiler)
 
     testImplementation(testFixtures(project(":domain:api")))
-    testImplementation(testFixtures(project(":screen:shared")))
     testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.kotlin.reflect)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.kotlin.reflect)
 
     screenshotTestImplementation(testFixtures(project(":screen:shared")))
     screenshotTestImplementation(libs.compose.screenshot.validation)
