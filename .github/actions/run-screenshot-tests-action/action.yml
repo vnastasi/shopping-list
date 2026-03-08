@@ -10,10 +10,21 @@ runs:
   steps:
     - id: run-screenshot-tests
       name: "Run screenshot tests"
+      continue-on-error: true
       shell: bash
       run: |
         ./gradlew validateDebugScreenshotTest
         ./gradlew copyScreenshotTestExecData
+
+    - name: "Archive screenshot diff images"
+      if: failure() && steps.run-screenshot-tests.outcome == 'failure' && steps.inputs.exec-data-cache-key != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: "screenshot-diff-images-${{ github.event.pull_request.number }}"
+        path: ${{ github.workspace }}/**/build/screenshotTest-results/preview/debug/diffs
+        if-no-files-found: ignore
+        retention-days: 14
+        overwrite: true
 
     - name: "Clear any previously cached execution data"
       if: ${{ inputs.exec-data-cache-key != '' }}
@@ -35,15 +46,5 @@ runs:
         name: "unit-tests-exec-data-${{ github.event.pull_request.number }}"
         path: ${{ github.workspace }}/build/exec-data/screenshot-tests
         if-no-files-found: error
-        retention-days: 14
-        overwrite: true
-
-    - name: "Archive screenshot diff images"
-      if: failure() && steps.run-screenshot-tests.outcome == 'failure' && steps.inputs.exec-data-cache-key != ''
-      uses: actions/upload-artifact@v4
-      with:
-        name: "screenshot-diff-images-${{ github.event.pull_request.number }}"
-        path: ${{ github.workspace }}/**/build/screenshotTest-results/preview/debug/diffs
-        if-no-files-found: ignore
         retention-days: 14
         overwrite: true
