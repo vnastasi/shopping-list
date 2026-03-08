@@ -147,7 +147,7 @@ class CodeCoveragePlugin @Inject constructor(
     private fun getAllClassDirs(): List<Provider<FileTree>> = targetProject.subprojects
         .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
         .map { project ->
-            project.layout.buildDirectory.dir("tmp/kotlin-classes/${extension.targetBuildType.get()}").map { directory ->
+            project.layout.buildDirectory.dir("intermediates/built_in_kotlinc/${extension.targetBuildType.get()}").map { directory ->
                 directory.asFileTree.matching {
                     exclude(extension.excludedClasses.get())
                 }
