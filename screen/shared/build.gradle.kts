@@ -47,7 +47,6 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testFixturesCompileOnly(libs.paparazzi)
     testFixturesCompileOnly(libs.compose.tooling)
 }
 

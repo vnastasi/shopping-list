@@ -31,7 +31,6 @@ material-adaptive = "1.3.0-alpha09"
 material-icons = "1.7.8"
 mockk = "1.14.9"
 navigation = "1.0.1"
-paparazzi = "2.0.0-alpha04"
 reorderable = "3.0.0"
 room = "2.8.4"
 serialization = "1.10.0"
@@ -119,8 +118,6 @@ mockk-dsl = { module = "io.mockk:mockk-dsl", version.ref = "mockk" }
 navigation-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation" }
 navigation-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation" }
 
-paparazzi = { module = "app.cash.paparazzi:paparazzi", version.ref = "paparazzi" }
-
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 room-common = { module = "androidx.room:room-common", version.ref = "room" }
@@ -165,7 +162,6 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
 
 
 [bundles]
