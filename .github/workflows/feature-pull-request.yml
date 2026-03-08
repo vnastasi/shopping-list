@@ -20,6 +20,7 @@ env:
   KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
   GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
   UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
+  ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
   IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
   CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
 
@@ -56,6 +57,24 @@ jobs:
         with:
           exec-data-cache-key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
 
+  screenshot-tests:
+    name: "Screenshot tests"
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs:
+      - build
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v5.0.0
+
+      - name: "Set up development tools"
+        uses: ./.github/actions/setup-dev-tools-action
+
+      - name: "Run screenshot tests"
+        uses: ./.github/actions/run-screenshot-tests-action
+        with:
+          exec-data-cache-key: ${{ env.ST_EXEC_DATA_CACHE_KEY }}
+
   instrumented-tests:
     name: "Instrumented tests"
     runs-on: ubuntu-latest
@@ -88,6 +107,7 @@ jobs:
     permissions: write-all
     needs:
       - unit-tests
+      - screenshot-tests
       - instrumented-tests
     steps:
       - name: "Check out repository"
@@ -109,6 +129,13 @@ jobs:
         with:
           path: ${{ github.workspace }}/build/exec-data/unit-tests
           key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
+          fail-on-cache-miss: true
+
+      - name: "Restore screenshot test execution data"
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/build/exec-data/screenshot-tests
+          key: ${{ env.ST_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (phone profile)"
@@ -133,6 +160,7 @@ jobs:
         shell: bash
         run: |
           gh cache delete "${{ env.UT_EXEC_DATA_CACHE_KEY }}"
+          gh cache delete "${{ env.ST_EXEC_DATA_CACHE_KEY }}"
           gh cache delete "${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}"
           gh cache delete "${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}"
 

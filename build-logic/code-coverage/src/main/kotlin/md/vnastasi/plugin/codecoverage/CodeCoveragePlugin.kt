@@ -24,6 +24,7 @@ private const val TASK_GROUP = "verification"
 private const val COVERAGE_REPORT_TASK_NAME = "createCodeCoverageReport"
 private const val COVERAGE_VERIFICATION_TASK_NAME = "verifyCodeCoverage"
 private const val COPY_UNIT_TEST_EXEC_DATA = "copyUnitTestExecData"
+private const val COPY_SCREENSHOT_TEST_EXEC_DATA = "copyScreenshotTestExecData"
 private const val COPY_INSTRUMENTED_TEST_EXEC_DATA = "copyInstrumentedTestExecData"
 
 private const val PROPERTY_AVD_PROFILE = "AVD_PROFILE"
@@ -66,6 +67,15 @@ class CodeCoveragePlugin @Inject constructor(
                     execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage") })
 
                     outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
+                }
+
+                tasks.register<CopyExecData>(COPY_SCREENSHOT_TEST_EXEC_DATA) {
+                    group = TASK_GROUP
+                    description = "Copy execution data for screenshot tests"
+
+                    execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("jacoco") })
+
+                    outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/screenshot-tests"))
                 }
 
                 tasks.register<CopyExecData>(COPY_INSTRUMENTED_TEST_EXEC_DATA) {

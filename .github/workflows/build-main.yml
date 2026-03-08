@@ -34,6 +34,9 @@ jobs:
       - name: "Run unit tests"
         uses: ./.github/actions/run-unit-tests-action
 
+      - name: "Run screenshot tests"
+        uses: ./.github/actions/run-screenshot-tests-action
+
       - name: "Create Android emulator (phone profile) snapshot"
         uses: ./.github/actions/create-emulator-snapshot-action
         with:
