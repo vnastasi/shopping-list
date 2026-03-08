@@ -1,22 +1,18 @@
-name: "Run unit tests"
+name: "Run screenshot tests"
 
 inputs:
   exec-data-cache-key:
-    description: "Cache key used for unit test execution data. Required for determining code coverage."
+    description: "Cache key used for screenshot test execution data. Required for determining code coverage."
     required: false
 
 runs:
   using: composite
   steps:
-    - name: "Assemble"
-      shell: bash
-      run: ./gradlew assembleDebugUnitTest
-
-    - name: "Run unit tests"
+    - name: "Run screenshot tests"
       shell: bash
       run: |
-        ./gradlew testDebugUnitTest
-        ./gradlew copyUnitTestExecData
+        ./gradlew validateDebugScreenshotTest
+        ./gradlew copyScreenshotTestExecData
 
     - name: "Clear any previously cached execution data"
       if: ${{ inputs.exec-data-cache-key != '' }}
@@ -28,7 +24,7 @@ runs:
       if: ${{ inputs.exec-data-cache-key != '' }}
       uses: actions/cache/save@v4
       with:
-        path: ${{ github.workspace }}/build/exec-data/unit-tests
+        path: ${{ github.workspace }}/build/exec-data/screenshot-tests
         key: ${{ inputs.exec-data-cache-key }}
 
     - name: "Archive test execution data"
@@ -36,7 +32,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: "unit-tests-exec-data-${{ github.event.pull_request.number }}"
-        path: ${{ github.workspace }}/build/exec-data/unit-tests
+        path: ${{ github.workspace }}/build/exec-data/screenshot-tests
         if-no-files-found: error
         retention-days: 14
         overwrite: true
