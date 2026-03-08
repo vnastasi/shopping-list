@@ -66,6 +66,8 @@ jobs:
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v5.0.0
+        with:
+          lfs: true
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
