@@ -13,6 +13,10 @@ android {
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
+screenshotTests {
+    imageDifferenceThreshold = 0.005f
+}
+
 dependencies {
     compileOnly(project(":support:annotation"))
 
