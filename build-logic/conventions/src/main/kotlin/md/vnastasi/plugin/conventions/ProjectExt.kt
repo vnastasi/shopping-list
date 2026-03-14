@@ -44,7 +44,7 @@ internal fun CommonExtension.configureUnitTests() {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
             all { test ->
-                test.jvmArgs("-Xmx6g", "-XX:NewSize=4g")
+                test.jvmArgs("-Xmx2g", "-XX:+UseG1GC")
                 test.useJUnitPlatform()
                 test.testLogging {
                     exceptionFormat = TestExceptionFormat.FULL
