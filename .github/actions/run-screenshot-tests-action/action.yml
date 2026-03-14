@@ -12,7 +12,7 @@ runs:
       name: "Run screenshot tests"
       shell: bash
       run: |
-        ./gradlew validateDebugScreenshotTest --max-workers 1
+        ./gradlew validateDebugScreenshotTest --stacktrace
         ./gradlew copyScreenshotTestExecData
 
     - name: "Archive screenshot diff images"
