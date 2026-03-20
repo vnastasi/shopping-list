@@ -1,11 +1,13 @@
 package md.vnastasi.shoppinglist.ui.robot
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
@@ -16,6 +18,8 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import md.vnastasi.shoppinglist.MainActivity
 import md.vnastasi.shoppinglist.res.R
@@ -108,5 +112,37 @@ class ListDetailsScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(itemMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(itemMatcher)
         composeTestRule.onNode(deleteButtonMatcher).performClick()
+    }
+
+    fun moveItemUp(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
+        val listItemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name))
+        val dragHandleMatcher = hasContentDescription(resources.getString(R.string.overview_item_drag_handle_btn_acc)) and hasAnyAncestor(listItemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
+        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
+            down(center)
+            advanceEventTime(500L)
+            moveBy(Offset(x = 0.0f, y = -100.dp.toPx()))
+            advanceEventTime(2000L)
+            up()
+        }
+    }
+
+    fun moveItemDown(name: String) {
+        val listMatcher = hasTestTag(SHOPPING_ITEMS_LIST)
+        val listItemMatcher = hasTestTag(SHOPPING_ITEMS_ITEM) and hasAnyDescendant(hasText(name))
+        val dragHandleMatcher = hasContentDescription(resources.getString(R.string.overview_item_drag_handle_btn_acc)) and hasAnyAncestor(listItemMatcher)
+        composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
+        composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
+        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
+            down(center)
+            advanceEventTime(500L)
+            moveBy(Offset(x = 0.0f, y = 100.dp.toPx()))
+            advanceEventTime(2000L)
+            up()
+        }
     }
 }
