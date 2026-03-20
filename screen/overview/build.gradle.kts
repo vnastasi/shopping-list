@@ -14,7 +14,7 @@ android {
 }
 
 screenshotTests {
-    imageDifferenceThreshold = 0.005f
+    imageDifferenceThreshold = 0.001f
 }
 
 dependencies {
