@@ -2,14 +2,14 @@ package md.vnastasi.shoppinglist.db.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import md.vnastasi.shoppinglist.db.callback.CreateAutoPositionShoppingListTriggerCallback
+import md.vnastasi.shoppinglist.db.callback.CreateAutoPositionShoppingItemTriggerCallback
 
-class MigrationFrom6To7 : Migration(startVersion = 5, endVersion = 6) {
+class MigrationFrom6To7 : Migration(startVersion = 6, endVersion = 7) {
 
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(ALTER_TABLE)
         db.execSQL(UPDATE_POSITIONS)
-        db.execSQL(CreateAutoPositionShoppingListTriggerCallback.SQL_STATEMENT)
+        db.execSQL(CreateAutoPositionShoppingItemTriggerCallback.SQL_STATEMENT)
     }
 
     private companion object {
