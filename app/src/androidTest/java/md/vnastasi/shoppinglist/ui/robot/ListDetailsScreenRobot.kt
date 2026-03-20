@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.ui.robot
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -18,7 +17,6 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import md.vnastasi.shoppinglist.MainActivity
@@ -121,13 +119,7 @@ class ListDetailsScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
         composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
-        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
-            down(center)
-            advanceEventTime(500L)
-            moveBy(Offset(x = 0.0f, y = -100.dp.toPx()))
-            advanceEventTime(2000L)
-            up()
-        }
+        composeTestRule.onNode(dragHandleMatcher).performDragUp(100.dp)
     }
 
     fun moveItemDown(name: String) {
@@ -137,12 +129,6 @@ class ListDetailsScreenRobot(
         composeTestRule.waitUntilAtLeastOneExists(listMatcher, DEFAULT_TIMEOUT)
         composeTestRule.waitUntilAtLeastOneExists(dragHandleMatcher, DEFAULT_TIMEOUT)
         composeTestRule.onNode(listMatcher).performScrollToNode(dragHandleMatcher)
-        composeTestRule.onNode(dragHandleMatcher).performTouchInput {
-            down(center)
-            advanceEventTime(500L)
-            moveBy(Offset(x = 0.0f, y = 100.dp.toPx()))
-            advanceEventTime(2000L)
-            up()
-        }
+        composeTestRule.onNode(dragHandleMatcher).performDragDown(100.dp)
     }
 }
