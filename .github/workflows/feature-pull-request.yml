@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -47,7 +47,7 @@ jobs:
       - build
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -65,7 +65,7 @@ jobs:
       - build
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           lfs: true
 
@@ -90,7 +90,7 @@ jobs:
           - ${{ vars.AVD_TABLET_PROFILE }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -113,7 +113,7 @@ jobs:
       - instrumented-tests
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -127,28 +127,28 @@ jobs:
         run: ./gradlew detekt
 
       - name: "Restore unit test execution data"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5.0.4
         with:
           path: ${{ github.workspace }}/build/exec-data/unit-tests
           key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore screenshot test execution data"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5.0.4
         with:
           path: ${{ github.workspace }}/build/exec-data/screenshot-tests
           key: ${{ env.ST_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (phone profile)"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5.0.4
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_PHONE_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (tablet profile)"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5.0.4
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_TABLET_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}
@@ -174,7 +174,7 @@ jobs:
       - code-quality
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Auto-merge PR"
         env:

@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -30,7 +30,7 @@ jobs:
           ./gradlew copyReleaseApkArtifact
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: "apk"
           path: build/artifacts/apk/shopping-list-${{ github.ref_name }}.apk
@@ -46,7 +46,7 @@ jobs:
     steps:
       - id: download-artifact
         name: "Download APK from build"
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v8.0.1
         with:
           name: "apk"
 
@@ -61,7 +61,7 @@ jobs:
 
       - id: upload-release-artifact
         name: "Upload release artifact"
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./shopping-list-${{ github.ref_name }}.apk
