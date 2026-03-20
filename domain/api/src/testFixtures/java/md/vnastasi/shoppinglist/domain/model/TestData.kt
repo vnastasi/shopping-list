@@ -37,6 +37,7 @@ object TestData {
         var id: Long = DEFAULT_SHOPPING_LIST_ITEM_ID,
         var name: String = DEFAULT_SHOPPING_LIST_ITEM_NAME,
         var isChecked: Boolean = false,
+        var position: Long = 0L,
         var shoppingList: ShoppingListBuilder.() -> Unit = {}
     ) {
 
@@ -44,6 +45,7 @@ object TestData {
             id = id,
             name = name,
             isChecked = isChecked,
+            position = position,
             list = createShoppingList(shoppingList)
         )
     }
