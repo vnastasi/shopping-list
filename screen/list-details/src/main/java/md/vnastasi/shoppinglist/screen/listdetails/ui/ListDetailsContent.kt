@@ -1,13 +1,21 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -22,6 +30,8 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LI
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 internal fun ListDetailsContent(
@@ -29,11 +39,18 @@ internal fun ListDetailsContent(
     listOfShoppingItems: ImmutableList<ShoppingItem>,
     dispatchEvent: (UiEvent) -> Unit,
 ) {
+    val reorderableList = remember(listOfShoppingItems) { listOfShoppingItems.toMutableStateList() }
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        reorderableList.add(to.index, reorderableList.removeAt(from.index))
+    }
+
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(top = AppDimensions.paddingSmall)
             .testTag(SHOPPING_ITEMS_LIST),
+        state = lazyListState,
         contentPadding = PaddingValues(
             start = contentPaddings.calculateStartPadding(LocalLayoutDirection.current),
             end = contentPaddings.calculateEndPadding(LocalLayoutDirection.current),
@@ -42,19 +59,46 @@ internal fun ListDetailsContent(
         )
     ) {
         itemsIndexed(
-            items = listOfShoppingItems,
+            items = reorderableList,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
-            ShoppingItemRow(
-                modifier = Modifier
-                    .animateItem()
-                    .testTag(SHOPPING_ITEMS_ITEM),
-                shoppingItem = shoppingItem,
-                isLastItemInList = index == listOfShoppingItems.size - 1,
-                onClick = { dispatchEvent(UiEvent.OnItemClicked(it)) },
-                onDelete = { dispatchEvent(UiEvent.OnItemDeleted(it)) }
-            )
+            ReorderableItem(
+                state = reorderableLazyListState,
+                key = shoppingItem.id
+            ) {
+                ShoppingItemRow(
+                    modifier = Modifier
+                        .animateItem()
+                        .testTag(SHOPPING_ITEMS_ITEM),
+                    shoppingItem = shoppingItem,
+                    onClick = { dispatchEvent(UiEvent.OnItemClicked(it)) },
+                    onDelete = { dispatchEvent(UiEvent.OnItemDeleted(it)) },
+                    onReorderItem = { dispatchEvent(UiEvent.OnItemsReordered(reorderableList)) }
+                )
+            }
+
+            if (index < reorderableList.lastIndex) {
+                CenterAlignedDivider()
+            }
         }
+    }
+}
+
+@Composable
+private fun CenterAlignedDivider() {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        HorizontalDivider(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .widthIn(max = AppDimensions.contentMaxWidth)
+                .padding(
+                    start = AppDimensions.paddingSmall,
+                    end = AppDimensions.paddingSmall
+                ),
+            thickness = AppDimensions.divider
+        )
     }
 }
 
