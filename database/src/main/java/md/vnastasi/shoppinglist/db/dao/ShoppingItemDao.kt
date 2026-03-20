@@ -24,6 +24,9 @@ interface ShoppingItemDao {
     @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun update(item: ShoppingItem)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(items: List<ShoppingItem>)
+
     @Delete
     suspend fun delete(item: ShoppingItem)
 }
