@@ -25,7 +25,7 @@ codeCoverage {
         "**/ShoppingListApplication.**",
         "**/MainActivity.**"
     )
-    coverageThreshold.set(providers.environmentVariable("CODE_COVERAGE_THRESHOLD").map { it.toBigDecimal() }.orElse(88.toBigDecimal()))
+    coverageThreshold.set(providers.environmentVariable("CODE_COVERAGE_THRESHOLD").map { it.toBigDecimal() }.orElse(89.toBigDecimal()))
 }
 
 dependencyAnalysis {
