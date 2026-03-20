@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.screen.listdetails.vm
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
 import io.mockk.coEvery
@@ -192,6 +193,55 @@ internal class ListDetailsViewModelTest {
 
             cancelAndConsumeRemainingEvents()
         }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnItemsReordered` UI event
+        Then expect repository to reorder shopping items
+    """
+    )
+    fun onItemsReordered() = runTest {
+        val shoppingListId = 567L
+        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList())
+
+        val shoppingItem1 = createShoppingItem {
+            id = 1L
+            position = 0L
+        }
+        val shoppingItem2 = createShoppingItem {
+            id = 2L
+            position = 1L
+        }
+        val shoppingItem3 = createShoppingItem {
+            id = 3L
+            position = 2L
+        }
+
+        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(listOf(shoppingItem1, shoppingItem2, shoppingItem3))
+
+        val reorderedItemsSlot = slot<List<ShoppingItem>>()
+        coEvery { mockShoppingItemRepository.update(capture(reorderedItemsSlot)) } returns Unit
+
+        val viewModel = createViewModel(shoppingListId)
+        viewModel.dispatch(UiEvent.OnItemsReordered(listOf(shoppingItem3, shoppingItem1, shoppingItem2)))
+        advanceUntilIdle()
+
+        assertThat(reorderedItemsSlot.captured).containsExactly(
+            createShoppingItem {
+                id = 3L
+                position = 0L
+            },
+            createShoppingItem {
+                id = 1L
+                position = 1L
+            },
+            createShoppingItem {
+                id = 2L
+                position = 2L
+            }
+        )
     }
 
     @Test

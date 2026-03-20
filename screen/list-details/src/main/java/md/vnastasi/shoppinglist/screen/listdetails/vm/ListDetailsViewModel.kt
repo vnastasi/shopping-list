@@ -50,6 +50,7 @@ class ListDetailsViewModel @AssistedInject internal constructor(
             is UiEvent.OnItemClicked -> onShoppingItemClicked(event.shoppingItem)
             is UiEvent.OnItemDeleted -> onShoppingItemDeleted(event.shoppingItem)
             is UiEvent.OnAddItemsClicked -> onAddItemsClicked()
+            is UiEvent.OnItemsReordered -> onItemsReordered(event.reorderedList)
             is UiEvent.OnBackClicked -> onBackClicked()
             is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
@@ -69,6 +70,13 @@ class ListDetailsViewModel @AssistedInject internal constructor(
 
     private fun onAddItemsClicked() {
         _navigationTarget.update { NavigationTarget.AddItems(shoppingListId) }
+    }
+
+    private fun onItemsReordered(reorderedList: List<ShoppingItem>) {
+        viewModelScope.launch {
+            val listToUpdate = reorderedList.mapIndexed { index, item -> item.copy(position = index.toLong()) }
+            shoppingItemRepository.update(listToUpdate)
+        }
     }
 
     private fun onBackClicked() {
