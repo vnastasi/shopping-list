@@ -11,5 +11,7 @@ interface ShoppingItemRepository {
 
     suspend fun update(item: ShoppingItem)
 
+    suspend fun update(items: List<ShoppingItem>)
+
     suspend fun delete(item: ShoppingItem)
 }

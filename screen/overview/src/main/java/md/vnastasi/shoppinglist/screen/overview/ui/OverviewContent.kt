@@ -3,7 +3,7 @@ package md.vnastasi.shoppinglist.screen.overview.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,7 +40,7 @@ internal fun OverviewContent(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .testTag(SHOPPING_LISTS_LIST),
         state = lazyListState,
         contentPadding = PaddingValues(

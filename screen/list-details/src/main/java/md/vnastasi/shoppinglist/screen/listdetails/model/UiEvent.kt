@@ -13,10 +13,13 @@ sealed interface UiEvent {
     data object OnAddItemsClicked : UiEvent
 
     @Immutable
-    data class OnItemClicked(val shoppingItem: ShoppingItem): UiEvent
+    data class OnItemClicked(val shoppingItem: ShoppingItem) : UiEvent
 
     @Immutable
-    data class OnItemDeleted(val shoppingItem: ShoppingItem): UiEvent
+    data class OnItemDeleted(val shoppingItem: ShoppingItem) : UiEvent
+
+    @Immutable
+    data class OnItemsReordered(val reorderedList: List<ShoppingItem>) : UiEvent
 
     @Immutable
     data object OnNavigationConsumed : UiEvent

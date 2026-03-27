@@ -14,7 +14,7 @@ android {
 }
 
 screenshotTests {
-    imageDifferenceThreshold = 0.005f
+    imageDifferenceThreshold = 0.001f
 }
 
 dependencies {
@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.reorderable)
 
     debugImplementation(libs.compose.tooling)
 
