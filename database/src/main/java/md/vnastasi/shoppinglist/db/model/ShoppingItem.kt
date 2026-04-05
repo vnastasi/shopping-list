@@ -33,5 +33,8 @@ data class ShoppingItem(
     val isChecked: Boolean,
 
     @ColumnInfo(name = "list_id")
-    val listId: Long
+    val listId: Long,
+
+    @ColumnInfo(name = "position")
+    val position: Long = 0L
 )

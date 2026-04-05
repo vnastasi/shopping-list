@@ -30,13 +30,17 @@ internal class LocalShoppingItemRepository(
         shoppingItemDao.update(item.toEntity())
     }
 
+    override suspend fun update(items: List<ShoppingItem>) {
+        shoppingItemDao.update(items.map { it.toEntity() })
+    }
+
     override suspend fun delete(item: ShoppingItem) {
         shoppingItemDao.delete(item.toEntity())
     }
 
-    private fun ShoppingItem.toEntity() = ShoppingItemEntity(id, name, isChecked, list.id)
+    private fun ShoppingItem.toEntity() = ShoppingItemEntity(id = id, name = name, isChecked = isChecked, listId = list.id, position = position)
 
-    private fun ShoppingItemEntity.toDomainModel(list: ShoppingList) = ShoppingItem(id, name, isChecked, list)
+    private fun ShoppingItemEntity.toDomainModel(list: ShoppingList) = ShoppingItem(id = id, name = name, isChecked = isChecked, position = position, list = list)
 
-    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id, name)
+    private fun ShoppingListEntity.toDomainModel() = ShoppingList(id = id, name = name, position = position)
 }

@@ -2,18 +2,18 @@ package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,21 +32,25 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBO
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
+import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
+import sh.calvin.reorderable.ReorderableCollectionItemScope
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-internal fun ShoppingItemRow(
+internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     modifier: Modifier = Modifier,
     shoppingItem: ShoppingItem,
-    isLastItemInList: Boolean,
     onClick: (ShoppingItem) -> Unit,
-    onDelete: (ShoppingItem) -> Unit
+    onDelete: (ShoppingItem) -> Unit,
+    onReorderItem: () -> Unit = { }
 ) {
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .widthIn(max = AppDimensions.contentMaxWidth)
                 .align(Alignment.Center)
@@ -54,7 +58,7 @@ internal fun ShoppingItemRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onClick.invoke(shoppingItem) }
+                    .clickable { onClick(shoppingItem) }
                     .padding(AppDimensions.paddingSmall)
             ) {
                 Checkbox(
@@ -62,7 +66,7 @@ internal fun ShoppingItemRow(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .testTag(LIST_ITEM_CHECKBOX),
-                    onCheckedChange = { onClick.invoke(shoppingItem) },
+                    onCheckedChange = { onClick(shoppingItem) },
                     colors = CheckboxDefaults.colors().copy(
                         checkedBoxColor = MaterialTheme.colorScheme.tertiary,
                         checkedBorderColor = MaterialTheme.colorScheme.tertiary,
@@ -90,7 +94,7 @@ internal fun ShoppingItemRow(
                         .testTag(SHOPPING_ITEMS_ITEM_DELETE_BUTTON)
                         .wrapContentSize()
                         .align(Alignment.CenterVertically),
-                    onClick = { onDelete.invoke(shoppingItem) }
+                    onClick = { onDelete(shoppingItem) }
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
@@ -98,16 +102,20 @@ internal fun ShoppingItemRow(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
-            }
 
-            if (!isLastItemInList) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        start = AppDimensions.paddingSmall,
-                        end = AppDimensions.paddingSmall
+                IconButton(
+                    modifier = Modifier.draggableHandle(
+                        onDragStopped = onReorderItem,
                     ),
-                    thickness = AppDimensions.divider
-                )
+                    onClick = { }
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically),
+                        imageVector = AppIcons.DragHandle,
+                        contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
+                    )
+                }
             }
         }
     }
@@ -127,12 +135,24 @@ private fun ShoppingItemRowPreview1() {
         isChecked = true,
         list = ShoppingList(1, "list")
     )
-    ShoppingItemRow(
-        shoppingItem = shoppingItem,
-        isLastItemInList = true,
-        onClick = { },
-        onDelete = { }
-    )
+
+
+    AppTheme {
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingItemRow(
+                        shoppingItem = shoppingItem,
+                        onClick = { },
+                        onDelete = { }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -151,11 +171,19 @@ private fun ShoppingItemRowPreview2() {
     )
 
     AppTheme {
-        ShoppingItemRow(
-            shoppingItem = shoppingItem,
-            isLastItemInList = true,
-            onClick = { },
-            onDelete = { }
-        )
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingItemRow(
+                        shoppingItem = shoppingItem,
+                        onClick = { },
+                        onDelete = { }
+                    )
+                }
+            }
+        }
     }
 }

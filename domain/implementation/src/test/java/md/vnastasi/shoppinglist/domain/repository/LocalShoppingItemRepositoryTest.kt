@@ -2,6 +2,7 @@ package md.vnastasi.shoppinglist.domain.repository
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEqualTo
 import io.mockk.coEvery
@@ -27,7 +28,7 @@ internal class LocalShoppingItemRepositoryTest {
     private val shoppingItemRepository = LocalShoppingItemRepository(mockShoppingListDao, mockShoppingItemDao)
 
     @Test
-    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 123 The expect empty list")
+    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 123 Then expect empty list")
     fun getAllItemsEmpty() = runTest {
         val listId = 123L
         coEvery { mockShoppingListDao.findById(listId) } returns flowOf(createShoppingListEntity())
@@ -39,7 +40,7 @@ internal class LocalShoppingItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 45 The expect non-empty list")
+    @DisplayName("Given no shopping item entities in DAO When getting shopping items for list 45 Then expect non-empty list")
     fun getAllItems() = runTest {
         val shoppingListId = 45L
         val shoppingListEntity = createShoppingListEntity {
@@ -90,7 +91,7 @@ internal class LocalShoppingItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("When creating a new shopping item The expect DAO call to create new entity")
+    @DisplayName("When creating a new shopping item Then expect DAO call to create new entity")
     fun create() = runTest {
         val shoppingItem = createShoppingItem {
             id = 980L
@@ -118,7 +119,7 @@ internal class LocalShoppingItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("When updating an existing shopping item The expect DAO call to update entity")
+    @DisplayName("When updating an existing shopping item Then expect DAO call to update entity")
     fun update() = runTest {
         val shoppingItem = createShoppingItem {
             id = 56L
@@ -145,8 +146,52 @@ internal class LocalShoppingItemRepositoryTest {
         assertThat(shoppingItemSlot.captured).isDataClassEqualTo(expectedShoppingItemEntity)
     }
 
+
     @Test
-    @DisplayName("When deleting a shopping item The expect DAO call to delete entity")
+    @DisplayName("When updating multiple existing shopping items Then expect DAO call to update all entities")
+    fun updateMultiple() = runTest {
+        val shoppingItem1 = createShoppingItem {
+            id = 89L
+            name = "Almonds"
+            isChecked = true
+            shoppingList = {
+                id = 67L
+                name = "Pindakaas winkel"
+            }
+        }
+        val shoppingItem2 = createShoppingItem {
+            id = 90L
+            name = "Cashew"
+            isChecked = false
+            shoppingList = {
+                id = 67L
+                name = "Pindakaas winkel"
+            }
+        }
+
+        val expectedSHoppingItemEntity1 = createShoppingItemEntity {
+            id = 89L
+            name = "Almonds"
+            isChecked = true
+            listId = 67L
+        }
+        val expectedSHoppingItemEntity2 = createShoppingItemEntity {
+            id = 90L
+            name = "Cashew"
+            isChecked = false
+            listId = 67L
+        }
+
+        val shoppingItemsSlot = slot<List<ShoppingItemEntity>>()
+        coEvery { mockShoppingItemDao.update(capture(shoppingItemsSlot)) } returns Unit
+
+        shoppingItemRepository.update(listOf(shoppingItem1, shoppingItem2))
+
+        assertThat(shoppingItemsSlot.captured).containsExactly(expectedSHoppingItemEntity1, expectedSHoppingItemEntity2)
+    }
+
+    @Test
+    @DisplayName("When deleting a shopping item Then expect DAO call to delete entity")
     fun delete() = runTest {
         val shoppingItem = createShoppingItem {
             id = 89L

@@ -77,6 +77,8 @@ class CreateShoppingListFlowTest {
             hasUncheckedItem("Hammer")
             deleteItem("Hammer")
             hasNoItem("Hammer")
+            moveItemUp("Coconut oil")
+            moveItemDown("Milk")
             navigateBack()
         }
 

@@ -8,5 +8,6 @@ data class ShoppingItem(
     val id: Long = 0L,
     val name: String,
     val isChecked: Boolean,
+    val position: Long = 0L,
     val list: ShoppingList
 ): Parcelable

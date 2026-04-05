@@ -41,6 +41,7 @@ object TestData {
         var id: Long = DEFAULT_SHOPPING_LIST_ITEM_ID,
         var name: String = DEFAULT_SHOPPING_LIST_ITEM_NAME,
         var isChecked: Boolean = false,
+        var position: Long = 0L,
         var listId: Long = DEFAULT_SHOPPING_LIST_ID
     ) {
 
@@ -48,7 +49,8 @@ object TestData {
             id = id,
             name = name,
             isChecked = isChecked,
-            listId = listId
+            listId = listId,
+            position = position
         )
     }
 }

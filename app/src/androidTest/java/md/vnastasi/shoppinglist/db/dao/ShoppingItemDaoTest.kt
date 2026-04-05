@@ -5,6 +5,7 @@ import assertk.all
 import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.containsExactly
 import assertk.assertions.hasSize
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
@@ -72,6 +73,38 @@ class ShoppingItemDaoTest {
             val updatedShoppingItem = shoppingItem.copy(isChecked = true)
             shoppingItemDao.update(updatedShoppingItem)
             assertThat(awaitItem()).all { hasSize(1); contains(updatedShoppingItem) }
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun updateMultipleShoppingItems() = runDatabaseTest { db ->
+        val shoppingListDao = db.shoppingListDao()
+        val shoppingItemDao = db.shoppingItemDao()
+
+        shoppingListDao.create(createShoppingListEntity())
+
+        val shoppingItem1 = createShoppingItemEntity {
+            id = 1L
+            name = "Item 1"
+            listId = DEFAULT_SHOPPING_LIST_ID
+            position = 1L
+        }
+        val shoppingItem2 = createShoppingItemEntity {
+            id = 2L
+            name = "Item 2"
+            listId = DEFAULT_SHOPPING_LIST_ID
+            position = 2L
+        }
+        shoppingItemDao.create(shoppingItem1)
+        shoppingItemDao.create(shoppingItem2)
+
+        shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
+            assertThat(awaitItem()).containsExactly(shoppingItem2, shoppingItem1)
+
+            shoppingItemDao.update(listOf(shoppingItem1.copy(position = 2L), shoppingItem2.copy(position = 1L)))
+            assertThat(awaitItem()).containsExactly(shoppingItem1.copy(position = 2L), shoppingItem2.copy(position = 1L))
 
             cancelAndIgnoreRemainingEvents()
         }
