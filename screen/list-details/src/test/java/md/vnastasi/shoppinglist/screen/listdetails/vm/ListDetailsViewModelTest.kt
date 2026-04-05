@@ -230,7 +230,7 @@ internal class ListDetailsViewModelTest {
 
         assertThat(reorderedItemsSlot.captured).containsExactly(
             createShoppingItem {
-                id = 3L
+                id = 2L
                 position = 0L
             },
             createShoppingItem {
@@ -238,7 +238,7 @@ internal class ListDetailsViewModelTest {
                 position = 1L
             },
             createShoppingItem {
-                id = 2L
+                id = 3L
                 position = 2L
             }
         )

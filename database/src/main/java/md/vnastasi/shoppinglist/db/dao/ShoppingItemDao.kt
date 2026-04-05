@@ -12,7 +12,7 @@ import md.vnastasi.shoppinglist.db.model.ShoppingItem
 @Dao
 interface ShoppingItemDao {
 
-    @Query("SELECT * FROM shopping_items WHERE list_id = :listId ORDER BY position ASC")
+    @Query("SELECT * FROM shopping_items WHERE list_id = :listId ORDER BY position DESC")
     fun findAll(listId: Long): Flow<List<ShoppingItem>>
 
     @Query("SELECT * FROM shopping_items WHERE id = :id LIMIT 1")

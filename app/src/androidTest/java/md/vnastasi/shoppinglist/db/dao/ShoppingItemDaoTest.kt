@@ -101,10 +101,10 @@ class ShoppingItemDaoTest {
         shoppingItemDao.create(shoppingItem2)
 
         shoppingItemDao.findAll(DEFAULT_SHOPPING_LIST_ID).test {
-            assertThat(awaitItem()).containsExactly(shoppingItem1, shoppingItem2)
+            assertThat(awaitItem()).containsExactly(shoppingItem2, shoppingItem1)
 
             shoppingItemDao.update(listOf(shoppingItem1.copy(position = 2L), shoppingItem2.copy(position = 1L)))
-            assertThat(awaitItem()).containsExactly(shoppingItem2.copy(position = 1L), shoppingItem1.copy(position = 2L))
+            assertThat(awaitItem()).containsExactly(shoppingItem1.copy(position = 2L), shoppingItem2.copy(position = 1L))
 
             cancelAndIgnoreRemainingEvents()
         }
