@@ -12,7 +12,7 @@ A modern Android application for managing shopping lists.
   <tr>
     <td><img src="docs/images/Screenshot_20260102_182602.png" alt="" width="320" /></td>
     <td><img src="docs/images/Screenshot_20260102_182740.png" alt="" width="320" /></td>
-    <td><img src="docs/images/Screenshot_20260102_182744.png" alt="" width="320" /></td>
+    <td><img src="docs/images/Screenshot_20260405_120224.png" alt="" width="320" /></td>
     <td><img src="docs/images/Screenshot_20260102_182806.png" alt="" width="320" /></td>
   </tr>
 </table>
@@ -21,10 +21,10 @@ A modern Android application for managing shopping lists.
     <td><img src="docs/images/Screenshot_20260102_182230.png" alt="" width="1280" /></td>
   </tr>
   <tr>
-    <td><img src="docs/images/Screenshot_20260102_182453.png" alt="" width="1280" /></td>
+    <td><img src="docs/images/Screenshot_20260405_114709.png" alt="" width="1280" /></td>
   </tr>
   <tr>
-    <td><img src="docs/images/Screenshot_20260102_182505.png" alt="" width="1280" /></td>
+    <td><img src="docs/images/Screenshot_20260405_114847.png" alt="" width="1280" /></td>
   </tr>
 </table>
 
@@ -116,6 +116,14 @@ To run all unit tests for the debug build type:
 ./gradlew testDebugUnitTest
 ```
 
+### Screenshot Tests
+
+To run all screenshot tests for the debug build type:
+
+```bash
+./gradlew validateDebugScreenshotTest
+```
+
 ### Instrumented Tests
 
 Instrumented tests require a connected Android device or emulator.
@@ -131,12 +139,12 @@ Instrumented tests require a connected Android device or emulator.
 This project uses GitHub Actions for Continuous Integration. The workflow is defined in [`.github/workflows/feature-pull-request.yml`](./.github/workflows/feature-pull-request.yml).
 
 The CI pipeline includes steps for:
-- Building the application (`./gradlew assemble`)
-- Running unit tests (`./gradlew testDebugUnitTest`, `./gradlew copyUnitTestExecData`)
-- Running instrumented tests (`./gradlew :app:connectedDebugAndroidTest`, `./gradlew copyInstrumentedTestExecData`)
-- Code quality checks (`./gradlew projectHealth`, `./gradlew verifyCodeCoverage`, `./gradlew detekt`)
-- Auto-merging dependency updates for Dependabot/Wrapperbot PRs.
-
+- Building the application and tests
+- Running unit tests
+- Running screenshot tests
+- Running instrumented tests on a phone and tablet emulator
+- Code quality checks (Gradle project health, Detekt, code coverage with Jacoco)
+- Auto-merging dependency updates for Dependabot PRs
 
 ## License
 
