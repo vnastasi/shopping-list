@@ -13,13 +13,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -31,8 +29,8 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
-import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
+import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 
 @HiltViewModel(assistedFactory = AddItemsViewModel.Factory::class)
 class AddItemsViewModel @AssistedInject internal constructor(
@@ -59,11 +57,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
         flow3 = _toastMessage,
         flow4 = _navigationTarget,
         transform = { _, suggestions, toastMessage, navigationTarget -> createViewState(suggestions, toastMessage, navigationTarget) }
-    ).stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.init()
-    )
+    ).asStateFlow(initialValue = ViewState.init())
 
     override fun dispatch(uiEvent: UiEvent) {
         when (uiEvent) {

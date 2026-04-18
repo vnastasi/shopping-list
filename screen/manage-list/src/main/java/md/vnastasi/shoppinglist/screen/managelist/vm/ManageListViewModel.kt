@@ -10,11 +10,9 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -23,7 +21,7 @@ import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
-import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
+import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 
 @HiltViewModel(assistedFactory = ManageListViewModel.Factory::class)
 class ManageListViewModel @AssistedInject constructor(
@@ -43,11 +41,7 @@ class ManageListViewModel @AssistedInject constructor(
         flow2 = _isSaveEnabled,
         flow3 = _navigationTarget,
         transform = ::ViewState
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.INIT
-    )
+    ).asStateFlow(initialValue = ViewState.INIT)
 
     init {
         if (shoppingListId != null) {
