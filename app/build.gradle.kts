@@ -55,7 +55,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                srcDir("${project(":database").layout.projectDirectory}/schemas")
+                directories += "${project(":database").layout.projectDirectory}/schemas"
             }
         }
     }

@@ -5,9 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -75,7 +75,6 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     onReorderItem: () -> Unit = { }
 ) {
     val density = LocalDensity.current
-    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
 
     val dragState = remember {
         val actionOffset = with(density) { 120.dp.toPx() }
@@ -84,11 +83,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
             anchors = DraggableAnchors {
                 SwipeToRevealState.Resting at 0.0f
                 SwipeToRevealState.Actions at -actionOffset
-            },
-            positionalThreshold = { it },
-            velocityThreshold = { with(density) { 120.dp.toPx() } },
-            snapAnimationSpec = tween(),
-            decayAnimationSpec = decayAnimationSpec
+            }
         )
     }
 
@@ -103,7 +98,12 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                 .anchoredDraggable(
                     state = dragState,
                     orientation = Orientation.Horizontal,
-                    overscrollEffect = overScrollEffect
+                    overscrollEffect = overScrollEffect,
+                    flingBehavior = AnchoredDraggableDefaults.flingBehavior(
+                        state = dragState,
+                        positionalThreshold = { it },
+                        animationSpec = tween()
+                    )
                 )
                 .overscroll(overScrollEffect)
                 .offset {

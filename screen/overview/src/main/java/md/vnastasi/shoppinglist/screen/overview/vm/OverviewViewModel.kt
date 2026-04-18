@@ -7,11 +7,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
@@ -20,7 +18,7 @@ import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
-import md.vnastasi.shoppinglist.screen.shared.coroutine.FLOW_SUBSCRIPTION_TIMEOUT
+import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,11 +35,7 @@ class OverviewViewModel @Inject internal constructor(
         flow = _shoppingLists,
         flow2 = _navigationTarget,
         transform = ::createViewState
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
-        initialValue = ViewState.Loading
-    )
+    ).asStateFlow(initialValue = ViewState.Loading)
 
     override fun dispatch(event: UiEvent) {
         when (event) {
