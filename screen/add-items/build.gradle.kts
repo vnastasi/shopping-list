@@ -60,6 +60,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 

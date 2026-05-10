@@ -20,6 +20,7 @@ dependencies {
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
+    api(libs.lifecycle.viewmodel)
 
     implementation(project(":resources"))
     implementation(project(":support:theme"))

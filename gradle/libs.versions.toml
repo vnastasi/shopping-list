@@ -73,6 +73,7 @@ compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-geometry = { module = "androidx.compose.ui:ui-geometry" }
 compose-ui-test = { module = "androidx.compose.ui:ui-test" }
 compose-ui-text = { module = "androidx.compose.ui:ui-text" }
 compose-ui-unit = { module = "androidx.compose.ui:ui-unit" }
@@ -113,6 +114,7 @@ lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-core = { module = "io.mockk:mockk-core", version.ref = "mockk" }
 mockk-dsl = { module = "io.mockk:mockk-dsl", version.ref = "mockk" }
 
 navigation-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation" }
@@ -129,7 +131,6 @@ room-test = { module = "androidx.room:room-testing", version.ref = "room" }
 serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization" }
 
 sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
-sqlite-framework = { module = "androidx.sqlite:sqlite-framework", version.ref = "sqlite" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 

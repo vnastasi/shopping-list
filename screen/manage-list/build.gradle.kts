@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.compose.graphics)
     implementation(libs.compose.material)
     implementation(libs.compose.preview)
+    implementation(libs.compose.runtime.annotation)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.hilt.android)
@@ -53,6 +54,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 
