@@ -23,5 +23,6 @@ data class ToastMessage(
         flag = false,
         value = [DURATION_SHORT, DURATION_LONG]
     )
+    @Retention(AnnotationRetention.SOURCE)
     private annotation class ToastDuration
 }

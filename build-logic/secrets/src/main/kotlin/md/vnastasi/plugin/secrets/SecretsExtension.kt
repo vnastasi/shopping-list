@@ -2,13 +2,14 @@ package md.vnastasi.plugin.secrets
 
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
+import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
 abstract class SecretsExtension @Inject constructor(
     objects: ObjectFactory
 ) {
 
-    val keystore: Keystore = objects.newInstance(Keystore::class.java)
+    val keystore: Keystore = objects.newInstance<Keystore>()
 
     fun keystore(action: Action<Keystore>) {
         action.execute(keystore)
