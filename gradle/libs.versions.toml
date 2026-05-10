@@ -144,6 +144,7 @@ window-core = { module = "androidx.window:window-core", version.ref = "window" }
 
 ## Plugins as librabry dependencies
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-tools" }
+compose-screenshot-gradlePlugin = { group = "com.android.compose.screenshot", name = "screenshot-test-gradle-plugin", version.ref = "compose-screenshot" }
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
