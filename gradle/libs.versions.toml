@@ -1,10 +1,10 @@
 [versions]
 
 project-application-id = "md.vnastasi.shoppinglist"
-project-compileSdk = "36"
+project-compileSdk = "37"
 project-jdk = "21"
 project-minSdk = "28"
-project-targetSdk = "36"
+project-targetSdk = "37"
 project-version-code = "24"
 project-version-name = "0.7.0"
 
