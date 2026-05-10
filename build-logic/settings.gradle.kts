@@ -30,5 +30,6 @@ include(
     ":conventions",
     ":detekt-aggregator",
     ":plugin-support",
+    ":screenshot-testing",
     ":secrets"
 )

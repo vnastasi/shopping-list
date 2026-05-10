@@ -2,7 +2,7 @@ import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("compose-library.conventions")
+    alias(libs.plugins.conventions.compose.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -20,6 +20,7 @@ dependencies {
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
+    api(libs.lifecycle.viewmodel)
 
     implementation(project(":resources"))
     implementation(project(":support:theme"))

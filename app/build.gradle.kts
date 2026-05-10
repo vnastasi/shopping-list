@@ -4,9 +4,9 @@ import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("application.conventions")
-    id("secrets")
-    id("app-build-support")
+    alias(libs.plugins.conventions.application)
+    alias(libs.plugins.conventions.app.build.support)
+    alias(libs.plugins.conventions.secrets)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
@@ -41,6 +41,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -116,7 +117,9 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)
+    androidTestImplementation(libs.compose.ui.geometry)
     androidTestImplementation(libs.compose.ui.test)
+    androidTestImplementation(libs.compose.ui.unit)
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.hilt.test)
@@ -125,7 +128,6 @@ dependencies {
     androidTestImplementation(libs.room.runtime)
     androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.sqlite)
-    androidTestImplementation(libs.sqlite.framework)
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.uiautomator)
     androidTestImplementation(libs.uitest.core)

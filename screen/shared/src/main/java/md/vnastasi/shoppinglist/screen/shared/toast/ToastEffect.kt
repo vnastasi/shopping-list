@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 
 @Composable
 fun Toast(
@@ -11,9 +12,10 @@ fun Toast(
     onToastShown: () -> Unit = { }
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     LaunchedEffect(key1 = message) {
         if (message != null) {
-            Toast.makeText(context, context.getString(message.textResourceId, *message.arguments.toTypedArray()), message.duration).show()
+            Toast.makeText(context, resources.getString(message.textResourceId, *message.arguments.toTypedArray()), message.duration).show()
             onToastShown.invoke()
         }
     }

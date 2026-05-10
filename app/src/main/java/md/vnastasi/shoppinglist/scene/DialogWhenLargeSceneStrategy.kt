@@ -1,6 +1,6 @@
 package md.vnastasi.shoppinglist.scene
 
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -17,7 +17,7 @@ import md.vnastasi.shoppinglist.screen.shared.content.PresentationMode
 
 @Composable
 internal fun <T : Any> rememberDialogWhenLargeSceneStrategy(): DialogWhenLargeSceneStrategy<T> {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     return remember(windowSizeClass) { DialogWhenLargeSceneStrategy(windowSizeClass) }
 }
 

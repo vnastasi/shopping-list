@@ -2,19 +2,14 @@ import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("compose-screen-library.conventions")
+    alias(libs.plugins.conventions.compose.screen.library)
+    alias(libs.plugins.conventions.screenshot.testing)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.compose.screenshot)
 }
 
 android {
     namespace = "md.vnastasi.shoppinglist.screen.listdetails"
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
-}
-
-screenshotTests {
-    imageDifferenceThreshold = 0.001f
 }
 
 dependencies {
@@ -67,6 +62,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
 
@@ -75,9 +71,6 @@ dependencies {
     testRuntimeOnly(libs.kotlin.reflect)
 
     screenshotTestImplementation(testFixtures(project(":domain:api")))
-    screenshotTestImplementation(testFixtures(project(":screen:shared")))
-    screenshotTestImplementation(libs.compose.screenshot.validation)
-    screenshotTestImplementation(libs.compose.tooling)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

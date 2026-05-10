@@ -1,7 +1,7 @@
 import md.vnastasi.plugin.support.libs
 
 plugins {
-    id("simple-library.conventions")
+    alias(libs.plugins.conventions.simple.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
