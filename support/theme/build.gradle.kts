@@ -1,7 +1,7 @@
 import md.vnastasi.plugin.support.libs
 
 plugins {
-    id("compose-library.conventions")
+    alias(libs.plugins.conventions.compose.library)
 }
 
 android {

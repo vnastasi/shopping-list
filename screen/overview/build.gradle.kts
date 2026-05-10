@@ -2,8 +2,8 @@ import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("compose-screen-library.conventions")
-    id("screenshot-testing.conventions")
+    alias(libs.plugins.conventions.compose.screen.library)
+    alias(libs.plugins.conventions.screenshot.testing)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }

@@ -4,9 +4,9 @@ import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("application.conventions")
-    id("secrets")
-    id("app-build-support")
+    alias(libs.plugins.conventions.application)
+    alias(libs.plugins.conventions.app.build.support)
+    alias(libs.plugins.conventions.secrets)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
