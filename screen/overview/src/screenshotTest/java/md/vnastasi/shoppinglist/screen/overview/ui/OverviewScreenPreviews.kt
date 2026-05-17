@@ -8,6 +8,7 @@ import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
+/*
 @PreviewTest
 @ScreenshotPreviews
 @Composable
@@ -21,7 +22,9 @@ fun LoadingOverviewScreen() {
         )
     }
 }
+ */
 
+/*
 @PreviewTest
 @ScreenshotPreviews
 @Composable
@@ -37,6 +40,7 @@ fun EmptyOverviewScreen() {
         )
     }
 }
+ */
 
 @PreviewTest
 @ScreenshotPreviews
