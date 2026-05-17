@@ -8,35 +8,35 @@ import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
-//@PreviewTest
-//@ScreenshotPreviews
-//@Composable
-//fun LoadingOverviewScreen() {
-//    val viewState = ViewState.Loading
-//
-//    AppTheme {
-//        OverviewScreen(
-//            viewModel = StubOverviewViewModel(viewState),
-//            navigator = StubOverviewScreenNavigator()
-//        )
-//    }
-//}
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun LoadingOverviewScreen() {
+    val viewState = ViewState.Loading
 
-//@PreviewTest
-//@ScreenshotPreviews
-//@Composable
-//fun EmptyOverviewScreen() {
-//    val viewState = ViewState.Empty(
-//        navigationTarget = null
-//    )
-//
-//    AppTheme {
-//        OverviewScreen(
-//            viewModel = StubOverviewViewModel(viewState),
-//            navigator = StubOverviewScreenNavigator()
-//        )
-//    }
-//}
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun EmptyOverviewScreen() {
+    val viewState = ViewState.Empty(
+        navigationTarget = null
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
 
 @PreviewTest
 @ScreenshotPreviews
