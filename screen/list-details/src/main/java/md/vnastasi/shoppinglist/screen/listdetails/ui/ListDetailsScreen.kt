@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -52,6 +53,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOL
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
+import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -113,29 +115,35 @@ private fun ListDetailsScreen(
             }
         }
     ) { contentPaddings ->
-        when (viewState) {
-            is ViewState.Loading -> {
-                AnimatedMessageContent(
-                    contentPaddings = contentPaddings,
-                    animationResId = R.raw.lottie_anim_loading,
-                    messageResId = R.string.list_details_loading
-                )
-            }
+        AnimatedContent(
+            targetState = viewState,
+            contentKey = { it::class },
+            transitionSpec = { contentTransitionSpec }
+        ) { viewState ->
+            when (viewState) {
+                is ViewState.Loading -> {
+                    AnimatedMessageContent(
+                        contentPaddings = contentPaddings,
+                        animationResId = R.raw.lottie_anim_loading,
+                        messageResId = R.string.list_details_loading
+                    )
+                }
 
-            is ViewState.Empty -> {
-                AnimatedMessageContent(
-                    contentPaddings = contentPaddings,
-                    animationResId = R.raw.lottie_anim_empty_box,
-                    messageResId = R.string.list_details_empty
-                )
-            }
+                is ViewState.Empty -> {
+                    AnimatedMessageContent(
+                        contentPaddings = contentPaddings,
+                        animationResId = R.raw.lottie_anim_empty_box,
+                        messageResId = R.string.list_details_empty
+                    )
+                }
 
-            is ViewState.Ready -> {
-                ListDetailsContent(
-                    contentPaddings = contentPaddings,
-                    listOfShoppingItems = viewState.listOfShoppingItems,
-                    dispatchEvent = dispatchEvent
-                )
+                is ViewState.Ready -> {
+                    ListDetailsContent(
+                        contentPaddings = contentPaddings,
+                        listOfShoppingItems = viewState.listOfShoppingItems,
+                        dispatchEvent = dispatchEvent
+                    )
+                }
             }
         }
     }
