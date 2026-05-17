@@ -59,7 +59,7 @@ internal fun OverviewContent(
                 state = reorderableLazyListState,
                 key = shoppingList.id
             ) {
-                val reorderDragHandleState = remember(reorderableList) {
+                val reorderDragHandleState = remember(reorderableList.size) {
                     if (reorderableList.size > 1) {
                         ReorderDragHandleState.Enabled(
                             onReorder = { dispatchEvent(UiEvent.OnShoppingListsReordered(reorderableList)) }

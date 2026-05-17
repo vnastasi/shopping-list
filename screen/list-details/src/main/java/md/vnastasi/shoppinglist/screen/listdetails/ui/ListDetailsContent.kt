@@ -63,7 +63,7 @@ internal fun ListDetailsContent(
             items = reorderableList,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
-            val reorderDragHandleState = remember(reorderableList) {
+            val reorderDragHandleState = remember(reorderableList.size) {
                 if (reorderableList.size > 1) {
                     ReorderDragHandleState.Enabled(
                         onReorder = { dispatchEvent(UiEvent.OnItemsReordered(reorderableList)) }
