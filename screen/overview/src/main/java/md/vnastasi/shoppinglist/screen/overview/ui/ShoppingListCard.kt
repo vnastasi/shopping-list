@@ -7,6 +7,7 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -15,6 +16,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -65,7 +67,7 @@ import kotlin.math.roundToInt
 
 private enum class SwipeToRevealState {
 
-    Resting, Actions
+    Content, Actions
 }
 
 @Composable
@@ -82,101 +84,173 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     val dragState = remember {
         val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
-            initialValue = SwipeToRevealState.Resting,
+            initialValue = SwipeToRevealState.Content,
             anchors = DraggableAnchors {
-                SwipeToRevealState.Resting at 0.0f
+                SwipeToRevealState.Content at 0.0f
                 SwipeToRevealState.Actions at -actionOffset
             }
         )
     }
 
-    val overScrollEffect = rememberOverscrollEffect()
-
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .anchoredDraggable(
+        ShoppingListCardContent(
+            item = item,
+            reorderableState = reorderableState,
+            dragState = dragState,
+            overScrollEffect = rememberOverscrollEffect(),
+            onClickItem = onClickItem
+        )
+
+        ShoppingListActions(
+            dragState = dragState,
+            onEditItem = onEditItem,
+            onDeleteItem = onDeleteItem
+        )
+    }
+}
+
+@Composable
+context(reorderableCollectionItemScope: ReorderableCollectionItemScope)
+private fun ShoppingListCardContent(
+    item: ShoppingListDetails,
+    reorderableState: ReorderableState,
+    dragState: AnchoredDraggableState<SwipeToRevealState>,
+    overScrollEffect: OverscrollEffect?,
+    onClickItem: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .anchoredDraggable(
+                state = dragState,
+                orientation = Orientation.Horizontal,
+                overscrollEffect = overScrollEffect,
+                flingBehavior = AnchoredDraggableDefaults.flingBehavior(
                     state = dragState,
-                    orientation = Orientation.Horizontal,
-                    overscrollEffect = overScrollEffect,
-                    flingBehavior = AnchoredDraggableDefaults.flingBehavior(
-                        state = dragState,
-                        positionalThreshold = { it },
-                        animationSpec = tween()
-                    )
+                    positionalThreshold = { it },
+                    animationSpec = tween()
                 )
-                .overscroll(overScrollEffect)
-                .offset {
-                    IntOffset(
-                        x = dragState.requireOffset().roundToInt(),
-                        y = 0
-                    )
-                }
+            )
+            .overscroll(overScrollEffect)
+            .offset {
+                IntOffset(
+                    x = dragState.requireOffset().roundToInt(),
+                    y = 0
+                )
+            }
+    ) {
+        Card(
+            modifier = Modifier
+                .widthIn(max = AppDimensions.contentMaxWidth)
+                .padding(
+                    horizontal = AppDimensions.paddingMedium,
+                    vertical = AppDimensions.paddingSmall
+                )
+                .align(Alignment.Center),
+            shape = CardDefaults.outlinedShape,
+            elevation = CardDefaults.elevatedCardElevation()
         ) {
-            Card(
+            Row(
                 modifier = Modifier
-                    .widthIn(max = AppDimensions.contentMaxWidth)
-                    .padding(
-                        horizontal = AppDimensions.paddingMedium,
-                        vertical = AppDimensions.paddingSmall
-                    )
-                    .align(Alignment.Center),
-                shape = CardDefaults.outlinedShape,
-                elevation = CardDefaults.elevatedCardElevation()
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clickable { onClickItem() }
+                    .padding(AppDimensions.paddingSmall),
+                horizontalArrangement = Arrangement.Start
             ) {
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(AppDimensions.paddingSmall),
+                    imageVector = AppIcons.Document,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    contentDescription = null
+                )
+
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .wrapContentHeight()
-                        .clickable { onClickItem() }
-                        .padding(AppDimensions.paddingSmall),
-                    horizontalArrangement = Arrangement.Start
+                        .weight(1.0f)
+                        .align(Alignment.CenterVertically)
                 ) {
-                    Icon(
+                    Text(
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(AppDimensions.paddingSmall),
-                        imageVector = AppIcons.Document,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        contentDescription = null
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentHeight()
+                            .alignBy(LastBaseline)
                             .weight(1.0f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .alignBy(LastBaseline)
-                                .weight(1.0f)
-                                .padding(start = AppDimensions.paddingSmall),
-                            text = item.name,
-                            style = AppTypography.titleLarge
-                        )
-                        Text(
-                            modifier = Modifier
-                                .alignBy(LastBaseline)
-                                .padding(
-                                    start = AppDimensions.paddingSmall,
-                                    end = AppDimensions.paddingSmall
-                                ),
-                            text = "${item.checkedItems} / ${item.totalItems}",
-                            style = AppTypography.bodySmall
-                        )
-                    }
+                            .padding(start = AppDimensions.paddingSmall),
+                        text = item.name,
+                        style = AppTypography.titleLarge
+                    )
+                    Text(
+                        modifier = Modifier
+                            .alignBy(LastBaseline)
+                            .padding(
+                                start = AppDimensions.paddingSmall,
+                                end = AppDimensions.paddingSmall
+                            ),
+                        text = "${item.checkedItems} / ${item.totalItems}",
+                        style = AppTypography.bodySmall
+                    )
+                }
 
+                with(reorderableCollectionItemScope) {
                     ReorderDragHandle(
                         reorderableState = reorderableState
                     )
                 }
             }
         }
+    }
+}
 
+@Composable
+context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
+private fun ReorderDragHandle(
+    reorderableState: ReorderableState
+) {
+    with(rowScope) {
+        AnimatedContent(
+            targetState = reorderableState,
+            contentKey = { it::class },
+            contentAlignment = Alignment.CenterEnd
+        ) { reorderableState ->
+            when (reorderableState) {
+                is ReorderableState.Disabled -> {
+                    Spacer(modifier = Modifier)
+                }
+
+                is ReorderableState.Enabled -> {
+                    with(reorderableCollectionItemScope) {
+                        IconButton(
+                            modifier = Modifier.draggableHandle(
+                                onDragStopped = reorderableState.onReorder,
+                            ),
+                            onClick = { }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically),
+                                imageVector = AppIcons.DragHandle,
+                                contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+context(boxScope: BoxScope)
+private fun ShoppingListActions(
+    dragState: AnchoredDraggableState<SwipeToRevealState>,
+    onEditItem: () -> Unit,
+    onDeleteItem: () -> Unit,
+) {
+    with(boxScope) {
         Row(
             modifier = Modifier
                 .widthIn(max = AppDimensions.contentMaxWidth)
@@ -227,44 +301,6 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                         tint = MaterialTheme.colorScheme.error,
                         contentDescription = stringResource(R.string.overview_btn_delete_list_acc)
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
-private fun ReorderDragHandle(
-    reorderableState: ReorderableState
-) {
-    with(rowScope) {
-        AnimatedContent(
-            targetState = reorderableState,
-            contentKey = { it::class },
-            contentAlignment = Alignment.CenterEnd
-        ) { reorderableState ->
-            when (reorderableState) {
-                is ReorderableState.Disabled -> {
-                    Spacer(modifier = Modifier)
-                }
-
-                is ReorderableState.Enabled -> {
-                    with(reorderableCollectionItemScope) {
-                        IconButton(
-                            modifier = Modifier.draggableHandle(
-                                onDragStopped = reorderableState.onReorder,
-                            ),
-                            onClick = { }
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically),
-                                imageVector = AppIcons.DragHandle,
-                                contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
-                            )
-                        }
-                    }
                 }
             }
         }
