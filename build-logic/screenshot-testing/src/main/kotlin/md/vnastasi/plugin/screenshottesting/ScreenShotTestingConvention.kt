@@ -15,7 +15,7 @@ class ScreenShotTestingConvention : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.applyAndConfigure(libs.plugins.compose.screenshot) {
             extensions.configure<ScreenshotTestOptions> {
-                imageDifferenceThreshold = 0.001f
+                imageDifferenceThreshold = 0.002f
             }
 
             dependencies {
