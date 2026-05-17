@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -15,6 +16,7 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -50,6 +52,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
+import md.vnastasi.shoppinglist.screen.shared.reorderable.ReorderableState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppIcons
@@ -69,10 +72,10 @@ private enum class SwipeToRevealState {
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
+    reorderableState: ReorderableState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
     onDeleteItem: () -> Unit = { },
-    onReorderItem: () -> Unit = { }
 ) {
     val density = LocalDensity.current
 
@@ -167,19 +170,9 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
                         )
                     }
 
-                    IconButton(
-                        modifier = Modifier.draggableHandle(
-                            onDragStopped = onReorderItem,
-                        ),
-                        onClick = { }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically),
-                            imageVector = AppIcons.DragHandle,
-                            contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
-                        )
-                    }
+                    ReorderDragHandle(
+                        reorderableState = reorderableState
+                    )
                 }
             }
         }
@@ -240,6 +233,44 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     }
 }
 
+@Composable
+context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
+private fun ReorderDragHandle(
+    reorderableState: ReorderableState
+) {
+    with(rowScope) {
+        AnimatedContent(
+            targetState = reorderableState,
+            contentKey = { it::class },
+            contentAlignment = Alignment.CenterEnd
+        ) { reorderableState ->
+            when (reorderableState) {
+                is ReorderableState.Disabled -> {
+                    Spacer(modifier = Modifier)
+                }
+
+                is ReorderableState.Enabled -> {
+                    with(reorderableCollectionItemScope) {
+                        IconButton(
+                            modifier = Modifier.draggableHandle(
+                                onDragStopped = reorderableState.onReorder,
+                            ),
+                            onClick = { }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically),
+                                imageVector = AppIcons.DragHandle,
+                                contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
@@ -253,7 +284,33 @@ private fun ShoppingListCardPreview() {
                     state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
                     key = Unit
                 ) {
-                    ShoppingListCard(item = shoppingList)
+                    ShoppingListCard(
+                        item = shoppingList,
+                        reorderableState = ReorderableState.Disabled
+                    )
+                }
+            }
+        }
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
+@Preview
+@Composable
+private fun ReorderableShoppingListCardPreview() {
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+
+    AppTheme {
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingListCard(
+                        item = shoppingList,
+                        reorderableState = ReorderableState.Enabled(onReorder = { })
+                    )
                 }
             }
         }
