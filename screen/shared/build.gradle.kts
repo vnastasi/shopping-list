@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
+    implementation(libs.reorderable)
     implementation(libs.window.core)
 
     ksp(libs.bundles.hilt.compiler)

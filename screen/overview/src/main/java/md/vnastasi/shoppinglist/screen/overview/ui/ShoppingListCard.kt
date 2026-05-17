@@ -6,6 +6,7 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -14,6 +15,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +52,8 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppIcons
@@ -62,128 +66,152 @@ import kotlin.math.roundToInt
 
 private enum class SwipeToRevealState {
 
-    Resting, Actions
+    Content, Actions
 }
 
 @Composable
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
+    reorderDragHandleState: ReorderDragHandleState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
     onDeleteItem: () -> Unit = { },
-    onReorderItem: () -> Unit = { }
 ) {
     val density = LocalDensity.current
 
     val dragState = remember {
         val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
-            initialValue = SwipeToRevealState.Resting,
+            initialValue = SwipeToRevealState.Content,
             anchors = DraggableAnchors {
-                SwipeToRevealState.Resting at 0.0f
+                SwipeToRevealState.Content at 0.0f
                 SwipeToRevealState.Actions at -actionOffset
             }
         )
     }
 
-    val overScrollEffect = rememberOverscrollEffect()
-
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .anchoredDraggable(
+        ShoppingListCardContent(
+            item = item,
+            reorderDragHandleState = reorderDragHandleState,
+            dragState = dragState,
+            overScrollEffect = rememberOverscrollEffect(),
+            onClickItem = onClickItem
+        )
+
+        ShoppingListActions(
+            dragState = dragState,
+            onEditItem = onEditItem,
+            onDeleteItem = onDeleteItem
+        )
+    }
+}
+
+context(reorderableCollectionItemScope: ReorderableCollectionItemScope)
+@Composable
+private fun ShoppingListCardContent(
+    item: ShoppingListDetails,
+    reorderDragHandleState: ReorderDragHandleState,
+    dragState: AnchoredDraggableState<SwipeToRevealState>,
+    overScrollEffect: OverscrollEffect?,
+    onClickItem: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .anchoredDraggable(
+                state = dragState,
+                orientation = Orientation.Horizontal,
+                overscrollEffect = overScrollEffect,
+                flingBehavior = AnchoredDraggableDefaults.flingBehavior(
                     state = dragState,
-                    orientation = Orientation.Horizontal,
-                    overscrollEffect = overScrollEffect,
-                    flingBehavior = AnchoredDraggableDefaults.flingBehavior(
-                        state = dragState,
-                        positionalThreshold = { it },
-                        animationSpec = tween()
-                    )
+                    positionalThreshold = { it },
+                    animationSpec = tween()
                 )
-                .overscroll(overScrollEffect)
-                .offset {
-                    IntOffset(
-                        x = dragState.requireOffset().roundToInt(),
-                        y = 0
-                    )
-                }
+            )
+            .overscroll(overScrollEffect)
+            .offset {
+                IntOffset(
+                    x = dragState.requireOffset().roundToInt(),
+                    y = 0
+                )
+            }
+    ) {
+        Card(
+            modifier = Modifier
+                .widthIn(max = AppDimensions.contentMaxWidth)
+                .padding(
+                    horizontal = AppDimensions.paddingMedium,
+                    vertical = AppDimensions.paddingSmall
+                )
+                .align(Alignment.Center),
+            shape = CardDefaults.outlinedShape,
+            elevation = CardDefaults.elevatedCardElevation()
         ) {
-            Card(
+            Row(
                 modifier = Modifier
-                    .widthIn(max = AppDimensions.contentMaxWidth)
-                    .padding(
-                        horizontal = AppDimensions.paddingMedium,
-                        vertical = AppDimensions.paddingSmall
-                    )
-                    .align(Alignment.Center),
-                shape = CardDefaults.outlinedShape,
-                elevation = CardDefaults.elevatedCardElevation()
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clickable { onClickItem() }
+                    .padding(AppDimensions.paddingSmall),
+                horizontalArrangement = Arrangement.Start
             ) {
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(AppDimensions.paddingSmall),
+                    imageVector = AppIcons.Document,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    contentDescription = null
+                )
+
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .wrapContentHeight()
-                        .clickable { onClickItem() }
-                        .padding(AppDimensions.paddingSmall),
-                    horizontalArrangement = Arrangement.Start
+                        .weight(1.0f)
+                        .align(Alignment.CenterVertically)
                 ) {
-                    Icon(
+                    Text(
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(AppDimensions.paddingSmall),
-                        imageVector = AppIcons.Document,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        contentDescription = null
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentHeight()
+                            .alignBy(LastBaseline)
                             .weight(1.0f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .alignBy(LastBaseline)
-                                .weight(1.0f)
-                                .padding(start = AppDimensions.paddingSmall),
-                            text = item.name,
-                            style = AppTypography.titleLarge
-                        )
-                        Text(
-                            modifier = Modifier
-                                .alignBy(LastBaseline)
-                                .padding(
-                                    start = AppDimensions.paddingSmall,
-                                    end = AppDimensions.paddingSmall
-                                ),
-                            text = "${item.checkedItems} / ${item.totalItems}",
-                            style = AppTypography.bodySmall
-                        )
-                    }
+                            .padding(start = AppDimensions.paddingSmall),
+                        text = item.name,
+                        style = AppTypography.titleLarge
+                    )
+                    Text(
+                        modifier = Modifier
+                            .alignBy(LastBaseline)
+                            .padding(
+                                start = AppDimensions.paddingSmall,
+                                end = AppDimensions.paddingSmall
+                            ),
+                        text = "${item.checkedItems} / ${item.totalItems}",
+                        style = AppTypography.bodySmall
+                    )
+                }
 
-                    IconButton(
-                        modifier = Modifier.draggableHandle(
-                            onDragStopped = onReorderItem,
-                        ),
-                        onClick = { }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically),
-                            imageVector = AppIcons.DragHandle,
-                            contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
-                        )
-                    }
+                with(reorderableCollectionItemScope) {
+                    ReorderDragHandle(
+                        state = reorderDragHandleState
+                    )
                 }
             }
         }
+    }
+}
 
+context(boxScope: BoxScope)
+@Composable
+private fun ShoppingListActions(
+    dragState: AnchoredDraggableState<SwipeToRevealState>,
+    onEditItem: () -> Unit,
+    onDeleteItem: () -> Unit,
+) {
+    with(boxScope) {
         Row(
             modifier = Modifier
                 .widthIn(max = AppDimensions.contentMaxWidth)
@@ -253,7 +281,33 @@ private fun ShoppingListCardPreview() {
                     state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
                     key = Unit
                 ) {
-                    ShoppingListCard(item = shoppingList)
+                    ShoppingListCard(
+                        item = shoppingList,
+                        reorderDragHandleState = ReorderDragHandleState.Disabled
+                    )
+                }
+            }
+        }
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
+@Preview
+@Composable
+private fun ReorderableShoppingListCardPreview() {
+    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+
+    AppTheme {
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingListCard(
+                        item = shoppingList,
+                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
+                    )
                 }
             }
         }

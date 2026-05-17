@@ -12,10 +12,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @ScreenshotPreviews
 @Composable
 fun EmptyListDetailsScreen() {
-    val viewState = ViewState.Ready(
+    val viewState = ViewState.Empty(
         shoppingListId = 1L,
         shoppingListName = "Test list",
-        listOfShoppingItems = persistentListOf(),
         navigationTarget = null
     )
     AppTheme {
@@ -29,7 +28,31 @@ fun EmptyListDetailsScreen() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun ReadyListDetailsScreen() {
+fun OneItemListDetailsScreen() {
+    val viewState = ViewState.Ready(
+        shoppingListId = 1L,
+        shoppingListName = "Test list",
+        listOfShoppingItems = persistentListOf(
+            createShoppingItem {
+                id = 1L
+                name = "Item 1"
+                isChecked = false
+            }
+        ),
+        navigationTarget = null
+    )
+    AppTheme {
+        ListDetailsScreen(
+            viewModel = StubListDetailsViewModelSpec(viewState),
+            navigator = StubListDetailsScreenNavigator()
+        )
+    }
+}
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun MultipleItemsListDetailsScreen() {
     val viewState = ViewState.Ready(
         shoppingListId = 1L,
         shoppingListName = "Test list",

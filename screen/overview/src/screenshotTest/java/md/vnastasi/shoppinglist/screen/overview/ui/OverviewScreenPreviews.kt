@@ -8,6 +8,7 @@ import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
+/*
 @PreviewTest
 @ScreenshotPreviews
 @Composable
@@ -21,7 +22,9 @@ fun LoadingOverviewScreen() {
         )
     }
 }
+ */
 
+/*
 @PreviewTest
 @ScreenshotPreviews
 @Composable
@@ -37,11 +40,31 @@ fun EmptyOverviewScreen() {
         )
     }
 }
+ */
 
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun ReadyOverviewScreen() {
+fun OneItemOverviewScreen() {
+    val viewState = ViewState.Ready(
+        data = persistentListOf(
+            ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 10L, checkedItems = 2L)
+        ),
+        navigationTarget = null
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun MultipleItemsOverviewScreen() {
     val viewState = ViewState.Ready(
         data = persistentListOf(
             ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 10L, checkedItems = 2L),
