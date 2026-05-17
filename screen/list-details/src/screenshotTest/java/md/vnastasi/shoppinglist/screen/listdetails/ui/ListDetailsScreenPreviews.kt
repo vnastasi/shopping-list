@@ -12,10 +12,9 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @ScreenshotPreviews
 @Composable
 fun EmptyListDetailsScreen() {
-    val viewState = ViewState.Ready(
+    val viewState = ViewState.Empty(
         shoppingListId = 1L,
         shoppingListName = "Test list",
-        listOfShoppingItems = persistentListOf(),
         navigationTarget = null
     )
     AppTheme {

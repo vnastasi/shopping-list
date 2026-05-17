@@ -2,23 +2,30 @@ package md.vnastasi.shoppinglist.screen.shared.content
 
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -102,11 +109,16 @@ private fun ExtendedContent(
         ) {
             val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(animationResId))
 
-            LottieAnimation(
-                modifier = Modifier.fillMaxWidth(),
-                composition = lottieComposition,
-                iterations = LottieConstants.IterateForever
-            )
+            if (!LocalInspectionMode.current) {
+                LottieAnimation(
+                    modifier = Modifier.fillMaxWidth(),
+                    composition = lottieComposition,
+                    iterations = LottieConstants.IterateForever,
+                    enableMergePaths = true
+                )
+            } else {
+                AnimationPlaceholder()
+            }
 
             Text(
                 modifier = Modifier
@@ -124,6 +136,24 @@ private fun ExtendedContent(
 
         Spacer(
             modifier = Modifier.weight(SPACER_WEIGHT)
+        )
+    }
+}
+
+@Composable
+private fun ColumnScope.AnimationPlaceholder() {
+    Box(
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .size(192.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = "Animation"
         )
     }
 }
