@@ -67,6 +67,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.kotlin.reflect)
+
+    screenshotTestImplementation(testFixtures(project(":domain:api")))
 }
 
 tasks.withType<KotlinCompile>().configureEach {

@@ -27,6 +27,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LIST
+import md.vnastasi.shoppinglist.screen.shared.reorderable.ReorderableState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -62,6 +63,16 @@ internal fun ListDetailsContent(
             items = reorderableList,
             key = { _, shoppingItem -> shoppingItem.id }
         ) { index, shoppingItem ->
+            val reorderableState = remember(reorderableList) {
+                if (reorderableList.size > 1) {
+                    ReorderableState.Enabled(
+                        onReorder = { dispatchEvent(UiEvent.OnItemsReordered(reorderableList)) }
+                    )
+                } else {
+                    ReorderableState.Disabled
+                }
+            }
+
             ReorderableItem(
                 state = reorderableLazyListState,
                 key = shoppingItem.id
@@ -71,9 +82,9 @@ internal fun ListDetailsContent(
                         .animateItem()
                         .testTag(SHOPPING_ITEMS_ITEM),
                     shoppingItem = shoppingItem,
+                    reorderableState = reorderableState,
                     onClick = { dispatchEvent(UiEvent.OnItemClicked(it)) },
                     onDelete = { dispatchEvent(UiEvent.OnItemDeleted(it)) },
-                    onReorderItem = { dispatchEvent(UiEvent.OnItemsReordered(reorderableList)) }
                 )
             }
 
