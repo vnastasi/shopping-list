@@ -110,8 +110,8 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     }
 }
 
-@Composable
 context(reorderableCollectionItemScope: ReorderableCollectionItemScope)
+@Composable
 private fun ShoppingListCardContent(
     item: ShoppingListDetails,
     reorderDragHandleState: ReorderDragHandleState,
@@ -204,8 +204,8 @@ private fun ShoppingListCardContent(
     }
 }
 
-@Composable
 context(boxScope: BoxScope)
+@Composable
 private fun ShoppingListActions(
     dragState: AnchoredDraggableState<SwipeToRevealState>,
     onEditItem: () -> Unit,

@@ -13,8 +13,8 @@ import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.support.theme.AppIcons
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
-@Composable
 context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
+@Composable
 fun ReorderDragHandle(
     state: ReorderDragHandleState
 ) {
