@@ -1,6 +1,5 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -54,7 +52,8 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
-import md.vnastasi.shoppinglist.screen.shared.reorderable.ReorderableState
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppIcons
@@ -74,7 +73,7 @@ private enum class SwipeToRevealState {
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     item: ShoppingListDetails,
-    reorderableState: ReorderableState,
+    reorderDragHandleState: ReorderDragHandleState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
     onDeleteItem: () -> Unit = { },
@@ -97,7 +96,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     ) {
         ShoppingListCardContent(
             item = item,
-            reorderableState = reorderableState,
+            reorderDragHandleState = reorderDragHandleState,
             dragState = dragState,
             overScrollEffect = rememberOverscrollEffect(),
             onClickItem = onClickItem
@@ -115,7 +114,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
 context(reorderableCollectionItemScope: ReorderableCollectionItemScope)
 private fun ShoppingListCardContent(
     item: ShoppingListDetails,
-    reorderableState: ReorderableState,
+    reorderDragHandleState: ReorderDragHandleState,
     dragState: AnchoredDraggableState<SwipeToRevealState>,
     overScrollEffect: OverscrollEffect?,
     onClickItem: () -> Unit
@@ -197,46 +196,8 @@ private fun ShoppingListCardContent(
 
                 with(reorderableCollectionItemScope) {
                     ReorderDragHandle(
-                        reorderableState = reorderableState
+                        state = reorderDragHandleState
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
-private fun ReorderDragHandle(
-    reorderableState: ReorderableState
-) {
-    with(rowScope) {
-        AnimatedContent(
-            targetState = reorderableState,
-            contentKey = { it::class },
-            contentAlignment = Alignment.CenterEnd
-        ) { reorderableState ->
-            when (reorderableState) {
-                is ReorderableState.Disabled -> {
-                    Spacer(modifier = Modifier)
-                }
-
-                is ReorderableState.Enabled -> {
-                    with(reorderableCollectionItemScope) {
-                        IconButton(
-                            modifier = Modifier.draggableHandle(
-                                onDragStopped = reorderableState.onReorder,
-                            ),
-                            onClick = { }
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically),
-                                imageVector = AppIcons.DragHandle,
-                                contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -322,7 +283,7 @@ private fun ShoppingListCardPreview() {
                 ) {
                     ShoppingListCard(
                         item = shoppingList,
-                        reorderableState = ReorderableState.Disabled
+                        reorderDragHandleState = ReorderDragHandleState.Disabled
                     )
                 }
             }
@@ -345,7 +306,7 @@ private fun ReorderableShoppingListCardPreview() {
                 ) {
                     ShoppingListCard(
                         item = shoppingList,
-                        reorderableState = ReorderableState.Enabled(onReorder = { })
+                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
                     )
                 }
             }

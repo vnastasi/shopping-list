@@ -20,7 +20,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
-import md.vnastasi.shoppinglist.screen.shared.reorderable.ReorderableState
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -59,13 +59,13 @@ internal fun OverviewContent(
                 state = reorderableLazyListState,
                 key = shoppingList.id
             ) {
-                val reorderableState = remember(reorderableList) {
+                val reorderDragHandleState = remember(reorderableList) {
                     if (reorderableList.size > 1) {
-                        ReorderableState.Enabled(
+                        ReorderDragHandleState.Enabled(
                             onReorder = { dispatchEvent(UiEvent.OnShoppingListsReordered(reorderableList)) }
                         )
                     } else {
-                        ReorderableState.Disabled
+                        ReorderDragHandleState.Disabled
                     }
                 }
                 ShoppingListCard(
@@ -73,7 +73,7 @@ internal fun OverviewContent(
                         .animateItem()
                         .testTag(SHOPPING_LISTS_ITEM),
                     item = shoppingList,
-                    reorderableState = reorderableState,
+                    reorderDragHandleState = reorderDragHandleState,
                     onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingList)) },
                     onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingList)) },
                     onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingList)) },

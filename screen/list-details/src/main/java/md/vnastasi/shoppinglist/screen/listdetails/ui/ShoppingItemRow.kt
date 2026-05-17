@@ -1,10 +1,8 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,10 +30,10 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
-import md.vnastasi.shoppinglist.screen.shared.reorderable.ReorderableState
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
+import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
-import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -46,7 +44,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     modifier: Modifier = Modifier,
     shoppingItem: ShoppingItem,
-    reorderableState: ReorderableState,
+    reorderDragHandleState: ReorderDragHandleState,
     onClick: (ShoppingItem) -> Unit,
     onDelete: (ShoppingItem) -> Unit
 ) {
@@ -107,51 +105,12 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
                 }
 
                 ReorderDragHandle(
-                    reorderableState = reorderableState
+                    state = reorderDragHandleState
                 )
             }
         }
     }
 }
-
-@Composable
-context(reorderableCollectionItemScope: ReorderableCollectionItemScope, rowScope: RowScope)
-private fun ReorderDragHandle(
-    reorderableState: ReorderableState
-) {
-    with(rowScope) {
-        AnimatedContent(
-            targetState = reorderableState,
-            contentKey = { it::class },
-            contentAlignment = Alignment.CenterEnd
-        ) { reorderableState ->
-            when (reorderableState) {
-                is ReorderableState.Disabled -> {
-                    Spacer(modifier = Modifier)
-                }
-
-                is ReorderableState.Enabled -> {
-                    with(reorderableCollectionItemScope) {
-                        IconButton(
-                            modifier = Modifier.draggableHandle(
-                                onDragStopped = reorderableState.onReorder,
-                            ),
-                            onClick = { }
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically),
-                                imageVector = AppIcons.DragHandle,
-                                contentDescription = stringResource(R.string.overview_item_drag_handle_btn_acc)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 
 @ExcludeFromJacocoGeneratedReport
 @Preview(
@@ -178,7 +137,7 @@ private fun ShoppingItemRowPreview1() {
                 ) {
                     ShoppingItemRow(
                         shoppingItem = shoppingItem,
-                        reorderableState = ReorderableState.Disabled,
+                        reorderDragHandleState = ReorderDragHandleState.Disabled,
                         onClick = { },
                         onDelete = { }
                     )
@@ -212,7 +171,7 @@ private fun ShoppingItemRowPreview2() {
                 ) {
                     ShoppingItemRow(
                         shoppingItem = shoppingItem,
-                        reorderableState = ReorderableState.Disabled,
+                        reorderDragHandleState = ReorderDragHandleState.Disabled,
                         onClick = { },
                         onDelete = { }
                     )
@@ -246,7 +205,7 @@ private fun ShoppingItemRowPreview3() {
                 ) {
                     ShoppingItemRow(
                         shoppingItem = shoppingItem,
-                        reorderableState = ReorderableState.Enabled(onReorder = { }),
+                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
                         onClick = { },
                         onDelete = { }
                     )
