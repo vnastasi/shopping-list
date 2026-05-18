@@ -20,7 +20,4 @@ sealed interface UiEvent {
 
     @Immutable
     data class OnItemsReordered(val reorderedList: List<ShoppingItem>) : UiEvent
-
-    @Immutable
-    data object OnNavigationConsumed : UiEvent
 }
