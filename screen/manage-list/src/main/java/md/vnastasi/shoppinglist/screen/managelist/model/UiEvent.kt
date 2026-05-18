@@ -10,7 +10,4 @@ sealed interface UiEvent {
 
     @Immutable
     data class OnNameSaved(val name: String) : UiEvent
-
-    @Immutable
-    data object OnNavigationConsumed : UiEvent
 }

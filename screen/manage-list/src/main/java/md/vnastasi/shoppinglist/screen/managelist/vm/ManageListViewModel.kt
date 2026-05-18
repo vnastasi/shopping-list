@@ -9,14 +9,18 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.managelist.model.Effect
 import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
@@ -32,16 +36,17 @@ class ManageListViewModel @AssistedInject constructor(
 
     private val _validationError = MutableStateFlow(TextValidationError.NONE)
     private val _isSaveEnabled = MutableStateFlow(false)
-    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
 
     override val listNameTextFieldState: TextFieldState = TextFieldState()
 
     override val viewState: StateFlow<ViewState> = combine(
         flow = _validationError,
         flow2 = _isSaveEnabled,
-        flow3 = _navigationTarget,
         transform = ::ViewState
     ).asStateFlow(initialValue = ViewState.INIT)
+
+    private val _effect = Channel<Effect>()
+    override val effect: Flow<Effect> = _effect.receiveAsFlow()
 
     init {
         if (shoppingListId != null) {
@@ -55,7 +60,6 @@ class ManageListViewModel @AssistedInject constructor(
         when (event) {
             is UiEvent.OnNameChanged -> onNameChanged(event.name)
             is UiEvent.OnNameSaved -> onNameSaved(event.name)
-            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
@@ -79,12 +83,8 @@ class ManageListViewModel @AssistedInject constructor(
                 repository.create(ShoppingList(name = name))
             }
 
-            _navigationTarget.update { NavigationTarget.CloseSheet }
+            _effect.send(Effect.Navigation(NavigationTarget.CloseSheet))
         }
-    }
-
-    private fun onNavigationConsumed() {
-        _navigationTarget.update { null }
     }
 
     @AssistedFactory
