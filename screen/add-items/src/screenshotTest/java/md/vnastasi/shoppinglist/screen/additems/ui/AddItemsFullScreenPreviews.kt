@@ -18,8 +18,7 @@ fun NoSuggestionsFullScreen() {
     ApplicationFullScreenPreview(
         viewState = ViewState(
             suggestions = persistentListOf(),
-            toastMessage = null,
-            navigationTarget = null
+            toastMessage = null
         ),
         searchTermValue = ""
     )
@@ -36,8 +35,7 @@ fun SuggestionsAvailableFullScreen() {
                 NameSuggestion(id = 2L, name = "Suggestion 2"),
                 NameSuggestion(id = 3L, name = "Suggestion 3")
             ),
-            toastMessage = null,
-            navigationTarget = null
+            toastMessage = null
         ),
         searchTermValue = "Suggest"
     )

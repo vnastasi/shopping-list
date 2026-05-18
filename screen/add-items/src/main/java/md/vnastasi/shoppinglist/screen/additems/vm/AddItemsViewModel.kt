@@ -12,12 +12,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -26,6 +29,7 @@ import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.Effect
 import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
@@ -43,11 +47,9 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     private val _triggerCounter = MutableStateFlow(0)
 
-    private val _suggestions = snapshotFlow { searchTermTextFieldState.text.toString() }.flatMapLatest { nameSuggestionRepository.findAllMatching(it) }
+    private val _suggestions = snapshotFlow { searchTermTextFieldState.text.toString() }.flatMapLatest(nameSuggestionRepository::findAllMatching)
 
     private val _toastMessage = MutableStateFlow<ToastMessage?>(null)
-
-    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
 
     override val searchTermTextFieldState: TextFieldState = TextFieldState(initialText = "")
 
@@ -55,9 +57,11 @@ class AddItemsViewModel @AssistedInject internal constructor(
         flow = _triggerCounter,
         flow2 = _suggestions,
         flow3 = _toastMessage,
-        flow4 = _navigationTarget,
-        transform = { _, suggestions, toastMessage, navigationTarget -> createViewState(suggestions, toastMessage, navigationTarget) }
+        transform = { _, suggestions, toastMessage -> createViewState(suggestions, toastMessage) }
     ).asStateFlow(initialValue = ViewState.init())
+
+    private val _effect = Channel<Effect>()
+    override val effect: Flow<Effect> = _effect.receiveAsFlow()
 
     override fun dispatch(uiEvent: UiEvent) {
         when (uiEvent) {
@@ -65,18 +69,15 @@ class AddItemsViewModel @AssistedInject internal constructor(
             is UiEvent.OnSuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
             is UiEvent.OnToastShown -> onToastShown()
             is UiEvent.OnBackClicked -> onBackClicked()
-            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
     private fun createViewState(
         suggestions: List<NameSuggestion>,
-        toastMessage: ToastMessage?,
-        navigationTarget: NavigationTarget?
+        toastMessage: ToastMessage?
     ): ViewState = ViewState(
         suggestions = suggestions.toImmutableList(),
         toastMessage = toastMessage,
-        navigationTarget = navigationTarget
     )
 
     private fun onItemAddedToList(name: String) {
@@ -116,11 +117,9 @@ class AddItemsViewModel @AssistedInject internal constructor(
     }
 
     private fun onBackClicked() {
-        _navigationTarget.update { NavigationTarget.BackToListDetails }
-    }
-
-    private fun onNavigationConsumed() {
-        _navigationTarget.update { null }
+        viewModelScope.launch {
+            _effect.send(Effect.Navigation(NavigationTarget.BackToListDetails))
+        }
     }
 
     @AssistedFactory

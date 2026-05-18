@@ -19,8 +19,7 @@ fun NoSuggestionsDialog() {
     ApplicationDialogPreview(
         viewState = ViewState(
             suggestions = persistentListOf(),
-            toastMessage = null,
-            navigationTarget = null
+            toastMessage = null
         ),
         searchTermValue = ""
     )
@@ -37,8 +36,7 @@ fun SuggestionsAvailableDialog() {
                 NameSuggestion(id = 2L, name = "Suggestion 2"),
                 NameSuggestion(id = 3L, name = "Suggestion 3")
             ),
-            toastMessage = null,
-            navigationTarget = null
+            toastMessage = null
         ),
         searchTermValue = "Suggest"
     )

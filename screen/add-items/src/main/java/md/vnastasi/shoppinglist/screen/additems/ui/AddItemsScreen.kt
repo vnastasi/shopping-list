@@ -1,12 +1,14 @@
 package md.vnastasi.shoppinglist.screen.additems.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
-import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import md.vnastasi.shoppinglist.screen.additems.model.Effect
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItemsScreenNavigator
+import md.vnastasi.shoppinglist.screen.additems.nav.navigate
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.LocalPresentationMode
 import md.vnastasi.shoppinglist.screen.shared.content.PresentationMode
@@ -18,28 +20,35 @@ fun AddItemsScreen(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewState.navigationTarget) {
-        when (viewState.navigationTarget) {
-            is NavigationTarget.BackToListDetails -> {
-                navigator.backToListDetails()
-                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+    LifecycleStartEffect(viewModel.effect) {
+        val job = lifecycleScope.launch {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is Effect.Navigation -> navigator.navigate(effect.target)
+                }
             }
+        }
 
-            null -> Unit
+        onStopOrDispose {
+            job.cancel()
         }
     }
 
-    if (LocalPresentationMode.current == PresentationMode.Dialog) {
-        AddItemsDialog(
-            searchTermTextFieldState = viewModel.searchTermTextFieldState,
-            viewState = viewState,
-            dispatchEvent = viewModel::dispatch,
-        )
-    } else {
-        AddItemsFullScreen(
-            searchTermTextFieldState = viewModel.searchTermTextFieldState,
-            viewState = viewState,
-            dispatchEvent = viewModel::dispatch,
-        )
+    when (LocalPresentationMode.current) {
+        PresentationMode.Dialog -> {
+            AddItemsDialog(
+                searchTermTextFieldState = viewModel.searchTermTextFieldState,
+                viewState = viewState,
+                dispatchEvent = viewModel::dispatch,
+            )
+        }
+
+        PresentationMode.FullScreen -> {
+            AddItemsFullScreen(
+                searchTermTextFieldState = viewModel.searchTermTextFieldState,
+                viewState = viewState,
+                dispatchEvent = viewModel::dispatch,
+            )
+        }
     }
 }

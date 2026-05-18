@@ -243,8 +243,7 @@ private fun AddItemsFullScreenPreview() {
             NameSuggestion(id = 6L, "Item 6"),
             NameSuggestion(id = 7L, "Item 7")
         ),
-        toastMessage = null,
-        navigationTarget = null
+        toastMessage = null
     )
 
     AppTheme {

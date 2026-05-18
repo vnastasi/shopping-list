@@ -9,12 +9,11 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 @Immutable
 data class ViewState(
     val suggestions: ImmutableList<NameSuggestion>,
-    val toastMessage: ToastMessage?,
-    val navigationTarget: NavigationTarget?
+    val toastMessage: ToastMessage?
 ) {
 
     companion object {
 
-        fun init() = ViewState(suggestions = persistentListOf(), toastMessage = null, navigationTarget = null)
+        fun init() = ViewState(suggestions = persistentListOf(), toastMessage = null)
     }
 }

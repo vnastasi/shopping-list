@@ -17,7 +17,4 @@ sealed interface UiEvent {
 
     @Immutable
     data object OnToastShown : UiEvent
-
-    @Immutable
-    data object OnNavigationConsumed : UiEvent
 }
