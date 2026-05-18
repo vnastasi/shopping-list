@@ -29,15 +29,19 @@ import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.managelist.model.Effect
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
+import md.vnastasi.shoppinglist.screen.managelist.nav.navigate
 import md.vnastasi.shoppinglist.screen.managelist.ui.TestTags.MANAGE_LIST_TEXT_FIELD
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -51,14 +55,17 @@ fun ManageListSheet(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewState.navigationTarget) {
-        when (viewState.navigationTarget) {
-            is NavigationTarget.CloseSheet -> {
-                navigator.closeSheet()
-                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+    LifecycleStartEffect(viewModel.effect) {
+        val job = lifecycleScope.launch {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is Effect.Navigation -> navigator.navigate(effect.target)
+                }
             }
+        }
 
-            null -> Unit
+        onStopOrDispose {
+            job.cancel()
         }
     }
 
@@ -159,7 +166,7 @@ private fun ManageListSheetPreview() {
         ) {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState("List"),
-                viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null),
+                viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
                 dispatchEvent = { }
             )
         }
@@ -189,7 +196,7 @@ private fun ManageListSheetWithErrorsPreview() {
         ) {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState(""),
-                viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true, navigationTarget = null),
+                viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true),
                 dispatchEvent = { }
             )
         }

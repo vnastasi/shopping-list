@@ -49,8 +49,7 @@ fun OneItemOverviewScreen() {
     val viewState = ViewState.Ready(
         data = persistentListOf(
             ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 10L, checkedItems = 2L)
-        ),
-        navigationTarget = null
+        )
     )
 
     AppTheme {
@@ -73,8 +72,7 @@ fun MultipleItemsOverviewScreen() {
             ShoppingListDetails(id = 4L, name = "Birthday party shopping list", position = 4L, totalItems = 3L, checkedItems = 3L),
             ShoppingListDetails(id = 5L, name = "Christmas Eve party", position = 5L, totalItems = 0L, checkedItems = 0L),
             ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", position = 6L, totalItems = 23L, checkedItems = 5L),
-        ),
-        navigationTarget = null
+        )
     )
 
     AppTheme {

@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,15 +38,19 @@ import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
-import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.listdetails.model.Effect
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetailsScreenNavigator
+import md.vnastasi.shoppinglist.screen.listdetails.nav.navigate
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.ADD_SHOPPING_LIST_ITEMS_FAB
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_DETAILS_TOOLBAR
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
@@ -65,19 +68,17 @@ fun ListDetailsScreen(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewState.navigationTarget) {
-        when (val localNavigationTarget = viewState.navigationTarget) {
-            is NavigationTarget.AddItems -> {
-                navigator.toAddItems(localNavigationTarget.shoppingListId)
-                viewModel.dispatch(UiEvent.OnNavigationConsumed)
+    LifecycleStartEffect(viewModel.effect) {
+        val job = lifecycleScope.launch {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is Effect.Navigation -> navigator.navigate(effect.target)
+                }
             }
+        }
 
-            is NavigationTarget.BackToOverview -> {
-                navigator.backToOverview()
-                viewModel.dispatch(UiEvent.OnNavigationConsumed)
-            }
-
-            null -> Unit
+        onStopOrDispose {
+            job.cancel()
         }
     }
 
@@ -238,8 +239,7 @@ private fun ListDetailsScreenPreview() {
     val viewState = ViewState.Ready(
         shoppingListId = 1L,
         shoppingListName = "My list",
-        listOfShoppingItems = listOfShoppingItems,
-        navigationTarget = null
+        listOfShoppingItems = listOfShoppingItems
     )
 
     AppTheme {

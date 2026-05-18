@@ -187,9 +187,7 @@ private fun AddItemsDialogPreview() {
             NameSuggestion(id = 5L, "Item 5"),
             NameSuggestion(id = 6L, "Item 6"),
             NameSuggestion(id = 7L, "Item 7")
-        ),
-        toastMessage = null,
-        navigationTarget = null
+        )
     )
 
     AppTheme {

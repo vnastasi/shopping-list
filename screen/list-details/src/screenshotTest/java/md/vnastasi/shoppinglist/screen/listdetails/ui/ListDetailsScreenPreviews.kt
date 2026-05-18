@@ -14,8 +14,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 fun EmptyListDetailsScreen() {
     val viewState = ViewState.Empty(
         shoppingListId = 1L,
-        shoppingListName = "Test list",
-        navigationTarget = null
+        shoppingListName = "Test list"
     )
     AppTheme {
         ListDetailsScreen(
@@ -38,8 +37,7 @@ fun OneItemListDetailsScreen() {
                 name = "Item 1"
                 isChecked = false
             }
-        ),
-        navigationTarget = null
+        )
     )
     AppTheme {
         ListDetailsScreen(
@@ -67,8 +65,7 @@ fun MultipleItemsListDetailsScreen() {
                 name = "Item 2"
                 isChecked = true
             }
-        ),
-        navigationTarget = null
+        )
     )
     AppTheme {
         ListDetailsScreen(

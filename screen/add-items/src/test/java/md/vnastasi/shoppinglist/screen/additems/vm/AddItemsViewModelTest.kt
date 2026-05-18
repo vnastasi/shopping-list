@@ -6,9 +6,6 @@ import assertk.assertThat
 import assertk.assertions.isDataClassEqualTo
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
-import assertk.assertions.prop
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -19,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
@@ -28,6 +26,7 @@ import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.Effect
 import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
@@ -61,7 +60,7 @@ internal class AddItemsViewModelTest {
 
             viewModel.searchTermTextFieldState.setTextAndPlaceCursorAtEnd(searchTerm)
 
-            val expectedViewState = ViewState(suggestions = persistentListOf(suggestion), toastMessage = null, navigationTarget = null)
+            val expectedViewState = ViewState(suggestions = persistentListOf(suggestion))
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
 
             cancelAndConsumeRemainingEvents()
@@ -72,7 +71,7 @@ internal class AddItemsViewModelTest {
     @DisplayName(
         """
         When handling a `ItemAddedToList` UI event
-        Then expect item to be added to the list and a toast message to be displayed
+        Then expect item to be added to the list and a toast effect
     """
     )
     fun onItemAddedToList() = runTest {
@@ -83,15 +82,13 @@ internal class AddItemsViewModelTest {
         coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
 
         val viewModel = createViewModel(currentSearchTermValue = "Search term")
-        viewModel.viewState.test {
-            skipItems(1)
 
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnItemAddedToList(name))
-            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
-            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage, navigationTarget = null)
-            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
+            advanceUntilIdle()
 
-            cancelAndConsumeRemainingEvents()
+            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(name))
+            assertThat(awaitItem()).isDataClassEqualTo(Effect.ShowToast(expectedToastMessage))
         }
 
         coVerify { mockShoppingItemRepository.create(eq(ShoppingItem(name = name, isChecked = false, list = shoppingList))) }
@@ -112,10 +109,10 @@ internal class AddItemsViewModelTest {
         every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(shoppingList)
 
         val viewModel = createViewModel(currentSearchTermValue = "Search term")
-        viewModel.viewState.test {
-            skipItems(1)
-
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnItemAddedToList(""))
+            advanceUntilIdle()
+
             expectNoEvents()
         }
 
@@ -139,18 +136,18 @@ internal class AddItemsViewModelTest {
         val suggestion = NameSuggestion(name = "Milk")
 
         val viewModel = createViewModel()
-        viewModel.viewState.test {
-            skipItems(1)
-
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnSuggestionDeleted(suggestion))
-            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf("Milk"))
-            val expectedViewState = ViewState(suggestions = persistentListOf(), toastMessage = expectedToastMessage, navigationTarget = null)
-            assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
+            advanceUntilIdle()
 
+            val expectedToastMessage = ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf("Milk"))
+            assertThat(awaitItem()).isDataClassEqualTo(Effect.ShowToast(expectedToastMessage))
+        }
+
+        viewModel.viewState.test {
             cancelAndConsumeRemainingEvents()
         }
 
-        coVerify { mockNameSuggestionRepository.findAllMatching(any()) }
         coVerify { mockNameSuggestionRepository.delete(suggestion) }
         confirmVerified(mockNameSuggestionRepository)
     }
@@ -158,35 +155,8 @@ internal class AddItemsViewModelTest {
     @Test
     @DisplayName(
         """
-        When handling a `ToastShown` UI event
-        Then expect toast message to be cleared
-    """
-    )
-    fun onToastShown() = runTest {
-        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
-        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
-
-        val suggestion = NameSuggestion(name = "Milk")
-
-        val viewModel = createViewModel()
-        viewModel.viewState.test {
-            skipItems(1)
-
-            viewModel.dispatch(UiEvent.OnSuggestionDeleted(suggestion))
-            assertThat(awaitItem()).prop(ViewState::toastMessage).isNotNull()
-
-            viewModel.dispatch(UiEvent.OnToastShown)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState(suggestions = persistentListOf(), toastMessage = null, navigationTarget = null))
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    @DisplayName(
-        """
         When handling a `OnBackClicked` UI event
-        Then expect navigation target to be set to `BackToListDetails`
+        Then expect navigation effect with target `BackToListDetails`
     """
     )
     fun onBackClicked() = runTest {
@@ -194,38 +164,9 @@ internal class AddItemsViewModelTest {
         coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
-        viewModel.viewState.test {
-            skipItems(1)
-
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnBackClicked)
-            assertThat(awaitItem().navigationTarget).isEqualTo(NavigationTarget.BackToListDetails)
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    @DisplayName(
-        """
-        When handling an `OnNavigationConsumed` UI event
-        Then expect navigation target to be set to `null`
-    """
-    )
-    fun onNavigationConsumed() = runTest {
-        every { mockShoppingListRepository.findById(DEFAULT_SHOPPING_LIST_ID) } returns flowOf(createShoppingList())
-        coEvery { mockNameSuggestionRepository.findAllMatching(any()) } returns flowOf(emptyList())
-
-        val viewModel = createViewModel()
-        viewModel.viewState.test {
-            skipItems(1)
-
-            viewModel.dispatch(UiEvent.OnBackClicked)
-            assertThat(awaitItem().navigationTarget).isEqualTo(NavigationTarget.BackToListDetails)
-
-            viewModel.dispatch(UiEvent.OnNavigationConsumed)
-            assertThat(awaitItem().navigationTarget).isNull()
-
-            cancelAndConsumeRemainingEvents()
+            assertThat(awaitItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.BackToListDetails))
         }
     }
 

@@ -4,17 +4,14 @@ import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
-import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 
 @Immutable
 data class ViewState(
-    val suggestions: ImmutableList<NameSuggestion>,
-    val toastMessage: ToastMessage?,
-    val navigationTarget: NavigationTarget?
+    val suggestions: ImmutableList<NameSuggestion>
 ) {
 
     companion object {
 
-        fun init() = ViewState(suggestions = persistentListOf(), toastMessage = null, navigationTarget = null)
+        val INIT = ViewState(suggestions = persistentListOf())
     }
 }

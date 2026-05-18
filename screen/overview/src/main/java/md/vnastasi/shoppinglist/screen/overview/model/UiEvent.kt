@@ -20,7 +20,4 @@ sealed interface UiEvent {
 
     @Immutable
     data object OnAddNewShoppingList : UiEvent
-
-    @Immutable
-    data object OnNavigationConsumed : UiEvent
 }

@@ -5,16 +5,14 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class ViewState(
     val validationError: TextValidationError,
-    val isSaveEnabled: Boolean,
-    val navigationTarget: NavigationTarget?
+    val isSaveEnabled: Boolean
 ) {
 
     companion object {
 
         val INIT = ViewState(
             validationError = TextValidationError.NONE,
-            isSaveEnabled = false,
-            navigationTarget = null
+            isSaveEnabled = false
         )
     }
 }

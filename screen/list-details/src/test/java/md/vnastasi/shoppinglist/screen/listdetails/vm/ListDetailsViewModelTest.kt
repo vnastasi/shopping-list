@@ -22,6 +22,7 @@ import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.listdetails.model.Effect
 import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
@@ -54,8 +55,7 @@ internal class ListDetailsViewModelTest {
             assertThat(awaitItem()).isDataClassEqualTo(
                 ViewState.Empty(
                     shoppingListId = shoppingListId,
-                    shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
-                    navigationTarget = null
+                    shoppingListName = DEFAULT_SHOPPING_LIST_NAME
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -85,8 +85,7 @@ internal class ListDetailsViewModelTest {
                 ViewState.Ready(
                     shoppingListId = shoppingListId,
                     shoppingListName = DEFAULT_SHOPPING_LIST_NAME,
-                    listOfShoppingItems = persistentListOf(shoppingItem),
-                    navigationTarget = null
+                    listOfShoppingItems = persistentListOf(shoppingItem)
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -176,7 +175,7 @@ internal class ListDetailsViewModelTest {
     @DisplayName(
         """
         When handling an `OnAddItemsClicked` UI event
-        Then expect navigation target to be set to `AddItems`
+        Then expect navigation effect with target `AddItems`
     """
     )
     fun onAddItemsClicked() = runTest {
@@ -185,13 +184,12 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
         val viewModel = createViewModel(shoppingListId)
-        viewModel.viewState.test {
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnAddItemsClicked)
             advanceUntilIdle()
 
-            assertThat(expectMostRecentItem().navigationTarget).isEqualTo(NavigationTarget.AddItems(shoppingListId))
-
-            cancelAndConsumeRemainingEvents()
+            val expectedEffect = Effect.Navigation(NavigationTarget.AddItems(shoppingListId))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
         }
     }
 
@@ -248,7 +246,7 @@ internal class ListDetailsViewModelTest {
     @DisplayName(
         """
         When handling an `OnBackClicked` UI event
-        Then expect navigation target to be set to `BackToOverview`
+        Then expect navigation effect with target `BackToOverview`
     """
     )
     fun onBackClicked() = runTest {
@@ -257,39 +255,12 @@ internal class ListDetailsViewModelTest {
         every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
 
         val viewModel = createViewModel(shoppingListId)
-        viewModel.viewState.test {
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnBackClicked)
             advanceUntilIdle()
 
-            assertThat(expectMostRecentItem().navigationTarget).isEqualTo(NavigationTarget.BackToOverview)
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    @DisplayName(
-        """
-        When handling an `OnNavigationConsumed` UI event
-        Then expect navigation target to be set to `null`
-    """
-    )
-    fun onNavigationConsumed() = runTest {
-        val shoppingListId = 567L
-        every { mockShoppingListRepository.findById(shoppingListId) } returns flowOf(createShoppingList { id = shoppingListId })
-        every { mockShoppingItemRepository.findAll(shoppingListId) } returns flowOf(emptyList())
-
-        val viewModel = createViewModel(shoppingListId)
-        viewModel.viewState.test {
-            viewModel.dispatch(UiEvent.OnBackClicked)
-            advanceUntilIdle()
-            assertThat(expectMostRecentItem().navigationTarget).isEqualTo(NavigationTarget.BackToOverview)
-
-            viewModel.dispatch(UiEvent.OnNavigationConsumed)
-            advanceUntilIdle()
-            assertThat(expectMostRecentItem().navigationTarget).isEqualTo(null)
-
-            cancelAndConsumeRemainingEvents()
+            val expectedEffect = Effect.Navigation(NavigationTarget.BackToOverview)
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
         }
     }
 

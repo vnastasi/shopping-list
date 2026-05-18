@@ -14,10 +14,4 @@ sealed interface UiEvent {
 
     @Immutable
     data class OnSuggestionDeleted(val suggestion: NameSuggestion) : UiEvent
-
-    @Immutable
-    data object OnToastShown : UiEvent
-
-    @Immutable
-    data object OnNavigationConsumed : UiEvent
 }

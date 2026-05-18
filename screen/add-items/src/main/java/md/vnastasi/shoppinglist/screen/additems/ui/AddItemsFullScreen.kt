@@ -63,7 +63,6 @@ import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.BACK_BUTTON
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SEARCH_BAR
-import md.vnastasi.shoppinglist.screen.shared.toast.Toast
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -123,11 +122,6 @@ internal fun AddItemsFullScreen(
             }
         }
     }
-
-    Toast(
-        message = viewState.toastMessage,
-        onToastShown = { dispatchEvent(UiEvent.OnToastShown) }
-    )
 }
 
 @Composable
@@ -242,9 +236,7 @@ private fun AddItemsFullScreenPreview() {
             NameSuggestion(id = 5L, "Item 5"),
             NameSuggestion(id = 6L, "Item 6"),
             NameSuggestion(id = 7L, "Item 7")
-        ),
-        toastMessage = null,
-        navigationTarget = null
+        )
     )
 
     AppTheme {

@@ -23,6 +23,7 @@ import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.overview.model.Effect
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
@@ -46,7 +47,7 @@ internal class OverviewViewModelTest {
 
         createViewModel().viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
-            assertThat(awaitItem()).isEqualTo(ViewState.Empty(navigationTarget = null))
+            assertThat(awaitItem()).isEqualTo(ViewState.Empty)
         }
     }
 
@@ -64,7 +65,7 @@ internal class OverviewViewModelTest {
 
         createViewModel().viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = null))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails)))
         }
     }
 
@@ -144,7 +145,7 @@ internal class OverviewViewModelTest {
     @DisplayName(
         """
         When handling a `OnAddNewShoppingList` UI event
-        Then expect navigation target to be set to `AddOrEditList` with no ID supplied
+        Then expect navigation effect with target `AddOrEditList` with no ID supplied
     """
     )
     fun onAddNewShoppingList() = runTest {
@@ -153,12 +154,12 @@ internal class OverviewViewModelTest {
 
         val viewModel = createViewModel()
 
-        viewModel.viewState.test {
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnAddNewShoppingList)
             advanceUntilIdle()
 
-            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(null))
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+            val expectedEffect = Effect.Navigation(NavigationTarget.AddOrEditList(null))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
         }
     }
 
@@ -166,7 +167,7 @@ internal class OverviewViewModelTest {
     @DisplayName(
         """
         When handling a `OnShoppingListEdited` UI event
-        Then expect navigation target to be set to `AddOrEditList` with shopping list ID supplied
+        Then expect navigation effect with target `AddOrEditList` with shopping list ID supplied
     """
     )
     fun onShoppingListEdited() = runTest {
@@ -175,12 +176,12 @@ internal class OverviewViewModelTest {
 
         val viewModel = createViewModel()
 
-        viewModel.viewState.test {
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnShoppingListEdited(shoppingListDetails))
             advanceUntilIdle()
 
-            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(shoppingListDetails.id))
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+            val expectedEffect = Effect.Navigation(NavigationTarget.AddOrEditList(shoppingListDetails.id))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
         }
     }
 
@@ -188,7 +189,7 @@ internal class OverviewViewModelTest {
     @DisplayName(
         """
         When handling a `OnShoppingListSelected` UI event
-        Then expect navigation target to be set to `ListDetails` with shopping list ID supplied
+        Then expect navigation effect with target `ListDetails` with shopping list ID supplied
     """
     )
     fun onShoppingListSelected() = runTest {
@@ -196,40 +197,12 @@ internal class OverviewViewModelTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         val viewModel = createViewModel()
-        viewModel.viewState.test {
+        viewModel.effect.test {
             viewModel.dispatch(UiEvent.OnShoppingListSelected(shoppingListDetails))
             advanceUntilIdle()
 
-            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.ListDetails(shoppingListDetails.id))
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
-        }
-    }
-
-    @Test
-    @DisplayName(
-        """
-        When handling a `OnNavigationConsumed` UI event
-        Then expect navigation target to be set to `null`
-    """
-    )
-    fun onNavigationConsumed() = runTest {
-        val shoppingListDetails = createShoppingListDetails()
-        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
-
-        val viewModel = createViewModel()
-
-        viewModel.viewState.test {
-            // First, trigger an event to set a navigation target
-            viewModel.dispatch(UiEvent.OnAddNewShoppingList)
-            advanceUntilIdle()
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = NavigationTarget.AddOrEditList(null)))
-
-            // Then, consume it
-            viewModel.dispatch(UiEvent.OnNavigationConsumed)
-            advanceUntilIdle()
-
-            val expectedViewState = ViewState.Ready(data = persistentListOf(shoppingListDetails), navigationTarget = null)
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+            val expectedEffect = Effect.Navigation(NavigationTarget.ListDetails(shoppingListDetails.id))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
         }
     }
 

@@ -12,12 +12,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
@@ -26,6 +29,7 @@ import md.vnastasi.shoppinglist.domain.repository.NameSuggestionRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.additems.model.Effect
 import md.vnastasi.shoppinglist.screen.additems.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
@@ -43,41 +47,26 @@ class AddItemsViewModel @AssistedInject internal constructor(
 
     private val _triggerCounter = MutableStateFlow(0)
 
-    private val _suggestions = snapshotFlow { searchTermTextFieldState.text.toString() }.flatMapLatest { nameSuggestionRepository.findAllMatching(it) }
-
-    private val _toastMessage = MutableStateFlow<ToastMessage?>(null)
-
-    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
+    private val _suggestions = snapshotFlow { searchTermTextFieldState.text.toString() }.flatMapLatest(nameSuggestionRepository::findAllMatching)
 
     override val searchTermTextFieldState: TextFieldState = TextFieldState(initialText = "")
 
     override val viewState: StateFlow<ViewState> = combine(
         flow = _triggerCounter,
         flow2 = _suggestions,
-        flow3 = _toastMessage,
-        flow4 = _navigationTarget,
-        transform = { _, suggestions, toastMessage, navigationTarget -> createViewState(suggestions, toastMessage, navigationTarget) }
-    ).asStateFlow(initialValue = ViewState.init())
+        transform = { _, suggestions -> ViewState(suggestions.toImmutableList()) }
+    ).asStateFlow(initialValue = ViewState.INIT)
+
+    private val _effect = Channel<Effect>()
+    override val effect: Flow<Effect> = _effect.receiveAsFlow()
 
     override fun dispatch(uiEvent: UiEvent) {
         when (uiEvent) {
             is UiEvent.OnItemAddedToList -> onItemAddedToList(uiEvent.name)
             is UiEvent.OnSuggestionDeleted -> onSuggestionDeleted(uiEvent.suggestion)
-            is UiEvent.OnToastShown -> onToastShown()
             is UiEvent.OnBackClicked -> onBackClicked()
-            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
-
-    private fun createViewState(
-        suggestions: List<NameSuggestion>,
-        toastMessage: ToastMessage?,
-        navigationTarget: NavigationTarget?
-    ): ViewState = ViewState(
-        suggestions = suggestions.toImmutableList(),
-        toastMessage = toastMessage,
-        navigationTarget = navigationTarget
-    )
 
     private fun onItemAddedToList(name: String) {
         val sanitisedName = name.trim()
@@ -87,12 +76,7 @@ class AddItemsViewModel @AssistedInject internal constructor(
                 .map { ShoppingItem(name = sanitisedName, isChecked = false, list = it) }
                 .collectLatest { shoppingItem ->
                     shoppingItemRepository.create(shoppingItem)
-                    _toastMessage.update {
-                        ToastMessage(
-                            textResourceId = R.string.toast_item_added,
-                            arguments = persistentListOf(sanitisedName)
-                        )
-                    }
+                    _effect.send(Effect.ShowToast(ToastMessage(textResourceId = R.string.toast_item_added, arguments = persistentListOf(sanitisedName))))
                     searchTermTextFieldState.clearText()
                 }
         }
@@ -101,26 +85,15 @@ class AddItemsViewModel @AssistedInject internal constructor(
     private fun onSuggestionDeleted(suggestion: NameSuggestion) {
         viewModelScope.launch {
             nameSuggestionRepository.delete(suggestion)
-            _toastMessage.update {
-                ToastMessage(
-                    textResourceId = R.string.toast_suggestion_removed,
-                    arguments = persistentListOf(suggestion.name)
-                )
-            }
+            _effect.send(Effect.ShowToast(ToastMessage(textResourceId = R.string.toast_suggestion_removed, arguments = persistentListOf(suggestion.name))))
             _triggerCounter.update { it + 1 }
         }
     }
 
-    private fun onToastShown() {
-        _toastMessage.update { null }
-    }
-
     private fun onBackClicked() {
-        _navigationTarget.update { NavigationTarget.BackToListDetails }
-    }
-
-    private fun onNavigationConsumed() {
-        _navigationTarget.update { null }
+        viewModelScope.launch {
+            _effect.send(Effect.Navigation(NavigationTarget.BackToListDetails))
+        }
     }
 
     @AssistedFactory
