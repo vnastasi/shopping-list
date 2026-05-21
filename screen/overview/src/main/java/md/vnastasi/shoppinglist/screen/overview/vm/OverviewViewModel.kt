@@ -7,15 +7,19 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.Effect
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListDetailsUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
@@ -27,11 +31,18 @@ class OverviewViewModel @Inject internal constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), OverviewViewModelSpec {
 
-    override val viewState: StateFlow<ViewState> =
-        shoppingListRepository.findAll()
-            .map { it.toImmutableList() }
-            .map { list -> if (list.isEmpty()) ViewState.Empty else ViewState.Ready(list) }
-            .asStateFlow(ViewState.Loading)
+    private val _swipeToRevealState = MutableStateFlow<Map<Long, SwipeToRevealState>>(emptyMap())
+
+    private val _shoppingLists: Flow<List<ShoppingListDetails>> = shoppingListRepository.findAll()
+
+    override val viewState: StateFlow<ViewState> = combine(
+        flow = _shoppingLists,
+        flow2 = _swipeToRevealState,
+        transform = { list, swipeToRevealStates ->
+            val uiModelList = list.map { ShoppingListDetailsUiModel(it, swipeToRevealStates.getOrDefault(it.id, SwipeToRevealState.Content)) }.toImmutableList()
+            if (list.isEmpty()) ViewState.Empty else ViewState.Ready(uiModelList)
+        }
+    ).asStateFlow(ViewState.Loading)
 
     private val _effect = Channel<Effect>()
     override val effect: Flow<Effect> = _effect.receiveAsFlow()
@@ -39,11 +50,19 @@ class OverviewViewModel @Inject internal constructor(
     override fun dispatch(event: UiEvent) {
         when (event) {
             is UiEvent.OnShoppingListDeleted -> onShoppingListDeleted(event.shoppingList)
-            is UiEvent.OnShoppingListsReordered -> onShoppingListsReordered(event.reorderedList)
+            is UiEvent.OnShoppingListsReordered -> onShoppingListsReordered(event.reorderedList.map { it.shoppingListDetails })
             is UiEvent.OnAddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.OnShoppingListEdited -> onShoppingListEdited(event.shoppingList.id)
             is UiEvent.OnShoppingListSelected -> onShoppingListSelected(event.shoppingList.id)
+            is UiEvent.OnSwipeToRevealStateChanged -> onSwipeToRevealStateChanged(event.shoppingList.shoppingListDetails, event.newState)
         }
+    }
+
+    private fun onSwipeToRevealStateChanged(
+        shoppingListDetails: ShoppingListDetails,
+        newState: SwipeToRevealState
+    ) {
+        _swipeToRevealState.update { it.plus(shoppingListDetails.id to newState) }
     }
 
     private fun onShoppingListSelected(id: Long) {

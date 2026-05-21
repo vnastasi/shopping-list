@@ -37,11 +37,13 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.model.Effect
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListDetailsUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import md.vnastasi.shoppinglist.screen.overview.nav.OverviewScreenNavigator
@@ -185,7 +187,7 @@ private fun ManageListFloatingActionButton(
 @PreviewFontScale
 @Composable
 private fun ListOverviewScreenPreview() {
-    val list = persistentListOf(
+    val list = listOf(
         ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 2L, name = "Pharmacy for mom", position = 2L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 3L, name = "Gamma & Praxis", position = 3L, totalItems = 0L, checkedItems = 0L),
@@ -198,7 +200,8 @@ private fun ListOverviewScreenPreview() {
         ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
-    )
+    ).map { ShoppingListDetailsUiModel(it, SwipeToRevealState.Content) }
+        .toImmutableList()
 
     AppTheme {
         OverviewScreen(

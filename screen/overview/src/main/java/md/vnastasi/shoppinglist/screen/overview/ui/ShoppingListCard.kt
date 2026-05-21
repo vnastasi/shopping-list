@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListDetailsUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
@@ -64,26 +67,22 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
-private enum class SwipeToRevealState {
-
-    Content, Actions
-}
-
 @Composable
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
-    item: ShoppingListDetails,
+    item: ShoppingListDetailsUiModel,
     reorderDragHandleState: ReorderDragHandleState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
     onDeleteItem: () -> Unit = { },
+    onSwipeToRevealStateChanged: (SwipeToRevealState) -> Unit = { }
 ) {
     val density = LocalDensity.current
 
     val dragState = remember {
         val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
-            initialValue = SwipeToRevealState.Content,
+            initialValue = item.swipeToRevealState,
             anchors = DraggableAnchors {
                 SwipeToRevealState.Content at 0.0f
                 SwipeToRevealState.Actions at -actionOffset
@@ -91,11 +90,15 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
         )
     }
 
+    LaunchedEffect(dragState.settledValue) {
+        onSwipeToRevealStateChanged(dragState.settledValue)
+    }
+
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
         ShoppingListCardContent(
-            item = item,
+            item = item.shoppingListDetails,
             reorderDragHandleState = reorderDragHandleState,
             dragState = dragState,
             overScrollEffect = rememberOverscrollEffect(),
@@ -282,7 +285,7 @@ private fun ShoppingListCardPreview() {
                     key = Unit
                 ) {
                     ShoppingListCard(
-                        item = shoppingList,
+                        item = ShoppingListDetailsUiModel(shoppingList, SwipeToRevealState.Content),
                         reorderDragHandleState = ReorderDragHandleState.Disabled
                     )
                 }
@@ -305,7 +308,7 @@ private fun ReorderableShoppingListCardPreview() {
                     key = Unit
                 ) {
                     ShoppingListCard(
-                        item = shoppingList,
+                        item = ShoppingListDetailsUiModel(shoppingList, SwipeToRevealState.Content),
                         reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
                     )
                 }
