@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.overview.model.Effect
-import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListDetailsUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
 import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
@@ -200,12 +200,11 @@ private fun ListOverviewScreenPreview() {
         ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
-    ).map { ShoppingListDetailsUiModel(it, SwipeToRevealState.Content) }
-        .toImmutableList()
+    ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
 
     AppTheme {
         OverviewScreen(
-            viewState = ViewState.Ready(data = list),
+            viewState = ViewState.Ready(data = list.toImmutableList()),
             dispatchEvent = { }
         )
     }

@@ -13,5 +13,5 @@ sealed class ViewState {
     data object Empty : ViewState()
 
     @Immutable
-    data class Ready(val data: ImmutableList<ShoppingListDetailsUiModel>) : ViewState()
+    data class Ready(val data: ImmutableList<ShoppingListUiModel>) : ViewState()
 }

@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
-import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListDetailsUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
 import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
@@ -32,7 +32,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
-    list: ImmutableList<ShoppingListDetailsUiModel>,
+    list: ImmutableList<ShoppingListUiModel>,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val reorderableList = remember(list) { list.toMutableStateList() }
@@ -55,11 +55,11 @@ internal fun OverviewContent(
     ) {
         items(
             items = reorderableList,
-            key = { it.shoppingListDetails.id }
+            key = { it.shoppingList.id }
         ) { shoppingListUiModel ->
             ReorderableItem(
                 state = reorderableLazyListState,
-                key = shoppingListUiModel.shoppingListDetails.id
+                key = shoppingListUiModel.shoppingList.id
             ) {
                 val reorderDragHandleState = remember(reorderableList.size) {
                     if (reorderableList.size > 1) {
@@ -74,11 +74,11 @@ internal fun OverviewContent(
                     modifier = Modifier
                         .animateItem()
                         .testTag(SHOPPING_LISTS_ITEM),
-                    item = shoppingListUiModel,
+                    shoppingListUiModel = shoppingListUiModel,
                     reorderDragHandleState = reorderDragHandleState,
-                    onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel.shoppingListDetails)) },
-                    onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel.shoppingListDetails)) },
-                    onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel.shoppingListDetails)) },
+                    onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel)) },
+                    onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel)) },
+                    onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel)) },
                     onSwipeToRevealStateChanged = { dispatchEvent(UiEvent.OnSwipeToRevealStateChanged(shoppingListUiModel, it)) }
                 )
             }
@@ -106,13 +106,12 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
-    ).map { ShoppingListDetailsUiModel(it, SwipeToRevealState.Content) }
-        .toImmutableList()
-
+    ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
+    
     AppTheme {
         OverviewContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
-            list = list,
+            list = list.toImmutableList(),
             dispatchEvent = { }
         )
     }

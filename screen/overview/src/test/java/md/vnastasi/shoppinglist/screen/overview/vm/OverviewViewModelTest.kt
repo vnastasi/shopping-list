@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.vm
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.containsExactly
@@ -25,6 +26,8 @@ import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
 import md.vnastasi.shoppinglist.screen.overview.model.Effect
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import org.junit.jupiter.api.DisplayName
@@ -63,9 +66,10 @@ internal class OverviewViewModelTest {
         val shoppingListDetails = createShoppingListDetails()
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
+        val expectedShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
         createViewModel().viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
-            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(shoppingListDetails)))
+            assertThat(awaitItem()).isDataClassEqualTo(ViewState.Ready(data = persistentListOf(expectedShoppingListUiModel)))
         }
     }
 
@@ -81,7 +85,8 @@ internal class OverviewViewModelTest {
         every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
 
         val viewModel = createViewModel()
-        viewModel.dispatch(UiEvent.OnShoppingListDeleted(shoppingListDetails))
+        val event = UiEvent.OnShoppingListDeleted(ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content))
+        viewModel.dispatch(event)
         advanceUntilIdle()
 
         coVerify { mockShoppingListRepository.delete(createShoppingList()) }
@@ -119,7 +124,14 @@ internal class OverviewViewModelTest {
         coEvery { mockShoppingListRepository.update(capture(reorderedListSlot)) } returns Unit
 
         val viewModel = createViewModel()
-        viewModel.dispatch(UiEvent.OnShoppingListsReordered(listOf(shoppingListDetails3, shoppingListDetails1, shoppingListDetails2)))
+        val event = UiEvent.OnShoppingListsReordered(
+            listOf(
+                ShoppingListUiModel(shoppingListDetails3, SwipeToRevealState.Content),
+                ShoppingListUiModel(shoppingListDetails1, SwipeToRevealState.Content),
+                ShoppingListUiModel(shoppingListDetails2, SwipeToRevealState.Content)
+            )
+        )
+        viewModel.dispatch(event)
         advanceUntilIdle()
 
         assertThat(reorderedListSlot.captured).containsExactly(
@@ -177,7 +189,8 @@ internal class OverviewViewModelTest {
         val viewModel = createViewModel()
 
         viewModel.effect.test {
-            viewModel.dispatch(UiEvent.OnShoppingListEdited(shoppingListDetails))
+            val event = UiEvent.OnShoppingListEdited(ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content))
+            viewModel.dispatch(event)
             advanceUntilIdle()
 
             val expectedEffect = Effect.Navigation(NavigationTarget.AddOrEditList(shoppingListDetails.id))
@@ -198,7 +211,44 @@ internal class OverviewViewModelTest {
 
         val viewModel = createViewModel()
         viewModel.effect.test {
-            viewModel.dispatch(UiEvent.OnShoppingListSelected(shoppingListDetails))
+            val event = UiEvent.OnShoppingListSelected(ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content))
+            viewModel.dispatch(event)
+            advanceUntilIdle()
+
+            val expectedEffect = Effect.Navigation(NavigationTarget.ListDetails(shoppingListDetails.id))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
+        When handling a `OnSwipeToRevealStateChanged` UI event
+        Then expect swipe to reveal state to change for the affected shopping list
+    """
+    )
+    fun onSwipeToRevealStateChanged() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
+
+            val originalShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
+            assertThat(awaitItem()).isEqualTo(ViewState.Ready(persistentListOf(originalShoppingListUiModel)))
+
+            val event = UiEvent.OnSwipeToRevealStateChanged(originalShoppingListUiModel, SwipeToRevealState.Actions)
+            viewModel.dispatch(event)
+            advanceUntilIdle()
+
+            val updatedShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Actions)
+            assertThat(awaitItem()).isEqualTo(ViewState.Ready(persistentListOf(updatedShoppingListUiModel)))
+        }
+
+        viewModel.effect.test {
+            val event = UiEvent.OnShoppingListSelected(ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content))
+            viewModel.dispatch(event)
             advanceUntilIdle()
 
             val expectedEffect = Effect.Navigation(NavigationTarget.ListDetails(shoppingListDetails.id))
@@ -209,6 +259,7 @@ internal class OverviewViewModelTest {
     context(scope: TestScope)
     private fun createViewModel() = OverviewViewModel(
         shoppingListRepository = mockShoppingListRepository,
+        savedStateHandle = SavedStateHandle(),
         coroutineScope = CoroutineScope(scope.coroutineContext + SupervisorJob() + StandardTestDispatcher(scope.testScheduler))
     )
 }
