@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.runTest
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.managelist.model.Effect
 import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
@@ -41,7 +42,7 @@ class ManageListViewModelTest {
     fun initialViewState() = runTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = null)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
         }
 
@@ -62,7 +63,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChanged(""))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false, navigationTarget = null)
+            val expectedViewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
         }
     }
@@ -81,7 +82,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChanged(" "))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false, navigationTarget = null)
+            val expectedViewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
         }
     }
@@ -100,7 +101,7 @@ class ManageListViewModelTest {
 
             viewModel.dispatch(UiEvent.OnNameChanged("a"))
 
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true)
             assertThat(awaitItem()).isDataClassEqualTo(expectedViewState)
         }
     }
@@ -110,7 +111,7 @@ class ManageListViewModelTest {
         """
             Given no shopping list ID
             When saving
-            Then expect new shopping list to be created with supplied name and navigation target set to `CloseSheet`
+            Then expect new shopping list to be created with supplied name and navigation effect with target `CloseSheet`
         """
     )
     fun createNewList() = runTest {
@@ -122,8 +123,12 @@ class ManageListViewModelTest {
             viewModel.dispatch(UiEvent.OnNameSaved("list"))
             advanceUntilIdle()
 
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false)
             assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+
+        viewModel.effect.test {
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet))
         }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = 0L, name = "list"))
@@ -136,7 +141,7 @@ class ManageListViewModelTest {
         """
             Given ID of existing shopping list
             When saving
-            Then expect name of existing shopping list to be updated and navigation target set to `CloseSheet`
+            Then expect name of existing shopping list to be updated and navigation effect with target `CloseSheet`
         """
     )
     fun updateExistingList() = runTest {
@@ -154,36 +159,15 @@ class ManageListViewModelTest {
             viewModel.dispatch(UiEvent.OnNameSaved("updated"))
             advanceUntilIdle()
 
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet)
+            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false)
             assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
+        }
+
+        viewModel.effect.test {
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet))
         }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = shoppingListId, name = "updated"))
-    }
-
-    @Test
-    @DisplayName(
-        """
-            When handling a `OnNavigationConsumed` UI event
-            Then expect navigation target to be set to `null`
-        """
-    )
-    fun onNavigationConsumed() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.viewState.test {
-            // Trigger an event to set a navigation target
-            viewModel.dispatch(UiEvent.OnNameSaved("test"))
-            advanceUntilIdle()
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = NavigationTarget.CloseSheet))
-
-            // Consume it
-            viewModel.dispatch(UiEvent.OnNavigationConsumed)
-            advanceUntilIdle()
-
-            val expectedViewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = false, navigationTarget = null)
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedViewState)
-        }
     }
 
     context(scope: TestScope)

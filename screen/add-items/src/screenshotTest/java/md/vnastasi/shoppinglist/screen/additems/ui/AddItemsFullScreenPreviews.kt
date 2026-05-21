@@ -17,9 +17,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 fun NoSuggestionsFullScreen() {
     ApplicationFullScreenPreview(
         viewState = ViewState(
-            suggestions = persistentListOf(),
-            toastMessage = null,
-            navigationTarget = null
+            suggestions = persistentListOf()
         ),
         searchTermValue = ""
     )
@@ -35,9 +33,7 @@ fun SuggestionsAvailableFullScreen() {
                 NameSuggestion(id = 1L, name = "Suggestion 1"),
                 NameSuggestion(id = 2L, name = "Suggestion 2"),
                 NameSuggestion(id = 3L, name = "Suggestion 3")
-            ),
-            toastMessage = null,
-            navigationTarget = null
+            )
         ),
         searchTermValue = "Suggest"
     )

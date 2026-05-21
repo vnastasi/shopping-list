@@ -8,15 +8,17 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.repository.ShoppingItemRepository
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.listdetails.model.Effect
 import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
@@ -30,14 +32,14 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), ListDetailsViewModelSpec {
 
-    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
-
     override val viewState: StateFlow<ViewState> = combine(
         flow = shoppingListRepository.findById(shoppingListId),
         flow2 = shoppingItemRepository.findAll(shoppingListId),
-        flow3 = _navigationTarget,
         transform = ::createViewState
     ).asStateFlow(initialValue = ViewState.Loading)
+
+    private val _effect = Channel<Effect>()
+    override val effect: Flow<Effect> = _effect.receiveAsFlow()
 
     override fun dispatch(event: UiEvent) {
         when (event) {
@@ -46,7 +48,6 @@ class ListDetailsViewModel @AssistedInject internal constructor(
             is UiEvent.OnAddItemsClicked -> onAddItemsClicked()
             is UiEvent.OnItemsReordered -> onItemsReordered(event.reorderedList)
             is UiEvent.OnBackClicked -> onBackClicked()
-            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
@@ -63,7 +64,7 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     }
 
     private fun onAddItemsClicked() {
-        _navigationTarget.update { NavigationTarget.AddItems(shoppingListId) }
+        onNewEffect(Effect.Navigation(NavigationTarget.AddItems(shoppingListId)))
     }
 
     private fun onItemsReordered(reorderedList: List<ShoppingItem>) {
@@ -74,32 +75,31 @@ class ListDetailsViewModel @AssistedInject internal constructor(
     }
 
     private fun onBackClicked() {
-        _navigationTarget.update { NavigationTarget.BackToOverview }
-    }
-
-    private fun onNavigationConsumed() {
-        _navigationTarget.update { null }
+        onNewEffect(Effect.Navigation(NavigationTarget.BackToOverview))
     }
 
     private fun createViewState(
         shoppingList: ShoppingList,
         listOfShoppingItems: List<ShoppingItem>,
-        navigationTarget: NavigationTarget?
     ): ViewState =
         if (listOfShoppingItems.isEmpty()) {
             ViewState.Empty(
                 shoppingListId = shoppingList.id,
                 shoppingListName = shoppingList.name,
-                navigationTarget = navigationTarget
             )
         } else {
             ViewState.Ready(
                 shoppingListId = shoppingList.id,
                 shoppingListName = shoppingList.name,
                 listOfShoppingItems = listOfShoppingItems.toImmutableList(),
-                navigationTarget = navigationTarget
             )
         }
+
+    private fun onNewEffect(effect: Effect) {
+        viewModelScope.launch {
+            _effect.send(effect)
+        }
+    }
 
     @AssistedFactory
     interface Factory {

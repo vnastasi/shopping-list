@@ -3,18 +3,18 @@ package md.vnastasi.shoppinglist.screen.overview.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.domain.repository.ShoppingListRepository
+import md.vnastasi.shoppinglist.screen.overview.model.Effect
 import md.vnastasi.shoppinglist.screen.overview.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.model.ViewState
@@ -27,15 +27,14 @@ class OverviewViewModel @Inject internal constructor(
     coroutineScope: CoroutineScope
 ) : ViewModel(coroutineScope), OverviewViewModelSpec {
 
-    private val _navigationTarget = MutableStateFlow<NavigationTarget?>(null)
+    override val viewState: StateFlow<ViewState> =
+        shoppingListRepository.findAll()
+            .map { it.toImmutableList() }
+            .map { list -> if (list.isEmpty()) ViewState.Empty else ViewState.Ready(list) }
+            .asStateFlow(ViewState.Loading)
 
-    private val _shoppingLists = shoppingListRepository.findAll().map { it.toImmutableList() }
-
-    override val viewState: StateFlow<ViewState> = combine(
-        flow = _shoppingLists,
-        flow2 = _navigationTarget,
-        transform = ::createViewState
-    ).asStateFlow(initialValue = ViewState.Loading)
+    private val _effect = Channel<Effect>()
+    override val effect: Flow<Effect> = _effect.receiveAsFlow()
 
     override fun dispatch(event: UiEvent) {
         when (event) {
@@ -44,30 +43,19 @@ class OverviewViewModel @Inject internal constructor(
             is UiEvent.OnAddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.OnShoppingListEdited -> onShoppingListEdited(event.shoppingList.id)
             is UiEvent.OnShoppingListSelected -> onShoppingListSelected(event.shoppingList.id)
-            is UiEvent.OnNavigationConsumed -> onNavigationConsumed()
         }
     }
 
-    private fun createViewState(
-        shoppingLists: ImmutableList<ShoppingListDetails>,
-        navigationTarget: NavigationTarget?
-    ): ViewState =
-        if (shoppingLists.isEmpty()) {
-            ViewState.Empty(navigationTarget)
-        } else {
-            ViewState.Ready(shoppingLists, navigationTarget)
-        }
-
     private fun onShoppingListSelected(id: Long) {
-        _navigationTarget.update { NavigationTarget.ListDetails(id) }
+        onNewEffect(Effect.Navigation(NavigationTarget.ListDetails(id)))
     }
 
     private fun onShoppingListEdited(id: Long) {
-        _navigationTarget.update { NavigationTarget.AddOrEditList(id) }
+        onNewEffect(Effect.Navigation(NavigationTarget.AddOrEditList(id)))
     }
 
     private fun onAddNewShoppingList() {
-        _navigationTarget.update { NavigationTarget.AddOrEditList(null) }
+        onNewEffect(Effect.Navigation(NavigationTarget.AddOrEditList(null)))
     }
 
     private fun onShoppingListDeleted(shoppingListDetails: ShoppingListDetails) {
@@ -85,7 +73,9 @@ class OverviewViewModel @Inject internal constructor(
         }
     }
 
-    private fun onNavigationConsumed() {
-        _navigationTarget.update { null }
+    private fun onNewEffect(effect: Effect) {
+        viewModelScope.launch {
+            _effect.send(effect)
+        }
     }
 }

@@ -25,7 +25,7 @@ fun NewListSheet() {
 @Composable
 fun EmptyListNameSheet() {
     ExpandedSheet(
-        viewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false, navigationTarget = null),
+        viewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false),
         listName = " "
     )
 }
@@ -35,7 +35,7 @@ fun EmptyListNameSheet() {
 @Composable
 fun BlankListNameSheet() {
     ExpandedSheet(
-        viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false, navigationTarget = null),
+        viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false),
         listName = " "
     )
 }
@@ -45,7 +45,7 @@ fun BlankListNameSheet() {
 @Composable
 fun ExistingListSheet() {
     ExpandedSheet(
-        viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true, navigationTarget = null),
+        viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
         listName = "Updated list"
     )
 }
