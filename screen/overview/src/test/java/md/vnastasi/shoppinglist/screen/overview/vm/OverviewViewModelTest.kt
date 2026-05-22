@@ -178,6 +178,53 @@ internal class OverviewViewModelTest {
     @Test
     @DisplayName(
         """
+        When handling a `OnAddNewShoppingList` UI event with a currently swiped to reveal actions shopping list
+        Then expect swipe to reveal state to reset for shopping list
+    """
+    )
+    fun onAddNewShoppingListResetSwipeToReveal() = runTest {
+        val shoppingListDetails = createShoppingListDetails()
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+
+        val viewModel = createViewModel()
+
+        viewModel.viewState.test {
+            assertThat(awaitItem()).isEqualTo(ViewState.Loading)
+
+            assertThat(awaitItem()).isDataClassEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
+                    )
+                )
+            )
+
+            val event1 = UiEvent.OnSwipeToRevealStateChanged(shoppingListDetails.id, SwipeToRevealState.Actions)
+            viewModel.dispatch(event1)
+            advanceUntilIdle()
+            assertThat(awaitItem()).isDataClassEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Actions)
+                    )
+                )
+            )
+
+            viewModel.dispatch(UiEvent.OnAddNewShoppingList)
+            advanceUntilIdle()
+            assertThat(awaitItem()).isDataClassEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    @DisplayName(
+        """
         When handling a `OnShoppingListEdited` UI event
         Then expect navigation effect with target `AddOrEditList` with shopping list ID supplied
     """
@@ -224,35 +271,56 @@ internal class OverviewViewModelTest {
     @DisplayName(
         """
         When handling a `OnSwipeToRevealStateChanged` UI event
-        Then expect swipe to reveal state to change for the affected shopping list
+        Then expect swipe to reveal state to change for the affected shopping list and reset for the other shopping lists
     """
     )
     fun onSwipeToRevealStateChanged() = runTest {
-        val shoppingListDetails = createShoppingListDetails()
-        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails))
+        val shoppingListDetails1 = createShoppingListDetails {
+            id = 1L
+        }
+        val shoppingListDetails2 = createShoppingListDetails {
+            id = 2L
+        }
+        every { mockShoppingListRepository.findAll() } returns flowOf(listOf(shoppingListDetails1, shoppingListDetails2))
 
         val viewModel = createViewModel()
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(ViewState.Loading)
 
-            val originalShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
-            assertThat(awaitItem()).isEqualTo(ViewState.Ready(persistentListOf(originalShoppingListUiModel)))
+            assertThat(awaitItem()).isEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails1, SwipeToRevealState.Content),
+                        ShoppingListUiModel(shoppingListDetails2, SwipeToRevealState.Content),
+                    )
+                )
+            )
 
-            val event = UiEvent.OnSwipeToRevealStateChanged(shoppingListDetails.id, SwipeToRevealState.Actions)
-            viewModel.dispatch(event)
+            val event1 = UiEvent.OnSwipeToRevealStateChanged(1L, SwipeToRevealState.Actions)
+            viewModel.dispatch(event1)
             advanceUntilIdle()
 
-            val updatedShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Actions)
-            assertThat(awaitItem()).isEqualTo(ViewState.Ready(persistentListOf(updatedShoppingListUiModel)))
-        }
+            assertThat(awaitItem()).isEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails1, SwipeToRevealState.Actions),
+                        ShoppingListUiModel(shoppingListDetails2, SwipeToRevealState.Content),
+                    )
+                )
+            )
 
-        viewModel.effect.test {
-            val event = UiEvent.OnShoppingListSelected(ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content))
-            viewModel.dispatch(event)
+            val event2 = UiEvent.OnSwipeToRevealStateChanged(2L, SwipeToRevealState.Actions)
+            viewModel.dispatch(event2)
             advanceUntilIdle()
 
-            val expectedEffect = Effect.Navigation(NavigationTarget.ListDetails(shoppingListDetails.id))
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(expectedEffect)
+            assertThat(awaitItem()).isEqualTo(
+                ViewState.Ready(
+                    persistentListOf(
+                        ShoppingListUiModel(shoppingListDetails1, SwipeToRevealState.Content),
+                        ShoppingListUiModel(shoppingListDetails2, SwipeToRevealState.Actions),
+                    )
+                )
+            )
         }
     }
 

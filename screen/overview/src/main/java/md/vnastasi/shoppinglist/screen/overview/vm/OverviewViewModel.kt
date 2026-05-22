@@ -34,10 +34,8 @@ class OverviewViewModel @Inject internal constructor(
 
     private val _swipeToRevealStates = savedStateHandle.getMutableStateFlow<Map<Long, SwipeToRevealState>>(KEY_SWIPE_TO_REVEAL_STATES, emptyMap())
 
-    private val _shoppingLists: Flow<List<ShoppingListDetails>> = shoppingListRepository.findAll()
-
     override val viewState: StateFlow<ViewState> = combine(
-        flow = _shoppingLists,
+        flow = shoppingListRepository.findAll(),
         flow2 = _swipeToRevealStates,
         transform = ::createViewState
     ).asStateFlow(ViewState.Loading)
@@ -78,7 +76,12 @@ class OverviewViewModel @Inject internal constructor(
         shoppingListId: Long,
         newState: SwipeToRevealState
     ) {
-        _swipeToRevealStates.update { it.plus(shoppingListId to newState) }
+        _swipeToRevealStates.update { currentStates ->
+            when (newState) {
+                SwipeToRevealState.Actions -> mapOf(shoppingListId to SwipeToRevealState.Actions)
+                SwipeToRevealState.Content -> currentStates.plus(shoppingListId to newState)
+            }
+        }
     }
 
     private fun onShoppingListSelected(id: Long) {
@@ -90,6 +93,7 @@ class OverviewViewModel @Inject internal constructor(
     }
 
     private fun onAddNewShoppingList() {
+        _swipeToRevealStates.update { emptyMap() }
         onNewEffect(Effect.Navigation(NavigationTarget.AddOrEditList(null)))
     }
 
