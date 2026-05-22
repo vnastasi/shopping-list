@@ -10,6 +10,8 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.runtime.result.ResultEffect
+import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import md.vnastasi.shoppinglist.nav.Route
 import md.vnastasi.shoppinglist.nav.ScreenNavigators
@@ -23,8 +25,11 @@ import md.vnastasi.shoppinglist.screen.additems.ui.AddItemsScreen
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModel
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
+import md.vnastasi.shoppinglist.screen.managelist.model.BottomSheetClosedSignal
 import md.vnastasi.shoppinglist.screen.managelist.ui.ManageListSheet
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
+import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 
@@ -44,7 +49,8 @@ internal fun ApplicationScreenContainer() {
         ),
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
+            rememberViewModelStoreNavEntryDecorator(),
+            rememberResultEventBusNavEntryDecorator()
         ),
         transitionSpec = {
             slideInFromRight() togetherWith slideOutToLeft()
@@ -62,8 +68,17 @@ internal fun ApplicationScreenContainer() {
             entry<Route.Overview>(
                 metadata = ListDetailSceneStrategy.listPane()
             ) {
+                val viewModel = hiltViewModel<OverviewViewModel>()
+
+                ResultEffect<BottomSheetClosedSignal> { signal ->
+                    val affectedShoppingListId = signal.affectedShoppingListId
+                    if (affectedShoppingListId != null) {
+                        viewModel.dispatch(UiEvent.OnSwipeToRevealStateChanged(affectedShoppingListId, SwipeToRevealState.Content))
+                    }
+                }
+
                 OverviewScreen(
-                    viewModel = hiltViewModel<OverviewViewModel>(),
+                    viewModel = viewModel,
                     navigator = ScreenNavigators.overview(navBackStack)
                 )
             }

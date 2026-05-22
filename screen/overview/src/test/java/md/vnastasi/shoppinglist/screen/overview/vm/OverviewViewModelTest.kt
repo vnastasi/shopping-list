@@ -238,7 +238,7 @@ internal class OverviewViewModelTest {
             val originalShoppingListUiModel = ShoppingListUiModel(shoppingListDetails, SwipeToRevealState.Content)
             assertThat(awaitItem()).isEqualTo(ViewState.Ready(persistentListOf(originalShoppingListUiModel)))
 
-            val event = UiEvent.OnSwipeToRevealStateChanged(originalShoppingListUiModel, SwipeToRevealState.Actions)
+            val event = UiEvent.OnSwipeToRevealStateChanged(shoppingListDetails.id, SwipeToRevealState.Actions)
             viewModel.dispatch(event)
             advanceUntilIdle()
 

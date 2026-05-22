@@ -4,11 +4,11 @@ import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 
 interface ManageListNavigator {
 
-    fun closeSheet()
+    fun closeSheet(affectedShoppingListId: Long?)
 }
 
 internal fun ManageListNavigator.navigate(target: NavigationTarget) {
     when (target) {
-        is NavigationTarget.CloseSheet -> closeSheet()
+        is NavigationTarget.CloseSheet -> closeSheet(target.affectedShoppingListId)
     }
 }

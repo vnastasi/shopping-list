@@ -79,7 +79,7 @@ internal fun OverviewContent(
                     onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel)) },
                     onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel)) },
                     onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel)) },
-                    onSwipeToRevealStateChanged = { dispatchEvent(UiEvent.OnSwipeToRevealStateChanged(shoppingListUiModel, it)) }
+                    onSwipeToRevealStateChanged = { dispatchEvent(UiEvent.OnSwipeToRevealStateChanged(shoppingListUiModel.shoppingList.id, it)) }
                 )
             }
         }

@@ -52,7 +52,7 @@ class OverviewViewModel @Inject internal constructor(
             is UiEvent.OnAddNewShoppingList -> onAddNewShoppingList()
             is UiEvent.OnShoppingListEdited -> onShoppingListEdited(event.shoppingListUiModel.shoppingList.id)
             is UiEvent.OnShoppingListSelected -> onShoppingListSelected(event.shoppingListUiModel.shoppingList.id)
-            is UiEvent.OnSwipeToRevealStateChanged -> onSwipeToRevealStateChanged(event.shoppingListUiModel.shoppingList, event.newState)
+            is UiEvent.OnSwipeToRevealStateChanged -> onSwipeToRevealStateChanged(event.shoppingListId, event.newState)
         }
     }
 
@@ -75,10 +75,10 @@ class OverviewViewModel @Inject internal constructor(
     }
 
     private fun onSwipeToRevealStateChanged(
-        shoppingListDetails: ShoppingListDetails,
+        shoppingListId: Long,
         newState: SwipeToRevealState
     ) {
-        _swipeToRevealStates.update { it.plus(shoppingListDetails.id to newState) }
+        _swipeToRevealStates.update { it.plus(shoppingListId to newState) }
     }
 
     private fun onShoppingListSelected(id: Long) {

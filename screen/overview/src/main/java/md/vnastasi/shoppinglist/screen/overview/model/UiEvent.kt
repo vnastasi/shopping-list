@@ -19,7 +19,7 @@ sealed interface UiEvent {
 
     @Immutable
     data class OnSwipeToRevealStateChanged(
-        val shoppingListUiModel: ShoppingListUiModel,
+        val shoppingListId: Long,
         val newState: SwipeToRevealState
     ) : UiEvent
 

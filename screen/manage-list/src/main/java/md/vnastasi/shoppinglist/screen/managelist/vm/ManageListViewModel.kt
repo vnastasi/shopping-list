@@ -83,7 +83,7 @@ class ManageListViewModel @AssistedInject constructor(
                 repository.create(ShoppingList(name = name))
             }
 
-            _effect.send(Effect.Navigation(NavigationTarget.CloseSheet))
+            _effect.send(Effect.Navigation(NavigationTarget.CloseSheet(shoppingListId)))
         }
     }
 

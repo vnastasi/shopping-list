@@ -6,5 +6,5 @@ import androidx.compose.runtime.Immutable
 sealed interface NavigationTarget {
 
     @Immutable
-    data object CloseSheet : NavigationTarget
+    data class CloseSheet(val affectedShoppingListId: Long?) : NavigationTarget
 }

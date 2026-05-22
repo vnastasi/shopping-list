@@ -111,7 +111,7 @@ class ManageListViewModelTest {
         """
             Given no shopping list ID
             When saving
-            Then expect new shopping list to be created with supplied name and navigation effect with target `CloseSheet`
+            Then expect new shopping list to be created with supplied name and navigation effect with target `CloseSheet` with no ID
         """
     )
     fun createNewList() = runTest {
@@ -128,7 +128,7 @@ class ManageListViewModelTest {
         }
 
         viewModel.effect.test {
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet(null)))
         }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = 0L, name = "list"))
@@ -141,7 +141,7 @@ class ManageListViewModelTest {
         """
             Given ID of existing shopping list
             When saving
-            Then expect name of existing shopping list to be updated and navigation effect with target `CloseSheet`
+            Then expect name of existing shopping list to be updated and navigation effect with target `CloseSheet` with same ID value
         """
     )
     fun updateExistingList() = runTest {
@@ -164,7 +164,7 @@ class ManageListViewModelTest {
         }
 
         viewModel.effect.test {
-            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet))
+            assertThat(expectMostRecentItem()).isDataClassEqualTo(Effect.Navigation(NavigationTarget.CloseSheet(shoppingListId)))
         }
 
         assertThat(shoppingListSlot.captured).isDataClassEqualTo(ShoppingList(id = shoppingListId, name = "updated"))

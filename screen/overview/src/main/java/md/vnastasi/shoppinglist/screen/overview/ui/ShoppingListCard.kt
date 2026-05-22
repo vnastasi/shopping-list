@@ -79,7 +79,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
 ) {
     val density = LocalDensity.current
 
-    val dragState = remember {
+    val dragState = remember(shoppingListUiModel.swipeToRevealState) {
         val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
             initialValue = shoppingListUiModel.swipeToRevealState,

@@ -4,5 +4,5 @@ import md.vnastasi.shoppinglist.screen.managelist.nav.ManageListNavigator
 
 class StubManageListNavigator : ManageListNavigator {
 
-    override fun closeSheet() = Unit
+    override fun closeSheet(affectedShoppingListId: Long?) = Unit
 }
