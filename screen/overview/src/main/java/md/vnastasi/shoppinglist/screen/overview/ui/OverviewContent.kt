@@ -15,8 +15,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
@@ -30,7 +32,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
-    list: ImmutableList<ShoppingListDetails>,
+    list: ImmutableList<ShoppingListUiModel>,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val reorderableList = remember(list) { list.toMutableStateList() }
@@ -53,11 +55,11 @@ internal fun OverviewContent(
     ) {
         items(
             items = reorderableList,
-            key = { it.id }
-        ) { shoppingList ->
+            key = { it.shoppingList.id }
+        ) { shoppingListUiModel ->
             ReorderableItem(
                 state = reorderableLazyListState,
-                key = shoppingList.id
+                key = shoppingListUiModel.shoppingList.id
             ) {
                 val reorderDragHandleState = remember(reorderableList.size) {
                     if (reorderableList.size > 1) {
@@ -72,11 +74,12 @@ internal fun OverviewContent(
                     modifier = Modifier
                         .animateItem()
                         .testTag(SHOPPING_LISTS_ITEM),
-                    item = shoppingList,
+                    shoppingListUiModel = shoppingListUiModel,
                     reorderDragHandleState = reorderDragHandleState,
-                    onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingList)) },
-                    onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingList)) },
-                    onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingList)) },
+                    onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel)) },
+                    onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel)) },
+                    onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel)) },
+                    onSwipeToRevealStateChanged = { dispatchEvent(UiEvent.OnSwipeToRevealStateChanged(shoppingListUiModel.shoppingList.id, it)) }
                 )
             }
         }
@@ -90,7 +93,7 @@ internal fun OverviewContent(
 )
 @Composable
 private fun NonEmptyListOverviewScreenContentPreview() {
-    val list = persistentListOf(
+    val list = listOf(
         ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 2L, name = "Pharmacy for mom", position = 2L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 3L, name = "Gamma & Praxis", position = 3L, totalItems = 0L, checkedItems = 0L),
@@ -103,12 +106,12 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
-    )
-
+    ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
+    
     AppTheme {
         OverviewContent(
             contentPaddings = PaddingValues(AppDimensions.zero),
-            list = list,
+            list = list.toImmutableList(),
             dispatchEvent = { }
         )
     }

@@ -2,7 +2,6 @@ package md.vnastasi.shoppinglist.screen.overview.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
-import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 
 @Immutable
 sealed class ViewState {
@@ -14,5 +13,5 @@ sealed class ViewState {
     data object Empty : ViewState()
 
     @Immutable
-    data class Ready(val data: ImmutableList<ShoppingListDetails>) : ViewState()
+    data class Ready(val data: ImmutableList<ShoppingListUiModel>) : ViewState()
 }

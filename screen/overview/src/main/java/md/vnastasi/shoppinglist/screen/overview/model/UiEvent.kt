@@ -1,22 +1,27 @@
 package md.vnastasi.shoppinglist.screen.overview.model
 
 import androidx.compose.runtime.Immutable
-import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 
 @Immutable
 sealed interface UiEvent {
 
     @Immutable
-    data class OnShoppingListDeleted(val shoppingList: ShoppingListDetails) : UiEvent
+    data class OnShoppingListDeleted(val shoppingListUiModel: ShoppingListUiModel) : UiEvent
 
     @Immutable
-    data class OnShoppingListsReordered(val reorderedList: List<ShoppingListDetails>) : UiEvent
+    data class OnShoppingListsReordered(val reorderedList: List<ShoppingListUiModel>) : UiEvent
 
     @Immutable
-    data class OnShoppingListSelected(val shoppingList: ShoppingListDetails) : UiEvent
+    data class OnShoppingListSelected(val shoppingListUiModel: ShoppingListUiModel) : UiEvent
 
     @Immutable
-    data class OnShoppingListEdited(val shoppingList: ShoppingListDetails) : UiEvent
+    data class OnShoppingListEdited(val shoppingListUiModel: ShoppingListUiModel) : UiEvent
+
+    @Immutable
+    data class OnSwipeToRevealStateChanged(
+        val shoppingListId: Long,
+        val newState: SwipeToRevealState
+    ) : UiEvent
 
     @Immutable
     data object OnAddNewShoppingList : UiEvent

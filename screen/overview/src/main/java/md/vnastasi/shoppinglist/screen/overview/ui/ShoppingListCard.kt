@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.res.R
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
@@ -64,26 +67,22 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
-private enum class SwipeToRevealState {
-
-    Content, Actions
-}
-
 @Composable
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
-    item: ShoppingListDetails,
+    shoppingListUiModel: ShoppingListUiModel,
     reorderDragHandleState: ReorderDragHandleState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
     onDeleteItem: () -> Unit = { },
+    onSwipeToRevealStateChanged: (SwipeToRevealState) -> Unit = { }
 ) {
     val density = LocalDensity.current
 
-    val dragState = remember {
+    val dragState = remember(shoppingListUiModel.swipeToRevealState) {
         val actionOffset = with(density) { 120.dp.toPx() }
         AnchoredDraggableState(
-            initialValue = SwipeToRevealState.Content,
+            initialValue = shoppingListUiModel.swipeToRevealState,
             anchors = DraggableAnchors {
                 SwipeToRevealState.Content at 0.0f
                 SwipeToRevealState.Actions at -actionOffset
@@ -91,11 +90,15 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
         )
     }
 
+    LaunchedEffect(dragState.settledValue) {
+        onSwipeToRevealStateChanged(dragState.settledValue)
+    }
+
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
         ShoppingListCardContent(
-            item = item,
+            item = shoppingListUiModel.shoppingList,
             reorderDragHandleState = reorderDragHandleState,
             dragState = dragState,
             overScrollEffect = rememberOverscrollEffect(),
@@ -271,8 +274,9 @@ private fun ShoppingListActions(
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ShoppingListCardPreview() {
+private fun ShoppingListCardContentPreview() {
     val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+    val shoppingListUiModel = ShoppingListUiModel(shoppingList, SwipeToRevealState.Content)
 
     AppTheme {
         LazyColumn {
@@ -282,7 +286,7 @@ private fun ShoppingListCardPreview() {
                     key = Unit
                 ) {
                     ShoppingListCard(
-                        item = shoppingList,
+                        shoppingListUiModel = shoppingListUiModel,
                         reorderDragHandleState = ReorderDragHandleState.Disabled
                     )
                 }
@@ -294,8 +298,9 @@ private fun ShoppingListCardPreview() {
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ReorderableShoppingListCardPreview() {
-    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+private fun ShoppingListCardActionsPreview() {
+    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+    val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Actions)
 
     AppTheme {
         LazyColumn {
@@ -305,7 +310,31 @@ private fun ReorderableShoppingListCardPreview() {
                     key = Unit
                 ) {
                     ShoppingListCard(
-                        item = shoppingList,
+                        shoppingListUiModel = shoppingListUiModel,
+                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
+                    )
+                }
+            }
+        }
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
+@Preview
+@Composable
+private fun ReorderableShoppingListCardPreview() {
+    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+    val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Content)
+
+    AppTheme {
+        LazyColumn {
+            item {
+                ReorderableItem(
+                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                    key = Unit
+                ) {
+                    ShoppingListCard(
+                        shoppingListUiModel = shoppingListUiModel,
                         reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
                     )
                 }
