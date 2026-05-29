@@ -11,7 +11,8 @@ import org.gradle.kotlin.dsl.configure
 class ApplicationConventions : Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
-        pluginManager.apply(libs.plugins.gradle.dependencies)
+        pluginManager.apply(libs.plugins.gradle.dependency.analysis)
+        pluginManager.apply(libs.plugins.gradle.dependency.sort)
         pluginManager.apply(libs.plugins.android.application)
         pluginManager.apply(libs.plugins.android.cacheFix)
         pluginManager.apply(libs.plugins.compose.compiler)

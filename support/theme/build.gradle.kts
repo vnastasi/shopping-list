@@ -10,13 +10,13 @@ android {
 
 dependencies {
     api(platform(libs.compose.bom))
+    api(libs.compose.material)
     api(libs.compose.runtime)
+    api(libs.compose.ui)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.foudation)
     implementation(libs.compose.graphics)
-    implementation(libs.compose.material)
-    implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
 }

@@ -12,44 +12,52 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":support:annotation"))
-
     api(platform(libs.compose.bom))
     api(platform(libs.coroutines.bom))
+    api(libs.collections.immutable)
+    api(libs.compose.animations)
     api(libs.compose.foudation.layout)
+    api(libs.compose.material)
     api(libs.compose.runtime)
+    api(libs.compose.ui)
     api(libs.coroutines.core)
     api(libs.dagger)
     api(libs.lifecycle.viewmodel)
+    api(libs.navigation.ui)
+    api(libs.reorderable)
+    api(libs.window.core)
 
-    implementation(project(":resources"))
-    implementation(project(":support:theme"))
+    debugApi(libs.reorderable.debug)
+
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
+    implementation(project(":resources"))
+    implementation(project(":support:theme"))
     implementation(libs.androidx.annotation)
-    implementation(libs.collections.immutable)
+    implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
-    implementation(libs.compose.material)
+    implementation(libs.compose.graphics)
     implementation(libs.compose.material.adaptive)
     implementation(libs.compose.preview)
     implementation(libs.compose.runtime.annotation)
-    implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
-    implementation(libs.hilt.core)
+    implementation(libs.compose.ui.unit)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.core)
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
-    implementation(libs.reorderable)
-    implementation(libs.window.core)
-
-    ksp(libs.bundles.hilt.compiler)
+    implementation(libs.navigation.runtime)
 
     debugImplementation(libs.compose.tooling)
 
-    debugRuntimeOnly(libs.compose.test.manifest)
+    compileOnly(project(":support:annotation"))
 
     testFixturesCompileOnly(libs.compose.tooling)
+
+    debugRuntimeOnly(libs.compose.test.manifest)
+
+    ksp(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

@@ -1,0 +1,149 @@
+package md.vnastasi.shoppinglist.screen.overview.ui
+
+import androidx.compose.runtime.Composable
+import com.android.tools.screenshot.PreviewTest
+import kotlinx.collections.immutable.persistentListOf
+import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
+import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
+import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
+import md.vnastasi.shoppinglist.screen.overview.model.ViewState
+import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
+import md.vnastasi.shoppinglist.support.theme.AppTheme
+
+/*
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun LoadingOverviewScreen() {
+    val viewState = ViewState.Loading
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
+ */
+
+/*
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun EmptyOverviewScreen() {
+    val viewState = ViewState.Empty(
+        navigationTarget = null
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            navigator = StubOverviewScreenNavigator()
+        )
+    }
+}
+ */
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun OneItemOverviewScreen() {
+    val viewState = ViewState.Ready(
+        data = persistentListOf(
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 1L,
+                    name = "Groceries",
+                    position = 1L,
+                    totalItems = 10L,
+                    checkedItems = 2L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            )
+        )
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            onNavigate = { }
+        )
+    }
+}
+
+@PreviewTest
+@ScreenshotPreviews
+@Composable
+fun MultipleItemsOverviewScreen() {
+    val viewState = ViewState.Ready(
+        data = persistentListOf(
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 1L,
+                    name = "Groceries",
+                    position = 1L,
+                    totalItems = 10L,
+                    checkedItems = 2L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            ),
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 2L,
+                    name = "Pharmacy for mom",
+                    position = 2L,
+                    totalItems = 1L,
+                    checkedItems = 1L
+                ),
+                swipeToRevealState = SwipeToRevealState.Actions
+            ),
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 3L,
+                    name = "Gamma & Praxis",
+                    position = 3L,
+                    totalItems = 4L,
+                    checkedItems = 0L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            ),
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 4L,
+                    name = "Birthday party shopping list",
+                    position = 4L,
+                    totalItems = 3L,
+                    checkedItems = 3L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            ),
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 5L,
+                    name = "Christmas Eve party",
+                    position = 5L,
+                    totalItems = 0L,
+                    checkedItems = 0L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            ),
+            ShoppingListUiModel(
+                shoppingList = ShoppingListDetails(
+                    id = 6L,
+                    name = "Thanksgiving family reunion",
+                    position = 6L,
+                    totalItems = 23L,
+                    checkedItems = 5L
+                ),
+                swipeToRevealState = SwipeToRevealState.Content
+            )
+        )
+    )
+
+    AppTheme {
+        OverviewScreen(
+            viewModel = StubOverviewViewModel(viewState),
+            onNavigate = { }
+        )
+    }
+}
