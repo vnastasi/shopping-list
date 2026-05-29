@@ -9,11 +9,10 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import md.vnastasi.shoppinglist.screen.additems.nav.addItems
-import md.vnastasi.shoppinglist.screen.listdetails.nav.listDetails
-import md.vnastasi.shoppinglist.screen.managelist.nav.manageList
+import md.vnastasi.shoppinglist.screen.additems.nav.AddItems
+import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetails
+import md.vnastasi.shoppinglist.screen.managelist.nav.ManageList
 import md.vnastasi.shoppinglist.screen.overview.nav.Overview
-import md.vnastasi.shoppinglist.screen.overview.nav.overview
 import md.vnastasi.shoppinglist.screen.shared.animation.slideInFromLeft
 import md.vnastasi.shoppinglist.screen.shared.animation.slideInFromRight
 import md.vnastasi.shoppinglist.screen.shared.animation.slideOutToLeft
@@ -53,10 +52,10 @@ internal fun ApplicationScreenContainer() {
             navBackStack.removeLastOrNull()
         },
         entryProvider = entryProvider {
-            overview(navBackStack)
-            manageList(navBackStack)
-            listDetails(navBackStack)
-            addItems(navBackStack)
+            Overview(navBackStack)
+            ManageList(navBackStack)
+            ListDetails(navBackStack)
+            AddItems(navBackStack)
         }
     )
 }

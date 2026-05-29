@@ -18,7 +18,7 @@ import md.vnastasi.shoppinglist.screen.shared.animation.slideOutToDown
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.DialogWhenLargeSceneStrategy
 
 @Composable
-fun EntryProviderScope<NavKey>.addItems(navBackStack: NavBackStack<NavKey>) {
+fun EntryProviderScope<NavKey>.AddItems(navBackStack: NavBackStack<NavKey>) {
     entry<AddItems>(
         metadata = DialogWhenLargeSceneStrategy.dialogWhenLarge() +
                 NavDisplay.transitionSpec { slideInFromDown() togetherWith ExitTransition.KeepUntilTransitionsFinished } +

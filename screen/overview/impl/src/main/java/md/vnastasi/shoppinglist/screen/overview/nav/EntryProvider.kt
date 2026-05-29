@@ -18,7 +18,7 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
 
 @Composable
-fun EntryProviderScope<NavKey>.overview(navBackStack: NavBackStack<NavKey>) {
+fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
     entry<Overview>(
         metadata = ListDetailSceneStrategy.listPane()
     ) {

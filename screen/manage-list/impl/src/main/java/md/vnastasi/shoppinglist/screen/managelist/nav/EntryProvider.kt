@@ -14,7 +14,7 @@ import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.BottomSheetSceneStrategy
 
 @Composable
-fun EntryProviderScope<NavKey>.manageList(navBackStack: NavBackStack<NavKey>) {
+fun EntryProviderScope<NavKey>.ManageList(navBackStack: NavBackStack<NavKey>) {
     entry<ManageList>(
         metadata = BottomSheetSceneStrategy.bottomSheet()
     ) { key ->
