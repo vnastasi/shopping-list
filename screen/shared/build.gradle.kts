@@ -12,52 +12,52 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":support:annotation"))
-
     api(platform(libs.compose.bom))
     api(platform(libs.coroutines.bom))
+    api(libs.collections.immutable)
+    api(libs.compose.animations)
     api(libs.compose.foudation.layout)
+    api(libs.compose.material)
     api(libs.compose.runtime)
+    api(libs.compose.ui)
     api(libs.coroutines.core)
     api(libs.dagger)
     api(libs.lifecycle.viewmodel)
-    api(libs.compose.animations)
-
-    implementation(project(":resources"))
-    implementation(project(":support:theme"))
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
-    implementation(platform(libs.kotlin.bom))
-    implementation(libs.androidx.annotation)
-    api(libs.collections.immutable)
-    implementation(libs.compose.foudation)
-    api(libs.compose.material)
-    implementation(libs.compose.material.adaptive)
-    implementation(libs.compose.preview)
-    implementation(libs.compose.runtime.annotation)
-    api(libs.compose.ui)
-    implementation(libs.compose.ui.text)
-    implementation(libs.hilt.core)
-    implementation(libs.hilt.android)
-    implementation(libs.lottie)
-    implementation(libs.lottie.compose)
+    api(libs.navigation.ui)
     api(libs.reorderable)
     api(libs.window.core)
-    implementation(libs.navigation.runtime)
-    api(libs.navigation.ui)
-    implementation(libs.compose.animations.core)
-    implementation(libs.compose.graphics)
-    implementation(libs.compose.ui.unit)
 
     debugApi(libs.reorderable.debug)
 
-    ksp(libs.bundles.hilt.compiler)
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
+    implementation(project(":resources"))
+    implementation(project(":support:theme"))
+    implementation(libs.androidx.annotation)
+    implementation(libs.compose.animations.core)
+    implementation(libs.compose.foudation)
+    implementation(libs.compose.graphics)
+    implementation(libs.compose.material.adaptive)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.runtime.annotation)
+    implementation(libs.compose.ui.text)
+    implementation(libs.compose.ui.unit)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.core)
+    implementation(libs.lottie)
+    implementation(libs.lottie.compose)
+    implementation(libs.navigation.runtime)
 
     debugImplementation(libs.compose.tooling)
 
-    debugRuntimeOnly(libs.compose.test.manifest)
+    compileOnly(project(":support:annotation"))
 
     testFixturesCompileOnly(libs.compose.tooling)
+
+    debugRuntimeOnly(libs.compose.test.manifest)
+
+    ksp(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

@@ -13,47 +13,45 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":support:annotation"))
-
-    api(project(":domain:api"))
     api(platform(libs.compose.bom))
     api(platform(libs.coroutines.bom))
+    api(project(":domain:api"))
+    api(libs.compose.foudation)
     api(libs.compose.foudation.layout)
+    api(libs.compose.material)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
     api(libs.javax.inject)
+    api(libs.lifecycle.viewmodel)
+    api(libs.navigation.runtime)
 
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.coroutines.bom))
     implementation(project(":resources"))
     implementation(project(":screen:manage-list:api"))
     implementation(project(":screen:shared"))
     implementation(project(":support:theme"))
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
-    api(libs.compose.foudation)
     implementation(libs.compose.graphics)
-    api(libs.compose.material)
     implementation(libs.compose.preview)
     implementation(libs.compose.runtime.annotation)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
+    implementation(libs.hilt.viewmodel.compose)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
-    api(libs.lifecycle.viewmodel)
-    api(libs.navigation.runtime)
-    implementation(libs.hilt.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.compose)
 
     debugImplementation(libs.compose.tooling)
 
+    compileOnly(project(":support:annotation"))
+
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    ksp(libs.bundles.hilt.compiler)
-
-    testImplementation(testFixtures(project(":domain:api")))
     testImplementation(platform(libs.coroutines.bom))
+    testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
@@ -65,6 +63,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.kotlin.reflect)
+
+    ksp(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

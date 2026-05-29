@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.conventions.code.coverage)
     alias(libs.plugins.conventions.detekt.aggregator)
-    alias(libs.plugins.gradle.dependencies)
+    alias(libs.plugins.gradle.dependency.analysis)
+    alias(libs.plugins.gradle.dependency.sort)
 
     alias(libs.plugins.android.cacheFix) apply false
     alias(libs.plugins.android.library) apply false
@@ -30,34 +31,38 @@ codeCoverage {
 
 dependencyAnalysis {
     issues {
-       all {
-           onUnusedDependencies {
-               exclude(
-                   "org.jetbrains.kotlin:kotlin-stdlib",
-                   ":domain:api" // Plugin has issues with screenshotTest configuration and flags test fixtures as not used
-               )
-              severity("fail")
-           }
+        all {
+            onUnusedDependencies {
+                exclude(
+                    "org.jetbrains.kotlin:kotlin-stdlib",
+                    ":domain:api" // Plugin has issues with screenshotTest configuration and flags test fixtures as not used
+                )
+                severity("fail")
+            }
 
-           onRedundantPlugins {
-               severity("fail")
-           }
+            onRedundantPlugins {
+                severity("fail")
+            }
 
-           onUnusedAnnotationProcessors {
-               severity("fail")
-           }
+            onUnusedAnnotationProcessors {
+                severity("fail")
+            }
 
-           onUsedTransitiveDependencies {
-               exclude(
-                   "androidx.fragment:fragment",
-                   "com.android.tools.layoutlib:layoutlib-api",
-                   "com.android.tools.layoutlib:layoutlib",
-                   "junit:junit"
-               )
-               severity("warn")
-           }
-       }
+            onUsedTransitiveDependencies {
+                exclude(
+                    "androidx.fragment:fragment",
+                    "com.android.tools.layoutlib:layoutlib-api",
+                    "com.android.tools.layoutlib:layoutlib",
+                    "junit:junit"
+                )
+                severity("warn")
+            }
+        }
     }
+}
+
+sortDependencies {
+    insertBlankLines.set(true)
 }
 
 tasks.register<Delete>("clean").configure {

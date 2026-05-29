@@ -13,26 +13,26 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":support:annotation"))
-
-    api(project(":domain:api"))
     api(platform(libs.compose.bom))
     api(platform(libs.coroutines.bom))
+    api(project(":domain:api"))
+    api(libs.collections.immutable)
     api(libs.compose.foudation.layout)
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
+    api(libs.lifecycle.viewmodel)
     api(libs.lifecycle.viewmodel.savedstate)
+    api(libs.navigation.runtime)
 
-    implementation(project(":resources"))
-    implementation(project(":screen:shared"))
-    implementation(project(":support:theme"))
-    implementation(project(":screen:overview:api"))
-    implementation(project(":screen:manage-list:api"))
-    implementation(project(":screen:list-details:api"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
-    api(libs.collections.immutable)
+    implementation(project(":resources"))
+    implementation(project(":screen:list-details:api"))
+    implementation(project(":screen:manage-list:api"))
+    implementation(project(":screen:overview:api"))
+    implementation(project(":screen:shared"))
+    implementation(project(":support:theme"))
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
@@ -46,38 +46,38 @@ dependencies {
     implementation(libs.compose.ui.unit)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
+    implementation(libs.hilt.viewmodel.compose)
     implementation(libs.javax.inject)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    api(libs.lifecycle.viewmodel)
     implementation(libs.reorderable)
-    api(libs.navigation.runtime)
-    implementation(libs.hilt.viewmodel.compose)
+
+    screenshotTestImplementation(testFixtures(project(":domain:api")))
 
     debugImplementation(libs.compose.tooling)
     debugImplementation(libs.reorderable.debug)
 
+    compileOnly(project(":support:annotation"))
+
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    ksp(libs.bundles.hilt.compiler)
-
-    testImplementation(testFixtures(project(":domain:api")))
     testImplementation(platform(libs.coroutines.bom))
+    testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.lifecycle.viewmodel.savedstate)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
-    testImplementation(libs.lifecycle.viewmodel.savedstate)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.kotlin.reflect)
 
-    screenshotTestImplementation(testFixtures(project(":domain:api")))
+    ksp(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

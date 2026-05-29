@@ -73,19 +73,19 @@ androidComponents {
 }
 
 dependencies {
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.coroutines.bom))
+    implementation(platform(libs.kotlin.bom))
     implementation(project(":database"))
     implementation(project(":domain:api"))
     implementation(project(":domain:implementation"))
     implementation(project(":screen:add-items:impl"))
-    implementation(project(":screen:manage-list:impl"))
     implementation(project(":screen:list-details:impl"))
+    implementation(project(":screen:manage-list:impl"))
     implementation(project(":screen:overview:api"))
     implementation(project(":screen:overview:impl"))
     implementation(project(":screen:shared"))
     implementation(project(":support:theme"))
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
-    implementation(platform(libs.kotlin.bom))
     implementation(libs.activity)
     implementation(libs.activity.compose)
     implementation(libs.androidx.annotation)
@@ -103,11 +103,9 @@ dependencies {
     implementation(libs.navigation.runtime)
     implementation(libs.navigation.ui)
 
-    ksp(libs.bundles.hilt.compiler)
-
-    androidTestImplementation(project(":resources"))
-    androidTestImplementation(testFixtures(project(":database")))
     androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(testFixtures(project(":database")))
+    androidTestImplementation(project(":resources"))
     androidTestImplementation(libs.assertk)
     androidTestImplementation(libs.compose.test.junit4)
     androidTestImplementation(libs.compose.ui.geometry)
@@ -127,6 +125,8 @@ dependencies {
     androidTestImplementation(libs.uitest.junit)
     androidTestImplementation(libs.uitest.monitor)
     androidTestImplementation(libs.uitest.runner)
+
+    ksp(libs.bundles.hilt.compiler)
 
     kspAndroidTest(libs.bundles.hilt.compiler)
 }

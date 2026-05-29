@@ -61,7 +61,8 @@ internal fun CommonExtension.configureCompose() {
 }
 
 internal fun Project.configureSimpleLibrary() {
-    pluginManager.apply(libs.plugins.gradle.dependencies)
+    pluginManager.apply(libs.plugins.gradle.dependency.analysis)
+    pluginManager.apply(libs.plugins.gradle.dependency.sort)
     pluginManager.apply(libs.plugins.android.library)
     pluginManager.apply(libs.plugins.android.cacheFix)
 

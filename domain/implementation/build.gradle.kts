@@ -21,11 +21,9 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
-    ksp(libs.bundles.hilt.compiler)
-
+    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
@@ -37,4 +35,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.kotlin.reflect)
+
+    ksp(libs.bundles.hilt.compiler)
 }
