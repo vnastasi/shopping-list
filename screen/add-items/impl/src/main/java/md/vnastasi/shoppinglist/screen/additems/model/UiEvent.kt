@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 
 @Immutable
-sealed interface UiEvent {
+internal sealed interface UiEvent {
 
     @Immutable
     data object OnBackClicked : UiEvent

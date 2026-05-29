@@ -7,7 +7,7 @@ import md.vnastasi.shoppinglist.screen.additems.model.Effect
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 
-interface AddItemsViewModelSpec {
+internal interface AddItemsViewModelSpec {
 
     val searchTermTextFieldState: TextFieldState
 

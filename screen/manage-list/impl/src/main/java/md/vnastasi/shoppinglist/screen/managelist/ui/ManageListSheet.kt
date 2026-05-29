@@ -48,7 +48,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun ManageListSheet(
+internal fun ManageListSheet(
     viewModel: ManageListViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
 ) {

@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 
 @Immutable
-sealed class ViewState {
+internal sealed class ViewState {
 
     @Immutable
     data object Loading : ViewState()

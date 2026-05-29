@@ -10,7 +10,7 @@ import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
 import md.vnastasi.shoppinglist.screen.additems.vm.AddItemsViewModelSpec
 
-class StubAddItemsViewModelSpec(
+internal class StubAddItemsViewModelSpec(
     viewState: ViewState,
     searchTermValue: String
 ) : AddItemsViewModelSpec {

@@ -10,7 +10,7 @@ import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
 
-class StubManageListViewModel(
+internal class StubManageListViewModel(
     expectedViewState: ViewState,
     expectedListName: String
 ) : ManageListViewModelSpec {

@@ -33,7 +33,7 @@ import md.vnastasi.shoppinglist.screen.overview.model.ViewState
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-internal class OverviewViewModelTest {
+class OverviewViewModelTest {
 
     private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-sealed class ViewState {
+internal sealed class ViewState {
 
     @Immutable
     data object Loading : ViewState()

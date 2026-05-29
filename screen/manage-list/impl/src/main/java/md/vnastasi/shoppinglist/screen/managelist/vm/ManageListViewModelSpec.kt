@@ -7,7 +7,7 @@ import md.vnastasi.shoppinglist.screen.managelist.model.Effect
 import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 
-interface ManageListViewModelSpec {
+internal interface ManageListViewModelSpec {
 
     val listNameTextFieldState: TextFieldState
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 
 @Immutable
-data class ShoppingListUiModel(
+internal data class ShoppingListUiModel(
     val shoppingList: ShoppingListDetails,
     val swipeToRevealState: SwipeToRevealState
 )

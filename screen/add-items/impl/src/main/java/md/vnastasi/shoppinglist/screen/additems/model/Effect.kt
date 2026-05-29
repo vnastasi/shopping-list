@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 
 @Immutable
-sealed interface Effect {
+internal sealed interface Effect {
 
     @Immutable
     data class Navigation(val target: NavigationTarget) : Effect

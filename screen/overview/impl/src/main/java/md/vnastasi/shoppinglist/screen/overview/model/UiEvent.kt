@@ -3,7 +3,7 @@ package md.vnastasi.shoppinglist.screen.overview.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-sealed interface UiEvent {
+internal sealed interface UiEvent {
 
     @Immutable
     data class OnShoppingListDeleted(val shoppingListUiModel: ShoppingListUiModel) : UiEvent

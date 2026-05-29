@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 
 @Immutable
-data class ViewState(
+internal data class ViewState(
     val suggestions: ImmutableList<NameSuggestion>
 ) {
 

@@ -25,7 +25,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 
 @HiltViewModel(assistedFactory = ListDetailsViewModel.Factory::class)
-class ListDetailsViewModel @AssistedInject internal constructor(
+internal class ListDetailsViewModel @AssistedInject internal constructor(
     @Assisted private val shoppingListId: Long,
     private val shoppingItemRepository: ShoppingItemRepository,
     shoppingListRepository: ShoppingListRepository,

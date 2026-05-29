@@ -26,7 +26,7 @@ import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class OverviewViewModel @Inject internal constructor(
+internal class OverviewViewModel @Inject internal constructor(
     private val shoppingListRepository: ShoppingListRepository,
     savedStateHandle: SavedStateHandle,
     coroutineScope: CoroutineScope

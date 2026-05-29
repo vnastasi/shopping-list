@@ -18,7 +18,7 @@ import md.vnastasi.shoppinglist.screen.shared.toast.Toast
 import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 
 @Composable
-fun AddItemsScreen(
+internal fun AddItemsScreen(
     viewModel: AddItemsViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
 ) {

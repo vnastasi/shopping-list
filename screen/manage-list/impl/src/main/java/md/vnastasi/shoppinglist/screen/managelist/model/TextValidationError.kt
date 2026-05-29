@@ -1,6 +1,6 @@
 package md.vnastasi.shoppinglist.screen.managelist.model
 
-enum class TextValidationError {
+internal enum class TextValidationError {
 
     NONE, EMPTY, BLANK
 }

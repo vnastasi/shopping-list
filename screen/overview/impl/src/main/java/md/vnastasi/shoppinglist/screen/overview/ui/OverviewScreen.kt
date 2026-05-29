@@ -56,7 +56,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun OverviewScreen(
+internal fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
 ) {

@@ -34,7 +34,7 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-internal class AddItemsViewModelTest {
+class AddItemsViewModelTest {
 
     private val mockNameSuggestionRepository = mockk<NameSuggestionRepository>(relaxUnitFun = true)
     private val mockShoppingListRepository = mockk<ShoppingListRepository>(relaxUnitFun = true)

@@ -9,7 +9,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 
-class StubListDetailsViewModelSpec(stubViewState: ViewState) : ListDetailsViewModelSpec {
+internal class StubListDetailsViewModelSpec(stubViewState: ViewState) : ListDetailsViewModelSpec {
 
     override val viewState: StateFlow<ViewState> = MutableStateFlow(stubViewState)
 

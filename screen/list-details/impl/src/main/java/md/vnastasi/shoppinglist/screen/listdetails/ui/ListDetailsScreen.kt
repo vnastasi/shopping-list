@@ -61,7 +61,7 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
-fun ListDetailsScreen(
+internal fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
 ) {

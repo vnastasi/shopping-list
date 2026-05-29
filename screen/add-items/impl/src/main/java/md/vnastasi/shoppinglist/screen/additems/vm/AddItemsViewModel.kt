@@ -37,7 +37,7 @@ import md.vnastasi.shoppinglist.screen.shared.toast.ToastMessage
 import md.vnastasi.shoppinglist.screen.shared.vm.asStateFlow
 
 @HiltViewModel(assistedFactory = AddItemsViewModel.Factory::class)
-class AddItemsViewModel @AssistedInject internal constructor(
+internal class AddItemsViewModel @AssistedInject internal constructor(
     @Assisted private val shoppingListId: Long,
     private val nameSuggestionRepository: NameSuggestionRepository,
     private val shoppingListRepository: ShoppingListRepository,
