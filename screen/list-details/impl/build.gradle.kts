@@ -32,7 +32,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
-    implementation(libs.collections.immutable)
+    api(libs.collections.immutable)
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
@@ -49,12 +49,14 @@ dependencies {
     implementation(libs.hilt.core)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.lifecycle.viewmodel)
+    api(libs.lifecycle.viewmodel)
     implementation(libs.reorderable)
-    implementation(libs.navigation.runtime)
+    api(libs.navigation.runtime)
     implementation(libs.hilt.viewmodel.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
 
     debugImplementation(libs.compose.tooling)
+    debugImplementation(libs.reorderable.debug)
 
     debugRuntimeOnly(libs.compose.test.manifest)
 

@@ -10,7 +10,6 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.navigation.runtime)
-    implementation(libs.serialization.core)
+    api(libs.navigation.runtime)
+    api(libs.serialization.core)
 }

@@ -122,6 +122,7 @@ navigation-runtime = { module = "androidx.navigation3:navigation3-runtime", vers
 navigation-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation" }
 
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+reorderable-debug = { module = "sh.calvin.reorderable:reorderable-android-debug", version.ref = "reorderable" }
 
 room-common = { module = "androidx.room:room-common", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

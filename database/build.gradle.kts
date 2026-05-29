@@ -25,7 +25,7 @@ dependencies {
     implementation(platform(libs.kotlin.bom))
     implementation(libs.hilt.core)
     implementation(libs.room.common)
-    implementation(libs.room.runtime)
+    api(libs.room.runtime)
 
     ksp(libs.bundles.hilt.compiler)
     ksp(libs.room.compiler)

@@ -22,6 +22,7 @@ dependencies {
     api(libs.compose.runtime)
     api(libs.coroutines.core)
     api(libs.dagger)
+    api(libs.lifecycle.viewmodel.savedstate)
 
     implementation(project(":resources"))
     implementation(project(":screen:shared"))
@@ -31,7 +32,7 @@ dependencies {
     implementation(project(":screen:list-details:api"))
     implementation(platform(libs.compose.bom))
     implementation(platform(libs.coroutines.bom))
-    implementation(libs.collections.immutable)
+    api(libs.collections.immutable)
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
     implementation(libs.compose.foudation)
@@ -48,12 +49,14 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.lifecycle.common)
     implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.viewmodel.compose)
+    api(libs.lifecycle.viewmodel)
     implementation(libs.reorderable)
-    implementation(libs.navigation.runtime)
+    api(libs.navigation.runtime)
     implementation(libs.hilt.viewmodel.compose)
 
     debugImplementation(libs.compose.tooling)
+    debugImplementation(libs.reorderable.debug)
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
@@ -68,6 +71,7 @@ dependencies {
     testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)
     testImplementation(libs.turbine)
+    testImplementation(libs.lifecycle.viewmodel.savedstate)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)

@@ -15,8 +15,8 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.foudation)
     implementation(libs.compose.graphics)
-    implementation(libs.compose.material)
-    implementation(libs.compose.ui)
+    api(libs.compose.material)
+    api(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
 }
