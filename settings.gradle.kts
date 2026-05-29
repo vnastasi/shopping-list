@@ -52,9 +52,13 @@ include(
     ":support:theme",
     ":resources",
     ":screen:shared",
-    ":screen:overview",
-    ":screen:manage-list",
-    ":screen:list-details",
-    ":screen:add-items",
+    ":screen:overview:api",
+    ":screen:overview:impl",
+    ":screen:manage-list:api",
+    ":screen:manage-list:impl",
+    ":screen:list-details:api",
+    ":screen:list-details:impl",
+    ":screen:add-items:api",
+    ":screen:add-items:impl",
     ":app"
 )

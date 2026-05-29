@@ -42,6 +42,7 @@ uitest-junit = "1.3.0"
 uitest-monitor = "1.8.0"
 uitest-runner = "1.7.0"
 window = "1.5.1"
+navigation3Runtime = "1.1.2"
 
 
 [libraries]
