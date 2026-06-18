@@ -1,3 +1,11 @@
+// Workaround for Kotlin Metadata version incopatibility in DAGP.
+// See https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1661
+buildscript {
+    dependencies {
+        classpath(libs.kotlin.metadata)
+    }
+}
+
 plugins {
     alias(libs.plugins.conventions.code.coverage)
     alias(libs.plugins.conventions.detekt.aggregator)
