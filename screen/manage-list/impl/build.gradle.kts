@@ -71,8 +71,7 @@ tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-Xcontext-parameters"
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         )
     }
 }

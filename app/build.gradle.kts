@@ -134,8 +134,7 @@ dependencies {
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xcontext-parameters"
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         )
     }
 }
