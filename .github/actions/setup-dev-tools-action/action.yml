@@ -14,4 +14,4 @@ runs:
       with:
         cache-provider: enhanced
         cache-read-only: false
-        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        cache-encryption-key: ${{ env.GRADLE_ENCRYPTION_KEY }}

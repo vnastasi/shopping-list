@@ -12,21 +12,17 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-  UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
-  ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
-  IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
-  CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
-
 jobs:
   build:
     name: "Build application"
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
@@ -44,6 +40,14 @@ jobs:
     permissions: write-all
     needs:
       - build
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
@@ -62,6 +66,14 @@ jobs:
     permissions: write-all
     needs:
       - build
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
@@ -87,6 +99,14 @@ jobs:
         profile:
           - ${{ vars.AVD_PHONE_PROFILE }}
           - ${{ vars.AVD_TABLET_PROFILE }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
@@ -110,6 +130,17 @@ jobs:
       - unit-tests
       - screenshot-tests
       - instrumented-tests
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
+      ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
+      IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
+      CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
@@ -171,6 +202,8 @@ jobs:
     if: startsWith(github.head_ref, 'dependabot/') || startsWith(github.head_ref, 'gradlew-update-')
     needs:
       - code-quality
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: "Check out repository"
         uses: actions/checkout@v7.0.0
