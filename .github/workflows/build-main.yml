@@ -12,7 +12,6 @@ env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
   KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
   KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
   CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
 
 jobs:
@@ -22,7 +21,7 @@ jobs:
     permissions: write-all
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
         with:
           lfs: true
 
