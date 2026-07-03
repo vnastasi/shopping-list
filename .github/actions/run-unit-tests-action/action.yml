@@ -26,14 +26,14 @@ runs:
 
     - name: "Cache test execution data"
       if: ${{ inputs.exec-data-cache-key != '' }}
-      uses: actions/cache/save@v5.0.4
+      uses: actions/cache/save@v6.1.0
       with:
         path: ${{ github.workspace }}/build/exec-data/unit-tests
         key: ${{ inputs.exec-data-cache-key }}
 
     - name: "Archive test execution data"
       if: ${{ inputs.exec-data-cache-key != '' }}
-      uses: actions/upload-artifact@v7.0.0
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: ${{ inputs.exec-data-cache-key }}
         path: ${{ github.workspace }}/build/exec-data/unit-tests
