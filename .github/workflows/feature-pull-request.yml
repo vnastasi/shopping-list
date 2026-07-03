@@ -12,25 +12,20 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-  GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-  UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
-  ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
-  IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
-  CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
-
 jobs:
   build:
     name: "Build application"
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -45,9 +40,17 @@ jobs:
     permissions: write-all
     needs:
       - build
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -63,9 +66,17 @@ jobs:
     permissions: write-all
     needs:
       - build
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
         with:
           lfs: true
 
@@ -88,9 +99,17 @@ jobs:
         profile:
           - ${{ vars.AVD_PHONE_PROFILE }}
           - ${{ vars.AVD_TABLET_PROFILE }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -111,9 +130,20 @@ jobs:
       - unit-tests
       - screenshot-tests
       - instrumented-tests
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+      UT_EXEC_DATA_CACHE_KEY: unit-tests-exec-data-${{ github.event.pull_request.number }}
+      ST_EXEC_DATA_CACHE_KEY: screenshot-tests-exec-data-${{ github.event.pull_request.number }}
+      IT_EXEC_DATA_CACHE_KEY: instrumented-tests-exec-data-${{ github.event.pull_request.number }}
+      CODE_COVERAGE_THRESHOLD: ${{ vars.CODE_COVERAGE_THRESHOLD }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -127,28 +157,28 @@ jobs:
         run: ./gradlew detekt
 
       - name: "Restore unit test execution data"
-        uses: actions/cache/restore@v5.0.4
+        uses: actions/cache/restore@v6.1.0
         with:
           path: ${{ github.workspace }}/build/exec-data/unit-tests
           key: ${{ env.UT_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore screenshot test execution data"
-        uses: actions/cache/restore@v5.0.4
+        uses: actions/cache/restore@v6.1.0
         with:
           path: ${{ github.workspace }}/build/exec-data/screenshot-tests
           key: ${{ env.ST_EXEC_DATA_CACHE_KEY }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (phone profile)"
-        uses: actions/cache/restore@v5.0.4
+        uses: actions/cache/restore@v6.1.0
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_PHONE_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_PHONE_PROFILE }}
           fail-on-cache-miss: true
 
       - name: "Restore instrumented test execution data (tablet profile)"
-        uses: actions/cache/restore@v5.0.4
+        uses: actions/cache/restore@v6.1.0
         with:
           path: ${{ github.workspace }}/build/exec-data/instrumented-tests/${{ vars.AVD_TABLET_PROFILE }}
           key: ${{ env.IT_EXEC_DATA_CACHE_KEY }}-${{ vars.AVD_TABLET_PROFILE }}
@@ -172,9 +202,11 @@ jobs:
     if: startsWith(github.head_ref, 'dependabot/') || startsWith(github.head_ref, 'gradlew-update-')
     needs:
       - code-quality
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Auto-merge PR"
         env:
