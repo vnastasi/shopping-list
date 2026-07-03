@@ -5,20 +5,20 @@ on:
     tags:
       - 'v*'
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-  KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-  KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-
 jobs:
   create-artifact:
     name: "Create release artifact"
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+      KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -30,7 +30,7 @@ jobs:
           ./gradlew copyReleaseApkArtifact
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: "apk"
           path: build/artifacts/apk/shopping-list-${{ github.ref_name }}.apk
@@ -43,6 +43,8 @@ jobs:
     needs:
       - create-artifact
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - id: download-artifact
         name: "Download APK from build"
@@ -52,7 +54,7 @@ jobs:
 
       - id: create-release
         name: "Create release"
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1.1.4
         with:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}

@@ -15,7 +15,7 @@ runs:
 
     - name: "Archive report"
       if: ${{ inputs.silent == 'false' }}
-      uses: actions/upload-artifact@v7.0.0
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: "code-coverage-report-${{ github.event.pull_request.number }}"
         path: ${{ github.workspace }}/build/reports/code-coverage
@@ -25,7 +25,7 @@ runs:
 
     - name: "Publish report"
       if: ${{ inputs.silent == 'false' }}
-      uses: madrapps/jacoco-report@v1.7.2
+      uses: madrapps/jacoco-report@v1.8.0
       with:
         token: ${{ env.GH_TOKEN }}
         paths: ${{ github.workspace }}/build/reports/code-coverage/jacoco.xml
@@ -43,7 +43,7 @@ runs:
 
     - name: "Update code coverage badge"
       if: ${{ inputs.silent == 'true' }}
-      uses: cicirello/jacoco-badge-generator@v2.12.0
+      uses: cicirello/jacoco-badge-generator@v2.12.1
       with:
         jacoco-csv-file: build/reports/code-coverage/jacoco.csv
         coverage-label: "Code coverage"
