@@ -126,6 +126,8 @@ dependencies {
     androidTestImplementation(libs.uitest.runner)
 
     ksp(libs.bundles.hilt.compiler)
+
+    kspAndroidTest(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
