@@ -26,8 +26,6 @@ dependencies {
     api(libs.lifecycle.viewmodel)
     api(libs.navigation.runtime)
 
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
     implementation(project(":resources"))
     implementation(project(":screen:manage-list:api"))
     implementation(project(":screen:shared"))
@@ -50,7 +48,6 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)

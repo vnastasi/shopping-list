@@ -23,6 +23,7 @@ gradle-dependency-analysis = "3.17.0"
 gradle-dependency-sort = "0.19.0"
 hilt = "1.4.0"
 jacoco = "0.8.14"
+jpecify = "1.0.0"
 junit = "6.1.2"
 kotlin = "2.4.10"
 ksp = "2.3.10"
@@ -93,6 +94,8 @@ hilt-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "
 hilt-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "hilt" }
 
 javax-inject = { module = "javax.inject:javax.inject", version.require = "1" }
+
+jpecify = { module = "org.jspecify:jspecify", version.ref = "jpecify" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

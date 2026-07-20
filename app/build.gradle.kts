@@ -103,7 +103,6 @@ dependencies {
     implementation(libs.navigation.runtime)
     implementation(libs.navigation.ui)
 
-    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(testFixtures(project(":database")))
     androidTestImplementation(project(":resources"))
     androidTestImplementation(libs.assertk)
@@ -114,8 +113,8 @@ dependencies {
     androidTestImplementation(libs.coroutines.core)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.hilt.test)
+    androidTestImplementation(libs.jpecify)
     androidTestImplementation(libs.kotlin.reflect)
-    androidTestImplementation(libs.lifecycle.viewmodel.savedstate)
     androidTestImplementation(libs.room.runtime)
     androidTestImplementation(libs.room.test)
     androidTestImplementation(libs.sqlite)
@@ -127,8 +126,6 @@ dependencies {
     androidTestImplementation(libs.uitest.runner)
 
     ksp(libs.bundles.hilt.compiler)
-
-    kspAndroidTest(libs.bundles.hilt.compiler)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

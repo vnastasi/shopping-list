@@ -21,7 +21,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":database")))
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)

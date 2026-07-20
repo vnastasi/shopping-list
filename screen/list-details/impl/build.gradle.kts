@@ -25,8 +25,6 @@ dependencies {
     api(libs.lifecycle.viewmodel)
     api(libs.navigation.runtime)
 
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(project(":resources"))
     implementation(project(":screen:add-items:api"))
@@ -44,7 +42,6 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.text)
     implementation(libs.compose.ui.unit)
-    implementation(libs.coroutines.core)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
     implementation(libs.hilt.viewmodel.compose)
@@ -62,7 +59,6 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
