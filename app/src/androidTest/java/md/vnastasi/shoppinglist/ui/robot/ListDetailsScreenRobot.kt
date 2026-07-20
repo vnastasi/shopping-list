@@ -42,7 +42,7 @@ class ListDetailsScreenRobot(
     private val resources = composeTestRule.activity.resources
 
     fun navigateBack() {
-        composeTestRule.activityRule.scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+        composeTestRule.activityRule.scenario.onActivity { (it as MainActivity).onBackPressedDispatcher.onBackPressed() }
     }
 
     fun hasToolbarName(value: String) {
