@@ -25,8 +25,6 @@ dependencies {
     api(libs.lifecycle.viewmodel.savedstate)
     api(libs.navigation.runtime)
 
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
     implementation(project(":resources"))
     implementation(project(":screen:list-details:api"))
     implementation(project(":screen:manage-list:api"))
@@ -62,12 +60,10 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.lifecycle.viewmodel.savedstate)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.dsl)

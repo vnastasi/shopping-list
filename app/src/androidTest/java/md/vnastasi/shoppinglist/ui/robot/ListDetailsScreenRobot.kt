@@ -30,11 +30,11 @@ import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LI
 
 private const val DEFAULT_TIMEOUT = 5_000L
 
-@RobotDslMarker
 context(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
 fun listDetailsScreen(block: ListDetailsScreenRobot.() -> Unit = {}) = ListDetailsScreenRobot(composeTestRule).apply(block)
 
 @OptIn(ExperimentalTestApi::class)
+@RobotDslMarker
 class ListDetailsScreenRobot(
     private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
@@ -42,7 +42,7 @@ class ListDetailsScreenRobot(
     private val resources = composeTestRule.activity.resources
 
     fun navigateBack() {
-        composeTestRule.activityRule.scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+        composeTestRule.activityRule.scenario.onActivity { (it as MainActivity).onBackPressedDispatcher.onBackPressed() }
     }
 
     fun hasToolbarName(value: String) {

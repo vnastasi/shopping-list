@@ -16,7 +16,6 @@ dependencies {
     api(platform(libs.compose.bom))
     api(platform(libs.coroutines.bom))
     api(project(":domain:api"))
-    api(project(":screen:shared"))
     api(libs.collections.immutable)
     api(libs.compose.foudation)
     api(libs.compose.foudation.layout)
@@ -27,11 +26,10 @@ dependencies {
     api(libs.lifecycle.viewmodel)
     api(libs.navigation.runtime)
 
-    implementation(platform(libs.compose.bom))
-    implementation(platform(libs.coroutines.bom))
     implementation(platform(libs.kotlin.bom))
     implementation(project(":resources"))
     implementation(project(":screen:add-items:api"))
+    implementation(project(":screen:shared"))
     implementation(project(":support:theme"))
     implementation(libs.compose.animations)
     implementation(libs.compose.animations.core)
@@ -57,7 +55,6 @@ dependencies {
 
     debugRuntimeOnly(libs.compose.test.manifest)
 
-    testImplementation(platform(libs.coroutines.bom))
     testImplementation(testFixtures(project(":domain:api")))
     testImplementation(libs.assertk)
     testImplementation(libs.coroutines.test)

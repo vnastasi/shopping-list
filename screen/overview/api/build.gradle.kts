@@ -12,4 +12,6 @@ android {
 dependencies {
     api(libs.navigation.runtime)
     api(libs.serialization.core)
+
+    implementation(libs.compose.runtime)
 }

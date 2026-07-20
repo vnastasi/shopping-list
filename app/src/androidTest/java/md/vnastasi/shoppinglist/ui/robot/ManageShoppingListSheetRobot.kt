@@ -16,11 +16,11 @@ import md.vnastasi.shoppinglist.screen.managelist.ui.TestTags.MANAGE_LIST_TEXT_F
 
 private const val DEFAULT_TIMEOUT = 5_000L
 
-@RobotDslMarker
 context(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>)
 fun manageShoppingListSheet(block: ManageShoppingListSheetRobot.() -> Unit = {}) = ManageShoppingListSheetRobot(composeTestRule).apply(block)
 
 @OptIn(ExperimentalTestApi::class)
+@RobotDslMarker
 class ManageShoppingListSheetRobot(
     private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
