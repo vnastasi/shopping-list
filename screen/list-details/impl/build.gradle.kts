@@ -49,9 +49,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.reorderable)
-
-    screenshotTestImplementation(testFixtures(project(":domain:api")))
-
+    
     debugImplementation(libs.compose.tooling)
     debugImplementation(libs.reorderable.debug)
 

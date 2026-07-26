@@ -1,19 +1,17 @@
 package md.vnastasi.shoppinglist.screen.managelist.ui
 
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import com.android.tools.screenshot.PreviewTest
 import md.vnastasi.shoppinglist.screen.managelist.model.TextValidationError
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.sheet.PreviewableSheetLayout
 import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun NewListSheet() {
+internal fun NewListSheet() {
     ExpandedSheet(
         viewState = ViewState.INIT,
         listName = ""
@@ -23,7 +21,7 @@ fun NewListSheet() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun EmptyListNameSheet() {
+internal fun EmptyListNameSheet() {
     ExpandedSheet(
         viewState = ViewState(validationError = TextValidationError.EMPTY, isSaveEnabled = false),
         listName = " "
@@ -33,7 +31,7 @@ fun EmptyListNameSheet() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun BlankListNameSheet() {
+internal fun BlankListNameSheet() {
     ExpandedSheet(
         viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = false),
         listName = " "
@@ -43,7 +41,7 @@ fun BlankListNameSheet() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun ExistingListSheet() {
+internal fun ExistingListSheet() {
     ExpandedSheet(
         viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
         listName = "Updated list"
@@ -56,19 +54,7 @@ private fun ExpandedSheet(
     listName: String
 ) {
     AppTheme {
-        val sheetState = SheetState(
-            skipPartiallyExpanded = true,
-            skipHiddenState = true,
-            initialValue = SheetValue.Expanded,
-            confirmValueChange = { true },
-            positionalThreshold = { 1.0f },
-            velocityThreshold = { 1.0f }
-        )
-
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { }
-        ) {
+        PreviewableSheetLayout {
             ManageListSheet(
                 viewModel = StubManageListViewModel(
                     expectedListName = listName,

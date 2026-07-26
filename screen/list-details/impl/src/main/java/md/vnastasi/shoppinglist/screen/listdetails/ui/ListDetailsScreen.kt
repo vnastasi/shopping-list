@@ -36,14 +36,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.model.Effect
 import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
@@ -240,17 +240,12 @@ private fun ViewState.getShoppingListIdOrNull(): Long? =
 @PreviewScreenSizes
 @PreviewFontScale
 @Composable
-private fun ListDetailsScreenPreview() {
-    val shoppingList = ShoppingList(id = 1L, "My list")
-    val listOfShoppingItems = persistentListOf(
-        ShoppingItem(id = 1L, name = "Apples", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 2L, name = "Bread", isChecked = false, list = shoppingList),
-        ShoppingItem(id = 3L, name = "Minced meat", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
-    )
+private fun ListDetailsScreenPreview(
+    @PreviewParameter(ListOfShoppingItemsParameterProvider::class, limit = 1) listOfShoppingItems: ImmutableList<ShoppingItem>
+) {
     val viewState = ViewState.Ready(
-        shoppingListId = 1L,
-        shoppingListName = "My list",
+        shoppingListId = previewShoppingList.id,
+        shoppingListName = previewShoppingList.name,
         listOfShoppingItems = listOfShoppingItems
     )
 

@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
@@ -116,8 +117,8 @@ internal fun ShoppingListCard(
     }
 }
 
-context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
 private fun ShoppingListCardContent(
     item: ShoppingListDetails,
     reorderDragHandleState: ReorderDragHandleState,
@@ -218,8 +219,8 @@ private fun ShoppingListCardContent(
     }
 }
 
-context(boxScope: BoxScope)
 @Composable
+context(boxScope: BoxScope)
 private fun ShoppingListActions(
     dragState: AnchoredDraggableState<SwipeToRevealState>,
     onEditItem: () -> Unit,
@@ -285,8 +286,9 @@ private fun ShoppingListActions(
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ShoppingListCardContentPreview() {
-    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+private fun ShoppingListCardContentPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList, SwipeToRevealState.Content)
 
     AppTheme {
@@ -311,8 +313,9 @@ private fun ShoppingListCardContentPreview() {
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ShoppingListCardActionsPreview() {
-    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+private fun ShoppingListCardActionsPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Actions)
 
     AppTheme {
@@ -325,7 +328,7 @@ private fun ShoppingListCardActionsPreview() {
                     ) {
                         ShoppingListCard(
                             shoppingListUiModel = shoppingListUiModel,
-                            reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                            reorderDragHandleState = ReorderDragHandleState.Disabled,
                         )
                     }
                 }
@@ -337,8 +340,9 @@ private fun ShoppingListCardActionsPreview() {
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ReorderableShoppingListCardPreview() {
-    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+private fun ReorderableShoppingListCardPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Content)
 
     AppTheme {
@@ -355,7 +359,6 @@ private fun ReorderableShoppingListCardPreview() {
                         )
                     }
                 }
-
             }
         }
     }

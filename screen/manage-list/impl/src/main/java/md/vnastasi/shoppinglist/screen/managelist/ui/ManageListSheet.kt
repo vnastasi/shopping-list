@@ -10,10 +10,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +40,7 @@ import md.vnastasi.shoppinglist.screen.managelist.model.UiEvent
 import md.vnastasi.shoppinglist.screen.managelist.model.ViewState
 import md.vnastasi.shoppinglist.screen.managelist.ui.TestTags.MANAGE_LIST_TEXT_FIELD
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModelSpec
+import md.vnastasi.shoppinglist.screen.shared.sheet.PreviewableSheetLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -150,19 +148,7 @@ private fun ManageListSheet(
 @Composable
 private fun ManageListSheetPreview() {
     AppTheme {
-        val sheetState = SheetState(
-            skipPartiallyExpanded = true,
-            skipHiddenState = true,
-            initialValue = SheetValue.Expanded,
-            confirmValueChange = { true },
-            positionalThreshold = { 1.0f },
-            velocityThreshold = { 1.0f }
-        )
-
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { }
-        ) {
+        PreviewableSheetLayout {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState("List"),
                 viewState = ViewState(validationError = TextValidationError.NONE, isSaveEnabled = true),
@@ -180,19 +166,7 @@ private fun ManageListSheetPreview() {
 @Composable
 private fun ManageListSheetWithErrorsPreview() {
     AppTheme {
-        val sheetState = SheetState(
-            skipPartiallyExpanded = true,
-            skipHiddenState = true,
-            initialValue = SheetValue.Expanded,
-            confirmValueChange = { true },
-            positionalThreshold = { 1.0f },
-            velocityThreshold = { 1.0f }
-        )
-
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { }
-        ) {
+        PreviewableSheetLayout {
             ManageListSheet(
                 listNameTextFieldState = rememberTextFieldState(""),
                 viewState = ViewState(validationError = TextValidationError.BLANK, isSaveEnabled = true),

@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
@@ -119,15 +119,9 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview1() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = true,
-        list = ShoppingList(1, "list")
-    )
-
-
+private fun ShoppingItemRowPreview1(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
         LazyColumn {
             item {
@@ -136,7 +130,7 @@ private fun ShoppingItemRowPreview1() {
                     key = Unit
                 ) {
                     ShoppingItemRow(
-                        shoppingItem = shoppingItem,
+                        shoppingItem = shoppingItem.copy(isChecked = true),
                         reorderDragHandleState = ReorderDragHandleState.Disabled,
                         onClick = { },
                         onDelete = { }
@@ -154,14 +148,9 @@ private fun ShoppingItemRowPreview1() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview2() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = false,
-        list = ShoppingList(1, "list")
-    )
-
+private fun ShoppingItemRowPreview2(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
         LazyColumn {
             item {
@@ -188,14 +177,9 @@ private fun ShoppingItemRowPreview2() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview3() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = false,
-        list = ShoppingList(1, "list")
-    )
-
+private fun ShoppingItemRowPreview3(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
         LazyColumn {
             item {

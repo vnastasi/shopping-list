@@ -14,11 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
 import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
-import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
@@ -95,27 +93,14 @@ internal fun OverviewContent(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun NonEmptyListOverviewScreenContentPreview() {
-    val list = listOf(
-        ShoppingListDetails(id = 1L, name = "Groceries", position = 1L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 2L, name = "Pharmacy for mom", position = 2L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 3L, name = "Gamma & Praxis", position = 3L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 4L, name = "Birthday party shopping list", position = 4L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 5L, name = "Christmas Eve party", position = 5L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 6L, name = "Thanksgiving family reunion", position = 6L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 7L, name = "Ibiza!", position = 7L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 8L, name = "At the baker's", position = 8L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 9L, name = "Big shopping at the mall", position = 9L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 10L, name = "Trip to Iceland", position = 10L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
-        ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
-    ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
-
+private fun NonEmptyListOverviewScreenContentPreview(
+    @PreviewParameter(LisOfShoppingListUiModelsPreviewParameter::class, limit = 1) list: ImmutableList<ShoppingListUiModel>
+) {
     AppTheme {
         PreviewableSharedTransitionLayout {
             OverviewContent(
                 contentPaddings = PaddingValues(AppDimensions.zero),
-                list = list.toImmutableList(),
+                list = list,
                 dispatchEvent = { }
             )
         }
