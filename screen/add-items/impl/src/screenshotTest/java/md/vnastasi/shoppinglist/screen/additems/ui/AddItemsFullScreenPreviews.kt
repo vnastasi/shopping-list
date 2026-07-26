@@ -16,7 +16,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun NoSuggestionsFullScreen() {
+internal fun NoSuggestionsFullScreen() {
     ApplicationFullScreenPreview(
         viewState = ViewState(
             suggestions = persistentListOf()
@@ -28,7 +28,7 @@ fun NoSuggestionsFullScreen() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun SuggestionsAvailableFullScreen(
+internal fun SuggestionsAvailableFullScreen(
     @PreviewParameter(ListOfSuggestionsParameterProvider::class, limit = 1) suggestions: ImmutableList<NameSuggestion>
 ) {
     ApplicationFullScreenPreview(

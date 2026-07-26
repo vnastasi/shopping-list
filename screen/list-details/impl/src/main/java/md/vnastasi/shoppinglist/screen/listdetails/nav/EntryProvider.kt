@@ -17,9 +17,7 @@ import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitio
 
 @Composable
 context(sharedTransitionScope: SharedTransitionScope)
-fun EntryProviderScope<NavKey>.ListDetails(
-    navBackStack: NavBackStack<NavKey>
-) {
+fun EntryProviderScope<NavKey>.ListDetails(navBackStack: NavBackStack<NavKey>) {
     entry<ListDetails>(
         metadata = ListDetailSceneStrategy.detailPane()
     ) { key ->
@@ -43,7 +41,7 @@ fun EntryProviderScope<NavKey>.ListDetails(
             }
         }
 
-        context(ExtendedSharedTransitionScope(sharedTransitionScope, LocalNavAnimatedContentScope.current)) {
+        context(ExtendedSharedTransitionScope(sharedTransitionScope = sharedTransitionScope, animatedContentScope = LocalNavAnimatedContentScope.current)) {
             ListDetailsScreen(
                 viewModel = viewModel,
                 onNavigate = navigationCallback

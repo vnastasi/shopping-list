@@ -176,7 +176,7 @@ private fun AddItemsTopAppBar(
 }
 
 @Composable
-internal fun SearchBar(
+private fun SearchBar(
     modifier: Modifier = Modifier,
     valueTextFieldState: TextFieldState,
     onValueAccepted: (String) -> Unit

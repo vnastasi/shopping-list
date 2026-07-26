@@ -22,9 +22,7 @@ import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitio
 
 @Composable
 context(sharedTransitionScope: SharedTransitionScope)
-fun EntryProviderScope<NavKey>.Overview(
-    navBackStack: NavBackStack<NavKey>,
-) {
+fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
     entry<Overview>(
         metadata = ListDetailSceneStrategy.listPane()
     ) {
@@ -45,14 +43,14 @@ fun EntryProviderScope<NavKey>.Overview(
             }
         }
 
-        ResultEffect<BottomSheetClosedSignal> { signal ->
-            val affectedShoppingListId = signal.affectedShoppingListId
+        ResultEffect<BottomSheetClosedSignal> { result ->
+            val affectedShoppingListId = result.affectedShoppingListId
             if (affectedShoppingListId != null) {
                 viewModel.dispatch(UiEvent.OnSwipeToRevealStateChanged(affectedShoppingListId, SwipeToRevealState.Content))
             }
         }
 
-        context(ExtendedSharedTransitionScope(sharedTransitionScope, LocalNavAnimatedContentScope.current)) {
+        context(ExtendedSharedTransitionScope(sharedTransitionScope = sharedTransitionScope, animatedContentScope = LocalNavAnimatedContentScope.current)) {
             OverviewScreen(
                 viewModel = viewModel,
                 onNavigate = navigationCallback

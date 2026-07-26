@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.material.icons.Icons
@@ -56,6 +54,7 @@ import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
 import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
+import md.vnastasi.shoppinglist.screen.shared.reorder.PreviewableReorderableItem
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
@@ -66,8 +65,6 @@ import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
 @Composable
@@ -293,18 +290,11 @@ private fun ShoppingListCardContentPreview(
 
     AppTheme {
         PreviewableSharedTransitionLayout {
-            LazyColumn {
-                item {
-                    ReorderableItem(
-                        state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                        key = Unit
-                    ) {
-                        ShoppingListCard(
-                            shoppingListUiModel = shoppingListUiModel,
-                            reorderDragHandleState = ReorderDragHandleState.Disabled,
-                        )
-                    }
-                }
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Disabled,
+                )
             }
         }
     }
@@ -320,18 +310,11 @@ private fun ShoppingListCardActionsPreview(
 
     AppTheme {
         PreviewableSharedTransitionLayout {
-            LazyColumn {
-                item {
-                    ReorderableItem(
-                        state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                        key = Unit
-                    ) {
-                        ShoppingListCard(
-                            shoppingListUiModel = shoppingListUiModel,
-                            reorderDragHandleState = ReorderDragHandleState.Disabled,
-                        )
-                    }
-                }
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Disabled,
+                )
             }
         }
     }
@@ -347,18 +330,11 @@ private fun ReorderableShoppingListCardPreview(
 
     AppTheme {
         PreviewableSharedTransitionLayout {
-            LazyColumn {
-                item {
-                    ReorderableItem(
-                        state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                        key = Unit
-                    ) {
-                        ShoppingListCard(
-                            shoppingListUiModel = shoppingListUiModel,
-                            reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
-                        )
-                    }
-                }
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                )
             }
         }
     }
