@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.material.icons.Icons
@@ -47,6 +45,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import md.vnastasi.shoppinglist.domain.model.ShoppingListDetails
@@ -55,20 +54,23 @@ import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
 import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
+import md.vnastasi.shoppinglist.screen.shared.nav.scene.rememberListDetailSceneStrategy
+import md.vnastasi.shoppinglist.screen.shared.reorder.PreviewableReorderableItem
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppIcons
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
 @Composable
-internal fun ReorderableCollectionItemScope.ShoppingListCard(
+internal fun ShoppingListCard(
     modifier: Modifier = Modifier,
     shoppingListUiModel: ShoppingListUiModel,
     reorderDragHandleState: ReorderDragHandleState,
@@ -113,7 +115,7 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
     }
 }
 
-context(reorderableCollectionItemScope: ReorderableCollectionItemScope)
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
 @Composable
 private fun ShoppingListCardContent(
     item: ShoppingListDetails,
@@ -151,8 +153,11 @@ private fun ShoppingListCardContent(
                     vertical = AppDimensions.paddingSmall
                 )
                 .align(Alignment.Center),
-            shape = CardDefaults.outlinedShape,
-            elevation = CardDefaults.elevatedCardElevation()
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.outlinedCardElevation(defaultElevation = AppDimensions.zero),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -177,14 +182,26 @@ private fun ShoppingListCardContent(
                         .weight(1.0f)
                         .align(Alignment.CenterVertically)
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .alignBy(LastBaseline)
-                            .weight(1.0f)
-                            .padding(start = AppDimensions.paddingSmall),
-                        text = item.name,
-                        style = AppTypography.titleLarge
-                    )
+                    with(extendedSharedTransitionScope.sharedTransitionScope) {
+                        val sharedElementModifier = if (rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()) {
+                            Modifier
+                        } else {
+                            Modifier.sharedElement(
+                                sharedContentState = rememberSharedContentState("list-name-${item.id}"),
+                                animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                            )
+                        }
+
+                        Text(
+                            modifier = Modifier
+                                .alignBy(LastBaseline)
+                                .weight(1.0f)
+                                .padding(start = AppDimensions.paddingSmall)
+                                .then(sharedElementModifier),
+                            text = item.name,
+                            style = AppTypography.titleLarge
+                        )
+                    }
                     Text(
                         modifier = Modifier
                             .alignBy(LastBaseline)
@@ -197,11 +214,10 @@ private fun ShoppingListCardContent(
                     )
                 }
 
-                with(reorderableCollectionItemScope) {
-                    ReorderDragHandle(
-                        state = reorderDragHandleState
-                    )
-                }
+
+                ReorderDragHandle(
+                    state = reorderDragHandleState
+                )
             }
         }
     }
@@ -274,22 +290,18 @@ private fun ShoppingListActions(
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ShoppingListCardContentPreview() {
-    val shoppingList = ShoppingListDetails(1, "Sample shopping list", 0L, 0L, 0L)
+private fun ShoppingListCardContentPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList, SwipeToRevealState.Content)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Disabled
-                    )
-                }
+        PreviewableSharedTransitionLayout {
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Disabled,
+                )
             }
         }
     }
@@ -298,22 +310,18 @@ private fun ShoppingListCardContentPreview() {
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ShoppingListCardActionsPreview() {
-    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+private fun ShoppingListCardActionsPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Actions)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
-                    )
-                }
+        PreviewableSharedTransitionLayout {
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Disabled,
+                )
             }
         }
     }
@@ -322,22 +330,18 @@ private fun ShoppingListCardActionsPreview() {
 @ExcludeFromJacocoGeneratedReport
 @Preview
 @Composable
-private fun ReorderableShoppingListCardPreview() {
-    val shoppingList = ShoppingListDetails(id = 1, name = "Sample shopping list", position = 0L, totalItems = 0L, checkedItems = 0L)
+private fun ReorderableShoppingListCardPreview(
+    @PreviewParameter(ShoppingListPreviewParameter::class, limit = 1) shoppingList: ShoppingListDetails
+) {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Content)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
-                    )
-                }
+        PreviewableSharedTransitionLayout {
+            PreviewableReorderableItem {
+                ShoppingListCard(
+                    shoppingListUiModel = shoppingListUiModel,
+                    reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                )
             }
         }
     }

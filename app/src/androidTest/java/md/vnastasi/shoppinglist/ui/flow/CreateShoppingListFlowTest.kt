@@ -10,7 +10,6 @@ import md.vnastasi.shoppinglist.ui.robot.manageShoppingListSheet
 import md.vnastasi.shoppinglist.ui.robot.overviewScreen
 import md.vnastasi.shoppinglist.ui.rule.databaseRule
 import md.vnastasi.shoppinglist.ui.rule.disableAnimationsRule
-import md.vnastasi.shoppinglist.ui.rule.retryOnFailureRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -28,7 +27,6 @@ class CreateShoppingListFlowTest {
         .outerRule(hiltAndroidRule)
         .around(databaseRule())
         .around(composeRule)
-        .around(retryOnFailureRule(maxAttempts = 3))
         .around(disableAnimationsRule())
 
     @Test

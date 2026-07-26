@@ -1,17 +1,21 @@
 package md.vnastasi.shoppinglist.screen.listdetails.nav
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import md.vnastasi.shoppinglist.screen.additems.nav.AddItems
 import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.listdetails.ui.ListDetailsScreen
 import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
 
+context(sharedTransitionScope: SharedTransitionScope)
 @Composable
 fun EntryProviderScope<NavKey>.ListDetails(navBackStack: NavBackStack<NavKey>) {
     entry<ListDetails>(
@@ -37,9 +41,11 @@ fun EntryProviderScope<NavKey>.ListDetails(navBackStack: NavBackStack<NavKey>) {
             }
         }
 
-        ListDetailsScreen(
-            viewModel = viewModel,
-            onNavigate = navigationCallback
-        )
+        context(ExtendedSharedTransitionScope(sharedTransitionScope = sharedTransitionScope, animatedContentScope = LocalNavAnimatedContentScope.current)) {
+            ListDetailsScreen(
+                viewModel = viewModel,
+                onNavigate = navigationCallback
+            )
+        }
     }
 }

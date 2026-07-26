@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.ui.TestTags.SUGGESTIONS_ITEM_DELETE_BUTTON
@@ -125,10 +126,12 @@ internal fun SuggestionRow(
     widthDp = 520
 )
 @Composable
-private fun SuggestionRowPreview1() {
+private fun SuggestionRowPreview1(
+    @PreviewParameter(SuggestionsParameterProvider::class, limit = 1) suggestion: NameSuggestion
+) {
     AppTheme {
         SuggestionRow(
-            suggestion = NameSuggestion(1L, "Name suggestion"),
+            suggestion = suggestion,
             isLastItemInList = true,
             isDeletable = true,
             onClick = { },
@@ -145,10 +148,12 @@ private fun SuggestionRowPreview1() {
     widthDp = 520
 )
 @Composable
-private fun SuggestionRowPreview2() {
+private fun SuggestionRowPreview2(
+    @PreviewParameter(SuggestionsParameterProvider::class, limit = 1) suggestion: NameSuggestion
+) {
     AppTheme {
         SuggestionRow(
-            suggestion = NameSuggestion(1L, "Name suggestion"),
+            suggestion = suggestion,
             isLastItemInList = true,
             isDeletable = false,
             onClick = { },

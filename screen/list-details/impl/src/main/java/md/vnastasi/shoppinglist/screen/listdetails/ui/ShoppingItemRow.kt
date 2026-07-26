@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Checkbox
@@ -25,11 +23,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.LIST_ITEM_CHECKBOX
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM_DELETE_BUTTON
+import md.vnastasi.shoppinglist.screen.shared.reorder.PreviewableReorderableItem
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -37,8 +36,6 @@ import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 import md.vnastasi.shoppinglist.support.theme.AppTypography
 import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 internal fun ReorderableCollectionItemScope.ShoppingItemRow(
@@ -119,30 +116,17 @@ internal fun ReorderableCollectionItemScope.ShoppingItemRow(
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview1() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = true,
-        list = ShoppingList(1, "list")
-    )
-
-
+private fun ShoppingItemRowPreview1(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingItemRow(
-                        shoppingItem = shoppingItem,
-                        reorderDragHandleState = ReorderDragHandleState.Disabled,
-                        onClick = { },
-                        onDelete = { }
-                    )
-                }
-            }
+        PreviewableReorderableItem {
+            ShoppingItemRow(
+                shoppingItem = shoppingItem.copy(isChecked = true),
+                reorderDragHandleState = ReorderDragHandleState.Disabled,
+                onClick = { },
+                onDelete = { }
+            )
         }
     }
 }
@@ -154,29 +138,17 @@ private fun ShoppingItemRowPreview1() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview2() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = false,
-        list = ShoppingList(1, "list")
-    )
-
+private fun ShoppingItemRowPreview2(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingItemRow(
-                        shoppingItem = shoppingItem,
-                        reorderDragHandleState = ReorderDragHandleState.Disabled,
-                        onClick = { },
-                        onDelete = { }
-                    )
-                }
-            }
+        PreviewableReorderableItem {
+            ShoppingItemRow(
+                shoppingItem = shoppingItem,
+                reorderDragHandleState = ReorderDragHandleState.Disabled,
+                onClick = { },
+                onDelete = { }
+            )
         }
     }
 }
@@ -188,29 +160,17 @@ private fun ShoppingItemRowPreview2() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun ShoppingItemRowPreview3() {
-    val shoppingItem = ShoppingItem(
-        id = 1,
-        name = "Sample shopping item",
-        isChecked = false,
-        list = ShoppingList(1, "list")
-    )
-
+private fun ShoppingItemRowPreview3(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingItemRow(
-                        shoppingItem = shoppingItem,
-                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
-                        onClick = { },
-                        onDelete = { }
-                    )
-                }
-            }
+        PreviewableReorderableItem {
+            ShoppingItemRow(
+                shoppingItem = shoppingItem,
+                reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                onClick = { },
+                onDelete = { }
+            )
         }
     }
 }

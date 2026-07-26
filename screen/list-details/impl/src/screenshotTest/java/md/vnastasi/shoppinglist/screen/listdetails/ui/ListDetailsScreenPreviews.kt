@@ -1,76 +1,54 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.android.tools.screenshot.PreviewTest
 import kotlinx.collections.immutable.persistentListOf
-import md.vnastasi.shoppinglist.domain.model.TestData.createShoppingItem
+import kotlinx.collections.immutable.toImmutableList
+import md.vnastasi.shoppinglist.domain.model.ShoppingItem
 import md.vnastasi.shoppinglist.screen.listdetails.model.ViewState
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.collection.ScreenshotPreviews
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun EmptyListDetailsScreen() {
-    val viewState = ViewState.Empty(
-        shoppingListId = 1L,
-        shoppingListName = "Test list"
+internal fun OneItemListDetailsScreen(
+    @PreviewParameter(ShoppingItemParameterProvider::class, limit = 1) shoppingItem: ShoppingItem
+) {
+    val viewState = ViewState.Ready(
+        shoppingListId = previewShoppingList.id,
+        shoppingListName = previewShoppingList.name,
+        listOfShoppingItems = persistentListOf(shoppingItem)
     )
     AppTheme {
-        ListDetailsScreen(
-            viewModel = StubListDetailsViewModelSpec(viewState),
-            onNavigate = { }
-        )
+        PreviewableSharedTransitionLayout {
+            ListDetailsScreen(
+                viewModel = StubListDetailsViewModelSpec(viewState),
+                onNavigate = { }
+            )
+        }
     }
 }
 
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun OneItemListDetailsScreen() {
+internal fun MultipleItemsListDetailsScreen(
+    @PreviewParameter(ListOfShoppingItemsParameterProvider::class, limit = 1) shoppingItems: List<ShoppingItem>
+) {
     val viewState = ViewState.Ready(
-        shoppingListId = 1L,
-        shoppingListName = "Test list",
-        listOfShoppingItems = persistentListOf(
-            createShoppingItem {
-                id = 1L
-                name = "Item 1"
-                isChecked = false
-            }
-        )
+        shoppingListId = previewShoppingList.id,
+        shoppingListName = previewShoppingList.name,
+        listOfShoppingItems = shoppingItems.toImmutableList()
     )
     AppTheme {
-        ListDetailsScreen(
-            viewModel = StubListDetailsViewModelSpec(viewState),
-            onNavigate = { }
-        )
-    }
-}
-
-@PreviewTest
-@ScreenshotPreviews
-@Composable
-fun MultipleItemsListDetailsScreen() {
-    val viewState = ViewState.Ready(
-        shoppingListId = 1L,
-        shoppingListName = "Test list",
-        listOfShoppingItems = persistentListOf(
-            createShoppingItem {
-                id = 1L
-                name = "Item 1"
-                isChecked = false
-            },
-            createShoppingItem {
-                id = 2L
-                name = "Item 2"
-                isChecked = true
-            }
-        )
-    )
-    AppTheme {
-        ListDetailsScreen(
-            viewModel = StubListDetailsViewModelSpec(viewState),
-            onNavigate = { }
-        )
+        PreviewableSharedTransitionLayout {
+            ListDetailsScreen(
+                viewModel = StubListDetailsViewModelSpec(viewState),
+                onNavigate = { }
+            )
+        }
     }
 }

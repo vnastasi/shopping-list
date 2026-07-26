@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -37,14 +36,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.listdetails.model.Effect
 import md.vnastasi.shoppinglist.screen.listdetails.model.NavigationTarget
@@ -56,10 +55,13 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
+import md.vnastasi.shoppinglist.screen.shared.nav.scene.rememberListDetailSceneStrategy
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
-import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 @Composable
 internal fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
@@ -87,6 +89,7 @@ internal fun ListDetailsScreen(
     )
 }
 
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 @Composable
 private fun ListDetailsScreen(
     viewState: ViewState,
@@ -102,7 +105,8 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = viewState.getShoppingListNameOrNull(),
+                listId = viewState.getShoppingListIdOrNull(),
+                listName = viewState.getShoppingListNameOrNull(),
                 onNavigateUp = { dispatchEvent(UiEvent.OnBackClicked) }
             )
         },
@@ -149,11 +153,13 @@ private fun ListDetailsScreen(
     }
 }
 
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 @Composable
 private fun ListDetailsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
-    title: String?,
+    listId: Long?,
+    listName: String?,
     onNavigateUp: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
@@ -163,11 +169,24 @@ private fun ListDetailsTopAppBar(
         windowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Top),
         title = {
             AnimatedVisibility(
-                visible = !title.isNullOrBlank(),
+                visible = !listName.isNullOrBlank(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                Text(text = title.orEmpty())
+                with(extendedSharedTransitionScope.sharedTransitionScope) {
+                    val sharedElementModifier = if (rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()) {
+                        Modifier
+                    } else {
+                        Modifier.sharedElement(
+                            sharedContentState = rememberSharedContentState("list-name-$listId"),
+                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.then(sharedElementModifier),
+                        text = listName.orEmpty()
+                    )
+                }
             }
         },
         navigationIcon = {
@@ -197,7 +216,7 @@ private fun AddItemsFloatingActionButton(
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Bottom + WindowInsetsSides.End))
             .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
-        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+        shape = MaterialTheme.shapes.large,
         onClick = onClick
     ) {
         Icon(
@@ -227,24 +246,21 @@ private fun ViewState.getShoppingListIdOrNull(): Long? =
 @PreviewScreenSizes
 @PreviewFontScale
 @Composable
-private fun ListDetailsScreenPreview() {
-    val shoppingList = ShoppingList(id = 1L, "My list")
-    val listOfShoppingItems = persistentListOf(
-        ShoppingItem(id = 1L, name = "Apples", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 2L, name = "Bread", isChecked = false, list = shoppingList),
-        ShoppingItem(id = 3L, name = "Minced meat", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
-    )
+private fun ListDetailsScreenPreview(
+    @PreviewParameter(ListOfShoppingItemsParameterProvider::class, limit = 1) listOfShoppingItems: ImmutableList<ShoppingItem>
+) {
     val viewState = ViewState.Ready(
-        shoppingListId = 1L,
-        shoppingListName = "My list",
+        shoppingListId = previewShoppingList.id,
+        shoppingListName = previewShoppingList.name,
         listOfShoppingItems = listOfShoppingItems
     )
 
     AppTheme {
-        ListDetailsScreen(
-            viewState = viewState,
-            dispatchEvent = { }
-        )
+        PreviewableSharedTransitionLayout {
+            ListDetailsScreen(
+                viewState = viewState,
+                dispatchEvent = { }
+            )
+        }
     }
 }

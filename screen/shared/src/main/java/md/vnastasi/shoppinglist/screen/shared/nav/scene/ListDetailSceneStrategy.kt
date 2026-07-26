@@ -51,7 +51,7 @@ class ListDetailSceneStrategy<T : Any>(
         }
     }
 
-    private fun isScreenWideEnough() =
+    fun isScreenWideEnough() =
         windowSizeClass.isAtLeastBreakpoint(widthDpBreakpoint = MIN_WIDTH_BREAKPOINT, heightDpBreakpoint = MIN_HEIGHT_BREAKPOINT)
 
     companion object {

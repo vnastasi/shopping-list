@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.nav
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -7,6 +8,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.result.ResultEffect
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetails
 import md.vnastasi.shoppinglist.screen.managelist.nav.BottomSheetClosedSignal
 import md.vnastasi.shoppinglist.screen.managelist.nav.ManageList
@@ -16,7 +18,9 @@ import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
 
+context(sharedTransitionScope: SharedTransitionScope)
 @Composable
 fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
     entry<Overview>(
@@ -39,16 +43,18 @@ fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
             }
         }
 
-        ResultEffect<BottomSheetClosedSignal> { signal ->
-            val affectedShoppingListId = signal.affectedShoppingListId
+        ResultEffect<BottomSheetClosedSignal> { result ->
+            val affectedShoppingListId = result.affectedShoppingListId
             if (affectedShoppingListId != null) {
                 viewModel.dispatch(UiEvent.OnSwipeToRevealStateChanged(affectedShoppingListId, SwipeToRevealState.Content))
             }
         }
 
-        OverviewScreen(
-            viewModel = viewModel,
-            onNavigate = navigationCallback
-        )
+        context(ExtendedSharedTransitionScope(sharedTransitionScope = sharedTransitionScope, animatedContentScope = LocalNavAnimatedContentScope.current)) {
+            OverviewScreen(
+                viewModel = viewModel,
+                onNavigate = navigationCallback
+            )
+        }
     }
 }

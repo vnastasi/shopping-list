@@ -54,9 +54,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.res.R
 import md.vnastasi.shoppinglist.screen.additems.model.UiEvent
@@ -175,7 +176,7 @@ private fun AddItemsTopAppBar(
 }
 
 @Composable
-internal fun SearchBar(
+private fun SearchBar(
     modifier: Modifier = Modifier,
     valueTextFieldState: TextFieldState,
     onValueAccepted: (String) -> Unit
@@ -225,18 +226,11 @@ internal fun SearchBar(
 @PreviewScreenSizes
 @PreviewFontScale
 @Composable
-private fun AddItemsFullScreenPreview() {
+private fun AddItemsFullScreenPreview(
+    @PreviewParameter(ListOfSuggestionsParameterProvider::class, limit = 1) suggestions: ImmutableList<NameSuggestion>
+) {
     val viewState = ViewState(
-        suggestions = persistentListOf(
-            NameSuggestion(id = -1L, "Sample item"),
-            NameSuggestion(id = 1L, "Item 1"),
-            NameSuggestion(id = 2L, "Item 2"),
-            NameSuggestion(id = 3L, "Item 3"),
-            NameSuggestion(id = 4L, "Item 4"),
-            NameSuggestion(id = 5L, "Item 5"),
-            NameSuggestion(id = 6L, "Item 6"),
-            NameSuggestion(id = 7L, "Item 7")
-        )
+        suggestions = suggestions
     )
 
     AppTheme {

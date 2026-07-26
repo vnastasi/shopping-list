@@ -20,10 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.ShoppingItem
-import md.vnastasi.shoppinglist.domain.model.ShoppingList
 import md.vnastasi.shoppinglist.screen.listdetails.model.UiEvent
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_ITEM
 import md.vnastasi.shoppinglist.screen.listdetails.ui.TestTags.SHOPPING_ITEMS_LIST
@@ -119,15 +118,9 @@ private fun CenterAlignedDivider() {
     backgroundColor = 0xFFFFFBFE
 )
 @Composable
-private fun NonEmptyListDetailsScreenContentPreview() {
-    val shoppingList = ShoppingList(id = 1L, "My list")
-    val listOfShoppingItems = persistentListOf(
-        ShoppingItem(id = 1L, name = "Apples", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 2L, name = "Bread", isChecked = false, list = shoppingList),
-        ShoppingItem(id = 3L, name = "Minced meat", isChecked = true, list = shoppingList),
-        ShoppingItem(id = 4L, name = "Deodorant", isChecked = false, list = shoppingList),
-    )
-
+private fun NonEmptyListDetailsScreenContentPreview(
+    @PreviewParameter(ListOfShoppingItemsParameterProvider::class, limit = 1) listOfShoppingItems: ImmutableList<ShoppingItem>
+) {
     AppTheme {
         ListDetailsContent(
             contentPaddings = PaddingValues(AppDimensions.zero),

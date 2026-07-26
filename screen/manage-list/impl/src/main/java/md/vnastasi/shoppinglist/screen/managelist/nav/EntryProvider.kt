@@ -7,7 +7,6 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.result.LocalResultEventBus
-import md.vnastasi.shoppinglist.screen.managelist.model.BottomSheetClosedSignal
 import md.vnastasi.shoppinglist.screen.managelist.model.NavigationTarget
 import md.vnastasi.shoppinglist.screen.managelist.ui.ManageListSheet
 import md.vnastasi.shoppinglist.screen.managelist.vm.ManageListViewModel

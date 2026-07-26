@@ -2,7 +2,9 @@ package md.vnastasi.shoppinglist.screen.additems.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.android.tools.screenshot.PreviewTest
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import md.vnastasi.shoppinglist.domain.model.NameSuggestion
 import md.vnastasi.shoppinglist.screen.additems.model.ViewState
@@ -14,7 +16,7 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun NoSuggestionsFullScreen() {
+internal fun NoSuggestionsFullScreen() {
     ApplicationFullScreenPreview(
         viewState = ViewState(
             suggestions = persistentListOf()
@@ -26,16 +28,14 @@ fun NoSuggestionsFullScreen() {
 @PreviewTest
 @ScreenshotPreviews
 @Composable
-fun SuggestionsAvailableFullScreen() {
+internal fun SuggestionsAvailableFullScreen(
+    @PreviewParameter(ListOfSuggestionsParameterProvider::class, limit = 1) suggestions: ImmutableList<NameSuggestion>
+) {
     ApplicationFullScreenPreview(
         viewState = ViewState(
-            suggestions = persistentListOf(
-                NameSuggestion(id = 1L, name = "Suggestion 1"),
-                NameSuggestion(id = 2L, name = "Suggestion 2"),
-                NameSuggestion(id = 3L, name = "Suggestion 3")
-            )
+            suggestions = suggestions
         ),
-        searchTermValue = "Suggest"
+        searchTermValue = "Mil"
     )
 }
 
