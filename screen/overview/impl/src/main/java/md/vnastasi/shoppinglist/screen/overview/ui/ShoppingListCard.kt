@@ -54,6 +54,7 @@ import md.vnastasi.shoppinglist.screen.overview.model.ShoppingListUiModel
 import md.vnastasi.shoppinglist.screen.overview.model.SwipeToRevealState
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_DELETE
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM_EDIT
+import md.vnastasi.shoppinglist.screen.shared.nav.scene.rememberListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.shared.reorder.PreviewableReorderableItem
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandle
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
@@ -182,15 +183,20 @@ private fun ShoppingListCardContent(
                         .align(Alignment.CenterVertically)
                 ) {
                     with(extendedSharedTransitionScope.sharedTransitionScope) {
+                        val isScreenWideEnough = rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()
                         Text(
                             modifier = Modifier
                                 .alignBy(LastBaseline)
                                 .weight(1.0f)
                                 .padding(start = AppDimensions.paddingSmall)
-                                .sharedElement(
-                                    sharedContentState = rememberSharedContentState("list-name-${item.id}"),
-                                    animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
-                                ),
+                                .apply {
+                                    if (!isScreenWideEnough) {
+                                        sharedElement(
+                                            sharedContentState = rememberSharedContentState("list-name-${item.id}"),
+                                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                                        )
+                                    }
+                                },
                             text = item.name,
                             style = AppTypography.titleLarge
                         )

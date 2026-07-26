@@ -55,6 +55,7 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
+import md.vnastasi.shoppinglist.screen.shared.nav.scene.rememberListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
 import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
@@ -173,11 +174,16 @@ private fun ListDetailsTopAppBar(
                 exit = fadeOut()
             ) {
                 with(extendedSharedTransitionScope.sharedTransitionScope) {
+                    val isScreenWideEnough = rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()
                     Text(
-                        modifier = modifier.sharedElement(
-                            sharedContentState = rememberSharedContentState("list-name-$listId"),
-                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
-                        ),
+                        modifier = modifier.apply {
+                            if (!isScreenWideEnough) {
+                                sharedElement(
+                                    sharedContentState = rememberSharedContentState("list-name-$listId"),
+                                    animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                                )
+                            }
+                        },
                         text = listName.orEmpty()
                     )
                 }

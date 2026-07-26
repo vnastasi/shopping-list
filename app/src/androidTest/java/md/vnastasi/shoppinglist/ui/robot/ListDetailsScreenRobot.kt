@@ -3,14 +3,13 @@ package md.vnastasi.shoppinglist.ui.robot
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -48,18 +47,18 @@ class ListDetailsScreenRobot(
     fun hasToolbarName(value: String) {
         val matcher = hasTestTag(LIST_DETAILS_TOOLBAR) and hasAnyDescendant(hasText(value))
         composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(matcher).isDisplayed()
+        composeTestRule.onNode(matcher, useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun hasEmptyShoppingListMessage() {
         val matcher = hasText(resources.getString(R.string.list_details_empty))
         composeTestRule.waitUntilAtLeastOneExists(matcher, DEFAULT_TIMEOUT)
-        composeTestRule.onNode(matcher).isDisplayed()
+        composeTestRule.onNode(matcher).assertIsDisplayed()
     }
 
     fun hasNoEmptyShoppingListMessage() {
         val matcher = hasText(resources.getString(R.string.list_details_empty))
-        composeTestRule.onNode(matcher).isNotDisplayed()
+        composeTestRule.onNode(matcher).assertIsNotDisplayed()
     }
 
     fun clickOnAddItemsFab() {
