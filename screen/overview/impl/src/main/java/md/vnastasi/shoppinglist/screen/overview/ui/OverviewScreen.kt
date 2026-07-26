@@ -55,8 +55,8 @@ import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransi
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 internal fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
@@ -83,8 +83,8 @@ internal fun OverviewScreen(
     )
 }
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 private fun OverviewScreen(
     viewState: ViewState,
     dispatchEvent: (UiEvent) -> Unit

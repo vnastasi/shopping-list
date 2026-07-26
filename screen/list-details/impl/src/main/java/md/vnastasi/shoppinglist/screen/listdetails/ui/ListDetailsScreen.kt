@@ -60,8 +60,8 @@ import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransi
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 internal fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
     onNavigate: (NavigationTarget) -> Unit
@@ -88,8 +88,8 @@ internal fun ListDetailsScreen(
     )
 }
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 private fun ListDetailsScreen(
     viewState: ViewState,
     dispatchEvent: (UiEvent) -> Unit
@@ -152,8 +152,8 @@ private fun ListDetailsScreen(
     }
 }
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 private fun ListDetailsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,

@@ -15,8 +15,8 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
 import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
 
-@Composable
 context(sharedTransitionScope: SharedTransitionScope)
+@Composable
 fun EntryProviderScope<NavKey>.ListDetails(navBackStack: NavBackStack<NavKey>) {
     entry<ListDetails>(
         metadata = ListDetailSceneStrategy.detailPane()

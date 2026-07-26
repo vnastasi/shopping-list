@@ -29,8 +29,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
+@Composable
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingListUiModel>,

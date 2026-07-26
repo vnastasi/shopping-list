@@ -67,8 +67,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTypography
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import kotlin.math.roundToInt
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
+@Composable
 internal fun ShoppingListCard(
     modifier: Modifier = Modifier,
     shoppingListUiModel: ShoppingListUiModel,
@@ -114,8 +114,8 @@ internal fun ShoppingListCard(
     }
 }
 
-@Composable
 context(extendedSharedTransitionScope: ExtendedSharedTransitionScope, reorderableCollectionItemScope: ReorderableCollectionItemScope)
+@Composable
 private fun ShoppingListCardContent(
     item: ShoppingListDetails,
     reorderDragHandleState: ReorderDragHandleState,
@@ -216,8 +216,8 @@ private fun ShoppingListCardContent(
     }
 }
 
-@Composable
 context(boxScope: BoxScope)
+@Composable
 private fun ShoppingListActions(
     dragState: AnchoredDraggableState<SwipeToRevealState>,
     onEditItem: () -> Unit,
