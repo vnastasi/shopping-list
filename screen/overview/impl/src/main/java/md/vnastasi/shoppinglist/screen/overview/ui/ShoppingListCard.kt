@@ -183,20 +183,21 @@ private fun ShoppingListCardContent(
                         .align(Alignment.CenterVertically)
                 ) {
                     with(extendedSharedTransitionScope.sharedTransitionScope) {
-                        val isScreenWideEnough = rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()
+                        val sharedElementModifier = if (rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()) {
+                            Modifier
+                        } else {
+                            Modifier.sharedElement(
+                                sharedContentState = rememberSharedContentState("list-name-${item.id}"),
+                                animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                            )
+                        }
+
                         Text(
                             modifier = Modifier
                                 .alignBy(LastBaseline)
                                 .weight(1.0f)
                                 .padding(start = AppDimensions.paddingSmall)
-                                .apply {
-                                    if (!isScreenWideEnough) {
-                                        sharedElement(
-                                            sharedContentState = rememberSharedContentState("list-name-${item.id}"),
-                                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
-                                        )
-                                    }
-                                },
+                                .then(sharedElementModifier),
                             text = item.name,
                             style = AppTypography.titleLarge
                         )

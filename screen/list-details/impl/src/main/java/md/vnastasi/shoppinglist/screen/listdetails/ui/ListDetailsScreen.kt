@@ -174,16 +174,16 @@ private fun ListDetailsTopAppBar(
                 exit = fadeOut()
             ) {
                 with(extendedSharedTransitionScope.sharedTransitionScope) {
-                    val isScreenWideEnough = rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()
+                    val sharedElementModifier = if (rememberListDetailSceneStrategy<Unit>().isScreenWideEnough()) {
+                        Modifier
+                    } else {
+                        Modifier.sharedElement(
+                            sharedContentState = rememberSharedContentState("list-name-$listId"),
+                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
+                        )
+                    }
                     Text(
-                        modifier = modifier.apply {
-                            if (!isScreenWideEnough) {
-                                sharedElement(
-                                    sharedContentState = rememberSharedContentState("list-name-$listId"),
-                                    animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
-                                )
-                            }
-                        },
+                        modifier = Modifier.then(sharedElementModifier),
                         text = listName.orEmpty()
                     )
                 }
