@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,7 +52,6 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
-import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
@@ -169,7 +168,7 @@ private fun ManageListFloatingActionButton(
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Bottom + WindowInsetsSides.End))
             .testTag(NEW_SHOPPING_LIST_FAB),
-        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+        shape = MaterialTheme.shapes.large,
         onClick = onClick
     ) {
         Icon(

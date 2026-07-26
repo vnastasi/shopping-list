@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -57,7 +56,6 @@ import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
-import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
@@ -197,7 +195,7 @@ private fun AddItemsFloatingActionButton(
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Bottom + WindowInsetsSides.End))
             .testTag(ADD_SHOPPING_LIST_ITEMS_FAB),
-        shape = RoundedCornerShape(size = AppDimensions.paddingMedium),
+        shape = MaterialTheme.shapes.large,
         onClick = onClick
     ) {
         Icon(

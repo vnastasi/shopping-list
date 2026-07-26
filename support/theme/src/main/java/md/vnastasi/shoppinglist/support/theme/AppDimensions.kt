@@ -17,4 +17,8 @@ object AppDimensions {
     val listItemMinHeight = 54.dp
 
     val divider = 0.5.dp
+
+    val elevationSmall = 2.dp
+    val elevationMedium = 4.dp
+    val elevationLarge = 8.dp
 }

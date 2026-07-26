@@ -151,8 +151,11 @@ private fun ShoppingListCardContent(
                     vertical = AppDimensions.paddingSmall
                 )
                 .align(Alignment.Center),
-            shape = CardDefaults.outlinedShape,
-            elevation = CardDefaults.elevatedCardElevation()
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = AppDimensions.elevationSmall),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Row(
                 modifier = Modifier
