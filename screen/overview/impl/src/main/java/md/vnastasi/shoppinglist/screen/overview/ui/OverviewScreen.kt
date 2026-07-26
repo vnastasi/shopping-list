@@ -1,9 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
@@ -54,14 +51,15 @@ import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.NEW_SHOPPING_LIST_FA
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 internal fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onNavigate: (NavigationTarget) -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -82,17 +80,14 @@ internal fun OverviewScreen(
 
     OverviewScreen(
         viewState = viewState,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedContentScope = animatedContentScope,
         dispatchEvent = viewModel::dispatch
     )
 }
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 private fun OverviewScreen(
     viewState: ViewState,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -143,8 +138,6 @@ private fun OverviewScreen(
                     OverviewContent(
                         contentPaddings = contentPaddings,
                         list = viewState.data,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedContentScope = animatedContentScope,
                         dispatchEvent = dispatchEvent
                     )
                 }
@@ -212,17 +205,11 @@ private fun ListOverviewScreenPreview() {
     ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
 
     AppTheme {
-        SharedTransitionLayout {
-            AnimatedContent(
-                targetState = ""
-            ) { it ->
-                OverviewScreen(
-                    viewState = ViewState.Ready(data = list.toImmutableList()),
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@AnimatedContent,
-                    dispatchEvent = { }
-                )
-            }
+        PreviewableSharedTransitionLayout {
+            OverviewScreen(
+                viewState = ViewState.Ready(data = list.toImmutableList()),
+                dispatchEvent = { }
+            )
         }
     }
 }

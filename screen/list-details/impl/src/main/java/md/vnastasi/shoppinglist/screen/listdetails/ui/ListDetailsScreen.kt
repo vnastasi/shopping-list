@@ -1,10 +1,7 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
@@ -58,14 +55,15 @@ import md.vnastasi.shoppinglist.screen.listdetails.vm.ListDetailsViewModelSpec
 import md.vnastasi.shoppinglist.screen.shared.content.AnimatedMessageContent
 import md.vnastasi.shoppinglist.screen.shared.content.LocalBackButtonVisibility
 import md.vnastasi.shoppinglist.screen.shared.content.contentTransitionSpec
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppTheme
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 internal fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onNavigate: (NavigationTarget) -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -86,17 +84,14 @@ internal fun ListDetailsScreen(
 
     ListDetailsScreen(
         viewState = viewState,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedContentScope = animatedContentScope,
         dispatchEvent = viewModel::dispatch,
     )
 }
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 private fun ListDetailsScreen(
     viewState: ViewState,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -109,10 +104,8 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
-                id = viewState.getShoppingListIdOrNull(),
-                title = viewState.getShoppingListNameOrNull(),
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
+                listId = viewState.getShoppingListIdOrNull(),
+                listName = viewState.getShoppingListNameOrNull(),
                 onNavigateUp = { dispatchEvent(UiEvent.OnBackClicked) }
             )
         },
@@ -160,13 +153,12 @@ private fun ListDetailsScreen(
 }
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 private fun ListDetailsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
-    id: Long?,
-    title: String?,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    listId: Long?,
+    listName: String?,
     onNavigateUp: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
@@ -176,17 +168,17 @@ private fun ListDetailsTopAppBar(
         windowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Top),
         title = {
             AnimatedVisibility(
-                visible = !title.isNullOrBlank(),
+                visible = !listName.isNullOrBlank(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                with(sharedTransitionScope) {
+                with(extendedSharedTransitionScope.sharedTransitionScope) {
                     Text(
                         modifier = modifier.sharedElement(
-                            sharedContentState = rememberSharedContentState("list-name-$id"),
-                            animatedVisibilityScope = animatedContentScope
+                            sharedContentState = rememberSharedContentState("list-name-$listId"),
+                            animatedVisibilityScope = extendedSharedTransitionScope.animatedContentScope
                         ),
-                        text = title.orEmpty()
+                        text = listName.orEmpty()
                     )
                 }
             }
@@ -263,17 +255,11 @@ private fun ListDetailsScreenPreview() {
     )
 
     AppTheme {
-        SharedTransitionLayout {
-            AnimatedContent(
-                targetState = ""
-            ) { it ->
-                ListDetailsScreen(
-                    viewState = viewState,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@AnimatedContent,
-                    dispatchEvent = { }
-                )
-            }
+        PreviewableSharedTransitionLayout {
+            ListDetailsScreen(
+                viewState = viewState,
+                dispatchEvent = { }
+            )
         }
     }
 }

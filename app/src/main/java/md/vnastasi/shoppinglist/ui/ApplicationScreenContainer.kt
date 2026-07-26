@@ -54,18 +54,9 @@ internal fun ApplicationScreenContainer() {
                 navBackStack.removeLastOrNull()
             },
             entryProvider = entryProvider {
-                Overview(
-                    navBackStack = navBackStack,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-
+                Overview(navBackStack)
                 ManageList(navBackStack)
-
-                ListDetails(
-                    navBackStack = navBackStack,
-                    sharedTransitionScope = this@SharedTransitionLayout
-                )
-
+                ListDetails(navBackStack)
                 AddItems(navBackStack)
             }
         )

@@ -18,11 +18,12 @@ import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.OverviewScreen
 import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
 
 @Composable
+context(sharedTransitionScope: SharedTransitionScope)
 fun EntryProviderScope<NavKey>.Overview(
     navBackStack: NavBackStack<NavKey>,
-    sharedTransitionScope: SharedTransitionScope
 ) {
     entry<Overview>(
         metadata = ListDetailSceneStrategy.listPane()
@@ -51,11 +52,11 @@ fun EntryProviderScope<NavKey>.Overview(
             }
         }
 
-        OverviewScreen(
-            viewModel = viewModel,
-            sharedTransitionScope = sharedTransitionScope,
-            animatedContentScope = LocalNavAnimatedContentScope.current,
-            onNavigate = navigationCallback
-        )
+        context(ExtendedSharedTransitionScope(sharedTransitionScope, LocalNavAnimatedContentScope.current)) {
+            OverviewScreen(
+                viewModel = viewModel,
+                onNavigate = navigationCallback
+            )
+        }
     }
 }

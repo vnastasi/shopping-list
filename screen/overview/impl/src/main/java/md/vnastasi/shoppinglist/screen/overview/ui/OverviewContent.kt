@@ -1,9 +1,5 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -27,6 +23,8 @@ import md.vnastasi.shoppinglist.screen.overview.model.UiEvent
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_ITEM
 import md.vnastasi.shoppinglist.screen.overview.ui.TestTags.SHOPPING_LISTS_LIST
 import md.vnastasi.shoppinglist.screen.shared.reorder.ReorderDragHandleState
+import md.vnastasi.shoppinglist.screen.shared.transition.ExtendedSharedTransitionScope
+import md.vnastasi.shoppinglist.screen.shared.transition.PreviewableSharedTransitionLayout
 import md.vnastasi.shoppinglist.support.annotation.ExcludeFromJacocoGeneratedReport
 import md.vnastasi.shoppinglist.support.theme.AppDimensions
 import md.vnastasi.shoppinglist.support.theme.AppTheme
@@ -34,11 +32,10 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
+context(extendedSharedTransitionScope: ExtendedSharedTransitionScope)
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingListUiModel>,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val reorderableList = remember(list) { list.toMutableStateList() }
@@ -82,8 +79,6 @@ internal fun OverviewContent(
                         .testTag(SHOPPING_LISTS_ITEM),
                     shoppingListUiModel = shoppingListUiModel,
                     reorderDragHandleState = reorderDragHandleState,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
                     onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel)) },
                     onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel)) },
                     onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel)) },
@@ -117,18 +112,12 @@ private fun NonEmptyListOverviewScreenContentPreview() {
     ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
 
     AppTheme {
-        SharedTransitionLayout {
-            AnimatedContent(
-                targetState = ""
-            ) { it ->
-                OverviewContent(
-                    contentPaddings = PaddingValues(AppDimensions.zero),
-                    list = list.toImmutableList(),
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@AnimatedContent,
-                    dispatchEvent = { }
-                )
-            }
+        PreviewableSharedTransitionLayout {
+            OverviewContent(
+                contentPaddings = PaddingValues(AppDimensions.zero),
+                list = list.toImmutableList(),
+                dispatchEvent = { }
+            )
         }
     }
 }
