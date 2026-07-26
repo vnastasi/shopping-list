@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.ui
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -24,38 +25,49 @@ import md.vnastasi.shoppinglist.screen.shared.nav.scene.rememberListDetailSceneS
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ApplicationScreenContainer() {
+    SharedTransitionLayout {
+        val navBackStack = rememberNavBackStack(Overview)
 
-    val navBackStack = rememberNavBackStack(Overview)
+        NavDisplay(
+            backStack = navBackStack,
+            sceneStrategies = listOf(
+                rememberListDetailSceneStrategy(),
+                rememberBottomSheetSceneStrategy(),
+                rememberDialogWhenLargeSceneStrategy()
+            ),
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+                rememberResultEventBusNavEntryDecorator()
+            ),
+            sharedTransitionScope = this,
+            transitionSpec = {
+                slideInFromRight() togetherWith slideOutToLeft()
+            },
+            popTransitionSpec = {
+                slideInFromLeft() togetherWith slideOutToRight()
+            },
+            predictivePopTransitionSpec = {
+                slideInFromLeft() togetherWith slideOutToRight()
+            },
+            onBack = {
+                navBackStack.removeLastOrNull()
+            },
+            entryProvider = entryProvider {
+                Overview(
+                    navBackStack = navBackStack,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
 
-    NavDisplay(
-        backStack = navBackStack,
-        sceneStrategies = listOf(
-            rememberListDetailSceneStrategy(),
-            rememberBottomSheetSceneStrategy(),
-            rememberDialogWhenLargeSceneStrategy()
-        ),
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-            rememberResultEventBusNavEntryDecorator()
-        ),
-        transitionSpec = {
-            slideInFromRight() togetherWith slideOutToLeft()
-        },
-        popTransitionSpec = {
-            slideInFromLeft() togetherWith slideOutToRight()
-        },
-        predictivePopTransitionSpec = {
-            slideInFromLeft() togetherWith slideOutToRight()
-        },
-        onBack = {
-            navBackStack.removeLastOrNull()
-        },
-        entryProvider = entryProvider {
-            Overview(navBackStack)
-            ManageList(navBackStack)
-            ListDetails(navBackStack)
-            AddItems(navBackStack)
-        }
-    )
+                ManageList(navBackStack)
+
+                ListDetails(
+                    navBackStack = navBackStack,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
+
+                AddItems(navBackStack)
+            }
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package md.vnastasi.shoppinglist.screen.overview.nav
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -7,6 +8,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.result.ResultEffect
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import md.vnastasi.shoppinglist.screen.listdetails.nav.ListDetails
 import md.vnastasi.shoppinglist.screen.managelist.nav.BottomSheetClosedSignal
 import md.vnastasi.shoppinglist.screen.managelist.nav.ManageList
@@ -18,7 +20,10 @@ import md.vnastasi.shoppinglist.screen.overview.vm.OverviewViewModel
 import md.vnastasi.shoppinglist.screen.shared.nav.scene.ListDetailSceneStrategy
 
 @Composable
-fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
+fun EntryProviderScope<NavKey>.Overview(
+    navBackStack: NavBackStack<NavKey>,
+    sharedTransitionScope: SharedTransitionScope
+) {
     entry<Overview>(
         metadata = ListDetailSceneStrategy.listPane()
     ) {
@@ -48,6 +53,8 @@ fun EntryProviderScope<NavKey>.Overview(navBackStack: NavBackStack<NavKey>) {
 
         OverviewScreen(
             viewModel = viewModel,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = LocalNavAnimatedContentScope.current,
             onNavigate = navigationCallback
         )
     }

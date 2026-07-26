@@ -1,7 +1,10 @@
 package md.vnastasi.shoppinglist.screen.listdetails.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
@@ -61,6 +64,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @Composable
 internal fun ListDetailsScreen(
     viewModel: ListDetailsViewModelSpec,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onNavigate: (NavigationTarget) -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -81,6 +86,8 @@ internal fun ListDetailsScreen(
 
     ListDetailsScreen(
         viewState = viewState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         dispatchEvent = viewModel::dispatch,
     )
 }
@@ -88,6 +95,8 @@ internal fun ListDetailsScreen(
 @Composable
 private fun ListDetailsScreen(
     viewState: ViewState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -100,7 +109,10 @@ private fun ListDetailsScreen(
         topBar = {
             ListDetailsTopAppBar(
                 scrollBehavior = scrollBehavior,
+                id = viewState.getShoppingListIdOrNull(),
                 title = viewState.getShoppingListNameOrNull(),
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
                 onNavigateUp = { dispatchEvent(UiEvent.OnBackClicked) }
             )
         },
@@ -151,7 +163,10 @@ private fun ListDetailsScreen(
 private fun ListDetailsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
+    id: Long?,
     title: String?,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onNavigateUp: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
@@ -165,7 +180,15 @@ private fun ListDetailsTopAppBar(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                Text(text = title.orEmpty())
+                with(sharedTransitionScope) {
+                    Text(
+                        modifier = modifier.sharedElement(
+                            sharedContentState = rememberSharedContentState("list-name-$id"),
+                            animatedVisibilityScope = animatedContentScope
+                        ),
+                        text = title.orEmpty()
+                    )
+                }
             }
         },
         navigationIcon = {
@@ -240,9 +263,17 @@ private fun ListDetailsScreenPreview() {
     )
 
     AppTheme {
-        ListDetailsScreen(
-            viewState = viewState,
-            dispatchEvent = { }
-        )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                ListDetailsScreen(
+                    viewState = viewState,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    dispatchEvent = { }
+                )
+            }
+        }
     }
 }

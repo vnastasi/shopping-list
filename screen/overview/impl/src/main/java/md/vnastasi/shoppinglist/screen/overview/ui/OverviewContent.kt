@@ -1,5 +1,9 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -33,6 +37,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 internal fun OverviewContent(
     contentPaddings: PaddingValues,
     list: ImmutableList<ShoppingListUiModel>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val reorderableList = remember(list) { list.toMutableStateList() }
@@ -76,6 +82,8 @@ internal fun OverviewContent(
                         .testTag(SHOPPING_LISTS_ITEM),
                     shoppingListUiModel = shoppingListUiModel,
                     reorderDragHandleState = reorderDragHandleState,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
                     onEditItem = { dispatchEvent(UiEvent.OnShoppingListEdited(shoppingListUiModel)) },
                     onClickItem = { dispatchEvent(UiEvent.OnShoppingListSelected(shoppingListUiModel)) },
                     onDeleteItem = { dispatchEvent(UiEvent.OnShoppingListDeleted(shoppingListUiModel)) },
@@ -107,12 +115,20 @@ private fun NonEmptyListOverviewScreenContentPreview() {
         ShoppingListDetails(id = 11L, name = "Disney", position = 11L, totalItems = 0L, checkedItems = 0L),
         ShoppingListDetails(id = 12L, name = "Trip to Paris", position = 12L, totalItems = 0L, checkedItems = 0L),
     ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
-    
+
     AppTheme {
-        OverviewContent(
-            contentPaddings = PaddingValues(AppDimensions.zero),
-            list = list.toImmutableList(),
-            dispatchEvent = { }
-        )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                OverviewContent(
+                    contentPaddings = PaddingValues(AppDimensions.zero),
+                    list = list.toImmutableList(),
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    dispatchEvent = { }
+                )
+            }
+        }
     }
 }

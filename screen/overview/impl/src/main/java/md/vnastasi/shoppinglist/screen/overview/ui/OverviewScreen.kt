@@ -1,6 +1,9 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
@@ -57,6 +60,8 @@ import md.vnastasi.shoppinglist.support.theme.AppTheme
 @Composable
 internal fun OverviewScreen(
     viewModel: OverviewViewModelSpec,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onNavigate: (NavigationTarget) -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -77,6 +82,8 @@ internal fun OverviewScreen(
 
     OverviewScreen(
         viewState = viewState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         dispatchEvent = viewModel::dispatch
     )
 }
@@ -84,6 +91,8 @@ internal fun OverviewScreen(
 @Composable
 private fun OverviewScreen(
     viewState: ViewState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     dispatchEvent: (UiEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -134,6 +143,8 @@ private fun OverviewScreen(
                     OverviewContent(
                         contentPaddings = contentPaddings,
                         list = viewState.data,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
                         dispatchEvent = dispatchEvent
                     )
                 }
@@ -201,9 +212,17 @@ private fun ListOverviewScreenPreview() {
     ).map { ShoppingListUiModel(it, SwipeToRevealState.Content) }
 
     AppTheme {
-        OverviewScreen(
-            viewState = ViewState.Ready(data = list.toImmutableList()),
-            dispatchEvent = { }
-        )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                OverviewScreen(
+                    viewState = ViewState.Ready(data = list.toImmutableList()),
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    dispatchEvent = { }
+                )
+            }
+        }
     }
 }

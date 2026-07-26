@@ -1,6 +1,10 @@
 package md.vnastasi.shoppinglist.screen.overview.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -71,6 +75,8 @@ import kotlin.math.roundToInt
 internal fun ReorderableCollectionItemScope.ShoppingListCard(
     modifier: Modifier = Modifier,
     shoppingListUiModel: ShoppingListUiModel,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     reorderDragHandleState: ReorderDragHandleState,
     onClickItem: () -> Unit = { },
     onEditItem: () -> Unit = { },
@@ -101,6 +107,8 @@ internal fun ReorderableCollectionItemScope.ShoppingListCard(
             item = shoppingListUiModel.shoppingList,
             reorderDragHandleState = reorderDragHandleState,
             dragState = dragState,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = animatedContentScope,
             overScrollEffect = rememberOverscrollEffect(),
             onClickItem = onClickItem
         )
@@ -119,6 +127,8 @@ private fun ShoppingListCardContent(
     item: ShoppingListDetails,
     reorderDragHandleState: ReorderDragHandleState,
     dragState: AnchoredDraggableState<SwipeToRevealState>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     overScrollEffect: OverscrollEffect?,
     onClickItem: () -> Unit
 ) {
@@ -180,14 +190,20 @@ private fun ShoppingListCardContent(
                         .weight(1.0f)
                         .align(Alignment.CenterVertically)
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .alignBy(LastBaseline)
-                            .weight(1.0f)
-                            .padding(start = AppDimensions.paddingSmall),
-                        text = item.name,
-                        style = AppTypography.titleLarge
-                    )
+                    with(sharedTransitionScope) {
+                        Text(
+                            modifier = Modifier
+                                .alignBy(LastBaseline)
+                                .weight(1.0f)
+                                .padding(start = AppDimensions.paddingSmall)
+                                .sharedElement(
+                                    sharedContentState = rememberSharedContentState("list-name-${item.id}"),
+                                    animatedVisibilityScope = animatedContentScope
+                                ),
+                            text = item.name,
+                            style = AppTypography.titleLarge
+                        )
+                    }
                     Text(
                         modifier = Modifier
                             .alignBy(LastBaseline)
@@ -282,16 +298,24 @@ private fun ShoppingListCardContentPreview() {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList, SwipeToRevealState.Content)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Disabled
-                    )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                LazyColumn {
+                    item {
+                        ReorderableItem(
+                            state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                            key = Unit
+                        ) {
+                            ShoppingListCard(
+                                shoppingListUiModel = shoppingListUiModel,
+                                reorderDragHandleState = ReorderDragHandleState.Disabled,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@AnimatedContent
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -306,16 +330,24 @@ private fun ShoppingListCardActionsPreview() {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Actions)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
-                    )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                LazyColumn {
+                    item {
+                        ReorderableItem(
+                            state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                            key = Unit
+                        ) {
+                            ShoppingListCard(
+                                shoppingListUiModel = shoppingListUiModel,
+                                reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@AnimatedContent
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -330,16 +362,24 @@ private fun ReorderableShoppingListCardPreview() {
     val shoppingListUiModel = ShoppingListUiModel(shoppingList = shoppingList, swipeToRevealState = SwipeToRevealState.Content)
 
     AppTheme {
-        LazyColumn {
-            item {
-                ReorderableItem(
-                    state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
-                    key = Unit
-                ) {
-                    ShoppingListCard(
-                        shoppingListUiModel = shoppingListUiModel,
-                        reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { })
-                    )
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = ""
+            ) { it ->
+                LazyColumn {
+                    item {
+                        ReorderableItem(
+                            state = rememberReorderableLazyListState(rememberLazyListState()) { _, _ -> },
+                            key = Unit
+                        ) {
+                            ShoppingListCard(
+                                shoppingListUiModel = shoppingListUiModel,
+                                reorderDragHandleState = ReorderDragHandleState.Enabled(onReorder = { }),
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@AnimatedContent
+                            )
+                        }
+                    }
                 }
             }
         }
