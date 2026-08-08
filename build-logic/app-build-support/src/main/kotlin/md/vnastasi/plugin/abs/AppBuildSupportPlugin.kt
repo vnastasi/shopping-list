@@ -11,7 +11,7 @@ class AppBuildSupportPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val versionCatalogFileProvider = target.isolated.rootProject.projectDirectory.dir("gradle").file("libs.versions.toml")
 
-        target.rootProject.tasks.register<UpdateProjectVersion>("updateProjectVersion") {
+        target.tasks.register<UpdateProjectVersion>("updateProjectVersion") {
             versionCatalogFile.set(versionCatalogFileProvider)
         }
     }
