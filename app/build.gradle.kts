@@ -1,6 +1,5 @@
 import com.android.build.api.artifact.SingleArtifact
 import md.vnastasi.plugin.abs.task.CopyAndroidArtifact
-import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {

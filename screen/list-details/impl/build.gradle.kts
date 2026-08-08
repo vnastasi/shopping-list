@@ -1,4 +1,3 @@
-import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
