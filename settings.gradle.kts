@@ -9,6 +9,7 @@ pluginManagement {
 
 plugins {
     id("com.gradle.develocity") version ("4.5.0")
+    id("apply-detekt-aggregator")
 }
 
 @Suppress("UnstableApiUsage")

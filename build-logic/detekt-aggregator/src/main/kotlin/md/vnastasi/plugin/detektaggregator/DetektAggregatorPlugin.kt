@@ -1,6 +1,8 @@
 package md.vnastasi.plugin.detektaggregator
 
 import io.gitlab.arturbosch.detekt.Detekt
+import md.vnastasi.plugin.support.libs
+import md.vnastasi.plugin.support.requirePlugin
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -10,7 +12,7 @@ import org.gradle.kotlin.dsl.withType
 class DetektAggregatorPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
-        pluginManager.apply("io.gitlab.arturbosch.detekt")
+        plugins.apply(libs.requirePlugin("detekt").get().pluginId)
 
         tasks.withType<Detekt>().configureEach {
             jvmTarget = JavaVersion.VERSION_17.toString()
@@ -25,10 +27,5 @@ class DetektAggregatorPlugin : Plugin<Project> {
 
             exclude("**/support/icon/**")
         }
-//
-//        gradle.lifecycle.beforeProject {
-//            rootProject.subprojects {
-//            }
-//        }
     }
 }

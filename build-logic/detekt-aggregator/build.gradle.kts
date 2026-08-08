@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     compileOnly(platform(libs.kotlin.bom))
     compileOnly(libs.kotlin.stdlib)
     compileOnly(libs.kotlin.gradlePlugin)
@@ -17,6 +16,11 @@ gradlePlugin {
         register("DetektAggregator") {
             id = "detekt-aggregator"
             implementationClass = "md.vnastasi.plugin.detektaggregator.DetektAggregatorPlugin"
+        }
+
+        register("ApplyDetektAggregator") {
+            id = "apply-detekt-aggregator"
+            implementationClass = "md.vnastasi.plugin.detektaggregator.ApplyDetektAggregatorPlugin"
         }
     }
 }
