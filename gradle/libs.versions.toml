@@ -31,7 +31,7 @@ gradle-dependency-sort = "0.20.0"
 hilt = "1.4.0"
 #noinspection UnusedVersionCatalogEntry
 jacoco = "0.8.14"
-jpecify = "1.0.0"
+jpecify = "1.0.1"
 junit = "6.1.2"
 kotlin = "2.4.10"
 ksp = "2.3.10"
