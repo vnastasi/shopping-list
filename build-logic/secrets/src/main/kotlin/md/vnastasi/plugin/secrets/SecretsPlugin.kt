@@ -16,11 +16,11 @@ class SecretsPlugin @Inject constructor(
 
     override fun apply(target: Project) {
         val localProperties = providers.of(LocalPropertiesValueSource::class) {
-            parameters.propertiesFile.set(target.rootProject.layout.projectDirectory.file("local.properties"))
+            parameters.propertiesFile.set(target.isolated.rootProject.projectDirectory.file("local.properties"))
         }
         target.extensions.create<SecretsExtension>("secrets").apply {
             keystore {
-                file.set(target.rootProject.layout.projectDirectory.file(localProperties.property(Keystore.PROP_KEYSTORE_FILE)))
+                file.set(target.isolated.rootProject.projectDirectory.file(localProperties.property(Keystore.PROP_KEYSTORE_FILE)))
                 storePassword.set(localProperties.property(Keystore.PROP_KEYSTORE_PASSWORD))
                 keyAlias.set(localProperties.property(Keystore.PROP_KEYSTORE_KEY_ALIAS))
                 keyPassword.set(localProperties.property(Keystore.PROP_KEYSTORE_KEY_PASSWORD))

@@ -14,21 +14,23 @@ class DetektAggregatorPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         val plugin = libs.plugins.detekt
 
-        rootProject.subprojects {
-            pluginManager.apply(plugin)
+        gradle.lifecycle.beforeProject {
+            rootProject.subprojects {
+                pluginManager.apply(plugin)
 
-            tasks.withType<Detekt>().configureEach {
-                jvmTarget = JavaVersion.VERSION_17.toString()
+                tasks.withType<Detekt>().configureEach {
+                    jvmTarget = JavaVersion.VERSION_17.toString()
 
-                reports {
-                    html.required.set(true)
-                    xml.required.set(false)
-                    sarif.required.set(false)
-                    md.required.set(false)
-                    txt.required.set(false)
+                    reports {
+                        html.required.set(true)
+                        xml.required.set(false)
+                        sarif.required.set(false)
+                        md.required.set(false)
+                        txt.required.set(false)
+                    }
+
+                    exclude("**/support/icon/**")
                 }
-
-                exclude("**/support/icon/**")
             }
         }
     }
