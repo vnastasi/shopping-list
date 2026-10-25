@@ -26,6 +26,7 @@ compose-screenshot = "0.0.1-alpha16"
 coroutines = "1.11.0"
 dagger = "2.60.1"
 detekt = "1.23.8"
+detekt2 = "2.0.0-alpha.6"
 gradle-dependency-analysis = "3.19.2"
 gradle-dependency-sort = "0.21.0"
 hilt = "1.4.0"
@@ -160,6 +161,7 @@ window-core = { module = "androidx.window:window-core", version.ref = "window" }
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "android-tools" }
 compose-screenshot-gradlePlugin = { group = "com.android.compose.screenshot", name = "screenshot-test-gradle-plugin", version.ref = "compose-screenshot" }
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt2-gradlePlugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt2" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 
@@ -172,6 +174,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 compose-screenshot = { id = "com.android.compose.screenshot", version.ref = "compose-screenshot" }
 #noinspection UnusedVersionCatalogEntry
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt2 = { id = "dev.detekt", version.ref = "detekt2" }
 gradle-dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "gradle-dependency-analysis" }
 gradle-dependency-sort = { id = "com.squareup.sort-dependencies", version.ref = "gradle-dependency-sort" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
