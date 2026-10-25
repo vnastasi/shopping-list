@@ -3,7 +3,6 @@ package md.vnastasi.plugin.detektaggregator
 import dev.detekt.gradle.Detekt
 import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
@@ -18,7 +17,7 @@ class DetektAggregatorPlugin : Plugin<Project> {
             pluginManager.apply(plugin)
 
             tasks.withType<Detekt>().configureEach {
-                jvmTarget.set(JavaVersion.VERSION_17.toString())
+                jvmTarget.set(libs.versions.project.jdk.get())
 
                 reports {
                     html.required.set(true)
