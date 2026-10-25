@@ -18,7 +18,7 @@ jobs:
       KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: "Set up development tools"
         uses: ./.github/actions/setup-dev-tools-action
@@ -30,7 +30,7 @@ jobs:
           ./gradlew copyReleaseApkArtifact
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: "apk"
           path: build/artifacts/apk/shopping-list-${{ github.ref_name }}.apk
@@ -48,7 +48,7 @@ jobs:
     steps:
       - id: download-artifact
         name: "Download APK from build"
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           name: "apk"
 

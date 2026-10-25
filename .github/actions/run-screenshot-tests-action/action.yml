@@ -17,7 +17,7 @@ runs:
 
     - name: "Archive screenshot diff images"
       if: ${{ failure() && steps.run-screenshot-tests.conclusion == 'failure' && inputs.exec-data-cache-key != '' }}
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: "screenshot-diff-images-${{ github.event.pull_request.number }}"
         path: |
@@ -43,7 +43,7 @@ runs:
 
     - name: "Archive test execution data"
       if: ${{ inputs.exec-data-cache-key != '' }}
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.exec-data-cache-key }}
         path: ${{ github.workspace }}/build/exec-data/screenshot-tests
