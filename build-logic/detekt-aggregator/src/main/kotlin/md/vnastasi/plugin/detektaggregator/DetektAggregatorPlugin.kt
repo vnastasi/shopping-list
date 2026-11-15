@@ -1,9 +1,8 @@
 package md.vnastasi.plugin.detektaggregator
 
-import io.gitlab.arturbosch.detekt.Detekt
+import dev.detekt.gradle.Detekt
+import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
-import md.vnastasi.plugin.support.requirePlugin
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
@@ -12,20 +11,20 @@ import org.gradle.kotlin.dsl.withType
 class DetektAggregatorPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
-        plugins.apply(libs.requirePlugin("detekt").get().pluginId)
+        val plugin = libs.plugins.detekt2
 
-        tasks.withType<Detekt>().configureEach {
-            jvmTarget = JavaVersion.VERSION_17.toString()
+        rootProject.subprojects {
+            pluginManager.apply(plugin)
 
-            reports {
-                html.required.set(true)
-                xml.required.set(false)
-                sarif.required.set(false)
-                md.required.set(false)
-                txt.required.set(false)
+            tasks.withType<Detekt>().configureEach {
+                jvmTarget.set(libs.versions.project.jdk.get())
+
+                reports {
+                    html.required.set(true)
+                }
+
+                exclude("**/support/icon/**")
             }
-
-            exclude("**/support/icon/**")
         }
     }
 }
