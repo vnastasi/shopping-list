@@ -30,8 +30,8 @@ class ScreenShotTestingConvention @Inject constructor(
         pluginManager.applyAndConfigure(libs.requirePlugin("compose-screenshot")) {
             dependencies {
                 add("screenshotTestImplementation", testFixtures(project(":screen:shared")))
-                add("screenshotTestImplementation", libs.findLibrary("compose-screenshot-validation"))
-                add("screenshotTestImplementation", libs.findLibrary("compose-tooling"))
+                add("screenshotTestImplementation", libs.findLibrary("compose-screenshot-validation").get())
+                add("screenshotTestImplementation", libs.findLibrary("compose-tooling").get())
             }
 
             val threshold = providers.environmentVariable(PROPERTY_SCREENSHOT_DIFF_THRESHOLD).map { it.toFloat() }.orElse(provider { DEFAULT_SCREENSHOT_DIFF_THRESHOLD })

@@ -28,7 +28,6 @@ include(
     ":app-build-support",
     ":code-coverage",
     ":conventions",
-    ":detekt-aggregator",
     ":plugin-support",
     ":screenshot-testing",
     ":secrets"

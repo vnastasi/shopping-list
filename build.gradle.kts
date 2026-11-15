@@ -1,6 +1,5 @@
 plugins {
 //    alias(libs.plugins.conventions.code.coverage)
-//    alias(libs.plugins.conventions.detekt.aggregator)
     alias(libs.plugins.conventions.app.build.support)
     alias(libs.plugins.gradle.dependency.analysis)
     alias(libs.plugins.gradle.dependency.sort)

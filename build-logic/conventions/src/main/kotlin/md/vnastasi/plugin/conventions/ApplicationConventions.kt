@@ -25,5 +25,6 @@ class ApplicationConventions : Plugin<Project> {
         }
 
         configureKotlin()
+        configureDetekt()
     }
 }

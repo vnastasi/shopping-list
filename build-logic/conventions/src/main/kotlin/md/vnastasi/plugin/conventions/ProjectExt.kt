@@ -3,6 +3,7 @@ package md.vnastasi.plugin.conventions
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.TestedExtension
+import dev.detekt.gradle.Detekt
 import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
 import md.vnastasi.plugin.support.requirePlugin
@@ -74,6 +75,7 @@ internal fun Project.configureSimpleLibrary() {
     }
 
     configureKotlin()
+    configureDetekt()
 }
 
 internal fun Project.configureTestableLibrary() {
@@ -90,6 +92,20 @@ internal fun Project.configureComposeLibrary() {
 
     extensions.configure<LibraryExtension> {
         configureCompose()
+    }
+}
+
+internal fun Project.configureDetekt() {
+    pluginManager.apply(libs.requirePlugin("detekt2"))
+
+    tasks.withType<Detekt>().configureEach {
+        jvmTarget.set(libs.requireVersion("project-jdk"))
+
+        reports {
+            html.required.set(true)
+        }
+
+        exclude("**/support/icon/**")
     }
 }
 
