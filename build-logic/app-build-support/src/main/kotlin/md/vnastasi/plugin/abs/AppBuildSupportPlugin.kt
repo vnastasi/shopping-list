@@ -9,9 +9,13 @@ import org.gradle.kotlin.dsl.register
 class AppBuildSupportPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val versionCatalogFileProvider = target.rootProject.layout.projectDirectory.dir("gradle").file("libs.versions.toml")
+        if (target.isolated != target.isolated.rootProject) {
+            return
+        }
 
-        target.rootProject.tasks.register<UpdateProjectVersion>("updateProjectVersion") {
+        val versionCatalogFileProvider = target.isolated.rootProject.projectDirectory.dir("gradle").file("libs.versions.toml")
+
+        target.tasks.register<UpdateProjectVersion>("updateProjectVersion") {
             versionCatalogFile.set(versionCatalogFileProvider)
         }
     }

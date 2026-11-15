@@ -1,6 +1,5 @@
 import com.android.build.api.artifact.SingleArtifact
 import md.vnastasi.plugin.abs.task.CopyAndroidArtifact
-import md.vnastasi.plugin.support.libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -55,7 +54,7 @@ android {
     sourceSets {
         getByName("androidTest") {
             assets {
-                directories += "${project(":database").layout.projectDirectory}/schemas"
+                directories += isolated.rootProject.projectDirectory.dir("database/schemas").toString()
             }
         }
     }
@@ -66,7 +65,7 @@ androidComponents {
         project.tasks.register<CopyAndroidArtifact>("copy${applicationVariant.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}ApkArtifact") {
             artifactDirectory.set(applicationVariant.artifacts.get(SingleArtifact.APK))
             artifactLoader.set(applicationVariant.artifacts.getBuiltArtifactsLoader())
-            targetDirectory.set(rootProject.layout.buildDirectory.dir("artifacts/apk"))
+            targetDirectory.set(isolated.rootProject.projectDirectory.dir("build/artifacts/apk"))
             fileName.set("shopping-list-v${libs.versions.project.version.name.get()}.apk")
         }
     }

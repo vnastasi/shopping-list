@@ -1,5 +1,3 @@
-import md.vnastasi.plugin.support.libs
-
 plugins {
     alias(libs.plugins.conventions.compose.library)
     alias(libs.plugins.kotlin.serialization)

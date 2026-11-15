@@ -5,6 +5,7 @@ import com.android.compose.screenshot.tasks.PreviewScreenshotUpdateTask
 import com.android.compose.screenshot.tasks.PreviewScreenshotValidationTask
 import md.vnastasi.plugin.support.applyAndConfigure
 import md.vnastasi.plugin.support.libs
+import md.vnastasi.plugin.support.requirePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.ProviderFactory
@@ -26,11 +27,11 @@ class ScreenShotTestingConvention @Inject constructor(
             experimentalProperties["android.experimental.enableScreenshotTest"] = true
         }
 
-        pluginManager.applyAndConfigure(libs.plugins.compose.screenshot) {
+        pluginManager.applyAndConfigure(libs.requirePlugin("compose-screenshot")) {
             dependencies {
                 add("screenshotTestImplementation", testFixtures(project(":screen:shared")))
-                add("screenshotTestImplementation", libs.compose.screenshot.validation)
-                add("screenshotTestImplementation", libs.compose.tooling)
+                add("screenshotTestImplementation", libs.findLibrary("compose-screenshot-validation").get())
+                add("screenshotTestImplementation", libs.findLibrary("compose-tooling").get())
             }
 
             val threshold = providers.environmentVariable(PROPERTY_SCREENSHOT_DIFF_THRESHOLD).map { it.toFloat() }.orElse(provider { DEFAULT_SCREENSHOT_DIFF_THRESHOLD })
