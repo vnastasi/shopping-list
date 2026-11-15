@@ -1,5 +1,5 @@
 plugins {
-//    alias(libs.plugins.conventions.code.coverage)
+    alias(libs.plugins.conventions.code.coverage)
     alias(libs.plugins.conventions.app.build.support)
     alias(libs.plugins.gradle.dependency.analysis)
     alias(libs.plugins.gradle.dependency.sort)
@@ -15,19 +15,18 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-//codeCoverage {
-//    targetBuildType.set("debug")
-//    reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
-//    excludedModules.addAll(project(":support:annotation"))
-//    excludedClasses.addAll(
-//        "**/*Preview*",
-//        "**/*Database_Impl.**",
-//        "**/*Database_Impl$*$*$1.**",
-//        "**/ShoppingListApplication.**",
-//        "**/MainActivity.**"
-//    )
-//    coverageThreshold.set(providers.environmentVariable("CODE_COVERAGE_THRESHOLD").map { it.toBigDecimal() }.orElse(89.toBigDecimal()))
-//}
+codeCoverage {
+    targetBuildType.set("debug")
+    reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
+    excludedClasses.addAll(
+        "**/*Preview*",
+        "**/*Database_Impl.**",
+        "**/*Database_Impl$*$*$1.**",
+        "**/ShoppingListApplication.**",
+        "**/MainActivity.**"
+    )
+    coverageThreshold.set(providers.environmentVariable("CODE_COVERAGE_THRESHOLD").map { it.toBigDecimal() }.orElse(89.toBigDecimal()))
+}
 
 dependencyAnalysis {
     issues {

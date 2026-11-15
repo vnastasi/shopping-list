@@ -39,6 +39,17 @@ internal fun CommonExtension.configureAndroid() {
         sourceCompatibility = JavaVersion.toVersion(libs.requireVersion("project-jdk"))
         targetCompatibility = JavaVersion.toVersion(libs.requireVersion("project-jdk"))
     }
+
+    buildTypes.apply {
+        getByName("debug") {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+    }
+
+    testCoverage.apply {
+        jacocoVersion = libs.requireVersion("jacoco")
+    }
 }
 
 internal fun CommonExtension.configureUnitTests() {
