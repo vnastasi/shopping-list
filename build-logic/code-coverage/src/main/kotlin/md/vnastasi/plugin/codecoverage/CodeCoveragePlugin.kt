@@ -1,10 +1,7 @@
 package md.vnastasi.plugin.codecoverage
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.LibraryExtension
 import md.vnastasi.plugin.support.libs
-import md.vnastasi.plugin.support.withPlugin
+import md.vnastasi.plugin.support.requireVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -40,31 +37,24 @@ class CodeCoveragePlugin @Inject constructor(
         target.pluginManager.apply("jacoco")
 
         target.extensions.configure<JacocoPluginExtension> {
-            toolVersion = target.libs.versions.jacoco.get()
+            toolVersion = target.libs.requireVersion("jacoco")
         }
 
         target.afterEvaluate {
             with(codeCoverageExtension) {
-
-                subprojects.forEach { subProject ->
-                    subProject.pluginManager.withPlugin(libs.plugins.android.library) {
-                        subProject.extensions.configure<LibraryExtension> { enableTestCoverageData() }
-                    }
-
-                    subProject.pluginManager.withPlugin(libs.plugins.android.application) {
-                        subProject.extensions.configure<ApplicationExtension> { enableTestCoverageData() }
-                    }
-                }
-
-                val executionDataDirectories = getExecDataDirs()
-                val allSourceDirectories = getAllSourceDirs() + getAllGeneratedSourceDirs()
-                val allClassDirectories = getAllClassDirs()
+                val executionDataDirectories = getExecDataDirs(target)
+                val allSourceDirectories = getAllSourceDirs(target, this) + getAllGeneratedSourceDirs(target, this)
+                val allClassDirectories = getAllClassDirs(target, this)
 
                 tasks.register<CopyExecData>(COPY_UNIT_TEST_EXEC_DATA) {
                     group = TASK_GROUP
                     description = "Copy execution data for unit tests"
 
-                    execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("outputs/unit_test_code_coverage") })
+                    execDataLocation.setFrom(
+                        subprojects.map { subProject ->
+                            target.layout.projectDirectory.dir("${subProject.projectDir.absolutePath}/build/outputs/unit_test_code_coverage")
+                        }
+                    )
 
                     outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/unit-tests"))
                 }
@@ -73,7 +63,12 @@ class CodeCoveragePlugin @Inject constructor(
                     group = TASK_GROUP
                     description = "Copy execution data for screenshot tests"
 
-                    execDataLocation.setFrom(subprojects.mapNotNull { it.layout.buildDirectory.dir("jacoco") })
+                    execDataLocation.setFrom(
+                        subprojects
+                            .map { subProject ->
+                                target.layout.projectDirectory.dir("${subProject.projectDir.absolutePath}/build/jacoco")
+                            }
+                    )
 
                     outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/screenshot-tests"))
                 }
@@ -84,7 +79,7 @@ class CodeCoveragePlugin @Inject constructor(
 
                     profile.set(providers.environmentVariable(PROPERTY_AVD_PROFILE))
 
-                    execDataLocation.setFrom(project(":app").layout.buildDirectory.dir("outputs/code_coverage"))
+                    execDataLocation.setFrom(rootProject.layout.projectDirectory.dir("app/build/outputs/code_coverage"))
 
                     outputDirectory.set(rootProject.layout.buildDirectory.dir("exec-data/instrumented-tests"))
                 }
@@ -132,48 +127,31 @@ class CodeCoveragePlugin @Inject constructor(
         }
     }
 
-    context(targetProject: Project, extension: CodeCoverageExtension)
-    private fun getAllSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
-        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
-        .map { project -> project.layout.projectDirectory.dir("src/main/java") }
-        .map { directory -> providers.provider { directory } }
+    private fun getAllSourceDirs(targetProject: Project, extension: CodeCoverageExtension): List<Provider<Directory>> = targetProject.subprojects
+        .map { project -> targetProject.layout.projectDirectory.dir("${project.projectDir.absolutePath}/src/main/java") }
+        .map { directory -> targetProject.providers.provider { directory } }
 
-    context(targetProject: Project, extension: CodeCoverageExtension)
-    private fun getAllGeneratedSourceDirs(): List<Provider<Directory>> = targetProject.subprojects
-        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
-        .map { project -> project.layout.buildDirectory.dir("generated/ksp/${extension.targetBuildType.get()}/kotlin") }
+    private fun getAllGeneratedSourceDirs(targetProject: Project, extension: CodeCoverageExtension): List<Provider<Directory>> = targetProject.subprojects
+        .map { project -> targetProject.layout.projectDirectory.dir("${project.projectDir.absolutePath}/build/generated/ksp/${extension.targetBuildType.get()}/kotlin") }
+        .map { directory -> targetProject.providers.provider { directory } }
 
-    context(targetProject: Project, extension: CodeCoverageExtension)
-    private fun getAllClassDirs(): List<Provider<FileTree>> = targetProject.subprojects
-        .filter { project -> extension.excludedModules.get().none { it.path == project.path } }
+    private fun getAllClassDirs(targetProject: Project, extension: CodeCoverageExtension): List<Provider<FileTree>> = targetProject.subprojects
         .map { project ->
-            project.layout.buildDirectory.dir("intermediates/built_in_kotlinc/${extension.targetBuildType.get()}").map { directory ->
-                directory.asFileTree.matching {
+            targetProject.layout.projectDirectory.dir("${project.projectDir.absolutePath}/build/intermediates/built_in_kotlinc/${extension.targetBuildType.get()}")
+        }
+        .map { directory ->
+            targetProject.providers.provider { directory }.map { dir ->
+                dir.asFileTree.matching {
                     exclude(extension.excludedClasses.get())
                 }
             }
         }
 
-    context(targetProject: Project)
-    private fun getExecDataDirs() = targetProject.layout.buildDirectory.dir("exec-data")
+    private fun getExecDataDirs(targetProject: Project) = targetProject.layout.buildDirectory.dir("exec-data")
         .map { directory ->
             directory.asFileTree.matching {
                 include("**/*.exec")
                 include("**/*.ec")
             }
         }
-
-    context(targetProject: Project, extension: CodeCoverageExtension)
-    private fun CommonExtension.enableTestCoverageData() {
-        buildTypes.apply {
-            getByName(extension.targetBuildType.get()) {
-                enableUnitTestCoverage = true
-                enableAndroidTestCoverage = true
-            }
-        }
-
-        testCoverage.apply {
-            jacocoVersion = targetProject.libs.versions.jacoco.get()
-        }
-    }
 }

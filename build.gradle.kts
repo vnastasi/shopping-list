@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.conventions.code.coverage)
-    alias(libs.plugins.conventions.detekt.aggregator)
+    alias(libs.plugins.conventions.app.build.support)
     alias(libs.plugins.gradle.dependency.analysis)
     alias(libs.plugins.gradle.dependency.sort)
 
@@ -18,7 +18,6 @@ plugins {
 codeCoverage {
     targetBuildType.set("debug")
     reportDirectory.set(layout.buildDirectory.dir("reports/code-coverage"))
-    excludedModules.addAll(project(":support:annotation"))
     excludedClasses.addAll(
         "**/*Preview*",
         "**/*Database_Impl.**",

@@ -13,6 +13,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
 
+    implementation(libs.detekt2.gradlePlugin)
     implementation(project(":plugin-support"))
 }
 

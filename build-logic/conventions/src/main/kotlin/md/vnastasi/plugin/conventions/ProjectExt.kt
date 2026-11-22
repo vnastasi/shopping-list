@@ -3,11 +3,14 @@ package md.vnastasi.plugin.conventions
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.TestedExtension
+import dev.detekt.gradle.Detekt
 import md.vnastasi.plugin.support.apply
 import md.vnastasi.plugin.support.libs
-import org.gradle.accessors.dm.LibrariesForLibs
+import md.vnastasi.plugin.support.requirePlugin
+import md.vnastasi.plugin.support.requireVersion
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
@@ -17,24 +20,35 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 internal fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(JvmTarget.fromTarget(libs.versions.project.jdk.get()))
+            jvmTarget.set(JvmTarget.fromTarget(libs.requireVersion("project-jdk")))
         }
     }
 }
 
-context(libs: LibrariesForLibs)
+context(libs: VersionCatalog)
 internal fun CommonExtension.configureAndroid() {
-    compileSdk = libs.versions.project.compileSdk.get().toInt()
+    compileSdk = libs.requireVersion("project-compileSdk").toInt()
 
     defaultConfig.apply {
         minSdk {
-            version = release(libs.versions.project.minSdk.get().toInt())
+            version = release(libs.requireVersion("project-minSdk").toInt())
         }
     }
 
     compileOptions.apply {
-        sourceCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
-        targetCompatibility = JavaVersion.toVersion(libs.versions.project.jdk.get())
+        sourceCompatibility = JavaVersion.toVersion(libs.requireVersion("project-jdk"))
+        targetCompatibility = JavaVersion.toVersion(libs.requireVersion("project-jdk"))
+    }
+
+    buildTypes.apply {
+        getByName("debug") {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+    }
+
+    testCoverage.apply {
+        jacocoVersion = libs.requireVersion("jacoco")
     }
 }
 
@@ -61,10 +75,10 @@ internal fun CommonExtension.configureCompose() {
 }
 
 internal fun Project.configureSimpleLibrary() {
-    pluginManager.apply(libs.plugins.gradle.dependency.analysis)
-    pluginManager.apply(libs.plugins.gradle.dependency.sort)
-    pluginManager.apply(libs.plugins.android.library)
-    pluginManager.apply(libs.plugins.android.cacheFix)
+    pluginManager.apply(libs.requirePlugin("gradle-dependency-analysis"))
+    pluginManager.apply(libs.requirePlugin("gradle-dependency-sort"))
+    pluginManager.apply(libs.requirePlugin("android-library"))
+    pluginManager.apply(libs.requirePlugin("android-cacheFix"))
 
     extensions.configure<LibraryExtension> {
         with(libs) { configureAndroid() }
@@ -72,6 +86,7 @@ internal fun Project.configureSimpleLibrary() {
     }
 
     configureKotlin()
+    configureDetekt()
 }
 
 internal fun Project.configureTestableLibrary() {
@@ -84,10 +99,24 @@ internal fun Project.configureTestableLibrary() {
 internal fun Project.configureComposeLibrary() {
     configureSimpleLibrary()
 
-    pluginManager.apply(libs.plugins.compose.compiler)
+    pluginManager.apply(libs.requirePlugin("compose-compiler"))
 
     extensions.configure<LibraryExtension> {
         configureCompose()
+    }
+}
+
+internal fun Project.configureDetekt() {
+    pluginManager.apply(libs.requirePlugin("detekt2"))
+
+    tasks.withType<Detekt>().configureEach {
+        jvmTarget.set(libs.requireVersion("project-jdk"))
+
+        reports {
+            html.required.set(true)
+        }
+
+        exclude("**/support/icon/**")
     }
 }
 

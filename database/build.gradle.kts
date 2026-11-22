@@ -1,5 +1,3 @@
-import md.vnastasi.plugin.support.libs
-
 plugins {
     alias(libs.plugins.conventions.simple.library)
     alias(libs.plugins.hilt)
